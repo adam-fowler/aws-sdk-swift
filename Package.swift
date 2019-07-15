@@ -4,7 +4,6 @@ import PackageDescription
 let package = Package(
     name: "AWSSDKSwift",
     products: [
-        .executable(name: "aws-sdk-swift-codegen", targets: ["CodeGenerator"]),
         .library(name: "AWSSDKSwift", targets: ["ACM","ACMPCA","APIGateway","AWSBackup","AWSDirectoryService","AlexaForBusiness","Amplify","ApiGatewayManagementApi","ApiGatewayV2","AppMesh","AppStream","AppSync","ApplicationAutoScaling","ApplicationDiscoveryService","ApplicationInsights","Athena","AutoScaling","AutoScalingPlans","Batch","Budgets","Chime","Cloud9","CloudDirectory","CloudFormation","CloudFront","CloudHSM","CloudHSMV2","CloudSearch","CloudSearchDomain","CloudTrail","CloudWatch","CloudWatchEvents","CloudWatchLogs","CodeBuild","CodeCommit","CodeDeploy","CodePipeline","CodeStar","CognitoIdentity","CognitoIdentityProvider","CognitoSync","Comprehend","ComprehendMedical","ConfigService","Connect","CostExplorer","CostandUsageReportService","DAX","DLM","DataPipeline","DataSync","DatabaseMigrationService","DeviceFarm","DirectConnect","DocDB","DynamoDB","DynamoDBStreams","EC2","EC2InstanceConnect","ECR","ECS","EFS","EKS","ELB","ELBV2","EMR","ElastiCache","ElasticBeanstalk","ElasticTranscoder","ElasticsearchService","FMS","FSx","Firehose","GameLift","Glacier","GlacierMiddleware","GlobalAccelerator","Glue","Greengrass","GroundStation","GuardDuty","Health","IAM","ImportExport","Inspector","IoT","IoT1ClickDevicesService","IoT1ClickProjects","IoTAnalytics","IoTDataPlane","IoTEvents","IoTEventsData","IoTJobsDataPlane","IoTThingsGraph","KMS","Kafka","Kinesis","KinesisAnalytics","KinesisAnalyticsV2","KinesisVideo","KinesisVideoArchivedMedia","KinesisVideoMedia","Lambda","LexModelBuildingService","LexRuntimeService","LicenseManager","Lightsail","MQ","MTurk","MachineLearning","Macie","ManagedBlockchain","MarketplaceCommerceAnalytics","MarketplaceEntitlementService","MarketplaceMetering","MediaConnect","MediaConvert","MediaLive","MediaPackage","MediaPackageVod","MediaStore","MediaStoreData","MediaTailor","MigrationHub","Mobile","MobileAnalytics","Neptune","OpsWorks","OpsWorksCM","Organizations","PI","Personalize","PersonalizeEvents","PersonalizeRuntime","Pinpoint","PinpointEmail","PinpointSMSVoice","Polly","Pricing","QuickSight","RAM","RDS","RDSDataService","Redshift","Rekognition","ResourceGroups","ResourceGroupsTaggingAPI","RoboMaker","Route53","Route53Domains","Route53Resolver","S3","S3Control","S3Middleware","SES","SFN","SMS","SNS","SQS","SSM","STS","SWF","SageMaker","SageMakerRuntime","SecretsManager","SecurityHub","ServerlessApplicationRepository","ServiceCatalog","ServiceDiscovery","ServiceQuotas","Shield","Signer","SimpleDB","Snowball","StorageGateway","Support","Textract","TranscribeService","Transfer","Translate","WAF","WAFRegional","WorkDocs","WorkLink","WorkMail","WorkSpaces","XRay"]),
 
         .library(name: "ACM", targets: ["ACM"]),
@@ -25,7 +24,6 @@ let package = Package(
         .library(name: "Athena", targets: ["Athena"]),
         .library(name: "AutoScaling", targets: ["AutoScaling"]),
         .library(name: "AutoScalingPlans", targets: ["AutoScalingPlans"]),
-        .library(name: "Backup", targets: ["Backup"]),
         .library(name: "Batch", targets: ["Batch"]),
         .library(name: "Budgets", targets: ["Budgets"]),
         .library(name: "Chime", targets: ["Chime"]),
@@ -195,12 +193,9 @@ let package = Package(
         .library(name: "XRay", targets: ["XRay"])
     ],
     dependencies: [
-        .package(url: "https://github.com/adam-fowler/aws-sdk-swift-core.git", .branch("working")),
-        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", .upToNextMajor(from: "4.1.0"))
+        .package(url: "https://github.com/adam-fowler/aws-sdk-swift-core.git", .branch("working"))
     ],
     targets: [
-        .target(name: "CodeGenerator", dependencies: ["AWSSDKSwiftCore", "SwiftyJSON"]),
-
         .target(name: "ACM", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/ACM"),
         .target(name: "ACMPCA", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/ACMPCA"),
         .target(name: "APIGateway", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/APIGateway"),
@@ -219,7 +214,6 @@ let package = Package(
         .target(name: "Athena", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/Athena"),
         .target(name: "AutoScaling", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/AutoScaling"),
         .target(name: "AutoScalingPlans", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/AutoScalingPlans"),
-        .target(name: "Backup", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/Backup"),
         .target(name: "Batch", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/Batch"),
         .target(name: "Budgets", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/Budgets"),
         .target(name: "Chime", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/Chime"),

@@ -6,7 +6,7 @@
         "repositoryURL": "https://github.com/adam-fowler/aws-sdk-swift-core.git",
         "state": {
           "branch": "working",
-          "revision": "14fba1a01695376541ade6054c0009891bcf0818",
+          "revision": "c907382b64bf6dff4456a8b3379000a86947a880",
           "version": null
         }
       },
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "7f20464df31e85f86bedf4a8afdd1785e0cb5059",
-          "version": "2.3.0"
+          "revision": "334815f6580b5256409d48431751938c4e966e72",
+          "version": "2.4.0"
         }
       },
       {
@@ -44,15 +44,6 @@
           "branch": null,
           "revision": "77173ac9038e8e9b92f3efe8780923447e3c890b",
           "version": "2.1.1"
-        }
-      },
-      {
-        "package": "SwiftyJSON",
-        "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
-        "state": {
-          "branch": null,
-          "revision": "2b6054efa051565954e1d2b9da831680026cd768",
-          "version": "4.3.0"
         }
       }
     ]
