@@ -7,10 +7,10 @@ let package = Package(
         .executable(name: "aws-sdk-swift-codegen", targets: ["CodeGenerator"])
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-aws/aws-sdk-swift-core.git", .branch("master")),
-        .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.2"))
+        .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.2")),
+        .package(url: "https://github.com/adam-fowler/Stencil.git", .upToNextMajor(from: "0.13.4"))
     ],
     targets: [
-        .target(name: "CodeGenerator", dependencies: ["AWSSDKSwiftCore", "SwiftyJSON"])
+        .target(name: "CodeGenerator", dependencies: ["SwiftyJSON", "Stencil"])
     ]
 )

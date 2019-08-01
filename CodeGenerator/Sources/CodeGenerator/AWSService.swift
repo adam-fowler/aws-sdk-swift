@@ -8,7 +8,6 @@
 
 import Foundation
 import SwiftyJSON
-import AWSSDKSwiftCore
 
 enum AWSServiceError: Error {
     case eventStreamingCodeGenerationsAreUnsupported
@@ -133,7 +132,10 @@ struct AWSService {
                 structure[_struct["shape"].stringValue] = try shapeType(from: shapeJSON, level: level+1)
             }
 
-            let members: [Member] = try json["members"].dictionaryValue.map { name, memberJSON in
+            let members: [Member] = try json["members"].dictionaryValue.compactMap { name, memberJSON in
+                if memberJSON["deprecated"].bool == true {
+                    return nil
+                }
                 let name = name
                 let memberDict = try JSONSerialization.jsonObject(with: memberJSON.rawData(), options: []) as? [String: Any] ?? [:]
                 let shapeName = memberJSON["shape"].stringValue
@@ -182,9 +184,11 @@ struct AWSService {
                     xmlNamespace: XMLNamespace(dictionary: memberDict),
                     isStreaming: memberJSON["streaming"].bool ?? false
                 )
-            }.sorted{ $0.name < $1.name }
+            }.sorted{ $0.name.lowercased() < $1.name.lowercased() }
 
-            let shape = StructureShape(members: members, payload: json["payload"].string)
+            let payloadMember = members.first(where:{$0.name == json["payload"].string})
+            let xmlNamespace = payloadMember?.xmlNamespace?.attributeMap["uri"] as? String
+            let shape = StructureShape(members: members, payload: json["payload"].string, xmlNamespace: xmlNamespace)
             type = .structure(shape)
 
         case "map":
@@ -254,6 +258,7 @@ struct AWSService {
         var shapes = [Shape]()
         for (key, json) in apiJSON["shapes"].dictionaryValue {
             do {
+                //if json["deprecated"].bool == true { continue }
                 let shape = try Shape(name: key, type: shapeType(from: json))
                 shapes.append(shape)
             } catch AWSServiceError.eventStreamingCodeGenerationsAreUnsupported {
@@ -278,6 +283,15 @@ struct AWSService {
                 }
             }
 
+            var deprecatedMessage : String? = nil
+            if json["deprecated"].bool == true {
+                if let message = json["deprecatedMessage"].string {
+                    deprecatedMessage = message
+                } else {
+                    deprecatedMessage = "\(json["name"].stringValue) is deprecated."
+                }
+            }
+
             var inputShape: Shape?
             if let inputShapeName = json["input"]["shape"].string {
                 if let index = shapes.firstIndex(where: { inputShapeName == $0.name }) {
@@ -297,7 +311,8 @@ struct AWSService {
                 httpMethod: json["http"]["method"].stringValue,
                 path: json["http"]["requestUri"].stringValue,
                 inputShape: inputShape,
-                outputShape: outputShape
+                outputShape: outputShape,
+                deprecatedMessage: deprecatedMessage
             )
 
             operations.append(operation)
