@@ -16,6 +16,7 @@ extension ComprehendMedical {
             AWSShapeMember(label: "Traits", required: false, type: .list), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         ///  The 0-based character offset in the input text that shows where the attribute begins. The offset returns the UTF-8 code point in the string. 
         public let beginOffset: Int32?
         ///  The 0-based character offset in the input text that shows where the attribute ends. The offset returns the UTF-8 code point in the string. 
@@ -44,6 +45,10 @@ extension ComprehendMedical {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case beginOffset = "BeginOffset"
             case endOffset = "EndOffset"
@@ -68,11 +73,17 @@ extension ComprehendMedical {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Text", required: true, type: .string)
         ]
+
         ///  A UTF-8 text string containing the clinical content being examined for entities. Each string must contain fewer than 20,000 bytes of characters.
         public let text: String
 
         public init(text: String) {
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", max: 20000)
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -86,6 +97,7 @@ extension ComprehendMedical {
             AWSShapeMember(label: "PaginationToken", required: false, type: .string), 
             AWSShapeMember(label: "UnmappedAttributes", required: false, type: .list)
         ]
+
         ///  The collection of medical entities extracted from the input text and their associated information. For each entity, the response provides the entity text, the entity category, where the entity text begins and ends, and the level of confidence that Comprehend Medical has in the detection and analysis. Attributes and traits of the entity are also returned.
         public let entities: [Entity]
         ///  If the result of the previous request to DetectEntities was truncated, include the Paginationtoken to fetch the next page of entities.
@@ -99,6 +111,16 @@ extension ComprehendMedical {
             self.unmappedAttributes = unmappedAttributes
         }
 
+        public func validate() throws {
+            try entities.forEach {
+                try $0.validate()
+            }
+            try validate(paginationToken, name:"paginationToken", min: 1)
+            try unmappedAttributes?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entities = "Entities"
             case paginationToken = "PaginationToken"
@@ -110,11 +132,17 @@ extension ComprehendMedical {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Text", required: true, type: .string)
         ]
+
         ///  A UTF-8 text string containing the clinical content being examined for PHI entities. Each string must contain fewer than 20,000 bytes of characters. 
         public let text: String
 
         public init(text: String) {
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", max: 20000)
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -127,6 +155,7 @@ extension ComprehendMedical {
             AWSShapeMember(label: "Entities", required: true, type: .list), 
             AWSShapeMember(label: "PaginationToken", required: false, type: .string)
         ]
+
         ///  The collection of PHI entities extracted from the input text and their associated information. For each entity, the response provides the entity text, the entity category, where the entity text begins and ends, and the level of confidence that Comprehend Medical has in its detection. 
         public let entities: [Entity]
         ///  If the result of the previous request to DetectPHI was truncated, include the Paginationtoken to fetch the next page of PHI entities. 
@@ -135,6 +164,13 @@ extension ComprehendMedical {
         public init(entities: [Entity], paginationToken: String? = nil) {
             self.entities = entities
             self.paginationToken = paginationToken
+        }
+
+        public func validate() throws {
+            try entities.forEach {
+                try $0.validate()
+            }
+            try validate(paginationToken, name:"paginationToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -155,6 +191,7 @@ extension ComprehendMedical {
             AWSShapeMember(label: "Traits", required: false, type: .list), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         ///  The extracted attributes that relate to this entity.
         public let attributes: [Attribute]?
         ///  The 0-based character offset in the input text that shows where the entity begins. The offset returns the UTF-8 code point in the string. 
@@ -184,6 +221,13 @@ extension ComprehendMedical {
             self.text = text
             self.traits = traits
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try attributes?.forEach {
+                try $0.validate()
+            }
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -245,6 +289,7 @@ extension ComprehendMedical {
             AWSShapeMember(label: "Name", required: false, type: .enum), 
             AWSShapeMember(label: "Score", required: false, type: .float)
         ]
+
         ///  Provides a name or contextual description about the trait. 
         public let name: AttributeName?
         ///  The level of confidence that Comprehend Medical has in the accuracy of this trait.
@@ -266,6 +311,7 @@ extension ComprehendMedical {
             AWSShapeMember(label: "Attribute", required: false, type: .structure), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         ///  The specific attribute that has been extracted but not mapped to an entity. 
         public let attribute: Attribute?
         ///  The type of the attribute, could be one of the following values: "MEDICATION", "MEDICAL_CONDITION", "ANATOMY", "TEST_AND_TREATMENT_PROCEDURE" or "PERSONAL_HEALTH_INFORMATION". 
@@ -274,6 +320,10 @@ extension ComprehendMedical {
         public init(attribute: Attribute? = nil, type: EntityType? = nil) {
             self.attribute = attribute
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try attribute?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

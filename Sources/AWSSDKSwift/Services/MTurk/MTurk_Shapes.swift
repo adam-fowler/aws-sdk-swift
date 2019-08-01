@@ -10,6 +10,7 @@ extension MTurk {
             AWSShapeMember(label: "IntegerValue", required: false, type: .integer), 
             AWSShapeMember(label: "QualificationRequestId", required: true, type: .string)
         ]
+
         ///  The value of the Qualification. You can omit this value if you are using the presence or absence of the Qualification as the basis for a HIT requirement. 
         public let integerValue: Int32?
         /// The ID of the Qualification request, as returned by the GetQualificationRequests operation.
@@ -28,6 +29,7 @@ extension MTurk {
 
     public struct AcceptQualificationRequestResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -39,6 +41,7 @@ extension MTurk {
             AWSShapeMember(label: "OverrideRejection", required: false, type: .boolean), 
             AWSShapeMember(label: "RequesterFeedback", required: false, type: .string)
         ]
+
         ///  The ID of the assignment. The assignment must correspond to a HIT created by the Requester. 
         public let assignmentId: String
         ///  A flag indicating that an assignment should be approved even if it was previously rejected. Defaults to False. 
@@ -52,6 +55,12 @@ extension MTurk {
             self.requesterFeedback = requesterFeedback
         }
 
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentId = "AssignmentId"
             case overrideRejection = "OverrideRejection"
@@ -60,6 +69,7 @@ extension MTurk {
     }
 
     public struct ApproveAssignmentResponse: AWSShape {
+
 
         public init() {
         }
@@ -81,6 +91,7 @@ extension MTurk {
             AWSShapeMember(label: "SubmitTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "WorkerId", required: false, type: .string)
         ]
+
         ///  The date and time the Worker accepted the assignment.
         public let acceptTime: TimeStamp?
         ///  The Worker's answers submitted for the HIT contained in a QuestionFormAnswers document, if the Worker provides an answer. If the Worker does not provide any answers, Answer may contain a QuestionFormAnswers document, or Answer may be empty.
@@ -121,6 +132,18 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptTime = "AcceptTime"
             case answer = "Answer"
@@ -151,6 +174,7 @@ extension MTurk {
             AWSShapeMember(label: "SendNotification", required: false, type: .boolean), 
             AWSShapeMember(label: "WorkerId", required: true, type: .string)
         ]
+
         /// The value of the Qualification to assign.
         public let integerValue: Int32?
         /// The ID of the Qualification type to use for the assigned Qualification.
@@ -167,6 +191,15 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case integerValue = "IntegerValue"
             case qualificationTypeId = "QualificationTypeId"
@@ -176,6 +209,7 @@ extension MTurk {
     }
 
     public struct AssociateQualificationWithWorkerResponse: AWSShape {
+
 
         public init() {
         }
@@ -190,6 +224,7 @@ extension MTurk {
             AWSShapeMember(label: "Reason", required: false, type: .string), 
             AWSShapeMember(label: "WorkerId", required: false, type: .string)
         ]
+
         /// The ID of the assignment associated with this bonus payment.
         public let assignmentId: String?
         public let bonusAmount: String?
@@ -206,6 +241,16 @@ extension MTurk {
             self.grantTime = grantTime
             self.reason = reason
             self.workerId = workerId
+        }
+
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
+            try validate(bonusAmount, name:"bonusAmount", pattern: "^[0-9]+(\\.)?[0-9]{0,2}$")
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -237,6 +282,7 @@ extension MTurk {
             AWSShapeMember(label: "NumberOfAdditionalAssignments", required: true, type: .integer), 
             AWSShapeMember(label: "UniqueRequestToken", required: false, type: .string)
         ]
+
         /// The ID of the HIT to extend.
         public let hITId: String
         /// The number of additional assignments to request for this HIT.
@@ -250,6 +296,14 @@ extension MTurk {
             self.uniqueRequestToken = uniqueRequestToken
         }
 
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", max: 64)
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hITId = "HITId"
             case numberOfAdditionalAssignments = "NumberOfAdditionalAssignments"
@@ -258,6 +312,7 @@ extension MTurk {
     }
 
     public struct CreateAdditionalAssignmentsForHITResponse: AWSShape {
+
 
         public init() {
         }
@@ -283,6 +338,7 @@ extension MTurk {
             AWSShapeMember(label: "Title", required: true, type: .string), 
             AWSShapeMember(label: "UniqueRequestToken", required: false, type: .string)
         ]
+
         ///  The amount of time, in seconds, that a Worker has to complete the HIT after accepting it. If a Worker does not complete the assignment within the specified duration, the assignment is considered abandoned. If the HIT is still active (that is, its lifetime has not elapsed), the assignment becomes available for other users to find and accept. 
         public let assignmentDurationInSeconds: Int64
         ///  The Assignment-level Review Policy applies to the assignments under the HIT. You can specify for Mechanical Turk to take various actions based on the policy. 
@@ -335,6 +391,18 @@ extension MTurk {
             self.uniqueRequestToken = uniqueRequestToken
         }
 
+        public func validate() throws {
+            try validate(hITLayoutId, name:"hITLayoutId", max: 64)
+            try validate(hITLayoutId, name:"hITLayoutId", min: 1)
+            try validate(hITLayoutId, name:"hITLayoutId", pattern: "^[A-Z0-9]+$")
+            try qualificationRequirements?.forEach {
+                try $0.validate()
+            }
+            try validate(reward, name:"reward", pattern: "^[0-9]+(\\.)?[0-9]{0,2}$")
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", max: 64)
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentDurationInSeconds = "AssignmentDurationInSeconds"
             case assignmentReviewPolicy = "AssignmentReviewPolicy"
@@ -359,11 +427,16 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HIT", required: false, type: .structure)
         ]
+
         ///  Contains the newly created HIT data. For a description of the HIT data structure as it appears in responses, see the HIT Data Structure documentation. 
         public let hit: HIT?
 
         public init(hit: HIT? = nil) {
             self.hit = hit
+        }
+
+        public func validate() throws {
+            try hit?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -381,6 +454,7 @@ extension MTurk {
             AWSShapeMember(label: "Reward", required: true, type: .string), 
             AWSShapeMember(label: "Title", required: true, type: .string)
         ]
+
         ///  The amount of time, in seconds, that a Worker has to complete the HIT after accepting it. If a Worker does not complete the assignment within the specified duration, the assignment is considered abandoned. If the HIT is still active (that is, its lifetime has not elapsed), the assignment becomes available for other users to find and accept. 
         public let assignmentDurationInSeconds: Int64
         ///  The number of seconds after an assignment for the HIT has been submitted, after which the assignment is considered Approved automatically unless the Requester explicitly rejects it. 
@@ -406,6 +480,13 @@ extension MTurk {
             self.title = title
         }
 
+        public func validate() throws {
+            try qualificationRequirements?.forEach {
+                try $0.validate()
+            }
+            try validate(reward, name:"reward", pattern: "^[0-9]+(\\.)?[0-9]{0,2}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentDurationInSeconds = "AssignmentDurationInSeconds"
             case autoApprovalDelayInSeconds = "AutoApprovalDelayInSeconds"
@@ -421,11 +502,18 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HITTypeId", required: false, type: .string)
         ]
+
         ///  The ID of the newly registered HIT type.
         public let hITTypeId: String?
 
         public init(hITTypeId: String? = nil) {
             self.hITTypeId = hITTypeId
+        }
+
+        public func validate() throws {
+            try validate(hITTypeId, name:"hITTypeId", max: 64)
+            try validate(hITTypeId, name:"hITTypeId", min: 1)
+            try validate(hITTypeId, name:"hITTypeId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -446,6 +534,7 @@ extension MTurk {
             AWSShapeMember(label: "RequesterAnnotation", required: false, type: .string), 
             AWSShapeMember(label: "UniqueRequestToken", required: false, type: .string)
         ]
+
         ///  The Assignment-level Review Policy applies to the assignments under the HIT. You can specify for Mechanical Turk to take various actions based on the policy. 
         public let assignmentReviewPolicy: ReviewPolicy?
         ///  The HITLayoutId allows you to use a pre-existing HIT design with placeholder values and create an additional HIT by providing those values as HITLayoutParameters.   Constraints: Either a Question parameter or a HITLayoutId parameter must be provided. 
@@ -480,6 +569,17 @@ extension MTurk {
             self.uniqueRequestToken = uniqueRequestToken
         }
 
+        public func validate() throws {
+            try validate(hITLayoutId, name:"hITLayoutId", max: 64)
+            try validate(hITLayoutId, name:"hITLayoutId", min: 1)
+            try validate(hITLayoutId, name:"hITLayoutId", pattern: "^[A-Z0-9]+$")
+            try validate(hITTypeId, name:"hITTypeId", max: 64)
+            try validate(hITTypeId, name:"hITTypeId", min: 1)
+            try validate(hITTypeId, name:"hITTypeId", pattern: "^[A-Z0-9]+$")
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", max: 64)
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentReviewPolicy = "AssignmentReviewPolicy"
             case hITLayoutId = "HITLayoutId"
@@ -498,11 +598,16 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HIT", required: false, type: .structure)
         ]
+
         ///  Contains the newly created HIT data. For a description of the HIT data structure as it appears in responses, see the HIT Data Structure documentation. 
         public let hit: HIT?
 
         public init(hit: HIT? = nil) {
             self.hit = hit
+        }
+
+        public func validate() throws {
+            try hit?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -523,6 +628,7 @@ extension MTurk {
             AWSShapeMember(label: "Test", required: false, type: .string), 
             AWSShapeMember(label: "TestDurationInSeconds", required: false, type: .long)
         ]
+
         /// The answers to the Qualification test specified in the Test parameter, in the form of an AnswerKey data structure. Constraints: Must not be longer than 65535 bytes. Constraints: None. If not specified, you must process Qualification requests manually.
         public let answerKey: String?
         /// Specifies whether requests for the Qualification type are granted immediately, without prompting the Worker with a Qualification test. Constraints: If the Test parameter is specified, this parameter cannot be true.
@@ -575,11 +681,16 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "QualificationType", required: false, type: .structure)
         ]
+
         /// The created Qualification type, returned as a QualificationType data structure.
         public let qualificationType: QualificationType?
 
         public init(qualificationType: QualificationType? = nil) {
             self.qualificationType = qualificationType
+        }
+
+        public func validate() throws {
+            try qualificationType?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -592,6 +703,7 @@ extension MTurk {
             AWSShapeMember(label: "Reason", required: true, type: .string), 
             AWSShapeMember(label: "WorkerId", required: true, type: .string)
         ]
+
         /// A message explaining the reason for blocking the Worker. This parameter enables you to keep track of your Workers. The Worker does not see this message.
         public let reason: String
         /// The ID of the Worker to block.
@@ -602,6 +714,12 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case reason = "Reason"
             case workerId = "WorkerId"
@@ -609,6 +727,7 @@ extension MTurk {
     }
 
     public struct CreateWorkerBlockResponse: AWSShape {
+
 
         public init() {
         }
@@ -619,11 +738,18 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HITId", required: true, type: .string)
         ]
+
         /// The ID of the HIT to be deleted.
         public let hITId: String
 
         public init(hITId: String) {
             self.hITId = hITId
+        }
+
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -632,6 +758,7 @@ extension MTurk {
     }
 
     public struct DeleteHITResponse: AWSShape {
+
 
         public init() {
         }
@@ -642,11 +769,18 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "QualificationTypeId", required: true, type: .string)
         ]
+
         /// The ID of the QualificationType to dispose.
         public let qualificationTypeId: String
 
         public init(qualificationTypeId: String) {
             self.qualificationTypeId = qualificationTypeId
+        }
+
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -655,6 +789,7 @@ extension MTurk {
     }
 
     public struct DeleteQualificationTypeResponse: AWSShape {
+
 
         public init() {
         }
@@ -666,6 +801,7 @@ extension MTurk {
             AWSShapeMember(label: "Reason", required: false, type: .string), 
             AWSShapeMember(label: "WorkerId", required: true, type: .string)
         ]
+
         /// A message that explains the reason for unblocking the Worker. The Worker does not see this message.
         public let reason: String?
         /// The ID of the Worker to unblock.
@@ -676,6 +812,12 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case reason = "Reason"
             case workerId = "WorkerId"
@@ -683,6 +825,7 @@ extension MTurk {
     }
 
     public struct DeleteWorkerBlockResponse: AWSShape {
+
 
         public init() {
         }
@@ -695,6 +838,7 @@ extension MTurk {
             AWSShapeMember(label: "Reason", required: false, type: .string), 
             AWSShapeMember(label: "WorkerId", required: true, type: .string)
         ]
+
         /// The ID of the Qualification type of the Qualification to be revoked.
         public let qualificationTypeId: String
         /// A text message that explains why the Qualification was revoked. The user who had the Qualification sees this message.
@@ -708,6 +852,15 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case qualificationTypeId = "QualificationTypeId"
             case reason = "Reason"
@@ -716,6 +869,7 @@ extension MTurk {
     }
 
     public struct DisassociateQualificationFromWorkerResponse: AWSShape {
+
 
         public init() {
         }
@@ -740,6 +894,7 @@ extension MTurk {
 
     public struct GetAccountBalanceRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -750,12 +905,18 @@ extension MTurk {
             AWSShapeMember(label: "AvailableBalance", required: false, type: .string), 
             AWSShapeMember(label: "OnHoldBalance", required: false, type: .string)
         ]
+
         public let availableBalance: String?
         public let onHoldBalance: String?
 
         public init(availableBalance: String? = nil, onHoldBalance: String? = nil) {
             self.availableBalance = availableBalance
             self.onHoldBalance = onHoldBalance
+        }
+
+        public func validate() throws {
+            try validate(availableBalance, name:"availableBalance", pattern: "^[0-9]+(\\.)?[0-9]{0,2}$")
+            try validate(onHoldBalance, name:"onHoldBalance", pattern: "^[0-9]+(\\.)?[0-9]{0,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -768,11 +929,18 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AssignmentId", required: true, type: .string)
         ]
+
         /// The ID of the Assignment to be retrieved.
         public let assignmentId: String
 
         public init(assignmentId: String) {
             self.assignmentId = assignmentId
+        }
+
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -785,6 +953,7 @@ extension MTurk {
             AWSShapeMember(label: "Assignment", required: false, type: .structure), 
             AWSShapeMember(label: "HIT", required: false, type: .structure)
         ]
+
         ///  The assignment. The response includes one Assignment element. 
         public let assignment: Assignment?
         ///  The HIT associated with this assignment. The response includes one HIT element.
@@ -793,6 +962,11 @@ extension MTurk {
         public init(assignment: Assignment? = nil, hit: HIT? = nil) {
             self.assignment = assignment
             self.hit = hit
+        }
+
+        public func validate() throws {
+            try assignment?.validate()
+            try hit?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -806,6 +980,7 @@ extension MTurk {
             AWSShapeMember(label: "AssignmentId", required: true, type: .string), 
             AWSShapeMember(label: "QuestionIdentifier", required: true, type: .string)
         ]
+
         /// The ID of the assignment that contains the question with a FileUploadAnswer.
         public let assignmentId: String
         /// The identifier of the question with a FileUploadAnswer, as specified in the QuestionForm of the HIT.
@@ -814,6 +989,12 @@ extension MTurk {
         public init(assignmentId: String, questionIdentifier: String) {
             self.assignmentId = assignmentId
             self.questionIdentifier = questionIdentifier
+        }
+
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -826,6 +1007,7 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FileUploadURL", required: false, type: .string)
         ]
+
         ///  A temporary URL for the file that the Worker uploaded for the answer. 
         public let fileUploadURL: String?
 
@@ -842,11 +1024,18 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HITId", required: true, type: .string)
         ]
+
         /// The ID of the HIT to be retrieved.
         public let hITId: String
 
         public init(hITId: String) {
             self.hITId = hITId
+        }
+
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -858,11 +1047,16 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HIT", required: false, type: .structure)
         ]
+
         ///  Contains the requested HIT data.
         public let hit: HIT?
 
         public init(hit: HIT? = nil) {
             self.hit = hit
+        }
+
+        public func validate() throws {
+            try hit?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -875,6 +1069,7 @@ extension MTurk {
             AWSShapeMember(label: "QualificationTypeId", required: true, type: .string), 
             AWSShapeMember(label: "WorkerId", required: true, type: .string)
         ]
+
         /// The ID of the QualificationType.
         public let qualificationTypeId: String
         /// The ID of the Worker whose Qualification is being updated.
@@ -883,6 +1078,15 @@ extension MTurk {
         public init(qualificationTypeId: String, workerId: String) {
             self.qualificationTypeId = qualificationTypeId
             self.workerId = workerId
+        }
+
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -895,11 +1099,16 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Qualification", required: false, type: .structure)
         ]
+
         ///  The Qualification data structure of the Qualification assigned to a user, including the Qualification type and the value (score). 
         public let qualification: Qualification?
 
         public init(qualification: Qualification? = nil) {
             self.qualification = qualification
+        }
+
+        public func validate() throws {
+            try qualification?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -911,11 +1120,18 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "QualificationTypeId", required: true, type: .string)
         ]
+
         /// The ID of the QualificationType.
         public let qualificationTypeId: String
 
         public init(qualificationTypeId: String) {
             self.qualificationTypeId = qualificationTypeId
+        }
+
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -927,11 +1143,16 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "QualificationType", required: false, type: .structure)
         ]
+
         ///  The returned Qualification Type
         public let qualificationType: QualificationType?
 
         public init(qualificationType: QualificationType? = nil) {
             self.qualificationType = qualificationType
+        }
+
+        public func validate() throws {
+            try qualificationType?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -963,6 +1184,7 @@ extension MTurk {
             AWSShapeMember(label: "Reward", required: false, type: .string), 
             AWSShapeMember(label: "Title", required: false, type: .string)
         ]
+
         ///  The length of time, in seconds, that a Worker has to complete the HIT after accepting it.
         public let assignmentDurationInSeconds: Int64?
         /// The amount of time, in seconds, after the Worker submits an assignment for the HIT that the results are automatically approved by Amazon Mechanical Turk. This is the amount of time the Requester has to reject an assignment submitted by a Worker before the assignment is auto-approved and the Worker is paid. 
@@ -1029,6 +1251,25 @@ extension MTurk {
             self.title = title
         }
 
+        public func validate() throws {
+            try validate(hITGroupId, name:"hITGroupId", max: 64)
+            try validate(hITGroupId, name:"hITGroupId", min: 1)
+            try validate(hITGroupId, name:"hITGroupId", pattern: "^[A-Z0-9]+$")
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try validate(hITLayoutId, name:"hITLayoutId", max: 64)
+            try validate(hITLayoutId, name:"hITLayoutId", min: 1)
+            try validate(hITLayoutId, name:"hITLayoutId", pattern: "^[A-Z0-9]+$")
+            try validate(hITTypeId, name:"hITTypeId", max: 64)
+            try validate(hITTypeId, name:"hITTypeId", min: 1)
+            try validate(hITTypeId, name:"hITTypeId", pattern: "^[A-Z0-9]+$")
+            try qualificationRequirements?.forEach {
+                try $0.validate()
+            }
+            try validate(reward, name:"reward", pattern: "^[0-9]+(\\.)?[0-9]{0,2}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentDurationInSeconds = "AssignmentDurationInSeconds"
             case autoApprovalDelayInSeconds = "AutoApprovalDelayInSeconds"
@@ -1066,6 +1307,7 @@ extension MTurk {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         ///  The name of the parameter in the HITLayout. 
         public let name: String
         /// The value substituted for the parameter referenced in the HITLayout. 
@@ -1106,6 +1348,7 @@ extension MTurk {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The status of the assignments to return: Submitted | Approved | Rejected
         public let assignmentStatuses: [AssignmentStatus]?
         /// The ID of the HIT.
@@ -1119,6 +1362,16 @@ extension MTurk {
             self.hITId = hITId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1135,6 +1388,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "NumResults", required: false, type: .integer)
         ]
+
         ///  The collection of Assignment data structures returned by this call.
         public let assignments: [Assignment]?
         public let nextToken: String?
@@ -1145,6 +1399,14 @@ extension MTurk {
             self.assignments = assignments
             self.nextToken = nextToken
             self.numResults = numResults
+        }
+
+        public func validate() throws {
+            try assignments?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1161,6 +1423,7 @@ extension MTurk {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ID of the assignment associated with the bonus payments to retrieve. If specified, only bonus payments for the given assignment are returned. Either the HITId parameter or the AssignmentId parameter must be specified
         public let assignmentId: String?
         /// The ID of the HIT associated with the bonus payments to retrieve. If not specified, all bonus payments for all assignments for the given HIT are returned. Either the HITId parameter or the AssignmentId parameter must be specified
@@ -1174,6 +1437,19 @@ extension MTurk {
             self.hITId = hITId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1190,6 +1466,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "NumResults", required: false, type: .integer)
         ]
+
         /// A successful request to the ListBonusPayments operation returns a list of BonusPayment objects. 
         public let bonusPayments: [BonusPayment]?
         public let nextToken: String?
@@ -1200,6 +1477,14 @@ extension MTurk {
             self.bonusPayments = bonusPayments
             self.nextToken = nextToken
             self.numResults = numResults
+        }
+
+        public func validate() throws {
+            try bonusPayments?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1215,6 +1500,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "QualificationTypeId", required: true, type: .string)
         ]
+
         ///  Limit the number of results returned. 
         public let maxResults: Int32?
         /// Pagination Token
@@ -1226,6 +1512,16 @@ extension MTurk {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.qualificationTypeId = qualificationTypeId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1241,6 +1537,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "NumResults", required: false, type: .integer)
         ]
+
         ///  The list of HIT elements returned by the query.
         public let hITs: [HIT]?
         public let nextToken: String?
@@ -1251,6 +1548,14 @@ extension MTurk {
             self.hITs = hITs
             self.nextToken = nextToken
             self.numResults = numResults
+        }
+
+        public func validate() throws {
+            try hITs?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1265,6 +1570,7 @@ extension MTurk {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         public let maxResults: Int32?
         /// Pagination token
         public let nextToken: String?
@@ -1272,6 +1578,13 @@ extension MTurk {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1286,6 +1599,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "NumResults", required: false, type: .integer)
         ]
+
         ///  The list of HIT elements returned by the query.
         public let hITs: [HIT]?
         public let nextToken: String?
@@ -1296,6 +1610,14 @@ extension MTurk {
             self.hITs = hITs
             self.nextToken = nextToken
             self.numResults = numResults
+        }
+
+        public func validate() throws {
+            try hITs?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1311,6 +1633,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "QualificationTypeId", required: false, type: .string)
         ]
+
         ///  The maximum number of results to return in a single call. 
         public let maxResults: Int32?
         public let nextToken: String?
@@ -1321,6 +1644,16 @@ extension MTurk {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.qualificationTypeId = qualificationTypeId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1336,6 +1669,7 @@ extension MTurk {
             AWSShapeMember(label: "NumResults", required: false, type: .integer), 
             AWSShapeMember(label: "QualificationRequests", required: false, type: .list)
         ]
+
         public let nextToken: String?
         /// The number of Qualification requests on this page in the filtered results list, equivalent to the number of Qualification requests being returned by this call.
         public let numResults: Int32?
@@ -1346,6 +1680,14 @@ extension MTurk {
             self.nextToken = nextToken
             self.numResults = numResults
             self.qualificationRequests = qualificationRequests
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try qualificationRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1363,6 +1705,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Query", required: false, type: .string)
         ]
+
         ///  The maximum number of results to return in a single call. 
         public let maxResults: Int32?
         ///  Specifies that only Qualification types that the Requester created are returned. If false, the operation returns all Qualification types. 
@@ -1381,6 +1724,13 @@ extension MTurk {
             self.query = query
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case mustBeOwnedByCaller = "MustBeOwnedByCaller"
@@ -1396,6 +1746,7 @@ extension MTurk {
             AWSShapeMember(label: "NumResults", required: false, type: .integer), 
             AWSShapeMember(label: "QualificationTypes", required: false, type: .list)
         ]
+
         public let nextToken: String?
         ///  The number of Qualification types on this page in the filtered results list, equivalent to the number of types this operation returns. 
         public let numResults: Int32?
@@ -1406,6 +1757,14 @@ extension MTurk {
             self.nextToken = nextToken
             self.numResults = numResults
             self.qualificationTypes = qualificationTypes
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try qualificationTypes?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1424,6 +1783,7 @@ extension MTurk {
             AWSShapeMember(label: "RetrieveActions", required: false, type: .boolean), 
             AWSShapeMember(label: "RetrieveResults", required: false, type: .boolean)
         ]
+
         /// The unique identifier of the HIT to retrieve review results for.
         public let hITId: String
         /// Limit the number of results returned.
@@ -1446,6 +1806,16 @@ extension MTurk {
             self.retrieveResults = retrieveResults
         }
 
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hITId = "HITId"
             case maxResults = "MaxResults"
@@ -1465,6 +1835,7 @@ extension MTurk {
             AWSShapeMember(label: "HITReviewReport", required: false, type: .structure), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         ///  The name of the Assignment-level Review Policy. This contains only the PolicyName element. 
         public let assignmentReviewPolicy: ReviewPolicy?
         ///  Contains both ReviewResult and ReviewAction elements for an Assignment. 
@@ -1486,6 +1857,16 @@ extension MTurk {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try assignmentReviewReport?.validate()
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try hITReviewReport?.validate()
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentReviewPolicy = "AssignmentReviewPolicy"
             case assignmentReviewReport = "AssignmentReviewReport"
@@ -1503,6 +1884,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         ///  The ID of the HIT type of the HITs to consider for the query. If not specified, all HITs for the Reviewer are considered 
         public let hITTypeId: String?
         ///  Limit the number of results returned. 
@@ -1519,6 +1901,16 @@ extension MTurk {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(hITTypeId, name:"hITTypeId", max: 64)
+            try validate(hITTypeId, name:"hITTypeId", min: 1)
+            try validate(hITTypeId, name:"hITTypeId", pattern: "^[A-Z0-9]+$")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hITTypeId = "HITTypeId"
             case maxResults = "MaxResults"
@@ -1533,6 +1925,7 @@ extension MTurk {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "NumResults", required: false, type: .integer)
         ]
+
         ///  The list of HIT elements returned by the query.
         public let hITs: [HIT]?
         public let nextToken: String?
@@ -1543,6 +1936,14 @@ extension MTurk {
             self.hITs = hITs
             self.nextToken = nextToken
             self.numResults = numResults
+        }
+
+        public func validate() throws {
+            try hITs?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1557,6 +1958,7 @@ extension MTurk {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         public let maxResults: Int32?
         /// Pagination token
         public let nextToken: String?
@@ -1564,6 +1966,13 @@ extension MTurk {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1578,6 +1987,7 @@ extension MTurk {
             AWSShapeMember(label: "NumResults", required: false, type: .integer), 
             AWSShapeMember(label: "WorkerBlocks", required: false, type: .list)
         ]
+
         public let nextToken: String?
         ///  The number of assignments on the page in the filtered results list, equivalent to the number of assignments returned by this call.
         public let numResults: Int32?
@@ -1588,6 +1998,14 @@ extension MTurk {
             self.nextToken = nextToken
             self.numResults = numResults
             self.workerBlocks = workerBlocks
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try workerBlocks?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1604,6 +2022,7 @@ extension MTurk {
             AWSShapeMember(label: "QualificationTypeId", required: true, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         ///  Limit the number of results returned. 
         public let maxResults: Int32?
         /// Pagination Token
@@ -1620,6 +2039,16 @@ extension MTurk {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case nextToken = "NextToken"
@@ -1634,6 +2063,7 @@ extension MTurk {
             AWSShapeMember(label: "NumResults", required: false, type: .integer), 
             AWSShapeMember(label: "Qualifications", required: false, type: .list)
         ]
+
         public let nextToken: String?
         ///  The number of Qualifications on this page in the filtered results list, equivalent to the number of Qualifications being returned by this call.
         public let numResults: Int32?
@@ -1644,6 +2074,14 @@ extension MTurk {
             self.nextToken = nextToken
             self.numResults = numResults
             self.qualifications = qualifications
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try qualifications?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1658,6 +2096,7 @@ extension MTurk {
             AWSShapeMember(label: "Country", required: true, type: .string), 
             AWSShapeMember(label: "Subdivision", required: false, type: .string)
         ]
+
         ///  The country of the locale. Must be a valid ISO 3166 country code. For example, the code US refers to the United States of America. 
         public let country: String
         /// The state or subdivision of the locale. A valid ISO 3166-2 subdivision code. For example, the code WA refers to the state of Washington.
@@ -1666,6 +2105,13 @@ extension MTurk {
         public init(country: String, subdivision: String? = nil) {
             self.country = country
             self.subdivision = subdivision
+        }
+
+        public func validate() throws {
+            try validate(country, name:"country", max: 2)
+            try validate(country, name:"country", min: 2)
+            try validate(subdivision, name:"subdivision", max: 2)
+            try validate(subdivision, name:"subdivision", min: 2)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1681,6 +2127,7 @@ extension MTurk {
             AWSShapeMember(label: "Transport", required: true, type: .enum), 
             AWSShapeMember(label: "Version", required: true, type: .string)
         ]
+
         ///  The target for notification messages. The Destination’s format is determined by the specified Transport:    When Transport is Email, the Destination is your email address.   When Transport is SQS, the Destination is your queue URL.   When Transport is SNS, the Destination is the ARN of your topic.  
         public let destination: String
         ///  The list of events that should cause notifications to be sent. Valid Values: AssignmentAccepted | AssignmentAbandoned | AssignmentReturned | AssignmentSubmitted | AssignmentRejected | AssignmentApproved | HITCreated | HITExtended | HITDisposed | HITReviewable | HITExpired | Ping. The Ping event is only valid for the SendTestEventNotification operation. 
@@ -1724,6 +2171,7 @@ extension MTurk {
             AWSShapeMember(label: "NotifyWorkersFailureMessage", required: false, type: .string), 
             AWSShapeMember(label: "WorkerId", required: false, type: .string)
         ]
+
         ///  Encoded value for the failure type. 
         public let notifyWorkersFailureCode: NotifyWorkersFailureCode?
         ///  A message detailing the reason the Worker could not be notified. 
@@ -1735,6 +2183,12 @@ extension MTurk {
             self.notifyWorkersFailureCode = notifyWorkersFailureCode
             self.notifyWorkersFailureMessage = notifyWorkersFailureMessage
             self.workerId = workerId
+        }
+
+        public func validate() throws {
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1750,6 +2204,7 @@ extension MTurk {
             AWSShapeMember(label: "Subject", required: true, type: .string), 
             AWSShapeMember(label: "WorkerIds", required: true, type: .list)
         ]
+
         /// The text of the email message to send. Can include up to 4,096 characters
         public let messageText: String
         /// The subject line of the email message to send. Can include up to 200 characters.
@@ -1763,6 +2218,14 @@ extension MTurk {
             self.workerIds = workerIds
         }
 
+        public func validate() throws {
+            try workerIds.forEach {
+                try validate($0, name:"workerIds[]", max: 64)
+                try validate($0, name:"workerIds[]", min: 1)
+                try validate($0, name:"workerIds[]", pattern: "^A[A-Z0-9]+$")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case messageText = "MessageText"
             case subject = "Subject"
@@ -1774,11 +2237,18 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NotifyWorkersFailureStatuses", required: false, type: .list)
         ]
+
         ///  When MTurk sends notifications to the list of Workers, it returns back any failures it encounters in this list of NotifyWorkersFailureStatus objects. 
         public let notifyWorkersFailureStatuses: [NotifyWorkersFailureStatus]?
 
         public init(notifyWorkersFailureStatuses: [NotifyWorkersFailureStatus]? = nil) {
             self.notifyWorkersFailureStatuses = notifyWorkersFailureStatuses
+        }
+
+        public func validate() throws {
+            try notifyWorkersFailureStatuses?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1791,6 +2261,7 @@ extension MTurk {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         ///  The QuestionID from the HIT that is used to identify which question requires Mechanical Turk to score as part of the ScoreMyKnownAnswers/2011-09-01 Review Policy. 
         public let key: String?
         ///  The list of answers to the question specified in the MapEntry Key element. The Worker must match all values in order for the answer to be scored correctly. 
@@ -1813,6 +2284,7 @@ extension MTurk {
             AWSShapeMember(label: "MapEntries", required: false, type: .list), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         ///  Name of the parameter from the list of Review Polices. 
         public let key: String?
         ///  List of ParameterMapEntry objects. 
@@ -1842,6 +2314,7 @@ extension MTurk {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "WorkerId", required: false, type: .string)
         ]
+
         ///  The date and time the Qualification was granted to the Worker. If the Worker's Qualification was revoked, and then re-granted based on a new Qualification request, GrantTime is the date and time of the last call to the AcceptQualificationRequest operation.
         public let grantTime: TimeStamp?
         ///  The value (score) of the Qualification, if the Qualification has an integer value.
@@ -1863,6 +2336,16 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try localeValue?.validate()
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case grantTime = "GrantTime"
             case integerValue = "IntegerValue"
@@ -1882,6 +2365,7 @@ extension MTurk {
             AWSShapeMember(label: "Test", required: false, type: .string), 
             AWSShapeMember(label: "WorkerId", required: false, type: .string)
         ]
+
         ///  The Worker's answers for the Qualification type's test contained in a QuestionFormAnswers document, if the type has a test and the Worker has submitted answers. If the Worker does not provide any answers, Answer may be empty. 
         public let answer: String?
         /// The ID of the Qualification request, a unique identifier generated when the request was submitted. 
@@ -1904,6 +2388,15 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case answer = "Answer"
             case qualificationRequestId = "QualificationRequestId"
@@ -1922,6 +2415,7 @@ extension MTurk {
             AWSShapeMember(label: "LocaleValues", required: false, type: .list), 
             AWSShapeMember(label: "QualificationTypeId", required: true, type: .string)
         ]
+
         ///  Setting this attribute prevents Workers whose Qualifications do not meet this QualificationRequirement from taking the specified action. Valid arguments include "Accept" (Worker cannot accept the HIT, but can preview the HIT and see it in their search results), "PreviewAndAccept" (Worker cannot accept or preview the HIT, but can see the HIT in their search results), and "DiscoverPreviewAndAccept" (Worker cannot accept, preview, or see the HIT in their search results). It's possible for you to create a HIT with multiple QualificationRequirements (which can have different values for the ActionGuarded attribute). In this case, the Worker is only permitted to perform an action when they have met all QualificationRequirements guarding the action. The actions in the order of least restrictive to most restrictive are Discover, Preview and Accept. For example, if a Worker meets all QualificationRequirements that are set to DiscoverPreviewAndAccept, but do not meet all requirements that are set with PreviewAndAccept, then the Worker will be able to Discover, i.e. see the HIT in their search result, but will not be able to Preview or Accept the HIT. ActionsGuarded should not be used in combination with the RequiredToPreview field. 
         public let actionsGuarded: HITAccessActions?
         /// The kind of comparison to make against a Qualification's value. You can compare a Qualification's value to an IntegerValue to see if it is LessThan, LessThanOrEqualTo, GreaterThan, GreaterThanOrEqualTo, EqualTo, or NotEqualTo the IntegerValue. You can compare it to a LocaleValue to see if it is EqualTo, or NotEqualTo the LocaleValue. You can check to see if the value is In or NotIn a set of IntegerValue or LocaleValue values. Lastly, a Qualification requirement can also test if a Qualification Exists or DoesNotExist in the user's profile, regardless of its value. 
@@ -1939,6 +2433,12 @@ extension MTurk {
             self.integerValues = integerValues
             self.localeValues = localeValues
             self.qualificationTypeId = qualificationTypeId
+        }
+
+        public func validate() throws {
+            try localeValues?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1972,6 +2472,7 @@ extension MTurk {
             AWSShapeMember(label: "Test", required: false, type: .string), 
             AWSShapeMember(label: "TestDurationInSeconds", required: false, type: .long)
         ]
+
         /// The answers to the Qualification test specified in the Test parameter.
         public let answerKey: String?
         /// Specifies that requests for the Qualification type are granted immediately, without prompting the Worker with a Qualification test. Valid values are True | False.
@@ -2015,6 +2516,12 @@ extension MTurk {
             self.testDurationInSeconds = testDurationInSeconds
         }
 
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case answerKey = "AnswerKey"
             case autoGranted = "AutoGranted"
@@ -2043,6 +2550,7 @@ extension MTurk {
             AWSShapeMember(label: "AssignmentId", required: true, type: .string), 
             AWSShapeMember(label: "RequesterFeedback", required: true, type: .string)
         ]
+
         ///  The ID of the assignment. The assignment must correspond to a HIT created by the Requester. 
         public let assignmentId: String
         ///  A message for the Worker, which the Worker can see in the Status section of the web site. 
@@ -2053,6 +2561,12 @@ extension MTurk {
             self.requesterFeedback = requesterFeedback
         }
 
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentId = "AssignmentId"
             case requesterFeedback = "RequesterFeedback"
@@ -2060,6 +2574,7 @@ extension MTurk {
     }
 
     public struct RejectAssignmentResponse: AWSShape {
+
 
         public init() {
         }
@@ -2071,6 +2586,7 @@ extension MTurk {
             AWSShapeMember(label: "QualificationRequestId", required: true, type: .string), 
             AWSShapeMember(label: "Reason", required: false, type: .string)
         ]
+
         ///  The ID of the Qualification request, as returned by the ListQualificationRequests operation. 
         public let qualificationRequestId: String
         /// A text message explaining why the request was rejected, to be shown to the Worker who made the request.
@@ -2089,6 +2605,7 @@ extension MTurk {
 
     public struct RejectQualificationRequestResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -2105,6 +2622,7 @@ extension MTurk {
             AWSShapeMember(label: "TargetId", required: false, type: .string), 
             AWSShapeMember(label: "TargetType", required: false, type: .string)
         ]
+
         /// The unique identifier for the action.
         public let actionId: String?
         ///  The nature of the action itself. The Review Policy is responsible for examining the HIT and Assignments, emitting results, and deciding which other actions will be necessary. 
@@ -2133,6 +2651,15 @@ extension MTurk {
             self.targetType = targetType
         }
 
+        public func validate() throws {
+            try validate(actionId, name:"actionId", max: 64)
+            try validate(actionId, name:"actionId", min: 1)
+            try validate(actionId, name:"actionId", pattern: "^[A-Z0-9]+$")
+            try validate(targetId, name:"targetId", max: 64)
+            try validate(targetId, name:"targetId", min: 1)
+            try validate(targetId, name:"targetId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionId = "ActionId"
             case actionName = "ActionName"
@@ -2158,6 +2685,7 @@ extension MTurk {
             AWSShapeMember(label: "Parameters", required: false, type: .list), 
             AWSShapeMember(label: "PolicyName", required: true, type: .string)
         ]
+
         /// Name of the parameter from the Review policy.
         public let parameters: [PolicyParameter]?
         ///  Name of a Review Policy: SimplePlurality/2011-09-01 or ScoreMyKnownAnswers/2011-09-01 
@@ -2185,6 +2713,7 @@ extension MTurk {
             AWSShapeMember(label: "ReviewActions", required: false, type: .list), 
             AWSShapeMember(label: "ReviewResults", required: false, type: .list)
         ]
+
         ///  A list of ReviewAction objects for each action specified in the Review Policy. 
         public let reviewActions: [ReviewActionDetail]?
         ///  A list of ReviewResults objects for each action specified in the Review Policy. 
@@ -2193,6 +2722,15 @@ extension MTurk {
         public init(reviewActions: [ReviewActionDetail]? = nil, reviewResults: [ReviewResultDetail]? = nil) {
             self.reviewActions = reviewActions
             self.reviewResults = reviewResults
+        }
+
+        public func validate() throws {
+            try reviewActions?.forEach {
+                try $0.validate()
+            }
+            try reviewResults?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2210,6 +2748,7 @@ extension MTurk {
             AWSShapeMember(label: "SubjectType", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         ///  A unique identifier of the Review action result. 
         public let actionId: String?
         ///  Key identifies the particular piece of reviewed information. 
@@ -2230,6 +2769,18 @@ extension MTurk {
             self.subjectId = subjectId
             self.subjectType = subjectType
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(actionId, name:"actionId", max: 64)
+            try validate(actionId, name:"actionId", min: 1)
+            try validate(actionId, name:"actionId", pattern: "^[A-Z0-9]+$")
+            try validate(questionId, name:"questionId", max: 64)
+            try validate(questionId, name:"questionId", min: 1)
+            try validate(questionId, name:"questionId", pattern: "^[A-Z0-9]+$")
+            try validate(subjectId, name:"subjectId", max: 64)
+            try validate(subjectId, name:"subjectId", min: 1)
+            try validate(subjectId, name:"subjectId", pattern: "^[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2256,6 +2807,7 @@ extension MTurk {
             AWSShapeMember(label: "UniqueRequestToken", required: false, type: .string), 
             AWSShapeMember(label: "WorkerId", required: true, type: .string)
         ]
+
         /// The ID of the assignment for which this bonus is paid.
         public let assignmentId: String
         ///  The Bonus amount is a US Dollar amount specified using a string (for example, "5" represents $5.00 USD and "101.42" represents $101.42 USD). Do not include currency symbols or currency codes. 
@@ -2275,6 +2827,18 @@ extension MTurk {
             self.workerId = workerId
         }
 
+        public func validate() throws {
+            try validate(assignmentId, name:"assignmentId", max: 64)
+            try validate(assignmentId, name:"assignmentId", min: 1)
+            try validate(assignmentId, name:"assignmentId", pattern: "^[A-Z0-9]+$")
+            try validate(bonusAmount, name:"bonusAmount", pattern: "^[0-9]+(\\.)?[0-9]{0,2}$")
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", max: 64)
+            try validate(uniqueRequestToken, name:"uniqueRequestToken", min: 1)
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assignmentId = "AssignmentId"
             case bonusAmount = "BonusAmount"
@@ -2286,6 +2850,7 @@ extension MTurk {
 
     public struct SendBonusResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -2296,6 +2861,7 @@ extension MTurk {
             AWSShapeMember(label: "Notification", required: true, type: .structure), 
             AWSShapeMember(label: "TestEventType", required: true, type: .enum)
         ]
+
         ///  The notification specification to test. This value is identical to the value you would provide to the UpdateNotificationSettings operation when you establish the notification specification for a HIT type. 
         public let notification: NotificationSpecification
         ///  The event to simulate to test the notification specification. This event is included in the test message even if the notification specification does not include the event type. The notification specification does not filter out the test event. 
@@ -2314,6 +2880,7 @@ extension MTurk {
 
     public struct SendTestEventNotificationResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -2324,6 +2891,7 @@ extension MTurk {
             AWSShapeMember(label: "ExpireAt", required: true, type: .timestamp), 
             AWSShapeMember(label: "HITId", required: true, type: .string)
         ]
+
         ///  The date and time at which you want the HIT to expire 
         public let expireAt: TimeStamp
         ///  The HIT to update. 
@@ -2334,6 +2902,12 @@ extension MTurk {
             self.hITId = hITId
         }
 
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expireAt = "ExpireAt"
             case hITId = "HITId"
@@ -2341,6 +2915,7 @@ extension MTurk {
     }
 
     public struct UpdateExpirationForHITResponse: AWSShape {
+
 
         public init() {
         }
@@ -2352,6 +2927,7 @@ extension MTurk {
             AWSShapeMember(label: "HITId", required: true, type: .string), 
             AWSShapeMember(label: "Revert", required: false, type: .boolean)
         ]
+
         ///  The ID of the HIT to update. 
         public let hITId: String
         ///  Specifies how to update the HIT status. Default is False.     Setting this to false will only transition a HIT from Reviewable to Reviewing     Setting this to true will only transition a HIT from Reviewing to Reviewable   
@@ -2362,6 +2938,12 @@ extension MTurk {
             self.revert = revert
         }
 
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hITId = "HITId"
             case revert = "Revert"
@@ -2369,6 +2951,7 @@ extension MTurk {
     }
 
     public struct UpdateHITReviewStatusResponse: AWSShape {
+
 
         public init() {
         }
@@ -2380,6 +2963,7 @@ extension MTurk {
             AWSShapeMember(label: "HITId", required: true, type: .string), 
             AWSShapeMember(label: "HITTypeId", required: true, type: .string)
         ]
+
         /// The HIT to update.
         public let hITId: String
         /// The ID of the new HIT type.
@@ -2390,6 +2974,15 @@ extension MTurk {
             self.hITTypeId = hITTypeId
         }
 
+        public func validate() throws {
+            try validate(hITId, name:"hITId", max: 64)
+            try validate(hITId, name:"hITId", min: 1)
+            try validate(hITId, name:"hITId", pattern: "^[A-Z0-9]+$")
+            try validate(hITTypeId, name:"hITTypeId", max: 64)
+            try validate(hITTypeId, name:"hITTypeId", min: 1)
+            try validate(hITTypeId, name:"hITTypeId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hITId = "HITId"
             case hITTypeId = "HITTypeId"
@@ -2397,6 +2990,7 @@ extension MTurk {
     }
 
     public struct UpdateHITTypeOfHITResponse: AWSShape {
+
 
         public init() {
         }
@@ -2409,6 +3003,7 @@ extension MTurk {
             AWSShapeMember(label: "HITTypeId", required: true, type: .string), 
             AWSShapeMember(label: "Notification", required: false, type: .structure)
         ]
+
         ///  Specifies whether notifications are sent for HITs of this HIT type, according to the notification specification. You must specify either the Notification parameter or the Active parameter for the call to UpdateNotificationSettings to succeed. 
         public let active: Bool?
         ///  The ID of the HIT type whose notification specification is being updated. 
@@ -2422,6 +3017,12 @@ extension MTurk {
             self.notification = notification
         }
 
+        public func validate() throws {
+            try validate(hITTypeId, name:"hITTypeId", max: 64)
+            try validate(hITTypeId, name:"hITTypeId", min: 1)
+            try validate(hITTypeId, name:"hITTypeId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case active = "Active"
             case hITTypeId = "HITTypeId"
@@ -2430,6 +3031,7 @@ extension MTurk {
     }
 
     public struct UpdateNotificationSettingsResponse: AWSShape {
+
 
         public init() {
         }
@@ -2448,6 +3050,7 @@ extension MTurk {
             AWSShapeMember(label: "Test", required: false, type: .string), 
             AWSShapeMember(label: "TestDurationInSeconds", required: false, type: .long)
         ]
+
         /// The answers to the Qualification test specified in the Test parameter, in the form of an AnswerKey data structure.
         public let answerKey: String?
         /// Specifies whether requests for the Qualification type are granted immediately, without prompting the Worker with a Qualification test. Constraints: If the Test parameter is specified, this parameter cannot be true.
@@ -2479,6 +3082,12 @@ extension MTurk {
             self.testDurationInSeconds = testDurationInSeconds
         }
 
+        public func validate() throws {
+            try validate(qualificationTypeId, name:"qualificationTypeId", max: 64)
+            try validate(qualificationTypeId, name:"qualificationTypeId", min: 1)
+            try validate(qualificationTypeId, name:"qualificationTypeId", pattern: "^[A-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case answerKey = "AnswerKey"
             case autoGranted = "AutoGranted"
@@ -2496,11 +3105,16 @@ extension MTurk {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "QualificationType", required: false, type: .structure)
         ]
+
         ///  Contains a QualificationType data structure.
         public let qualificationType: QualificationType?
 
         public init(qualificationType: QualificationType? = nil) {
             self.qualificationType = qualificationType
+        }
+
+        public func validate() throws {
+            try qualificationType?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2513,6 +3127,7 @@ extension MTurk {
             AWSShapeMember(label: "Reason", required: false, type: .string), 
             AWSShapeMember(label: "WorkerId", required: false, type: .string)
         ]
+
         ///  A message explaining the reason the Worker was blocked. 
         public let reason: String?
         ///  The ID of the Worker who accepted the HIT.
@@ -2521,6 +3136,12 @@ extension MTurk {
         public init(reason: String? = nil, workerId: String? = nil) {
             self.reason = reason
             self.workerId = workerId
+        }
+
+        public func validate() throws {
+            try validate(workerId, name:"workerId", max: 64)
+            try validate(workerId, name:"workerId", min: 1)
+            try validate(workerId, name:"workerId", pattern: "^A[A-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {

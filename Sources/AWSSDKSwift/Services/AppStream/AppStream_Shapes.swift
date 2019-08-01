@@ -24,6 +24,7 @@ extension AppStream {
             AWSShapeMember(label: "Metadata", required: false, type: .map), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The application name to display.
         public let displayName: String?
         /// If there is a problem, the application can be disabled after image creation.
@@ -49,6 +50,14 @@ extension AppStream {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(iconURL, name:"iconURL", min: 1)
+            try validate(launchParameters, name:"launchParameters", min: 1)
+            try validate(launchPath, name:"launchPath", min: 1)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case displayName = "DisplayName"
             case enabled = "Enabled"
@@ -65,6 +74,7 @@ extension AppStream {
             AWSShapeMember(label: "Enabled", required: true, type: .boolean), 
             AWSShapeMember(label: "SettingsGroup", required: false, type: .string)
         ]
+
         /// Enables or disables persistent application settings for users during their streaming sessions. 
         public let enabled: Bool
         /// The path prefix for the S3 bucket where users’ persistent application settings are stored. You can allow the same persistent application settings to be used across multiple stacks by specifying the same settings group for each stack. 
@@ -73,6 +83,10 @@ extension AppStream {
         public init(enabled: Bool, settingsGroup: String? = nil) {
             self.enabled = enabled
             self.settingsGroup = settingsGroup
+        }
+
+        public func validate() throws {
+            try validate(settingsGroup, name:"settingsGroup", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -87,6 +101,7 @@ extension AppStream {
             AWSShapeMember(label: "S3BucketName", required: false, type: .string), 
             AWSShapeMember(label: "SettingsGroup", required: false, type: .string)
         ]
+
         /// Specifies whether persistent application settings are enabled for users during their streaming sessions.
         public let enabled: Bool?
         /// The S3 bucket where users’ persistent application settings are stored. When persistent application settings are enabled for the first time for an account in an AWS Region, an S3 bucket is created. The bucket is unique to the AWS account and the Region. 
@@ -98,6 +113,11 @@ extension AppStream {
             self.enabled = enabled
             self.s3BucketName = s3BucketName
             self.settingsGroup = settingsGroup
+        }
+
+        public func validate() throws {
+            try validate(s3BucketName, name:"s3BucketName", min: 1)
+            try validate(settingsGroup, name:"settingsGroup", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -112,6 +132,7 @@ extension AppStream {
             AWSShapeMember(label: "FleetName", required: true, type: .string), 
             AWSShapeMember(label: "StackName", required: true, type: .string)
         ]
+
         /// The name of the fleet. 
         public let fleetName: String
         /// The name of the stack.
@@ -122,6 +143,11 @@ extension AppStream {
             self.stackName = stackName
         }
 
+        public func validate() throws {
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(stackName, name:"stackName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case fleetName = "FleetName"
             case stackName = "StackName"
@@ -129,6 +155,7 @@ extension AppStream {
     }
 
     public struct AssociateFleetResult: AWSShape {
+
 
         public init() {
         }
@@ -146,11 +173,20 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserStackAssociations", required: true, type: .list)
         ]
+
         /// The list of UserStackAssociation objects.
         public let userStackAssociations: [UserStackAssociation]
 
         public init(userStackAssociations: [UserStackAssociation]) {
             self.userStackAssociations = userStackAssociations
+        }
+
+        public func validate() throws {
+            try userStackAssociations.forEach {
+                try $0.validate()
+            }
+            try validate(userStackAssociations, name:"userStackAssociations", max: 25)
+            try validate(userStackAssociations, name:"userStackAssociations", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -162,11 +198,18 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "errors", required: false, type: .list)
         ]
+
         /// The list of UserStackAssociationError objects.
         public let errors: [UserStackAssociationError]?
 
         public init(errors: [UserStackAssociationError]? = nil) {
             self.errors = errors
+        }
+
+        public func validate() throws {
+            try errors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -178,11 +221,20 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserStackAssociations", required: true, type: .list)
         ]
+
         /// The list of UserStackAssociation objects.
         public let userStackAssociations: [UserStackAssociation]
 
         public init(userStackAssociations: [UserStackAssociation]) {
             self.userStackAssociations = userStackAssociations
+        }
+
+        public func validate() throws {
+            try userStackAssociations.forEach {
+                try $0.validate()
+            }
+            try validate(userStackAssociations, name:"userStackAssociations", max: 25)
+            try validate(userStackAssociations, name:"userStackAssociations", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -194,11 +246,18 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "errors", required: false, type: .list)
         ]
+
         /// The list of UserStackAssociationError objects.
         public let errors: [UserStackAssociationError]?
 
         public init(errors: [UserStackAssociationError]? = nil) {
             self.errors = errors
+        }
+
+        public func validate() throws {
+            try errors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -210,6 +269,7 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DesiredInstances", required: true, type: .integer)
         ]
+
         /// The desired number of streaming instances.
         public let desiredInstances: Int32
 
@@ -229,6 +289,7 @@ extension AppStream {
             AWSShapeMember(label: "InUse", required: false, type: .integer), 
             AWSShapeMember(label: "Running", required: false, type: .integer)
         ]
+
         /// The number of currently available instances that can be used to stream sessions.
         public let available: Int32?
         /// The desired number of streaming instances.
@@ -260,6 +321,7 @@ extension AppStream {
             AWSShapeMember(label: "DestinationRegion", required: true, type: .string), 
             AWSShapeMember(label: "SourceImageName", required: true, type: .string)
         ]
+
         /// The description that the image will have when it is copied to the destination.
         public let destinationImageDescription: String?
         /// The name that the image will have when it is copied to the destination.
@@ -276,6 +338,14 @@ extension AppStream {
             self.sourceImageName = sourceImageName
         }
 
+        public func validate() throws {
+            try validate(destinationImageDescription, name:"destinationImageDescription", max: 256)
+            try validate(destinationImageName, name:"destinationImageName", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try validate(destinationRegion, name:"destinationRegion", max: 32)
+            try validate(destinationRegion, name:"destinationRegion", min: 1)
+            try validate(sourceImageName, name:"sourceImageName", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case destinationImageDescription = "DestinationImageDescription"
             case destinationImageName = "DestinationImageName"
@@ -288,11 +358,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DestinationImageName", required: false, type: .string)
         ]
+
         /// The name of the destination image.
         public let destinationImageName: String?
 
         public init(destinationImageName: String? = nil) {
             self.destinationImageName = destinationImageName
+        }
+
+        public func validate() throws {
+            try validate(destinationImageName, name:"destinationImageName", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -306,6 +381,7 @@ extension AppStream {
             AWSShapeMember(label: "OrganizationalUnitDistinguishedNames", required: true, type: .list), 
             AWSShapeMember(label: "ServiceAccountCredentials", required: true, type: .structure)
         ]
+
         /// The fully qualified name of the directory (for example, corp.example.com).
         public let directoryName: String
         /// The distinguished names of the organizational units for computer accounts.
@@ -319,6 +395,13 @@ extension AppStream {
             self.serviceAccountCredentials = serviceAccountCredentials
         }
 
+        public func validate() throws {
+            try organizationalUnitDistinguishedNames.forEach {
+                try validate($0, name:"organizationalUnitDistinguishedNames[]", max: 2000)
+            }
+            try serviceAccountCredentials.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case directoryName = "DirectoryName"
             case organizationalUnitDistinguishedNames = "OrganizationalUnitDistinguishedNames"
@@ -330,11 +413,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DirectoryConfig", required: false, type: .structure)
         ]
+
         /// Information about the directory configuration.
         public let directoryConfig: DirectoryConfig?
 
         public init(directoryConfig: DirectoryConfig? = nil) {
             self.directoryConfig = directoryConfig
+        }
+
+        public func validate() throws {
+            try directoryConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -360,6 +448,7 @@ extension AppStream {
             AWSShapeMember(label: "Tags", required: false, type: .map), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The desired capacity for the fleet.
         public let computeCapacity: ComputeCapacity
         /// The description to display.
@@ -409,6 +498,17 @@ extension AppStream {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(displayName, name:"displayName", max: 100)
+            try domainJoinInfo?.validate()
+            try validate(imageArn, name:"imageArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(imageName, name:"imageName", min: 1)
+            try validate(instanceType, name:"instanceType", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case computeCapacity = "ComputeCapacity"
             case description = "Description"
@@ -432,11 +532,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Fleet", required: false, type: .structure)
         ]
+
         /// Information about the fleet.
         public let fleet: Fleet?
 
         public init(fleet: Fleet? = nil) {
             self.fleet = fleet
+        }
+
+        public func validate() throws {
+            try fleet?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -458,6 +563,7 @@ extension AppStream {
             AWSShapeMember(label: "Tags", required: false, type: .map), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The version of the AppStream 2.0 agent to use for this image builder. To use the latest version of the AppStream 2.0 agent, specify [LATEST]. 
         public let appstreamAgentVersion: String?
         /// The description to display.
@@ -495,6 +601,19 @@ extension AppStream {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", max: 100)
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", min: 1)
+            try validate(description, name:"description", max: 256)
+            try validate(displayName, name:"displayName", max: 100)
+            try domainJoinInfo?.validate()
+            try validate(imageArn, name:"imageArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(imageName, name:"imageName", min: 1)
+            try validate(instanceType, name:"instanceType", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case appstreamAgentVersion = "AppstreamAgentVersion"
             case description = "Description"
@@ -514,11 +633,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImageBuilder", required: false, type: .structure)
         ]
+
         /// Information about the image builder.
         public let imageBuilder: ImageBuilder?
 
         public init(imageBuilder: ImageBuilder? = nil) {
             self.imageBuilder = imageBuilder
+        }
+
+        public func validate() throws {
+            try imageBuilder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -531,6 +655,7 @@ extension AppStream {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Validity", required: false, type: .long)
         ]
+
         /// The name of the image builder.
         public let name: String
         /// The time that the streaming URL will be valid, in seconds. Specify a value between 1 and 604800 seconds. The default is 3600 seconds.
@@ -539,6 +664,10 @@ extension AppStream {
         public init(name: String, validity: Int64? = nil) {
             self.name = name
             self.validity = validity
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -552,6 +681,7 @@ extension AppStream {
             AWSShapeMember(label: "Expires", required: false, type: .timestamp), 
             AWSShapeMember(label: "StreamingURL", required: false, type: .string)
         ]
+
         /// The elapsed time, in seconds after the Unix epoch, when this URL expires.
         public let expires: TimeStamp?
         /// The URL to start the AppStream 2.0 streaming session.
@@ -560,6 +690,10 @@ extension AppStream {
         public init(expires: TimeStamp? = nil, streamingURL: String? = nil) {
             self.expires = expires
             self.streamingURL = streamingURL
+        }
+
+        public func validate() throws {
+            try validate(streamingURL, name:"streamingURL", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -580,6 +714,7 @@ extension AppStream {
             AWSShapeMember(label: "Tags", required: false, type: .map), 
             AWSShapeMember(label: "UserSettings", required: false, type: .list)
         ]
+
         /// The persistent application settings for users of a stack. When these settings are enabled, changes that users make to applications and Windows settings are automatically saved after each session and applied to the next session.
         public let applicationSettings: ApplicationSettings?
         /// The description to display.
@@ -611,6 +746,19 @@ extension AppStream {
             self.userSettings = userSettings
         }
 
+        public func validate() throws {
+            try applicationSettings?.validate()
+            try validate(description, name:"description", max: 256)
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(feedbackURL, name:"feedbackURL", max: 1000)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try validate(redirectURL, name:"redirectURL", max: 1000)
+            try storageConnectors?.forEach {
+                try $0.validate()
+            }
+            try validate(userSettings, name:"userSettings", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case applicationSettings = "ApplicationSettings"
             case description = "Description"
@@ -628,11 +776,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Stack", required: false, type: .structure)
         ]
+
         /// Information about the stack.
         public let stack: Stack?
 
         public init(stack: Stack? = nil) {
             self.stack = stack
+        }
+
+        public func validate() throws {
+            try stack?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -649,6 +802,7 @@ extension AppStream {
             AWSShapeMember(label: "UserId", required: true, type: .string), 
             AWSShapeMember(label: "Validity", required: false, type: .long)
         ]
+
         /// The name of the application to launch after the session starts. This is the name that you specified as Name in the Image Assistant.
         public let applicationId: String?
         /// The name of the fleet.
@@ -671,6 +825,16 @@ extension AppStream {
             self.validity = validity
         }
 
+        public func validate() throws {
+            try validate(applicationId, name:"applicationId", min: 1)
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(sessionContext, name:"sessionContext", min: 1)
+            try validate(stackName, name:"stackName", min: 1)
+            try validate(userId, name:"userId", max: 32)
+            try validate(userId, name:"userId", min: 2)
+            try validate(userId, name:"userId", pattern: "[\\w+=,.@-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case applicationId = "ApplicationId"
             case fleetName = "FleetName"
@@ -686,6 +850,7 @@ extension AppStream {
             AWSShapeMember(label: "Expires", required: false, type: .timestamp), 
             AWSShapeMember(label: "StreamingURL", required: false, type: .string)
         ]
+
         /// The elapsed time, in seconds after the Unix epoch, when this URL expires.
         public let expires: TimeStamp?
         /// The URL to start the AppStream 2.0 streaming session.
@@ -696,6 +861,10 @@ extension AppStream {
             self.streamingURL = streamingURL
         }
 
+        public func validate() throws {
+            try validate(streamingURL, name:"streamingURL", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expires = "Expires"
             case streamingURL = "StreamingURL"
@@ -703,6 +872,7 @@ extension AppStream {
     }
 
     public struct CreateUsageReportSubscriptionRequest: AWSShape {
+
 
         public init() {
         }
@@ -714,6 +884,7 @@ extension AppStream {
             AWSShapeMember(label: "S3BucketName", required: false, type: .string), 
             AWSShapeMember(label: "Schedule", required: false, type: .enum)
         ]
+
         /// The Amazon S3 bucket where generated reports are stored. If you enabled on-instance session scripts and Amazon S3 logging for your session script configuration, AppStream 2.0 created an S3 bucket to store the script output. The bucket is unique to your account and Region. When you enable usage reporting in this case, AppStream 2.0 uses the same bucket to store your usage reports. If you haven't already enabled on-instance session scripts, when you enable usage reports, AppStream 2.0 creates a new S3 bucket.
         public let s3BucketName: String?
         /// The schedule for generating usage reports.
@@ -722,6 +893,10 @@ extension AppStream {
         public init(s3BucketName: String? = nil, schedule: UsageReportSchedule? = nil) {
             self.s3BucketName = s3BucketName
             self.schedule = schedule
+        }
+
+        public func validate() throws {
+            try validate(s3BucketName, name:"s3BucketName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -738,6 +913,7 @@ extension AppStream {
             AWSShapeMember(label: "MessageAction", required: false, type: .enum), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The authentication type for the user. You must specify USERPOOL. 
         public let authenticationType: AuthenticationType
         /// The first name, or given name, of the user.
@@ -757,6 +933,16 @@ extension AppStream {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(firstName, name:"firstName", max: 2048)
+            try validate(firstName, name:"firstName", pattern: "^[A-Za-z0-9_\\-\\s]+$")
+            try validate(lastName, name:"lastName", max: 2048)
+            try validate(lastName, name:"lastName", pattern: "^[A-Za-z0-9_\\-\\s]+$")
+            try validate(userName, name:"userName", max: 128)
+            try validate(userName, name:"userName", min: 1)
+            try validate(userName, name:"userName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case firstName = "FirstName"
@@ -768,6 +954,7 @@ extension AppStream {
 
     public struct CreateUserResult: AWSShape {
 
+
         public init() {
         }
 
@@ -777,6 +964,7 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DirectoryName", required: true, type: .string)
         ]
+
         /// The name of the directory configuration.
         public let directoryName: String
 
@@ -791,6 +979,7 @@ extension AppStream {
 
     public struct DeleteDirectoryConfigResult: AWSShape {
 
+
         public init() {
         }
 
@@ -800,11 +989,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the fleet.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -813,6 +1007,7 @@ extension AppStream {
     }
 
     public struct DeleteFleetResult: AWSShape {
+
 
         public init() {
         }
@@ -823,11 +1018,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the image builder.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -839,11 +1039,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImageBuilder", required: false, type: .structure)
         ]
+
         /// Information about the image builder.
         public let imageBuilder: ImageBuilder?
 
         public init(imageBuilder: ImageBuilder? = nil) {
             self.imageBuilder = imageBuilder
+        }
+
+        public func validate() throws {
+            try imageBuilder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -856,6 +1061,7 @@ extension AppStream {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "SharedAccountId", required: true, type: .string)
         ]
+
         /// The name of the private image.
         public let name: String
         /// The 12-digit identifier of the AWS account for which to delete image permissions.
@@ -866,6 +1072,11 @@ extension AppStream {
             self.sharedAccountId = sharedAccountId
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try validate(sharedAccountId, name:"sharedAccountId", pattern: "^\\d+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case sharedAccountId = "SharedAccountId"
@@ -873,6 +1084,7 @@ extension AppStream {
     }
 
     public struct DeleteImagePermissionsResult: AWSShape {
+
 
         public init() {
         }
@@ -883,11 +1095,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the image.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -899,11 +1116,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Image", required: false, type: .structure)
         ]
+
         /// Information about the image.
         public let image: Image?
 
         public init(image: Image? = nil) {
             self.image = image
+        }
+
+        public func validate() throws {
+            try image?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -915,11 +1137,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the stack.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -929,6 +1156,7 @@ extension AppStream {
 
     public struct DeleteStackResult: AWSShape {
 
+
         public init() {
         }
 
@@ -936,12 +1164,14 @@ extension AppStream {
 
     public struct DeleteUsageReportSubscriptionRequest: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct DeleteUsageReportSubscriptionResult: AWSShape {
+
 
         public init() {
         }
@@ -953,6 +1183,7 @@ extension AppStream {
             AWSShapeMember(label: "AuthenticationType", required: true, type: .enum), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The authentication type for the user. You must specify USERPOOL.
         public let authenticationType: AuthenticationType
         /// The email address of the user.  Users' email addresses are case-sensitive. 
@@ -963,6 +1194,12 @@ extension AppStream {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(userName, name:"userName", max: 128)
+            try validate(userName, name:"userName", min: 1)
+            try validate(userName, name:"userName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case userName = "UserName"
@@ -970,6 +1207,7 @@ extension AppStream {
     }
 
     public struct DeleteUserResult: AWSShape {
+
 
         public init() {
         }
@@ -982,6 +1220,7 @@ extension AppStream {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The directory names.
         public let directoryNames: [String]?
         /// The maximum size of each page of results.
@@ -993,6 +1232,10 @@ extension AppStream {
             self.directoryNames = directoryNames
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1007,6 +1250,7 @@ extension AppStream {
             AWSShapeMember(label: "DirectoryConfigs", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the directory configurations. Note that although the response syntax in this topic includes the account password, this password is not returned in the actual response. 
         public let directoryConfigs: [DirectoryConfig]?
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -1015,6 +1259,13 @@ extension AppStream {
         public init(directoryConfigs: [DirectoryConfig]? = nil, nextToken: String? = nil) {
             self.directoryConfigs = directoryConfigs
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try directoryConfigs?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1028,6 +1279,7 @@ extension AppStream {
             AWSShapeMember(label: "Names", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of the fleets to describe.
         public let names: [String]?
         /// The pagination token to use to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
@@ -1036,6 +1288,13 @@ extension AppStream {
         public init(names: [String]? = nil, nextToken: String? = nil) {
             self.names = names
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try names?.forEach {
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1049,6 +1308,7 @@ extension AppStream {
             AWSShapeMember(label: "Fleets", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the fleets.
         public let fleets: [Fleet]?
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -1057,6 +1317,13 @@ extension AppStream {
         public init(fleets: [Fleet]? = nil, nextToken: String? = nil) {
             self.fleets = fleets
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try fleets?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1071,6 +1338,7 @@ extension AppStream {
             AWSShapeMember(label: "Names", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum size of each page of results.
         public let maxResults: Int32?
         /// The names of the image builders to describe.
@@ -1082,6 +1350,13 @@ extension AppStream {
             self.maxResults = maxResults
             self.names = names
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try names?.forEach {
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1096,6 +1371,7 @@ extension AppStream {
             AWSShapeMember(label: "ImageBuilders", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the image builders.
         public let imageBuilders: [ImageBuilder]?
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -1104,6 +1380,13 @@ extension AppStream {
         public init(imageBuilders: [ImageBuilder]? = nil, nextToken: String? = nil) {
             self.imageBuilders = imageBuilders
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try imageBuilders?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1119,6 +1402,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SharedAwsAccountIds", required: false, type: .list)
         ]
+
         /// The maximum size of each page of results.
         public let maxResults: Int32?
         /// The name of the private image for which to describe permissions. The image must be one that you own. 
@@ -1135,6 +1419,18 @@ extension AppStream {
             self.sharedAwsAccountIds = sharedAwsAccountIds
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sharedAwsAccountIds?.forEach {
+                try validate($0, name:"sharedAwsAccountIds[]", pattern: "^\\d+$")
+            }
+            try validate(sharedAwsAccountIds, name:"sharedAwsAccountIds", max: 5)
+            try validate(sharedAwsAccountIds, name:"sharedAwsAccountIds", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case name = "Name"
@@ -1149,6 +1445,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SharedImagePermissionsList", required: false, type: .list)
         ]
+
         /// The name of the private image.
         public let name: String?
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -1160,6 +1457,14 @@ extension AppStream {
             self.name = name
             self.nextToken = nextToken
             self.sharedImagePermissionsList = sharedImagePermissionsList
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sharedImagePermissionsList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1177,6 +1482,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The ARNs of the public, private, and shared images to describe.
         public let arns: [String]?
         /// The maximum size of each page of results.
@@ -1196,6 +1502,18 @@ extension AppStream {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try arns?.forEach {
+                try validate($0, name:"arns[]", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            }
+            try validate(maxResults, name:"maxResults", max: 25)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try names?.forEach {
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arns = "Arns"
             case maxResults = "MaxResults"
@@ -1210,6 +1528,7 @@ extension AppStream {
             AWSShapeMember(label: "Images", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the images.
         public let images: [Image]?
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -1218,6 +1537,13 @@ extension AppStream {
         public init(images: [Image]? = nil, nextToken: String? = nil) {
             self.images = images
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try images?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1235,6 +1561,7 @@ extension AppStream {
             AWSShapeMember(label: "StackName", required: true, type: .string), 
             AWSShapeMember(label: "UserId", required: false, type: .string)
         ]
+
         /// The authentication method. Specify API for a user authenticated using a streaming URL or SAML for a SAML federated user. The default is to authenticate users using a streaming URL.
         public let authenticationType: AuthenticationType?
         /// The name of the fleet. This value is case-sensitive.
@@ -1257,6 +1584,14 @@ extension AppStream {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(stackName, name:"stackName", min: 1)
+            try validate(userId, name:"userId", max: 32)
+            try validate(userId, name:"userId", min: 2)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case fleetName = "FleetName"
@@ -1272,6 +1607,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Sessions", required: false, type: .list)
         ]
+
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
         public let nextToken: String?
         /// Information about the streaming sessions.
@@ -1280,6 +1616,13 @@ extension AppStream {
         public init(nextToken: String? = nil, sessions: [Session]? = nil) {
             self.nextToken = nextToken
             self.sessions = sessions
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sessions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1293,6 +1636,7 @@ extension AppStream {
             AWSShapeMember(label: "Names", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of the stacks to describe.
         public let names: [String]?
         /// The pagination token to use to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
@@ -1301,6 +1645,13 @@ extension AppStream {
         public init(names: [String]? = nil, nextToken: String? = nil) {
             self.names = names
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try names?.forEach {
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1314,6 +1665,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Stacks", required: false, type: .list)
         ]
+
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
         public let nextToken: String?
         /// Information about the stacks.
@@ -1322,6 +1674,13 @@ extension AppStream {
         public init(nextToken: String? = nil, stacks: [Stack]? = nil) {
             self.nextToken = nextToken
             self.stacks = stacks
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try stacks?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1335,6 +1694,7 @@ extension AppStream {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum size of each page of results.
         public let maxResults: Int32?
         /// The pagination token to use to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
@@ -1343,6 +1703,10 @@ extension AppStream {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1356,6 +1720,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "UsageReportSubscriptions", required: false, type: .list)
         ]
+
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
         public let nextToken: String?
         /// Information about the usage report subscription.
@@ -1364,6 +1729,13 @@ extension AppStream {
         public init(nextToken: String? = nil, usageReportSubscriptions: [UsageReportSubscription]? = nil) {
             self.nextToken = nextToken
             self.usageReportSubscriptions = usageReportSubscriptions
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try usageReportSubscriptions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1380,6 +1752,7 @@ extension AppStream {
             AWSShapeMember(label: "StackName", required: false, type: .string), 
             AWSShapeMember(label: "UserName", required: false, type: .string)
         ]
+
         /// The authentication type for the user who is associated with the stack. You must specify USERPOOL.
         public let authenticationType: AuthenticationType?
         /// The maximum size of each page of results.
@@ -1399,6 +1772,16 @@ extension AppStream {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(stackName, name:"stackName", min: 1)
+            try validate(userName, name:"userName", max: 128)
+            try validate(userName, name:"userName", min: 1)
+            try validate(userName, name:"userName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case maxResults = "MaxResults"
@@ -1413,6 +1796,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "UserStackAssociations", required: false, type: .list)
         ]
+
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
         public let nextToken: String?
         /// The UserStackAssociation objects.
@@ -1421,6 +1805,15 @@ extension AppStream {
         public init(nextToken: String? = nil, userStackAssociations: [UserStackAssociation]? = nil) {
             self.nextToken = nextToken
             self.userStackAssociations = userStackAssociations
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try userStackAssociations?.forEach {
+                try $0.validate()
+            }
+            try validate(userStackAssociations, name:"userStackAssociations", max: 25)
+            try validate(userStackAssociations, name:"userStackAssociations", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1435,6 +1828,7 @@ extension AppStream {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The authentication type for the users in the user pool to describe. You must specify USERPOOL.
         public let authenticationType: AuthenticationType
         /// The maximum size of each page of results.
@@ -1446,6 +1840,10 @@ extension AppStream {
             self.authenticationType = authenticationType
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1460,6 +1858,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Users", required: false, type: .list)
         ]
+
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
         public let nextToken: String?
         /// Information about users in the user pool.
@@ -1468,6 +1867,13 @@ extension AppStream {
         public init(nextToken: String? = nil, users: [User]? = nil) {
             self.nextToken = nextToken
             self.users = users
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try users?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1483,6 +1889,7 @@ extension AppStream {
             AWSShapeMember(label: "OrganizationalUnitDistinguishedNames", required: false, type: .list), 
             AWSShapeMember(label: "ServiceAccountCredentials", required: false, type: .structure)
         ]
+
         /// The time the directory configuration was created.
         public let createdTime: TimeStamp?
         /// The fully qualified name of the directory (for example, corp.example.com).
@@ -1499,6 +1906,13 @@ extension AppStream {
             self.serviceAccountCredentials = serviceAccountCredentials
         }
 
+        public func validate() throws {
+            try organizationalUnitDistinguishedNames?.forEach {
+                try validate($0, name:"organizationalUnitDistinguishedNames[]", max: 2000)
+            }
+            try serviceAccountCredentials?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdTime = "CreatedTime"
             case directoryName = "DirectoryName"
@@ -1512,6 +1926,7 @@ extension AppStream {
             AWSShapeMember(label: "AuthenticationType", required: true, type: .enum), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The authentication type for the user. You must specify USERPOOL.
         public let authenticationType: AuthenticationType
         /// The email address of the user.  Users' email addresses are case-sensitive. 
@@ -1522,6 +1937,12 @@ extension AppStream {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(userName, name:"userName", max: 128)
+            try validate(userName, name:"userName", min: 1)
+            try validate(userName, name:"userName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case userName = "UserName"
@@ -1529,6 +1950,7 @@ extension AppStream {
     }
 
     public struct DisableUserResult: AWSShape {
+
 
         public init() {
         }
@@ -1540,6 +1962,7 @@ extension AppStream {
             AWSShapeMember(label: "FleetName", required: true, type: .string), 
             AWSShapeMember(label: "StackName", required: true, type: .string)
         ]
+
         /// The name of the fleet.
         public let fleetName: String
         /// The name of the stack.
@@ -1550,6 +1973,11 @@ extension AppStream {
             self.stackName = stackName
         }
 
+        public func validate() throws {
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(stackName, name:"stackName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case fleetName = "FleetName"
             case stackName = "StackName"
@@ -1557,6 +1985,7 @@ extension AppStream {
     }
 
     public struct DisassociateFleetResult: AWSShape {
+
 
         public init() {
         }
@@ -1568,6 +1997,7 @@ extension AppStream {
             AWSShapeMember(label: "DirectoryName", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationalUnitDistinguishedName", required: false, type: .string)
         ]
+
         /// The fully qualified name of the directory (for example, corp.example.com).
         public let directoryName: String?
         /// The distinguished name of the organizational unit for computer accounts.
@@ -1576,6 +2006,10 @@ extension AppStream {
         public init(directoryName: String? = nil, organizationalUnitDistinguishedName: String? = nil) {
             self.directoryName = directoryName
             self.organizationalUnitDistinguishedName = organizationalUnitDistinguishedName
+        }
+
+        public func validate() throws {
+            try validate(organizationalUnitDistinguishedName, name:"organizationalUnitDistinguishedName", max: 2000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1589,6 +2023,7 @@ extension AppStream {
             AWSShapeMember(label: "AuthenticationType", required: true, type: .enum), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The authentication type for the user. You must specify USERPOOL.
         public let authenticationType: AuthenticationType
         /// The email address of the user.  Users' email addresses are case-sensitive. During login, if they specify an email address that doesn't use the same capitalization as the email address specified when their user pool account was created, a "user does not exist" error message displays.  
@@ -1599,6 +2034,12 @@ extension AppStream {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(userName, name:"userName", max: 128)
+            try validate(userName, name:"userName", min: 1)
+            try validate(userName, name:"userName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case userName = "UserName"
@@ -1606,6 +2047,7 @@ extension AppStream {
     }
 
     public struct EnableUserResult: AWSShape {
+
 
         public init() {
         }
@@ -1616,11 +2058,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SessionId", required: true, type: .string)
         ]
+
         /// The identifier of the streaming session.
         public let sessionId: String
 
         public init(sessionId: String) {
             self.sessionId = sessionId
+        }
+
+        public func validate() throws {
+            try validate(sessionId, name:"sessionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1629,6 +2076,7 @@ extension AppStream {
     }
 
     public struct ExpireSessionResult: AWSShape {
+
 
         public init() {
         }
@@ -1656,6 +2104,7 @@ extension AppStream {
             AWSShapeMember(label: "State", required: true, type: .enum), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The ARN for the fleet.
         public let arn: String
         /// The capacity status for the fleet.
@@ -1714,6 +2163,21 @@ extension AppStream {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(description, name:"description", min: 1)
+            try validate(displayName, name:"displayName", min: 1)
+            try domainJoinInfo?.validate()
+            try fleetErrors?.forEach {
+                try $0.validate()
+            }
+            try validate(imageArn, name:"imageArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(imageName, name:"imageName", min: 1)
+            try validate(instanceType, name:"instanceType", min: 1)
+            try validate(name, name:"name", min: 1)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case computeCapacityStatus = "ComputeCapacityStatus"
@@ -1748,6 +2212,7 @@ extension AppStream {
             AWSShapeMember(label: "ErrorCode", required: false, type: .enum), 
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string)
         ]
+
         /// The error code.
         public let errorCode: FleetErrorCode?
         /// The error message.
@@ -1756,6 +2221,10 @@ extension AppStream {
         public init(errorCode: FleetErrorCode? = nil, errorMessage: String? = nil) {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1827,6 +2296,7 @@ extension AppStream {
             AWSShapeMember(label: "StateChangeReason", required: false, type: .structure), 
             AWSShapeMember(label: "Visibility", required: false, type: .enum)
         ]
+
         /// The applications associated with the image.
         public let applications: [Application]?
         /// The version of the AppStream 2.0 agent to use for instances that are launched from this image. 
@@ -1879,6 +2349,21 @@ extension AppStream {
             self.visibility = visibility
         }
 
+        public func validate() throws {
+            try applications?.forEach {
+                try $0.validate()
+            }
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", max: 100)
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", min: 1)
+            try validate(arn, name:"arn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(baseImageArn, name:"baseImageArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(description, name:"description", min: 1)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(imageBuilderName, name:"imageBuilderName", min: 1)
+            try validate(name, name:"name", min: 1)
+            try stateChangeReason?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case applications = "Applications"
             case appstreamAgentVersion = "AppstreamAgentVersion"
@@ -1918,6 +2403,7 @@ extension AppStream {
             AWSShapeMember(label: "StateChangeReason", required: false, type: .structure), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The version of the AppStream 2.0 agent that is currently being used by the image builder. 
         public let appstreamAgentVersion: String?
         /// The ARN for the image builder.
@@ -1969,6 +2455,24 @@ extension AppStream {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", max: 100)
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", min: 1)
+            try validate(arn, name:"arn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(description, name:"description", min: 1)
+            try validate(displayName, name:"displayName", min: 1)
+            try domainJoinInfo?.validate()
+            try validate(imageArn, name:"imageArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try imageBuilderErrors?.forEach {
+                try $0.validate()
+            }
+            try validate(instanceType, name:"instanceType", min: 1)
+            try validate(name, name:"name", min: 1)
+            try networkAccessConfiguration?.validate()
+            try stateChangeReason?.validate()
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case appstreamAgentVersion = "AppstreamAgentVersion"
             case arn = "Arn"
@@ -2007,6 +2511,7 @@ extension AppStream {
             AWSShapeMember(label: "Code", required: false, type: .enum), 
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// The state change reason code.
         public let code: ImageBuilderStateChangeReasonCode?
         /// The state change reason message.
@@ -2015,6 +2520,10 @@ extension AppStream {
         public init(code: ImageBuilderStateChangeReasonCode? = nil, message: String? = nil) {
             self.code = code
             self.message = message
+        }
+
+        public func validate() throws {
+            try validate(message, name:"message", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2034,6 +2543,7 @@ extension AppStream {
             AWSShapeMember(label: "allowFleet", required: false, type: .boolean), 
             AWSShapeMember(label: "allowImageBuilder", required: false, type: .boolean)
         ]
+
         /// Indicates whether the image can be used for a fleet.
         public let allowFleet: Bool?
         /// Indicates whether the image can be used for an image builder.
@@ -2064,6 +2574,7 @@ extension AppStream {
             AWSShapeMember(label: "Code", required: false, type: .enum), 
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// The state change reason code.
         public let code: ImageStateChangeReasonCode?
         /// The state change reason message.
@@ -2072,6 +2583,10 @@ extension AppStream {
         public init(code: ImageStateChangeReasonCode? = nil, message: String? = nil) {
             self.code = code
             self.message = message
+        }
+
+        public func validate() throws {
+            try validate(message, name:"message", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2092,6 +2607,7 @@ extension AppStream {
             AWSShapeMember(label: "ErrorCode", required: false, type: .enum), 
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string)
         ]
+
         /// The error code for the error that is returned when a usage report can't be generated.
         public let errorCode: UsageReportExecutionErrorCode?
         /// The error message for the error that is returned when a usage report can't be generated.
@@ -2100,6 +2616,10 @@ extension AppStream {
         public init(errorCode: UsageReportExecutionErrorCode? = nil, errorMessage: String? = nil) {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2113,6 +2633,7 @@ extension AppStream {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "StackName", required: true, type: .string)
         ]
+
         /// The pagination token to use to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
         public let nextToken: String?
         /// The name of the stack.
@@ -2121,6 +2642,11 @@ extension AppStream {
         public init(nextToken: String? = nil, stackName: String) {
             self.nextToken = nextToken
             self.stackName = stackName
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(stackName, name:"stackName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2134,6 +2660,7 @@ extension AppStream {
             AWSShapeMember(label: "Names", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the fleet.
         public let names: [String]?
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -2142,6 +2669,13 @@ extension AppStream {
         public init(names: [String]? = nil, nextToken: String? = nil) {
             self.names = names
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try names?.forEach {
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2155,6 +2689,7 @@ extension AppStream {
             AWSShapeMember(label: "FleetName", required: true, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the fleet.
         public let fleetName: String
         /// The pagination token to use to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
@@ -2163,6 +2698,11 @@ extension AppStream {
         public init(fleetName: String, nextToken: String? = nil) {
             self.fleetName = fleetName
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2176,6 +2716,7 @@ extension AppStream {
             AWSShapeMember(label: "Names", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the stack.
         public let names: [String]?
         /// The pagination token to use to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -2184,6 +2725,13 @@ extension AppStream {
         public init(names: [String]? = nil, nextToken: String? = nil) {
             self.names = names
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try names?.forEach {
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2196,11 +2744,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2212,6 +2765,7 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The information about the tags.
         public let tags: [String: String]?
 
@@ -2235,6 +2789,7 @@ extension AppStream {
             AWSShapeMember(label: "EniId", required: false, type: .string), 
             AWSShapeMember(label: "EniPrivateIpAddress", required: false, type: .string)
         ]
+
         /// The resource identifier of the elastic network interface that is attached to instances in your VPC. All network interfaces have the eni-xxxxxxxx resource identifier.
         public let eniId: String?
         /// The private IP address of the elastic network interface that is attached to instances in your VPC.
@@ -2243,6 +2798,11 @@ extension AppStream {
         public init(eniId: String? = nil, eniPrivateIpAddress: String? = nil) {
             self.eniId = eniId
             self.eniPrivateIpAddress = eniPrivateIpAddress
+        }
+
+        public func validate() throws {
+            try validate(eniId, name:"eniId", min: 1)
+            try validate(eniPrivateIpAddress, name:"eniPrivateIpAddress", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2270,6 +2830,7 @@ extension AppStream {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "ErrorTimestamp", required: false, type: .timestamp)
         ]
+
         /// The error code.
         public let errorCode: FleetErrorCode?
         /// The error message.
@@ -2281,6 +2842,10 @@ extension AppStream {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.errorTimestamp = errorTimestamp
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2295,6 +2860,7 @@ extension AppStream {
             AWSShapeMember(label: "AccountName", required: true, type: .string), 
             AWSShapeMember(label: "AccountPassword", required: true, type: .string)
         ]
+
         /// The user name of the account. This account must have the following privileges: create computer objects, join computers to the domain, and change/reset the password on descendant computer objects for the organizational units specified.
         public let accountName: String
         /// The password for the account.
@@ -2303,6 +2869,12 @@ extension AppStream {
         public init(accountName: String, accountPassword: String) {
             self.accountName = accountName
             self.accountPassword = accountPassword
+        }
+
+        public func validate() throws {
+            try validate(accountName, name:"accountName", min: 1)
+            try validate(accountPassword, name:"accountPassword", max: 127)
+            try validate(accountPassword, name:"accountPassword", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2324,6 +2896,7 @@ extension AppStream {
             AWSShapeMember(label: "State", required: true, type: .enum), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The authentication method. The user is authenticated using a streaming URL (API) or SAML 2.0 federation (SAML).
         public let authenticationType: AuthenticationType?
         /// Specifies whether a user is connected to the streaming session.
@@ -2358,6 +2931,15 @@ extension AppStream {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(id, name:"id", min: 1)
+            try networkAccessConfiguration?.validate()
+            try validate(stackName, name:"stackName", min: 1)
+            try validate(userId, name:"userId", max: 32)
+            try validate(userId, name:"userId", min: 2)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case connectionState = "ConnectionState"
@@ -2390,6 +2972,7 @@ extension AppStream {
             AWSShapeMember(label: "imagePermissions", required: true, type: .structure), 
             AWSShapeMember(label: "sharedAccountId", required: true, type: .string)
         ]
+
         /// Describes the permissions for a shared image.
         public let imagePermissions: ImagePermissions
         /// The 12-digit identifier of the AWS account with which the image is shared.
@@ -2398,6 +2981,10 @@ extension AppStream {
         public init(imagePermissions: ImagePermissions, sharedAccountId: String) {
             self.imagePermissions = imagePermissions
             self.sharedAccountId = sharedAccountId
+        }
+
+        public func validate() throws {
+            try validate(sharedAccountId, name:"sharedAccountId", pattern: "^\\d+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2420,6 +3007,7 @@ extension AppStream {
             AWSShapeMember(label: "StorageConnectors", required: false, type: .list), 
             AWSShapeMember(label: "UserSettings", required: false, type: .list)
         ]
+
         /// The persistent application settings for users of the stack.
         public let applicationSettings: ApplicationSettingsResponse?
         /// The ARN of the stack.
@@ -2457,6 +3045,23 @@ extension AppStream {
             self.userSettings = userSettings
         }
 
+        public func validate() throws {
+            try applicationSettings?.validate()
+            try validate(arn, name:"arn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(description, name:"description", min: 1)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(feedbackURL, name:"feedbackURL", max: 1000)
+            try validate(name, name:"name", min: 1)
+            try validate(redirectURL, name:"redirectURL", max: 1000)
+            try stackErrors?.forEach {
+                try $0.validate()
+            }
+            try storageConnectors?.forEach {
+                try $0.validate()
+            }
+            try validate(userSettings, name:"userSettings", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case applicationSettings = "ApplicationSettings"
             case arn = "Arn"
@@ -2489,6 +3094,7 @@ extension AppStream {
             AWSShapeMember(label: "ErrorCode", required: false, type: .enum), 
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string)
         ]
+
         /// The error code.
         public let errorCode: StackErrorCode?
         /// The error message.
@@ -2497,6 +3103,10 @@ extension AppStream {
         public init(errorCode: StackErrorCode? = nil, errorMessage: String? = nil) {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2515,11 +3125,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the fleet.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2528,6 +3143,7 @@ extension AppStream {
     }
 
     public struct StartFleetResult: AWSShape {
+
 
         public init() {
         }
@@ -2539,6 +3155,7 @@ extension AppStream {
             AWSShapeMember(label: "AppstreamAgentVersion", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The version of the AppStream 2.0 agent to use for this image builder. To use the latest version of the AppStream 2.0 agent, specify [LATEST]. 
         public let appstreamAgentVersion: String?
         /// The name of the image builder.
@@ -2547,6 +3164,12 @@ extension AppStream {
         public init(appstreamAgentVersion: String? = nil, name: String) {
             self.appstreamAgentVersion = appstreamAgentVersion
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", max: 100)
+            try validate(appstreamAgentVersion, name:"appstreamAgentVersion", min: 1)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2559,11 +3182,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImageBuilder", required: false, type: .structure)
         ]
+
         /// Information about the image builder.
         public let imageBuilder: ImageBuilder?
 
         public init(imageBuilder: ImageBuilder? = nil) {
             self.imageBuilder = imageBuilder
+        }
+
+        public func validate() throws {
+            try imageBuilder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2575,11 +3203,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the fleet.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2588,6 +3221,7 @@ extension AppStream {
     }
 
     public struct StopFleetResult: AWSShape {
+
 
         public init() {
         }
@@ -2598,11 +3232,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the image builder.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2614,11 +3253,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImageBuilder", required: false, type: .structure)
         ]
+
         /// Information about the image builder.
         public let imageBuilder: ImageBuilder?
 
         public init(imageBuilder: ImageBuilder? = nil) {
             self.imageBuilder = imageBuilder
+        }
+
+        public func validate() throws {
+            try imageBuilder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2632,6 +3276,7 @@ extension AppStream {
             AWSShapeMember(label: "Domains", required: false, type: .list), 
             AWSShapeMember(label: "ResourceIdentifier", required: false, type: .string)
         ]
+
         /// The type of storage connector.
         public let connectorType: StorageConnectorType
         /// The names of the domains for the account.
@@ -2643,6 +3288,14 @@ extension AppStream {
             self.connectorType = connectorType
             self.domains = domains
             self.resourceIdentifier = resourceIdentifier
+        }
+
+        public func validate() throws {
+            try domains?.forEach {
+                try validate($0, name:"domains[]", max: 64)
+            }
+            try validate(domains, name:"domains", max: 10)
+            try validate(resourceIdentifier, name:"resourceIdentifier", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2664,6 +3317,7 @@ extension AppStream {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource.
         public let resourceArn: String
         /// The tags to associate. A tag is a key-value pair, and the value is optional. For example, Environment=Test. If you do not specify a value, Environment=.  If you do not specify a value, the value is set to an empty string. Generally allowed characters are: letters, numbers, and spaces representable in UTF-8, and the following special characters:  _ . : / = + \ - @
@@ -2674,6 +3328,10 @@ extension AppStream {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tags = "Tags"
@@ -2681,6 +3339,7 @@ extension AppStream {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -2692,6 +3351,7 @@ extension AppStream {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource.
         public let resourceArn: String
         /// The tag keys for the tags to disassociate.
@@ -2702,6 +3362,17 @@ extension AppStream {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name:"tagKeys[]", pattern: "^(^(?!aws:).[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tagKeys = "TagKeys"
@@ -2709,6 +3380,7 @@ extension AppStream {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -2721,6 +3393,7 @@ extension AppStream {
             AWSShapeMember(label: "OrganizationalUnitDistinguishedNames", required: false, type: .list), 
             AWSShapeMember(label: "ServiceAccountCredentials", required: false, type: .structure)
         ]
+
         /// The name of the Directory Config object.
         public let directoryName: String
         /// The distinguished names of the organizational units for computer accounts.
@@ -2734,6 +3407,13 @@ extension AppStream {
             self.serviceAccountCredentials = serviceAccountCredentials
         }
 
+        public func validate() throws {
+            try organizationalUnitDistinguishedNames?.forEach {
+                try validate($0, name:"organizationalUnitDistinguishedNames[]", max: 2000)
+            }
+            try serviceAccountCredentials?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case directoryName = "DirectoryName"
             case organizationalUnitDistinguishedNames = "OrganizationalUnitDistinguishedNames"
@@ -2745,11 +3425,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DirectoryConfig", required: false, type: .structure)
         ]
+
         /// Information about the Directory Config object.
         public let directoryConfig: DirectoryConfig?
 
         public init(directoryConfig: DirectoryConfig? = nil) {
             self.directoryConfig = directoryConfig
+        }
+
+        public func validate() throws {
+            try directoryConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2774,6 +3459,7 @@ extension AppStream {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The fleet attributes to delete.
         public let attributesToDelete: [FleetAttribute]?
         /// The desired capacity for the fleet.
@@ -2820,6 +3506,17 @@ extension AppStream {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(displayName, name:"displayName", max: 100)
+            try domainJoinInfo?.validate()
+            try validate(imageArn, name:"imageArn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(imageName, name:"imageName", min: 1)
+            try validate(instanceType, name:"instanceType", min: 1)
+            try validate(name, name:"name", min: 1)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributesToDelete = "AttributesToDelete"
             case computeCapacity = "ComputeCapacity"
@@ -2842,11 +3539,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Fleet", required: false, type: .structure)
         ]
+
         /// Information about the fleet.
         public let fleet: Fleet?
 
         public init(fleet: Fleet? = nil) {
             self.fleet = fleet
+        }
+
+        public func validate() throws {
+            try fleet?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2860,6 +3562,7 @@ extension AppStream {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "SharedAccountId", required: true, type: .string)
         ]
+
         /// The permissions for the image.
         public let imagePermissions: ImagePermissions
         /// The name of the private image.
@@ -2873,6 +3576,11 @@ extension AppStream {
             self.sharedAccountId = sharedAccountId
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
+            try validate(sharedAccountId, name:"sharedAccountId", pattern: "^\\d+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case imagePermissions = "ImagePermissions"
             case name = "Name"
@@ -2881,6 +3589,7 @@ extension AppStream {
     }
 
     public struct UpdateImagePermissionsResult: AWSShape {
+
 
         public init() {
         }
@@ -2899,6 +3608,7 @@ extension AppStream {
             AWSShapeMember(label: "StorageConnectors", required: false, type: .list), 
             AWSShapeMember(label: "UserSettings", required: false, type: .list)
         ]
+
         /// The persistent application settings for users of a stack. When these settings are enabled, changes that users make to applications and Windows settings are automatically saved after each session and applied to the next session.
         public let applicationSettings: ApplicationSettings?
         /// The stack attributes to delete.
@@ -2930,6 +3640,19 @@ extension AppStream {
             self.userSettings = userSettings
         }
 
+        public func validate() throws {
+            try applicationSettings?.validate()
+            try validate(description, name:"description", max: 256)
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(feedbackURL, name:"feedbackURL", max: 1000)
+            try validate(name, name:"name", min: 1)
+            try validate(redirectURL, name:"redirectURL", max: 1000)
+            try storageConnectors?.forEach {
+                try $0.validate()
+            }
+            try validate(userSettings, name:"userSettings", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case applicationSettings = "ApplicationSettings"
             case attributesToDelete = "AttributesToDelete"
@@ -2947,11 +3670,16 @@ extension AppStream {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Stack", required: false, type: .structure)
         ]
+
         /// Information about the stack.
         public let stack: Stack?
 
         public init(stack: Stack? = nil) {
             self.stack = stack
+        }
+
+        public func validate() throws {
+            try stack?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2978,6 +3706,7 @@ extension AppStream {
             AWSShapeMember(label: "Schedule", required: false, type: .enum), 
             AWSShapeMember(label: "SubscriptionErrors", required: false, type: .list)
         ]
+
         /// The time when the last usage report was generated.
         public let lastGeneratedReportDate: TimeStamp?
         /// The Amazon S3 bucket where generated reports are stored. If you enabled on-instance session scripts and Amazon S3 logging for your session script configuration, AppStream 2.0 created an S3 bucket to store the script output. The bucket is unique to your account and Region. When you enable usage reporting in this case, AppStream 2.0 uses the same bucket to store your usage reports. If you haven't already enabled on-instance session scripts, when you enable usage reports, AppStream 2.0 creates a new S3 bucket.
@@ -2992,6 +3721,13 @@ extension AppStream {
             self.s3BucketName = s3BucketName
             self.schedule = schedule
             self.subscriptionErrors = subscriptionErrors
+        }
+
+        public func validate() throws {
+            try validate(s3BucketName, name:"s3BucketName", min: 1)
+            try subscriptionErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3013,6 +3749,7 @@ extension AppStream {
             AWSShapeMember(label: "Status", required: false, type: .string), 
             AWSShapeMember(label: "UserName", required: false, type: .string)
         ]
+
         /// The ARN of the user.
         public let arn: String?
         /// The authentication type for the user.
@@ -3041,6 +3778,18 @@ extension AppStream {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "^arn:aws:[A-Za-z0-9][A-Za-z0-9_/.-]{0,62}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-Za-z0-9:_/+=,@.-]{0,1023}$")
+            try validate(firstName, name:"firstName", max: 2048)
+            try validate(firstName, name:"firstName", pattern: "^[A-Za-z0-9_\\-\\s]+$")
+            try validate(lastName, name:"lastName", max: 2048)
+            try validate(lastName, name:"lastName", pattern: "^[A-Za-z0-9_\\-\\s]+$")
+            try validate(status, name:"status", min: 1)
+            try validate(userName, name:"userName", max: 128)
+            try validate(userName, name:"userName", min: 1)
+            try validate(userName, name:"userName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case authenticationType = "AuthenticationType"
@@ -3058,6 +3807,7 @@ extension AppStream {
             AWSShapeMember(label: "Action", required: true, type: .enum), 
             AWSShapeMember(label: "Permission", required: true, type: .enum)
         ]
+
         /// The action that is enabled or disabled.
         public let action: Action
         /// Indicates whether the action is enabled or disabled.
@@ -3081,6 +3831,7 @@ extension AppStream {
             AWSShapeMember(label: "StackName", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The authentication type for the user.
         public let authenticationType: AuthenticationType
         /// Specifies whether a welcome email is sent to a user after the user is created in the user pool.
@@ -3097,6 +3848,13 @@ extension AppStream {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(stackName, name:"stackName", min: 1)
+            try validate(userName, name:"userName", max: 128)
+            try validate(userName, name:"userName", min: 1)
+            try validate(userName, name:"userName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authenticationType = "AuthenticationType"
             case sendEmailNotification = "SendEmailNotification"
@@ -3111,6 +3869,7 @@ extension AppStream {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "UserStackAssociation", required: false, type: .structure)
         ]
+
         /// The error code for the error that is returned when a user can’t be associated with or disassociated from a stack.
         public let errorCode: UserStackAssociationErrorCode?
         /// The error message for the error that is returned when a user can’t be associated with or disassociated from a stack.
@@ -3122,6 +3881,11 @@ extension AppStream {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.userStackAssociation = userStackAssociation
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", min: 1)
+            try userStackAssociation?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3150,6 +3914,7 @@ extension AppStream {
             AWSShapeMember(label: "SecurityGroupIds", required: false, type: .list), 
             AWSShapeMember(label: "SubnetIds", required: false, type: .list)
         ]
+
         /// The identifiers of the security groups for the fleet or image builder.
         public let securityGroupIds: [String]?
         /// The identifiers of the subnets to which a network interface is attached from the fleet instance or image builder instance. Fleet instances use one or more subnets. Image builder instances use one subnet.
@@ -3158,6 +3923,16 @@ extension AppStream {
         public init(securityGroupIds: [String]? = nil, subnetIds: [String]? = nil) {
             self.securityGroupIds = securityGroupIds
             self.subnetIds = subnetIds
+        }
+
+        public func validate() throws {
+            try securityGroupIds?.forEach {
+                try validate($0, name:"securityGroupIds[]", min: 1)
+            }
+            try validate(securityGroupIds, name:"securityGroupIds", max: 5)
+            try subnetIds?.forEach {
+                try validate($0, name:"subnetIds[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {

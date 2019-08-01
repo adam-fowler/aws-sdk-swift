@@ -11,6 +11,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PortfolioId", required: true, type: .string), 
             AWSShapeMember(label: "PortfolioShareType", required: false, type: .enum)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -24,6 +25,13 @@ extension ServiceCatalog {
             self.portfolioShareType = portfolioShareType
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case portfolioId = "PortfolioId"
@@ -32,6 +40,7 @@ extension ServiceCatalog {
     }
 
     public struct AcceptPortfolioShareOutput: AWSShape {
+
 
         public init() {
         }
@@ -43,6 +52,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The access level.    Account - Filter results based on the account.    Role - Filter results based on the federated role of the specified user.    User - Filter results based on the specified user.  
         public let key: AccessLevelFilterKey?
         /// The user to which the access level applies. The only supported value is Self.
@@ -78,6 +88,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "BudgetName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The name of the budget you want to associate.
         public let budgetName: String
         ///  The resource identifier. Either a portfolio-id or a product-id.
@@ -88,6 +99,14 @@ extension ServiceCatalog {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(resourceId, name:"resourceId", max: 100)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceId, name:"resourceId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case budgetName = "BudgetName"
             case resourceId = "ResourceId"
@@ -95,6 +114,7 @@ extension ServiceCatalog {
     }
 
     public struct AssociateBudgetWithResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -108,6 +128,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PrincipalARN", required: true, type: .string), 
             AWSShapeMember(label: "PrincipalType", required: true, type: .enum)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -124,6 +145,15 @@ extension ServiceCatalog {
             self.principalType = principalType
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(principalARN, name:"principalARN", max: 1000)
+            try validate(principalARN, name:"principalARN", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case portfolioId = "PortfolioId"
@@ -133,6 +163,7 @@ extension ServiceCatalog {
     }
 
     public struct AssociatePrincipalWithPortfolioOutput: AWSShape {
+
 
         public init() {
         }
@@ -146,6 +177,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductId", required: true, type: .string), 
             AWSShapeMember(label: "SourcePortfolioId", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -162,6 +194,19 @@ extension ServiceCatalog {
             self.sourcePortfolioId = sourcePortfolioId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(sourcePortfolioId, name:"sourcePortfolioId", max: 100)
+            try validate(sourcePortfolioId, name:"sourcePortfolioId", min: 1)
+            try validate(sourcePortfolioId, name:"sourcePortfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case portfolioId = "PortfolioId"
@@ -171,6 +216,7 @@ extension ServiceCatalog {
     }
 
     public struct AssociateProductWithPortfolioOutput: AWSShape {
+
 
         public init() {
         }
@@ -184,6 +230,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string), 
             AWSShapeMember(label: "ServiceActionId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier. For example, prod-abcdzk7xy33qa.
@@ -200,6 +247,19 @@ extension ServiceCatalog {
             self.serviceActionId = serviceActionId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(serviceActionId, name:"serviceActionId", max: 100)
+            try validate(serviceActionId, name:"serviceActionId", min: 1)
+            try validate(serviceActionId, name:"serviceActionId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case productId = "ProductId"
@@ -209,6 +269,7 @@ extension ServiceCatalog {
     }
 
     public struct AssociateServiceActionWithProvisioningArtifactOutput: AWSShape {
+
 
         public init() {
         }
@@ -220,6 +281,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ResourceId", required: true, type: .string), 
             AWSShapeMember(label: "TagOptionId", required: true, type: .string)
         ]
+
         /// The resource identifier.
         public let resourceId: String
         /// The TagOption identifier.
@@ -230,6 +292,11 @@ extension ServiceCatalog {
             self.tagOptionId = tagOptionId
         }
 
+        public func validate() throws {
+            try validate(tagOptionId, name:"tagOptionId", max: 100)
+            try validate(tagOptionId, name:"tagOptionId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceId = "ResourceId"
             case tagOptionId = "TagOptionId"
@@ -237,6 +304,7 @@ extension ServiceCatalog {
     }
 
     public struct AssociateTagOptionWithResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -248,6 +316,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "ServiceActionAssociations", required: true, type: .list)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// One or more associations, each consisting of the Action ID, the Product ID, and the Provisioning Artifact ID.
@@ -256,6 +325,15 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, serviceActionAssociations: [ServiceActionAssociation]) {
             self.acceptLanguage = acceptLanguage
             self.serviceActionAssociations = serviceActionAssociations
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try serviceActionAssociations.forEach {
+                try $0.validate()
+            }
+            try validate(serviceActionAssociations, name:"serviceActionAssociations", max: 50)
+            try validate(serviceActionAssociations, name:"serviceActionAssociations", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -268,11 +346,19 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedServiceActionAssociations", required: false, type: .list)
         ]
+
         /// An object that contains a list of errors, along with information to help you identify the self-service action.
         public let failedServiceActionAssociations: [FailedServiceActionAssociation]?
 
         public init(failedServiceActionAssociations: [FailedServiceActionAssociation]? = nil) {
             self.failedServiceActionAssociations = failedServiceActionAssociations
+        }
+
+        public func validate() throws {
+            try failedServiceActionAssociations?.forEach {
+                try $0.validate()
+            }
+            try validate(failedServiceActionAssociations, name:"failedServiceActionAssociations", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -285,6 +371,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "ServiceActionAssociations", required: true, type: .list)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// One or more associations, each consisting of the Action ID, the Product ID, and the Provisioning Artifact ID.
@@ -293,6 +380,15 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, serviceActionAssociations: [ServiceActionAssociation]) {
             self.acceptLanguage = acceptLanguage
             self.serviceActionAssociations = serviceActionAssociations
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try serviceActionAssociations.forEach {
+                try $0.validate()
+            }
+            try validate(serviceActionAssociations, name:"serviceActionAssociations", max: 50)
+            try validate(serviceActionAssociations, name:"serviceActionAssociations", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -305,11 +401,19 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedServiceActionAssociations", required: false, type: .list)
         ]
+
         /// An object that contains a list of errors, along with information to help you identify the self-service action.
         public let failedServiceActionAssociations: [FailedServiceActionAssociation]?
 
         public init(failedServiceActionAssociations: [FailedServiceActionAssociation]? = nil) {
             self.failedServiceActionAssociations = failedServiceActionAssociations
+        }
+
+        public func validate() throws {
+            try failedServiceActionAssociations?.forEach {
+                try $0.validate()
+            }
+            try validate(failedServiceActionAssociations, name:"failedServiceActionAssociations", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -321,11 +425,17 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BudgetName", required: false, type: .string)
         ]
+
         /// Name of the associated budget.
         public let budgetName: String?
 
         public init(budgetName: String? = nil) {
             self.budgetName = budgetName
+        }
+
+        public func validate() throws {
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -344,6 +454,7 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the CloudWatch dashboard.
         public let name: String?
 
@@ -363,6 +474,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Owner", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .string)
         ]
+
         /// The identifier of the constraint.
         public let constraintId: String?
         /// The description of the constraint.
@@ -379,6 +491,16 @@ extension ServiceCatalog {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(constraintId, name:"constraintId", max: 100)
+            try validate(constraintId, name:"constraintId", min: 1)
+            try validate(constraintId, name:"constraintId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(description, name:"description", max: 2000)
+            try validate(owner, name:"owner", pattern: "^[0-9]{12}$")
+            try validate(`type`, name:"`type`", max: 1024)
+            try validate(`type`, name:"`type`", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case constraintId = "ConstraintId"
             case description = "Description"
@@ -392,6 +514,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .string)
         ]
+
         /// The description of the constraint.
         public let description: String?
         /// The type of constraint.    LAUNCH     NOTIFICATION    STACKSET    TEMPLATE   
@@ -400,6 +523,12 @@ extension ServiceCatalog {
         public init(description: String? = nil, type: String? = nil) {
             self.description = description
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 2000)
+            try validate(`type`, name:"`type`", max: 1024)
+            try validate(`type`, name:"`type`", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -423,6 +552,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "TargetProductId", required: false, type: .string), 
             AWSShapeMember(label: "TargetProductName", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The copy options. If the value is CopyTags, the tags from the source product are copied to the target product.
@@ -438,7 +568,7 @@ extension ServiceCatalog {
         /// A name for the target product. The default is the name of the source product.
         public let targetProductName: String?
 
-        public init(acceptLanguage: String? = nil, copyOptions: [CopyOption]? = nil, idempotencyToken: String, sourceProductArn: String, sourceProvisioningArtifactIdentifiers: [[ProvisioningArtifactPropertyName: String]]? = nil, targetProductId: String? = nil, targetProductName: String? = nil) {
+        public init(acceptLanguage: String? = nil, copyOptions: [CopyOption]? = nil, idempotencyToken: String = CopyProductInput.idempotencyToken(), sourceProductArn: String, sourceProvisioningArtifactIdentifiers: [[ProvisioningArtifactPropertyName: String]]? = nil, targetProductId: String? = nil, targetProductName: String? = nil) {
             self.acceptLanguage = acceptLanguage
             self.copyOptions = copyOptions
             self.idempotencyToken = idempotencyToken
@@ -446,6 +576,20 @@ extension ServiceCatalog {
             self.sourceProvisioningArtifactIdentifiers = sourceProvisioningArtifactIdentifiers
             self.targetProductId = targetProductId
             self.targetProductName = targetProductName
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(sourceProductArn, name:"sourceProductArn", max: 1224)
+            try validate(sourceProductArn, name:"sourceProductArn", min: 1)
+            try validate(sourceProductArn, name:"sourceProductArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(targetProductId, name:"targetProductId", max: 100)
+            try validate(targetProductId, name:"targetProductId", min: 1)
+            try validate(targetProductId, name:"targetProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(targetProductName, name:"targetProductName", max: 8191)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -463,11 +607,18 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CopyProductToken", required: false, type: .string)
         ]
+
         /// The token to use to track the progress of the operation.
         public let copyProductToken: String?
 
         public init(copyProductToken: String? = nil) {
             self.copyProductToken = copyProductToken
+        }
+
+        public func validate() throws {
+            try validate(copyProductToken, name:"copyProductToken", max: 100)
+            try validate(copyProductToken, name:"copyProductToken", min: 1)
+            try validate(copyProductToken, name:"copyProductToken", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -492,6 +643,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductId", required: true, type: .string), 
             AWSShapeMember(label: "Type", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The description of the constraint.
@@ -507,7 +659,7 @@ extension ServiceCatalog {
         /// The type of constraint.    LAUNCH     NOTIFICATION     RESOURCE_UPDATE     STACKSET     TEMPLATE   
         public let `type`: String
 
-        public init(acceptLanguage: String? = nil, description: String? = nil, idempotencyToken: String, parameters: String, portfolioId: String, productId: String, type: String) {
+        public init(acceptLanguage: String? = nil, description: String? = nil, idempotencyToken: String = CreateConstraintInput.idempotencyToken(), parameters: String, portfolioId: String, productId: String, type: String) {
             self.acceptLanguage = acceptLanguage
             self.description = description
             self.idempotencyToken = idempotencyToken
@@ -515,6 +667,22 @@ extension ServiceCatalog {
             self.portfolioId = portfolioId
             self.productId = productId
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(description, name:"description", max: 2000)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(`type`, name:"`type`", max: 1024)
+            try validate(`type`, name:"`type`", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -534,6 +702,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ConstraintParameters", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Information about the constraint.
         public let constraintDetail: ConstraintDetail?
         /// The constraint parameters.
@@ -545,6 +714,10 @@ extension ServiceCatalog {
             self.constraintDetail = constraintDetail
             self.constraintParameters = constraintParameters
             self.status = status
+        }
+
+        public func validate() throws {
+            try constraintDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -563,6 +736,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProviderName", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The description of the portfolio.
@@ -576,13 +750,29 @@ extension ServiceCatalog {
         /// One or more tags.
         public let tags: [Tag]?
 
-        public init(acceptLanguage: String? = nil, description: String? = nil, displayName: String, idempotencyToken: String, providerName: String, tags: [Tag]? = nil) {
+        public init(acceptLanguage: String? = nil, description: String? = nil, displayName: String, idempotencyToken: String = CreatePortfolioInput.idempotencyToken(), providerName: String, tags: [Tag]? = nil) {
             self.acceptLanguage = acceptLanguage
             self.description = description
             self.displayName = displayName
             self.idempotencyToken = idempotencyToken
             self.providerName = providerName
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(description, name:"description", max: 2000)
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(providerName, name:"providerName", max: 50)
+            try validate(providerName, name:"providerName", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -600,6 +790,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PortfolioDetail", required: false, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Information about the portfolio.
         public let portfolioDetail: PortfolioDetail?
         /// Information about the tags associated with the portfolio.
@@ -608,6 +799,14 @@ extension ServiceCatalog {
         public init(portfolioDetail: PortfolioDetail? = nil, tags: [Tag]? = nil) {
             self.portfolioDetail = portfolioDetail
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try portfolioDetail?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -623,6 +822,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "OrganizationNode", required: false, type: .structure), 
             AWSShapeMember(label: "PortfolioId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The AWS account ID. For example, 123456789012.
@@ -639,6 +839,15 @@ extension ServiceCatalog {
             self.portfolioId = portfolioId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(accountId, name:"accountId", pattern: "^[0-9]{12}$")
+            try organizationNode?.validate()
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case accountId = "AccountId"
@@ -651,11 +860,18 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PortfolioShareToken", required: false, type: .string)
         ]
+
         /// The portfolio share unique identifier. This will only be returned if portfolio is shared to an organization node.
         public let portfolioShareToken: String?
 
         public init(portfolioShareToken: String? = nil) {
             self.portfolioShareToken = portfolioShareToken
+        }
+
+        public func validate() throws {
+            try validate(portfolioShareToken, name:"portfolioShareToken", max: 100)
+            try validate(portfolioShareToken, name:"portfolioShareToken", min: 1)
+            try validate(portfolioShareToken, name:"portfolioShareToken", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -678,6 +894,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "SupportUrl", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The description of the product.
@@ -703,7 +920,7 @@ extension ServiceCatalog {
         /// One or more tags.
         public let tags: [Tag]?
 
-        public init(acceptLanguage: String? = nil, description: String? = nil, distributor: String? = nil, idempotencyToken: String, name: String, owner: String, productType: ProductType, provisioningArtifactParameters: ProvisioningArtifactProperties, supportDescription: String? = nil, supportEmail: String? = nil, supportUrl: String? = nil, tags: [Tag]? = nil) {
+        public init(acceptLanguage: String? = nil, description: String? = nil, distributor: String? = nil, idempotencyToken: String = CreateProductInput.idempotencyToken(), name: String, owner: String, productType: ProductType, provisioningArtifactParameters: ProvisioningArtifactProperties, supportDescription: String? = nil, supportEmail: String? = nil, supportUrl: String? = nil, tags: [Tag]? = nil) {
             self.acceptLanguage = acceptLanguage
             self.description = description
             self.distributor = distributor
@@ -716,6 +933,24 @@ extension ServiceCatalog {
             self.supportEmail = supportEmail
             self.supportUrl = supportUrl
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(description, name:"description", max: 8191)
+            try validate(distributor, name:"distributor", max: 8191)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(name, name:"name", max: 8191)
+            try validate(owner, name:"owner", max: 8191)
+            try validate(supportDescription, name:"supportDescription", max: 8191)
+            try validate(supportEmail, name:"supportEmail", max: 254)
+            try validate(supportUrl, name:"supportUrl", max: 2083)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -740,6 +975,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactDetail", required: false, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Information about the product view.
         public let productViewDetail: ProductViewDetail?
         /// Information about the provisioning artifact.
@@ -751,6 +987,15 @@ extension ServiceCatalog {
             self.productViewDetail = productViewDetail
             self.provisioningArtifactDetail = provisioningArtifactDetail
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try productViewDetail?.validate()
+            try provisioningArtifactDetail?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -774,6 +1019,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningParameters", required: false, type: .list), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// A unique identifier that you provide to ensure idempotency. If multiple requests differ only by the idempotency token, the same response is returned for each repeated request.
@@ -797,7 +1043,7 @@ extension ServiceCatalog {
         /// One or more tags. If the plan is for an existing provisioned product, the product must have a RESOURCE_UPDATE constraint with TagUpdatesOnProvisionedProduct set to ALLOWED to allow tag updates.
         public let tags: [Tag]?
 
-        public init(acceptLanguage: String? = nil, idempotencyToken: String, notificationArns: [String]? = nil, pathId: String? = nil, planName: String, planType: ProvisionedProductPlanType, productId: String, provisionedProductName: String, provisioningArtifactId: String, provisioningParameters: [UpdateProvisioningParameter]? = nil, tags: [Tag]? = nil) {
+        public init(acceptLanguage: String? = nil, idempotencyToken: String = CreateProvisionedProductPlanInput.idempotencyToken(), notificationArns: [String]? = nil, pathId: String? = nil, planName: String, planType: ProvisionedProductPlanType, productId: String, provisionedProductName: String, provisioningArtifactId: String, provisioningParameters: [UpdateProvisioningParameter]? = nil, tags: [Tag]? = nil) {
             self.acceptLanguage = acceptLanguage
             self.idempotencyToken = idempotencyToken
             self.notificationArns = notificationArns
@@ -809,6 +1055,38 @@ extension ServiceCatalog {
             self.provisioningArtifactId = provisioningArtifactId
             self.provisioningParameters = provisioningParameters
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try notificationArns?.forEach {
+                try validate($0, name:"notificationArns[]", max: 1224)
+                try validate($0, name:"notificationArns[]", min: 1)
+                try validate($0, name:"notificationArns[]", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            }
+            try validate(notificationArns, name:"notificationArns", max: 5)
+            try validate(pathId, name:"pathId", max: 100)
+            try validate(pathId, name:"pathId", min: 1)
+            try validate(pathId, name:"pathId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductName, name:"provisionedProductName", max: 128)
+            try validate(provisionedProductName, name:"provisionedProductName", min: 1)
+            try validate(provisionedProductName, name:"provisionedProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try provisioningParameters?.forEach {
+                try $0.validate()
+            }
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -834,6 +1112,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactId", required: false, type: .string), 
             AWSShapeMember(label: "ProvisionProductId", required: false, type: .string)
         ]
+
         /// The plan identifier.
         public let planId: String?
         /// The name of the plan.
@@ -853,6 +1132,21 @@ extension ServiceCatalog {
             self.provisionProductId = provisionProductId
         }
 
+        public func validate() throws {
+            try validate(planId, name:"planId", max: 100)
+            try validate(planId, name:"planId", min: 1)
+            try validate(planId, name:"planId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductName, name:"provisionedProductName", max: 128)
+            try validate(provisionedProductName, name:"provisionedProductName", min: 1)
+            try validate(provisionedProductName, name:"provisionedProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionProductId, name:"provisionProductId", max: 100)
+            try validate(provisionProductId, name:"provisionProductId", min: 1)
+            try validate(provisionProductId, name:"provisionProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case planId = "PlanId"
             case planName = "PlanName"
@@ -869,6 +1163,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Parameters", required: true, type: .structure), 
             AWSShapeMember(label: "ProductId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// A unique identifier that you provide to ensure idempotency. If multiple requests differ only by the idempotency token, the same response is returned for each repeated request.
@@ -878,11 +1173,21 @@ extension ServiceCatalog {
         /// The product identifier.
         public let productId: String
 
-        public init(acceptLanguage: String? = nil, idempotencyToken: String, parameters: ProvisioningArtifactProperties, productId: String) {
+        public init(acceptLanguage: String? = nil, idempotencyToken: String = CreateProvisioningArtifactInput.idempotencyToken(), parameters: ProvisioningArtifactProperties, productId: String) {
             self.acceptLanguage = acceptLanguage
             self.idempotencyToken = idempotencyToken
             self.parameters = parameters
             self.productId = productId
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -899,6 +1204,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactDetail", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The URL of the CloudFormation template in Amazon S3, in JSON format.
         public let info: [String: String]?
         /// Information about the provisioning artifact.
@@ -910,6 +1216,10 @@ extension ServiceCatalog {
             self.info = info
             self.provisioningArtifactDetail = provisioningArtifactDetail
             self.status = status
+        }
+
+        public func validate() throws {
+            try provisioningArtifactDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -928,6 +1238,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "IdempotencyToken", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The self-service action definition. Can be one of the following:  Name  The name of the AWS Systems Manager Document. For example, AWS-RestartEC2Instance.  Version  The AWS Systems Manager automation document version. For example, "Version": "1"   AssumeRole  The Amazon Resource Name (ARN) of the role that performs the self-service actions on your behalf. For example, "AssumeRole": "arn:aws:iam::12345678910:role/ActionRole". To reuse the provisioned product launch role, set to "AssumeRole": "LAUNCH_ROLE".  Parameters  The list of parameters in JSON format. For example: [{\"Name\":\"InstanceId\",\"Type\":\"TARGET\"}].  
@@ -941,13 +1252,24 @@ extension ServiceCatalog {
         /// The self-service action name.
         public let name: String
 
-        public init(acceptLanguage: String? = nil, definition: [ServiceActionDefinitionKey: String], definitionType: ServiceActionDefinitionType, description: String? = nil, idempotencyToken: String, name: String) {
+        public init(acceptLanguage: String? = nil, definition: [ServiceActionDefinitionKey: String], definitionType: ServiceActionDefinitionType, description: String? = nil, idempotencyToken: String = CreateServiceActionInput.idempotencyToken(), name: String) {
             self.acceptLanguage = acceptLanguage
             self.definition = definition
             self.definitionType = definitionType
             self.description = description
             self.idempotencyToken = idempotencyToken
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(description, name:"description", max: 1024)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -964,11 +1286,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServiceActionDetail", required: false, type: .structure)
         ]
+
         /// An object containing information about the self-service action.
         public let serviceActionDetail: ServiceActionDetail?
 
         public init(serviceActionDetail: ServiceActionDetail? = nil) {
             self.serviceActionDetail = serviceActionDetail
+        }
+
+        public func validate() throws {
+            try serviceActionDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -981,6 +1308,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The TagOption key.
         public let key: String
         /// The TagOption value.
@@ -989,6 +1317,15 @@ extension ServiceCatalog {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1001,11 +1338,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagOptionDetail", required: false, type: .structure)
         ]
+
         /// Information about the TagOption.
         public let tagOptionDetail: TagOptionDetail?
 
         public init(tagOptionDetail: TagOptionDetail? = nil) {
             self.tagOptionDetail = tagOptionDetail
+        }
+
+        public func validate() throws {
+            try tagOptionDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1018,6 +1360,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The identifier of the constraint.
@@ -1028,6 +1371,13 @@ extension ServiceCatalog {
             self.id = id
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case id = "Id"
@@ -1035,6 +1385,7 @@ extension ServiceCatalog {
     }
 
     public struct DeleteConstraintOutput: AWSShape {
+
 
         public init() {
         }
@@ -1046,6 +1397,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -1056,6 +1408,13 @@ extension ServiceCatalog {
             self.id = id
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case id = "Id"
@@ -1063,6 +1422,7 @@ extension ServiceCatalog {
     }
 
     public struct DeletePortfolioOutput: AWSShape {
+
 
         public init() {
         }
@@ -1076,6 +1436,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "OrganizationNode", required: false, type: .structure), 
             AWSShapeMember(label: "PortfolioId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The AWS account ID.
@@ -1092,6 +1453,15 @@ extension ServiceCatalog {
             self.portfolioId = portfolioId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(accountId, name:"accountId", pattern: "^[0-9]{12}$")
+            try organizationNode?.validate()
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case accountId = "AccountId"
@@ -1104,11 +1474,18 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PortfolioShareToken", required: false, type: .string)
         ]
+
         /// The portfolio share unique identifier. This will only be returned if delete is made to an organization node.
         public let portfolioShareToken: String?
 
         public init(portfolioShareToken: String? = nil) {
             self.portfolioShareToken = portfolioShareToken
+        }
+
+        public func validate() throws {
+            try validate(portfolioShareToken, name:"portfolioShareToken", max: 100)
+            try validate(portfolioShareToken, name:"portfolioShareToken", min: 1)
+            try validate(portfolioShareToken, name:"portfolioShareToken", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1121,6 +1498,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier.
@@ -1131,6 +1509,13 @@ extension ServiceCatalog {
             self.id = id
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case id = "Id"
@@ -1138,6 +1523,7 @@ extension ServiceCatalog {
     }
 
     public struct DeleteProductOutput: AWSShape {
+
 
         public init() {
         }
@@ -1150,6 +1536,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "IgnoreErrors", required: false, type: .boolean), 
             AWSShapeMember(label: "PlanId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// If set to true, AWS Service Catalog stops managing the specified provisioned product even if it cannot delete the underlying resources.
@@ -1163,6 +1550,13 @@ extension ServiceCatalog {
             self.planId = planId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(planId, name:"planId", max: 100)
+            try validate(planId, name:"planId", min: 1)
+            try validate(planId, name:"planId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case ignoreErrors = "IgnoreErrors"
@@ -1171,6 +1565,7 @@ extension ServiceCatalog {
     }
 
     public struct DeleteProvisionedProductPlanOutput: AWSShape {
+
 
         public init() {
         }
@@ -1183,6 +1578,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductId", required: true, type: .string), 
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier.
@@ -1196,6 +1592,16 @@ extension ServiceCatalog {
             self.provisioningArtifactId = provisioningArtifactId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case productId = "ProductId"
@@ -1204,6 +1610,7 @@ extension ServiceCatalog {
     }
 
     public struct DeleteProvisioningArtifactOutput: AWSShape {
+
 
         public init() {
         }
@@ -1215,6 +1622,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The self-service action identifier. For example, act-fs7abcd89wxyz.
@@ -1225,6 +1633,13 @@ extension ServiceCatalog {
             self.id = id
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case id = "Id"
@@ -1232,6 +1647,7 @@ extension ServiceCatalog {
     }
 
     public struct DeleteServiceActionOutput: AWSShape {
+
 
         public init() {
         }
@@ -1242,11 +1658,17 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The TagOption identifier.
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1255,6 +1677,7 @@ extension ServiceCatalog {
     }
 
     public struct DeleteTagOptionOutput: AWSShape {
+
 
         public init() {
         }
@@ -1266,6 +1689,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The identifier of the constraint.
@@ -1274,6 +1698,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, id: String) {
             self.acceptLanguage = acceptLanguage
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1288,6 +1719,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ConstraintParameters", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Information about the constraint.
         public let constraintDetail: ConstraintDetail?
         /// The constraint parameters.
@@ -1299,6 +1731,10 @@ extension ServiceCatalog {
             self.constraintDetail = constraintDetail
             self.constraintParameters = constraintParameters
             self.status = status
+        }
+
+        public func validate() throws {
+            try constraintDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1313,6 +1749,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "CopyProductToken", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The token for the copy product operation. This token is returned by CopyProduct.
@@ -1321,6 +1758,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, copyProductToken: String) {
             self.acceptLanguage = acceptLanguage
             self.copyProductToken = copyProductToken
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(copyProductToken, name:"copyProductToken", max: 100)
+            try validate(copyProductToken, name:"copyProductToken", min: 1)
+            try validate(copyProductToken, name:"copyProductToken", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1335,6 +1779,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "StatusDetail", required: false, type: .string), 
             AWSShapeMember(label: "TargetProductId", required: false, type: .string)
         ]
+
         /// The status of the copy product operation.
         public let copyProductStatus: CopyProductStatus?
         /// The status message.
@@ -1346,6 +1791,12 @@ extension ServiceCatalog {
             self.copyProductStatus = copyProductStatus
             self.statusDetail = statusDetail
             self.targetProductId = targetProductId
+        }
+
+        public func validate() throws {
+            try validate(targetProductId, name:"targetProductId", max: 100)
+            try validate(targetProductId, name:"targetProductId", min: 1)
+            try validate(targetProductId, name:"targetProductId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1360,6 +1811,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -1368,6 +1820,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, id: String) {
             self.acceptLanguage = acceptLanguage
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1383,6 +1842,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "TagOptions", required: false, type: .list), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Information about the associated budgets.
         public let budgets: [BudgetDetail]?
         /// Information about the portfolio.
@@ -1399,6 +1859,20 @@ extension ServiceCatalog {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try budgets?.forEach {
+                try $0.validate()
+            }
+            try portfolioDetail?.validate()
+            try tagOptions?.forEach {
+                try $0.validate()
+            }
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case budgets = "Budgets"
             case portfolioDetail = "PortfolioDetail"
@@ -1411,11 +1885,18 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PortfolioShareToken", required: true, type: .string)
         ]
+
         /// The token for the portfolio share operation. This token is returned either by CreatePortfolioShare or by DeletePortfolioShare.
         public let portfolioShareToken: String
 
         public init(portfolioShareToken: String) {
             self.portfolioShareToken = portfolioShareToken
+        }
+
+        public func validate() throws {
+            try validate(portfolioShareToken, name:"portfolioShareToken", max: 100)
+            try validate(portfolioShareToken, name:"portfolioShareToken", min: 1)
+            try validate(portfolioShareToken, name:"portfolioShareToken", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1431,6 +1912,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ShareDetails", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Organization node identifier. It can be either account id, organizational unit id or organization id.
         public let organizationNodeValue: String?
         /// The portfolio identifier.
@@ -1450,6 +1932,17 @@ extension ServiceCatalog {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(organizationNodeValue, name:"organizationNodeValue", pattern: "(^[0-9]{12}$)|(^arn:aws:organizations::\\d{12}:organization\\/o-[a-z0-9]{10,32})|(^o-[a-z0-9]{10,32}$)|(^arn:aws:organizations::\\d{12}:ou\\/o-[a-z0-9]{10,32}\\/ou-[0-9a-z]{4,32}-[0-9a-z]{8,32}$)|(^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$)")
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(portfolioShareToken, name:"portfolioShareToken", max: 100)
+            try validate(portfolioShareToken, name:"portfolioShareToken", min: 1)
+            try validate(portfolioShareToken, name:"portfolioShareToken", pattern: "^[a-zA-Z0-9_\\-]*")
+            try shareDetails?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case organizationNodeValue = "OrganizationNodeValue"
             case portfolioId = "PortfolioId"
@@ -1464,6 +1957,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier.
@@ -1472,6 +1966,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, id: String) {
             self.acceptLanguage = acceptLanguage
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1488,6 +1989,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "TagOptions", required: false, type: .list), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Information about the associated budgets.
         public let budgets: [BudgetDetail]?
         /// Information about the product view.
@@ -1507,6 +2009,23 @@ extension ServiceCatalog {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try budgets?.forEach {
+                try $0.validate()
+            }
+            try productViewDetail?.validate()
+            try provisioningArtifactSummaries?.forEach {
+                try $0.validate()
+            }
+            try tagOptions?.forEach {
+                try $0.validate()
+            }
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case budgets = "Budgets"
             case productViewDetail = "ProductViewDetail"
@@ -1521,6 +2040,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier.
@@ -1529,6 +2049,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, id: String) {
             self.acceptLanguage = acceptLanguage
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1543,6 +2070,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductViewSummary", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisioningArtifacts", required: false, type: .list)
         ]
+
         /// Information about the associated budgets.
         public let budgets: [BudgetDetail]?
         /// Summary information about the product view.
@@ -1554,6 +2082,16 @@ extension ServiceCatalog {
             self.budgets = budgets
             self.productViewSummary = productViewSummary
             self.provisioningArtifacts = provisioningArtifacts
+        }
+
+        public func validate() throws {
+            try budgets?.forEach {
+                try $0.validate()
+            }
+            try productViewSummary?.validate()
+            try provisioningArtifacts?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1568,6 +2106,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product view identifier.
@@ -1576,6 +2115,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, id: String) {
             self.acceptLanguage = acceptLanguage
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1589,6 +2135,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductViewSummary", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisioningArtifacts", required: false, type: .list)
         ]
+
         /// Summary information about the product.
         public let productViewSummary: ProductViewSummary?
         /// Information about the provisioning artifacts for the product.
@@ -1597,6 +2144,13 @@ extension ServiceCatalog {
         public init(productViewSummary: ProductViewSummary? = nil, provisioningArtifacts: [ProvisioningArtifact]? = nil) {
             self.productViewSummary = productViewSummary
             self.provisioningArtifacts = provisioningArtifacts
+        }
+
+        public func validate() throws {
+            try productViewSummary?.validate()
+            try provisioningArtifacts?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1610,6 +2164,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The provisioned product identifier.
@@ -1618,6 +2173,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, id: String) {
             self.acceptLanguage = acceptLanguage
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1631,6 +2193,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "CloudWatchDashboards", required: false, type: .list), 
             AWSShapeMember(label: "ProvisionedProductDetail", required: false, type: .structure)
         ]
+
         /// Any CloudWatch dashboards that were created when provisioning the product.
         public let cloudWatchDashboards: [CloudWatchDashboard]?
         /// Information about the provisioned product.
@@ -1639,6 +2202,10 @@ extension ServiceCatalog {
         public init(cloudWatchDashboards: [CloudWatchDashboard]? = nil, provisionedProductDetail: ProvisionedProductDetail? = nil) {
             self.cloudWatchDashboards = cloudWatchDashboards
             self.provisionedProductDetail = provisionedProductDetail
+        }
+
+        public func validate() throws {
+            try provisionedProductDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1654,6 +2221,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "PlanId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -1670,6 +2238,17 @@ extension ServiceCatalog {
             self.planId = planId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(planId, name:"planId", max: 100)
+            try validate(planId, name:"planId", min: 1)
+            try validate(planId, name:"planId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -1684,6 +2263,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisionedProductPlanDetails", required: false, type: .structure), 
             AWSShapeMember(label: "ResourceChanges", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the plan.
@@ -1695,6 +2275,15 @@ extension ServiceCatalog {
             self.nextPageToken = nextPageToken
             self.provisionedProductPlanDetails = provisionedProductPlanDetails
             self.resourceChanges = resourceChanges
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try provisionedProductPlanDetails?.validate()
+            try resourceChanges?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1711,6 +2300,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string), 
             AWSShapeMember(label: "Verbose", required: false, type: .boolean)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier.
@@ -1727,6 +2317,16 @@ extension ServiceCatalog {
             self.verbose = verbose
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case productId = "ProductId"
@@ -1741,6 +2341,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactDetail", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The URL of the CloudFormation template in Amazon S3.
         public let info: [String: String]?
         /// Information about the provisioning artifact.
@@ -1752,6 +2353,10 @@ extension ServiceCatalog {
             self.info = info
             self.provisioningArtifactDetail = provisioningArtifactDetail
             self.status = status
+        }
+
+        public func validate() throws {
+            try provisioningArtifactDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1768,6 +2373,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductId", required: true, type: .string), 
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The path identifier of the product. This value is optional if the product has a default path, and required if the product has more than one path. To list the paths for a product, use ListLaunchPaths.
@@ -1782,6 +2388,19 @@ extension ServiceCatalog {
             self.pathId = pathId
             self.productId = productId
             self.provisioningArtifactId = provisioningArtifactId
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pathId, name:"pathId", max: 100)
+            try validate(pathId, name:"pathId", min: 1)
+            try validate(pathId, name:"pathId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1800,6 +2419,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "TagOptions", required: false, type: .list), 
             AWSShapeMember(label: "UsageInstructions", required: false, type: .list)
         ]
+
         /// Information about the constraints used to provision the product.
         public let constraintSummaries: [ConstraintSummary]?
         /// Information about the parameters used to provision the product.
@@ -1819,6 +2439,19 @@ extension ServiceCatalog {
             self.usageInstructions = usageInstructions
         }
 
+        public func validate() throws {
+            try constraintSummaries?.forEach {
+                try $0.validate()
+            }
+            try provisioningArtifactParameters?.forEach {
+                try $0.validate()
+            }
+            try provisioningArtifactPreferences?.validate()
+            try tagOptions?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case constraintSummaries = "ConstraintSummaries"
             case provisioningArtifactParameters = "ProvisioningArtifactParameters"
@@ -1835,6 +2468,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageSize", required: false, type: .integer), 
             AWSShapeMember(label: "PageToken", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The record identifier of the provisioned product. This identifier is returned by the request operation.
@@ -1851,6 +2485,17 @@ extension ServiceCatalog {
             self.pageToken = pageToken
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case id = "Id"
@@ -1865,6 +2510,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "RecordDetail", required: false, type: .structure), 
             AWSShapeMember(label: "RecordOutputs", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the product.
@@ -1876,6 +2522,12 @@ extension ServiceCatalog {
             self.nextPageToken = nextPageToken
             self.recordDetail = recordDetail
             self.recordOutputs = recordOutputs
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try recordDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1890,6 +2542,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The self-service action identifier.
@@ -1898,6 +2551,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, id: String) {
             self.acceptLanguage = acceptLanguage
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1910,11 +2570,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServiceActionDetail", required: false, type: .structure)
         ]
+
         /// Detailed information about the self-service action.
         public let serviceActionDetail: ServiceActionDetail?
 
         public init(serviceActionDetail: ServiceActionDetail? = nil) {
             self.serviceActionDetail = serviceActionDetail
+        }
+
+        public func validate() throws {
+            try serviceActionDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1926,11 +2591,17 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// The TagOption identifier.
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1942,11 +2613,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagOptionDetail", required: false, type: .structure)
         ]
+
         /// Information about the TagOption.
         public let tagOptionDetail: TagOptionDetail?
 
         public init(tagOptionDetail: TagOptionDetail? = nil) {
             self.tagOptionDetail = tagOptionDetail
+        }
+
+        public func validate() throws {
+            try tagOptionDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1956,12 +2632,14 @@ extension ServiceCatalog {
 
     public struct DisableAWSOrganizationsAccessInput: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct DisableAWSOrganizationsAccessOutput: AWSShape {
+
 
         public init() {
         }
@@ -1973,6 +2651,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "BudgetName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The name of the budget you want to disassociate.
         public let budgetName: String
         /// The resource identifier you want to disassociate from. Either a portfolio-id or a product-id.
@@ -1983,6 +2662,14 @@ extension ServiceCatalog {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(resourceId, name:"resourceId", max: 100)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceId, name:"resourceId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case budgetName = "BudgetName"
             case resourceId = "ResourceId"
@@ -1990,6 +2677,7 @@ extension ServiceCatalog {
     }
 
     public struct DisassociateBudgetFromResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -2002,6 +2690,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PortfolioId", required: true, type: .string), 
             AWSShapeMember(label: "PrincipalARN", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -2015,6 +2704,15 @@ extension ServiceCatalog {
             self.principalARN = principalARN
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(principalARN, name:"principalARN", max: 1000)
+            try validate(principalARN, name:"principalARN", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case portfolioId = "PortfolioId"
@@ -2023,6 +2721,7 @@ extension ServiceCatalog {
     }
 
     public struct DisassociatePrincipalFromPortfolioOutput: AWSShape {
+
 
         public init() {
         }
@@ -2035,6 +2734,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PortfolioId", required: true, type: .string), 
             AWSShapeMember(label: "ProductId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -2048,6 +2748,16 @@ extension ServiceCatalog {
             self.productId = productId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case portfolioId = "PortfolioId"
@@ -2056,6 +2766,7 @@ extension ServiceCatalog {
     }
 
     public struct DisassociateProductFromPortfolioOutput: AWSShape {
+
 
         public init() {
         }
@@ -2069,6 +2780,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string), 
             AWSShapeMember(label: "ServiceActionId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier. For example, prod-abcdzk7xy33qa.
@@ -2085,6 +2797,19 @@ extension ServiceCatalog {
             self.serviceActionId = serviceActionId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(serviceActionId, name:"serviceActionId", max: 100)
+            try validate(serviceActionId, name:"serviceActionId", min: 1)
+            try validate(serviceActionId, name:"serviceActionId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case productId = "ProductId"
@@ -2094,6 +2819,7 @@ extension ServiceCatalog {
     }
 
     public struct DisassociateServiceActionFromProvisioningArtifactOutput: AWSShape {
+
 
         public init() {
         }
@@ -2105,6 +2831,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ResourceId", required: true, type: .string), 
             AWSShapeMember(label: "TagOptionId", required: true, type: .string)
         ]
+
         /// The resource identifier.
         public let resourceId: String
         /// The TagOption identifier.
@@ -2115,6 +2842,11 @@ extension ServiceCatalog {
             self.tagOptionId = tagOptionId
         }
 
+        public func validate() throws {
+            try validate(tagOptionId, name:"tagOptionId", max: 100)
+            try validate(tagOptionId, name:"tagOptionId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceId = "ResourceId"
             case tagOptionId = "TagOptionId"
@@ -2123,6 +2855,7 @@ extension ServiceCatalog {
 
     public struct DisassociateTagOptionFromResourceOutput: AWSShape {
 
+
         public init() {
         }
 
@@ -2130,12 +2863,14 @@ extension ServiceCatalog {
 
     public struct EnableAWSOrganizationsAccessInput: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct EnableAWSOrganizationsAccessOutput: AWSShape {
+
 
         public init() {
         }
@@ -2154,6 +2889,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "IdempotencyToken", required: true, type: .string), 
             AWSShapeMember(label: "PlanId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// A unique identifier that you provide to ensure idempotency. If multiple requests differ only by the idempotency token, the same response is returned for each repeated request.
@@ -2161,10 +2897,20 @@ extension ServiceCatalog {
         /// The plan identifier.
         public let planId: String
 
-        public init(acceptLanguage: String? = nil, idempotencyToken: String, planId: String) {
+        public init(acceptLanguage: String? = nil, idempotencyToken: String = ExecuteProvisionedProductPlanInput.idempotencyToken(), planId: String) {
             self.acceptLanguage = acceptLanguage
             self.idempotencyToken = idempotencyToken
             self.planId = planId
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(planId, name:"planId", max: 100)
+            try validate(planId, name:"planId", min: 1)
+            try validate(planId, name:"planId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2178,11 +2924,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RecordDetail", required: false, type: .structure)
         ]
+
         /// Information about the result of provisioning the product.
         public let recordDetail: RecordDetail?
 
         public init(recordDetail: RecordDetail? = nil) {
             self.recordDetail = recordDetail
+        }
+
+        public func validate() throws {
+            try recordDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2197,6 +2948,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisionedProductId", required: true, type: .string), 
             AWSShapeMember(label: "ServiceActionId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// An idempotency token that uniquely identifies the execute request.
@@ -2206,11 +2958,24 @@ extension ServiceCatalog {
         /// The self-service action identifier. For example, act-fs7abcd89wxyz.
         public let serviceActionId: String
 
-        public init(acceptLanguage: String? = nil, executeToken: String, provisionedProductId: String, serviceActionId: String) {
+        public init(acceptLanguage: String? = nil, executeToken: String = ExecuteProvisionedProductServiceActionInput.idempotencyToken(), provisionedProductId: String, serviceActionId: String) {
             self.acceptLanguage = acceptLanguage
             self.executeToken = executeToken
             self.provisionedProductId = provisionedProductId
             self.serviceActionId = serviceActionId
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(executeToken, name:"executeToken", max: 128)
+            try validate(executeToken, name:"executeToken", min: 1)
+            try validate(executeToken, name:"executeToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(provisionedProductId, name:"provisionedProductId", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", min: 1)
+            try validate(provisionedProductId, name:"provisionedProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(serviceActionId, name:"serviceActionId", max: 100)
+            try validate(serviceActionId, name:"serviceActionId", min: 1)
+            try validate(serviceActionId, name:"serviceActionId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2225,11 +2990,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RecordDetail", required: false, type: .structure)
         ]
+
         /// An object containing detailed information about the result of provisioning the product.
         public let recordDetail: RecordDetail?
 
         public init(recordDetail: RecordDetail? = nil) {
             self.recordDetail = recordDetail
+        }
+
+        public func validate() throws {
+            try recordDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2245,6 +3015,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactId", required: false, type: .string), 
             AWSShapeMember(label: "ServiceActionId", required: false, type: .string)
         ]
+
         /// The error code. Valid values are listed below.
         public let errorCode: ServiceActionAssociationErrorCode?
         /// A text description of the error.
@@ -2264,6 +3035,20 @@ extension ServiceCatalog {
             self.serviceActionId = serviceActionId
         }
 
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", max: 1024)
+            try validate(errorMessage, name:"errorMessage", min: 1)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(serviceActionId, name:"serviceActionId", max: 100)
+            try validate(serviceActionId, name:"serviceActionId", min: 1)
+            try validate(serviceActionId, name:"serviceActionId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case errorCode = "ErrorCode"
             case errorMessage = "ErrorMessage"
@@ -2275,6 +3060,7 @@ extension ServiceCatalog {
 
     public struct GetAWSOrganizationsAccessStatusInput: AWSShape {
 
+
         public init() {
         }
 
@@ -2284,6 +3070,7 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccessStatus", required: false, type: .enum)
         ]
+
         /// The status of the portfolio share feature.
         public let accessStatus: AccessStatus?
 
@@ -2303,6 +3090,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The constraints on the portfolio-product relationship.
         public let constraintSummaries: [ConstraintSummary]?
         /// The identifier of the product path.
@@ -2317,6 +3105,19 @@ extension ServiceCatalog {
             self.id = id
             self.name = name
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try constraintSummaries?.forEach {
+                try $0.validate()
+            }
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2334,6 +3135,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "PortfolioShareType", required: false, type: .enum)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2350,6 +3152,14 @@ extension ServiceCatalog {
             self.portfolioShareType = portfolioShareType
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -2363,6 +3173,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "PortfolioDetails", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the portfolios.
@@ -2371,6 +3182,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, portfolioDetails: [PortfolioDetail]? = nil) {
             self.nextPageToken = nextPageToken
             self.portfolioDetails = portfolioDetails
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try portfolioDetails?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2386,6 +3205,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2402,6 +3222,17 @@ extension ServiceCatalog {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(resourceId, name:"resourceId", max: 100)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceId, name:"resourceId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -2415,6 +3246,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Budgets", required: false, type: .list), 
             AWSShapeMember(label: "NextPageToken", required: false, type: .string)
         ]
+
         /// Information about the associated budgets.
         public let budgets: [BudgetDetail]?
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
@@ -2423,6 +3255,14 @@ extension ServiceCatalog {
         public init(budgets: [BudgetDetail]? = nil, nextPageToken: String? = nil) {
             self.budgets = budgets
             self.nextPageToken = nextPageToken
+        }
+
+        public func validate() throws {
+            try budgets?.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2439,6 +3279,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PortfolioId", required: true, type: .string), 
             AWSShapeMember(label: "ProductId", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2458,6 +3299,20 @@ extension ServiceCatalog {
             self.productId = productId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -2472,6 +3327,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ConstraintDetails", required: false, type: .list), 
             AWSShapeMember(label: "NextPageToken", required: false, type: .string)
         ]
+
         /// Information about the constraints.
         public let constraintDetails: [ConstraintDetail]?
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
@@ -2480,6 +3336,14 @@ extension ServiceCatalog {
         public init(constraintDetails: [ConstraintDetail]? = nil, nextPageToken: String? = nil) {
             self.constraintDetails = constraintDetails
             self.nextPageToken = nextPageToken
+        }
+
+        public func validate() throws {
+            try constraintDetails?.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2495,6 +3359,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProductId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2511,6 +3376,17 @@ extension ServiceCatalog {
             self.productId = productId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -2524,6 +3400,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "LaunchPathSummaries", required: false, type: .list), 
             AWSShapeMember(label: "NextPageToken", required: false, type: .string)
         ]
+
         /// Information about the launch path.
         public let launchPathSummaries: [LaunchPathSummary]?
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
@@ -2532,6 +3409,14 @@ extension ServiceCatalog {
         public init(launchPathSummaries: [LaunchPathSummary]? = nil, nextPageToken: String? = nil) {
             self.launchPathSummaries = launchPathSummaries
             self.nextPageToken = nextPageToken
+        }
+
+        public func validate() throws {
+            try launchPathSummaries?.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2548,6 +3433,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "PortfolioId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The organization node type that will be returned in the output.    ORGANIZATION - Organization that has access to the portfolio.     ORGANIZATIONAL_UNIT - Organizational unit that has access to the portfolio within your organization.    ACCOUNT - Account that has access to the portfolio within your organization.  
@@ -2567,6 +3453,17 @@ extension ServiceCatalog {
             self.portfolioId = portfolioId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case organizationNodeType = "OrganizationNodeType"
@@ -2581,6 +3478,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationNodes", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Displays information about the organization nodes.
@@ -2589,6 +3487,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, organizationNodes: [OrganizationNode]? = nil) {
             self.nextPageToken = nextPageToken
             self.organizationNodes = organizationNodes
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try organizationNodes?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2602,6 +3508,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "PortfolioId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -2610,6 +3517,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, portfolioId: String) {
             self.acceptLanguage = acceptLanguage
             self.portfolioId = portfolioId
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2623,6 +3537,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AccountIds", required: false, type: .list), 
             AWSShapeMember(label: "NextPageToken", required: false, type: .string)
         ]
+
         /// Information about the AWS accounts with access to the portfolio.
         public let accountIds: [String]?
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
@@ -2631,6 +3546,14 @@ extension ServiceCatalog {
         public init(accountIds: [String]? = nil, nextPageToken: String? = nil) {
             self.accountIds = accountIds
             self.nextPageToken = nextPageToken
+        }
+
+        public func validate() throws {
+            try accountIds?.forEach {
+                try validate($0, name:"accountIds[]", pattern: "^[0-9]{12}$")
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2646,6 +3569,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProductId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2662,6 +3586,17 @@ extension ServiceCatalog {
             self.productId = productId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -2675,6 +3610,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "PortfolioDetails", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the portfolios.
@@ -2683,6 +3619,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, portfolioDetails: [PortfolioDetail]? = nil) {
             self.nextPageToken = nextPageToken
             self.portfolioDetails = portfolioDetails
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try portfolioDetails?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2697,6 +3641,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageSize", required: false, type: .integer), 
             AWSShapeMember(label: "PageToken", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2708,6 +3653,14 @@ extension ServiceCatalog {
             self.acceptLanguage = acceptLanguage
             self.pageSize = pageSize
             self.pageToken = pageToken
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2722,6 +3675,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "PortfolioDetails", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the portfolios.
@@ -2730,6 +3684,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, portfolioDetails: [PortfolioDetail]? = nil) {
             self.nextPageToken = nextPageToken
             self.portfolioDetails = portfolioDetails
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try portfolioDetails?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2745,6 +3707,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "PortfolioId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2761,6 +3724,17 @@ extension ServiceCatalog {
             self.portfolioId = portfolioId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -2774,6 +3748,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "Principals", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// The IAM principals (users or roles) associated with the portfolio.
@@ -2782,6 +3757,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, principals: [Principal]? = nil) {
             self.nextPageToken = nextPageToken
             self.principals = principals
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try principals?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2798,6 +3781,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProvisionProductId", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The access level to use to obtain results. The default is User.
@@ -2817,6 +3801,17 @@ extension ServiceCatalog {
             self.provisionProductId = provisionProductId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(provisionProductId, name:"provisionProductId", max: 100)
+            try validate(provisionProductId, name:"provisionProductId", min: 1)
+            try validate(provisionProductId, name:"provisionProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case accessLevelFilter = "AccessLevelFilter"
@@ -2831,6 +3826,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProvisionedProductPlans", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the plans.
@@ -2839,6 +3835,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, provisionedProductPlans: [ProvisionedProductPlanSummary]? = nil) {
             self.nextPageToken = nextPageToken
             self.provisionedProductPlans = provisionedProductPlans
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try provisionedProductPlans?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2854,6 +3858,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "ServiceActionId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -2870,6 +3875,17 @@ extension ServiceCatalog {
             self.serviceActionId = serviceActionId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(serviceActionId, name:"serviceActionId", max: 100)
+            try validate(serviceActionId, name:"serviceActionId", min: 1)
+            try validate(serviceActionId, name:"serviceActionId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -2883,6 +3899,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProvisioningArtifactViews", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// An array of objects with information about product views and provisioning artifacts.
@@ -2891,6 +3908,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, provisioningArtifactViews: [ProvisioningArtifactView]? = nil) {
             self.nextPageToken = nextPageToken
             self.provisioningArtifactViews = provisioningArtifactViews
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try provisioningArtifactViews?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2904,6 +3929,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "AcceptLanguage", required: false, type: .string), 
             AWSShapeMember(label: "ProductId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The product identifier.
@@ -2912,6 +3938,13 @@ extension ServiceCatalog {
         public init(acceptLanguage: String? = nil, productId: String) {
             self.acceptLanguage = acceptLanguage
             self.productId = productId
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2925,6 +3958,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProvisioningArtifactDetails", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the provisioning artifacts.
@@ -2933,6 +3967,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, provisioningArtifactDetails: [ProvisioningArtifactDetail]? = nil) {
             self.nextPageToken = nextPageToken
             self.provisioningArtifactDetails = provisioningArtifactDetails
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try provisioningArtifactDetails?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2949,6 +3991,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "SearchFilter", required: false, type: .structure)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The access level to use to obtain results. The default is User.
@@ -2968,6 +4011,14 @@ extension ServiceCatalog {
             self.searchFilter = searchFilter
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case accessLevelFilter = "AccessLevelFilter"
@@ -2982,6 +4033,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "RecordDetails", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// The records, in reverse chronological order.
@@ -2990,6 +4042,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, recordDetails: [RecordDetail]? = nil) {
             self.nextPageToken = nextPageToken
             self.recordDetails = recordDetails
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try recordDetails?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3003,6 +4063,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The filter key.    product - Filter results based on the specified product identifier.    provisionedproduct - Filter results based on the provisioned product identifier.  
         public let key: String?
         /// The filter value.
@@ -3026,6 +4087,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ResourceType", required: false, type: .string), 
             AWSShapeMember(label: "TagOptionId", required: true, type: .string)
         ]
+
         /// The maximum number of items to return with this call.
         public let pageSize: Int32?
         /// The page token for the next set of results. To retrieve the first set of results, use null.
@@ -3042,6 +4104,15 @@ extension ServiceCatalog {
             self.tagOptionId = tagOptionId
         }
 
+        public func validate() throws {
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(tagOptionId, name:"tagOptionId", max: 100)
+            try validate(tagOptionId, name:"tagOptionId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case pageSize = "PageSize"
             case pageToken = "PageToken"
@@ -3055,6 +4126,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceDetails", required: false, type: .list)
         ]
+
         /// The page token for the next set of results. To retrieve the first set of results, use null.
         public let pageToken: String?
         /// Information about the resources.
@@ -3063,6 +4135,11 @@ extension ServiceCatalog {
         public init(pageToken: String? = nil, resourceDetails: [ResourceDetail]? = nil) {
             self.pageToken = pageToken
             self.resourceDetails = resourceDetails
+        }
+
+        public func validate() throws {
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3079,6 +4156,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductId", required: true, type: .string), 
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -3098,6 +4176,20 @@ extension ServiceCatalog {
             self.provisioningArtifactId = provisioningArtifactId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -3112,6 +4204,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "ServiceActionSummaries", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// An object containing information about the self-service actions associated with the provisioning artifact.
@@ -3120,6 +4213,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, serviceActionSummaries: [ServiceActionSummary]? = nil) {
             self.nextPageToken = nextPageToken
             self.serviceActionSummaries = serviceActionSummaries
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try serviceActionSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3134,6 +4235,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageSize", required: false, type: .integer), 
             AWSShapeMember(label: "PageToken", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -3145,6 +4247,14 @@ extension ServiceCatalog {
             self.acceptLanguage = acceptLanguage
             self.pageSize = pageSize
             self.pageToken = pageToken
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3159,6 +4269,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "ServiceActionSummaries", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// An object containing information about the service actions associated with the provisioning artifact.
@@ -3167,6 +4278,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, serviceActionSummaries: [ServiceActionSummary]? = nil) {
             self.nextPageToken = nextPageToken
             self.serviceActionSummaries = serviceActionSummaries
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try serviceActionSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3182,6 +4301,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProvisionedProductId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The maximum number of items to return with this call.
@@ -3198,6 +4318,17 @@ extension ServiceCatalog {
             self.provisionedProductId = provisionedProductId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(provisionedProductId, name:"provisionedProductId", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", min: 1)
+            try validate(provisionedProductId, name:"provisionedProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case pageSize = "PageSize"
@@ -3211,6 +4342,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "StackInstances", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// List of stack instances.
@@ -3219,6 +4351,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, stackInstances: [StackInstance]? = nil) {
             self.nextPageToken = nextPageToken
             self.stackInstances = stackInstances
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try stackInstances?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3233,6 +4373,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The active state.
         public let active: Bool?
         /// The TagOption key.
@@ -3244,6 +4385,15 @@ extension ServiceCatalog {
             self.active = active
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3259,6 +4409,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageSize", required: false, type: .integer), 
             AWSShapeMember(label: "PageToken", required: false, type: .string)
         ]
+
         /// The search filters. If no search filters are specified, the output includes all TagOptions.
         public let filters: ListTagOptionsFilters?
         /// The maximum number of items to return with this call.
@@ -3270,6 +4421,14 @@ extension ServiceCatalog {
             self.filters = filters
             self.pageSize = pageSize
             self.pageToken = pageToken
+        }
+
+        public func validate() throws {
+            try filters?.validate()
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3284,6 +4443,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageToken", required: false, type: .string), 
             AWSShapeMember(label: "TagOptionDetails", required: false, type: .list)
         ]
+
         /// The page token for the next set of results. To retrieve the first set of results, use null.
         public let pageToken: String?
         /// Information about the TagOptions.
@@ -3292,6 +4452,14 @@ extension ServiceCatalog {
         public init(pageToken: String? = nil, tagOptionDetails: [TagOptionDetail]? = nil) {
             self.pageToken = pageToken
             self.tagOptionDetails = tagOptionDetails
+        }
+
+        public func validate() throws {
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try tagOptionDetails?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3305,6 +4473,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The organization node type.
         public let `type`: OrganizationNodeType?
         /// The identifier of the organization node.
@@ -3313,6 +4482,10 @@ extension ServiceCatalog {
         public init(type: OrganizationNodeType? = nil, value: String? = nil) {
             self.`type` = `type`
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", pattern: "(^[0-9]{12}$)|(^arn:aws:organizations::\\d{12}:organization\\/o-[a-z0-9]{10,32})|(^o-[a-z0-9]{10,32}$)|(^arn:aws:organizations::\\d{12}:ou\\/o-[a-z0-9]{10,32}\\/ou-[0-9a-z]{4,32}-[0-9a-z]{8,32}$)|(^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3332,6 +4505,7 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AllowedValues", required: false, type: .list)
         ]
+
         /// The values that the administrator has allowed for the parameter.
         public let allowedValues: [String]?
 
@@ -3353,6 +4527,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "ProviderName", required: false, type: .string)
         ]
+
         /// The ARN assigned to the portfolio.
         public let arn: String?
         /// The UTC time stamp of the creation time.
@@ -3373,6 +4548,19 @@ extension ServiceCatalog {
             self.displayName = displayName
             self.id = id
             self.providerName = providerName
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 150)
+            try validate(arn, name:"arn", min: 1)
+            try validate(description, name:"description", max: 2000)
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(providerName, name:"providerName", max: 50)
+            try validate(providerName, name:"providerName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3397,6 +4585,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PrincipalARN", required: false, type: .string), 
             AWSShapeMember(label: "PrincipalType", required: false, type: .enum)
         ]
+
         /// The ARN of the principal (IAM user, role, or group).
         public let principalARN: String?
         /// The principal type. The supported value is IAM.
@@ -3405,6 +4594,11 @@ extension ServiceCatalog {
         public init(principalARN: String? = nil, principalType: PrincipalType? = nil) {
             self.principalARN = principalARN
             self.principalType = principalType
+        }
+
+        public func validate() throws {
+            try validate(principalARN, name:"principalARN", max: 1000)
+            try validate(principalARN, name:"principalARN", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3434,6 +4628,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ApproximateCount", required: false, type: .integer), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// An approximate count of the products that match the value.
         public let approximateCount: Int32?
         /// The value of the product view aggregation.
@@ -3457,6 +4652,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductViewSummary", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The UTC time stamp of the creation time.
         public let createdTime: TimeStamp?
         /// The ARN of the product.
@@ -3471,6 +4667,12 @@ extension ServiceCatalog {
             self.productARN = productARN
             self.productViewSummary = productViewSummary
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(productARN, name:"productARN", max: 150)
+            try validate(productARN, name:"productARN", min: 1)
+            try productViewSummary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3510,6 +4712,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "SupportUrl", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The distributor of the product. Contact the product administrator for the significance of this value.
         public let distributor: String?
         /// Indicates whether the product has a default path. If the product does not have a default path, call ListLaunchPaths to disambiguate between paths. Otherwise, ListLaunchPaths is not required, and the output of ProductViewSummary can be used directly with DescribeProvisioningParameters.
@@ -3547,6 +4750,21 @@ extension ServiceCatalog {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(name, name:"name", max: 8191)
+            try validate(owner, name:"owner", max: 8191)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(shortDescription, name:"shortDescription", max: 8191)
+            try validate(supportDescription, name:"supportDescription", max: 8191)
+            try validate(supportEmail, name:"supportEmail", max: 254)
+            try validate(supportUrl, name:"supportUrl", max: 2083)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case distributor = "Distributor"
             case hasDefaultPath = "HasDefaultPath"
@@ -3580,6 +4798,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisionToken", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// Passed to CloudFormation. The SNS topic ARNs to which to publish stack-related events.
@@ -3601,7 +4820,7 @@ extension ServiceCatalog {
         /// One or more tags.
         public let tags: [Tag]?
 
-        public init(acceptLanguage: String? = nil, notificationArns: [String]? = nil, pathId: String? = nil, productId: String, provisionedProductName: String, provisioningArtifactId: String, provisioningParameters: [ProvisioningParameter]? = nil, provisioningPreferences: ProvisioningPreferences? = nil, provisionToken: String, tags: [Tag]? = nil) {
+        public init(acceptLanguage: String? = nil, notificationArns: [String]? = nil, pathId: String? = nil, productId: String, provisionedProductName: String, provisioningArtifactId: String, provisioningParameters: [ProvisioningParameter]? = nil, provisioningPreferences: ProvisioningPreferences? = nil, provisionToken: String = ProvisionProductInput.idempotencyToken(), tags: [Tag]? = nil) {
             self.acceptLanguage = acceptLanguage
             self.notificationArns = notificationArns
             self.pathId = pathId
@@ -3612,6 +4831,39 @@ extension ServiceCatalog {
             self.provisioningPreferences = provisioningPreferences
             self.provisionToken = provisionToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try notificationArns?.forEach {
+                try validate($0, name:"notificationArns[]", max: 1224)
+                try validate($0, name:"notificationArns[]", min: 1)
+                try validate($0, name:"notificationArns[]", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            }
+            try validate(notificationArns, name:"notificationArns", max: 5)
+            try validate(pathId, name:"pathId", max: 100)
+            try validate(pathId, name:"pathId", min: 1)
+            try validate(pathId, name:"pathId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductName, name:"provisionedProductName", max: 128)
+            try validate(provisionedProductName, name:"provisionedProductName", min: 1)
+            try validate(provisionedProductName, name:"provisionedProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try provisioningParameters?.forEach {
+                try $0.validate()
+            }
+            try provisioningPreferences?.validate()
+            try validate(provisionToken, name:"provisionToken", max: 128)
+            try validate(provisionToken, name:"provisionToken", min: 1)
+            try validate(provisionToken, name:"provisionToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3632,11 +4884,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RecordDetail", required: false, type: .structure)
         ]
+
         /// Information about the result of provisioning the product.
         public let recordDetail: RecordDetail?
 
         public init(recordDetail: RecordDetail? = nil) {
             self.recordDetail = recordDetail
+        }
+
+        public func validate() throws {
+            try recordDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3662,6 +4919,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "UserArn", required: false, type: .string), 
             AWSShapeMember(label: "UserArnSession", required: false, type: .string)
         ]
+
         /// The ARN of the provisioned product.
         public let arn: String?
         /// The UTC time stamp of the creation time.
@@ -3711,6 +4969,34 @@ extension ServiceCatalog {
             self.userArnSession = userArnSession
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1224)
+            try validate(arn, name:"arn", min: 1)
+            try validate(arn, name:"arn", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}|arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(lastRecordId, name:"lastRecordId", max: 100)
+            try validate(lastRecordId, name:"lastRecordId", min: 1)
+            try validate(lastRecordId, name:"lastRecordId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(name, name:"name", max: 1224)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}|arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case createdTime = "CreatedTime"
@@ -3744,6 +5030,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "StatusMessage", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .string)
         ]
+
         /// The ARN of the provisioned product.
         public let arn: String?
         /// The UTC time stamp of the creation time.
@@ -3781,6 +5068,24 @@ extension ServiceCatalog {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1224)
+            try validate(arn, name:"arn", min: 1)
+            try validate(arn, name:"arn", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}|arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(name, name:"name", max: 1224)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}|arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case createdTime = "CreatedTime"
@@ -3814,6 +5119,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "UpdatedTime", required: false, type: .timestamp)
         ]
+
         /// The UTC time stamp of the creation time.
         public let createdTime: TimeStamp?
         /// Passed to CloudFormation. The SNS topic ARNs to which to publish stack-related events.
@@ -3863,6 +5169,41 @@ extension ServiceCatalog {
             self.updatedTime = updatedTime
         }
 
+        public func validate() throws {
+            try notificationArns?.forEach {
+                try validate($0, name:"notificationArns[]", max: 1224)
+                try validate($0, name:"notificationArns[]", min: 1)
+                try validate($0, name:"notificationArns[]", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            }
+            try validate(notificationArns, name:"notificationArns", max: 5)
+            try validate(pathId, name:"pathId", max: 100)
+            try validate(pathId, name:"pathId", min: 1)
+            try validate(pathId, name:"pathId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(planId, name:"planId", max: 100)
+            try validate(planId, name:"planId", min: 1)
+            try validate(planId, name:"planId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try provisioningParameters?.forEach {
+                try $0.validate()
+            }
+            try validate(provisionProductId, name:"provisionProductId", max: 100)
+            try validate(provisionProductId, name:"provisionProductId", min: 1)
+            try validate(provisionProductId, name:"provisionProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionProductName, name:"provisionProductName", max: 128)
+            try validate(provisionProductName, name:"provisionProductName", min: 1)
+            try validate(provisionProductName, name:"provisionProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]*")
+            try validate(statusMessage, name:"statusMessage", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdTime = "CreatedTime"
             case notificationArns = "NotificationArns"
@@ -3901,6 +5242,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisionProductId", required: false, type: .string), 
             AWSShapeMember(label: "ProvisionProductName", required: false, type: .string)
         ]
+
         /// The plan identifier.
         public let planId: String?
         /// The name of the plan.
@@ -3921,6 +5263,21 @@ extension ServiceCatalog {
             self.provisioningArtifactId = provisioningArtifactId
             self.provisionProductId = provisionProductId
             self.provisionProductName = provisionProductName
+        }
+
+        public func validate() throws {
+            try validate(planId, name:"planId", max: 100)
+            try validate(planId, name:"planId", min: 1)
+            try validate(planId, name:"planId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionProductId, name:"provisionProductId", max: 100)
+            try validate(provisionProductId, name:"provisionProductId", min: 1)
+            try validate(provisionProductId, name:"provisionProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionProductName, name:"provisionProductName", max: 128)
+            try validate(provisionProductName, name:"provisionProductName", min: 1)
+            try validate(provisionProductName, name:"provisionProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3960,6 +5317,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The UTC time stamp of the creation time.
         public let createdTime: TimeStamp?
         /// The description of the provisioning artifact.
@@ -3977,6 +5335,12 @@ extension ServiceCatalog {
             self.guidance = guidance
             self.id = id
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3998,6 +5362,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// Indicates whether the product version is active.
         public let active: Bool?
         /// The UTC time stamp of the creation time.
@@ -4021,6 +5386,12 @@ extension ServiceCatalog {
             self.id = id
             self.name = name
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4049,6 +5420,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ParameterKey", required: false, type: .string), 
             AWSShapeMember(label: "ParameterType", required: false, type: .string)
         ]
+
         /// The default value.
         public let defaultValue: String?
         /// The description of the parameter.
@@ -4071,6 +5443,11 @@ extension ServiceCatalog {
             self.parameterType = parameterType
         }
 
+        public func validate() throws {
+            try validate(parameterKey, name:"parameterKey", max: 1000)
+            try validate(parameterKey, name:"parameterKey", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultValue = "DefaultValue"
             case description = "Description"
@@ -4086,6 +5463,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "StackSetAccounts", required: false, type: .list), 
             AWSShapeMember(label: "StackSetRegions", required: false, type: .list)
         ]
+
         /// One or more AWS accounts where stack instances are deployed from the stack set. These accounts can be scoped in ProvisioningPreferences$StackSetAccounts and UpdateProvisioningPreferences$StackSetAccounts. Applicable only to a CFN_STACKSET provisioned product type.
         public let stackSetAccounts: [String]?
         /// One or more AWS Regions where stack instances are deployed from the stack set. These regions can be scoped in ProvisioningPreferences$StackSetRegions and UpdateProvisioningPreferences$StackSetRegions. Applicable only to a CFN_STACKSET provisioned product type.
@@ -4094,6 +5472,12 @@ extension ServiceCatalog {
         public init(stackSetAccounts: [String]? = nil, stackSetRegions: [String]? = nil) {
             self.stackSetAccounts = stackSetAccounts
             self.stackSetRegions = stackSetRegions
+        }
+
+        public func validate() throws {
+            try stackSetAccounts?.forEach {
+                try validate($0, name:"stackSetAccounts[]", pattern: "^[0-9]{12}$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4110,6 +5494,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The description of the provisioning artifact, including how it differs from the previous provisioning artifact.
         public let description: String?
         /// If set to true, AWS Service Catalog stops validating the specified provisioning artifact even if it is invalid.
@@ -4151,6 +5536,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "ProvisioningArtifactMetadata", required: false, type: .map)
         ]
+
         /// The UTC time stamp of the creation time.
         public let createdTime: TimeStamp?
         /// The description of the provisioning artifact.
@@ -4168,6 +5554,12 @@ extension ServiceCatalog {
             self.id = id
             self.name = name
             self.provisioningArtifactMetadata = provisioningArtifactMetadata
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4191,6 +5583,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductViewSummary", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisioningArtifact", required: false, type: .structure)
         ]
+
         /// Summary information about a product view.
         public let productViewSummary: ProductViewSummary?
         /// Information about a provisioning artifact. A provisioning artifact is also known as a product version.
@@ -4199,6 +5592,11 @@ extension ServiceCatalog {
         public init(productViewSummary: ProductViewSummary? = nil, provisioningArtifact: ProvisioningArtifact? = nil) {
             self.productViewSummary = productViewSummary
             self.provisioningArtifact = provisioningArtifact
+        }
+
+        public func validate() throws {
+            try productViewSummary?.validate()
+            try provisioningArtifact?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4212,6 +5610,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The parameter key.
         public let key: String?
         /// The parameter value.
@@ -4220,6 +5619,12 @@ extension ServiceCatalog {
         public init(key: String? = nil, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 1000)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 4096)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4237,6 +5642,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "StackSetMaxConcurrencyPercentage", required: false, type: .integer), 
             AWSShapeMember(label: "StackSetRegions", required: false, type: .list)
         ]
+
         /// One or more AWS accounts that will have access to the provisioned product. Applicable only to a CFN_STACKSET provisioned product type. The AWS accounts specified should be within the list of accounts in the STACKSET constraint. To get the list of accounts in the STACKSET constraint, use the DescribeProvisioningParameters operation. If no values are specified, the default value is all accounts from the STACKSET constraint.
         public let stackSetAccounts: [String]?
         /// The number of accounts, per region, for which this operation can fail before AWS Service Catalog stops the operation in that region. If the operation is stopped in a region, AWS Service Catalog doesn't attempt the operation in any subsequent regions. Applicable only to a CFN_STACKSET provisioned product type. Conditional: You must specify either StackSetFailureToleranceCount or StackSetFailureTolerancePercentage, but not both. The default value is 0 if no value is specified.
@@ -4257,6 +5663,18 @@ extension ServiceCatalog {
             self.stackSetMaxConcurrencyCount = stackSetMaxConcurrencyCount
             self.stackSetMaxConcurrencyPercentage = stackSetMaxConcurrencyPercentage
             self.stackSetRegions = stackSetRegions
+        }
+
+        public func validate() throws {
+            try stackSetAccounts?.forEach {
+                try validate($0, name:"stackSetAccounts[]", pattern: "^[0-9]{12}$")
+            }
+            try validate(stackSetFailureToleranceCount, name:"stackSetFailureToleranceCount", min: 0)
+            try validate(stackSetFailureTolerancePercentage, name:"stackSetFailureTolerancePercentage", max: 100)
+            try validate(stackSetFailureTolerancePercentage, name:"stackSetFailureTolerancePercentage", min: 0)
+            try validate(stackSetMaxConcurrencyCount, name:"stackSetMaxConcurrencyCount", min: 1)
+            try validate(stackSetMaxConcurrencyPercentage, name:"stackSetMaxConcurrencyPercentage", max: 100)
+            try validate(stackSetMaxConcurrencyPercentage, name:"stackSetMaxConcurrencyPercentage", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4285,6 +5703,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "UpdatedTime", required: false, type: .timestamp)
         ]
+
         /// The UTC time stamp of the creation time.
         public let createdTime: TimeStamp?
         /// The path identifier.
@@ -4328,6 +5747,31 @@ extension ServiceCatalog {
             self.updatedTime = updatedTime
         }
 
+        public func validate() throws {
+            try validate(pathId, name:"pathId", max: 100)
+            try validate(pathId, name:"pathId", min: 1)
+            try validate(pathId, name:"pathId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductId, name:"provisionedProductId", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", min: 1)
+            try validate(provisionedProductId, name:"provisionedProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductName, name:"provisionedProductName", max: 128)
+            try validate(provisionedProductName, name:"provisionedProductName", min: 1)
+            try validate(provisionedProductName, name:"provisionedProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(recordId, name:"recordId", max: 100)
+            try validate(recordId, name:"recordId", min: 1)
+            try validate(recordId, name:"recordId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try recordTags?.forEach {
+                try $0.validate()
+            }
+            try validate(recordTags, name:"recordTags", max: 50)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdTime = "CreatedTime"
             case pathId = "PathId"
@@ -4350,6 +5794,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Code", required: false, type: .string), 
             AWSShapeMember(label: "Description", required: false, type: .string)
         ]
+
         /// The numeric value of the error.
         public let code: String?
         /// The description of the error.
@@ -4372,6 +5817,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "OutputKey", required: false, type: .string), 
             AWSShapeMember(label: "OutputValue", required: false, type: .string)
         ]
+
         /// The description of the output.
         public let description: String?
         /// The output key.
@@ -4406,6 +5852,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The key for this tag.
         public let key: String?
         /// The value for this tag.
@@ -4414,6 +5861,15 @@ extension ServiceCatalog {
         public init(key: String? = nil, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4428,6 +5884,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PortfolioId", required: true, type: .string), 
             AWSShapeMember(label: "PortfolioShareType", required: false, type: .enum)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The portfolio identifier.
@@ -4441,6 +5898,13 @@ extension ServiceCatalog {
             self.portfolioShareType = portfolioShareType
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case portfolioId = "PortfolioId"
@@ -4449,6 +5913,7 @@ extension ServiceCatalog {
     }
 
     public struct RejectPortfolioShareOutput: AWSShape {
+
 
         public init() {
         }
@@ -4489,6 +5954,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ResourceType", required: false, type: .string), 
             AWSShapeMember(label: "Scope", required: false, type: .list)
         ]
+
         /// The change action.
         public let action: ChangeAction?
         /// Information about the resource changes.
@@ -4514,6 +5980,11 @@ extension ServiceCatalog {
             self.scope = scope
         }
 
+        public func validate() throws {
+            try validate(resourceType, name:"resourceType", max: 256)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case action = "Action"
             case details = "Details"
@@ -4531,6 +6002,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Evaluation", required: false, type: .enum), 
             AWSShapeMember(label: "Target", required: false, type: .structure)
         ]
+
         /// The ID of the entity that caused the change.
         public let causingEntity: String?
         /// For static evaluations, the value of the resource attribute will change and the new value is known. For dynamic evaluations, the value might change, and any new value will be determined when the plan is updated.
@@ -4559,6 +6031,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The ARN of the resource.
         public let arn: String?
         /// The creation time of the resource.
@@ -4593,6 +6066,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "RequiresRecreation", required: false, type: .enum)
         ]
+
         /// The attribute to be changed.
         public let attribute: ResourceAttribute?
         /// If the attribute is Properties, the value is the name of the property. Otherwise, the value is null.
@@ -4620,6 +6094,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PageSize", required: false, type: .integer), 
             AWSShapeMember(label: "PageToken", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The access level to use to obtain results. The default is User.
@@ -4636,6 +6111,14 @@ extension ServiceCatalog {
             self.pageToken = pageToken
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case accessLevelFilter = "AccessLevelFilter"
@@ -4649,6 +6132,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProvisionedProducts", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the provisioned products.
@@ -4657,6 +6141,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, provisionedProducts: [ProvisionedProductDetail]? = nil) {
             self.nextPageToken = nextPageToken
             self.provisionedProducts = provisionedProducts
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try provisionedProducts?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4676,6 +6168,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "SortBy", required: false, type: .enum), 
             AWSShapeMember(label: "SortOrder", required: false, type: .enum)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The search filters. If no search filters are specified, the output includes all products to which the administrator has access.
@@ -4704,6 +6197,17 @@ extension ServiceCatalog {
             self.sortOrder = sortOrder
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try validate(portfolioId, name:"portfolioId", max: 100)
+            try validate(portfolioId, name:"portfolioId", min: 1)
+            try validate(portfolioId, name:"portfolioId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case filters = "Filters"
@@ -4721,6 +6225,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "NextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "ProductViewDetails", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the product views.
@@ -4729,6 +6234,14 @@ extension ServiceCatalog {
         public init(nextPageToken: String? = nil, productViewDetails: [ProductViewDetail]? = nil) {
             self.nextPageToken = nextPageToken
             self.productViewDetails = productViewDetails
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try productViewDetails?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4746,6 +6259,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "SortBy", required: false, type: .enum), 
             AWSShapeMember(label: "SortOrder", required: false, type: .enum)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The search filters. If no search filters are specified, the output includes all products to which the caller has access.
@@ -4768,6 +6282,14 @@ extension ServiceCatalog {
             self.sortOrder = sortOrder
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 20)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case filters = "Filters"
@@ -4784,6 +6306,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductViewAggregations", required: false, type: .map), 
             AWSShapeMember(label: "ProductViewSummaries", required: false, type: .list)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// The product view aggregations.
@@ -4795,6 +6318,14 @@ extension ServiceCatalog {
             self.nextPageToken = nextPageToken
             self.productViewAggregations = productViewAggregations
             self.productViewSummaries = productViewSummaries
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try productViewSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4814,6 +6345,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "SortBy", required: false, type: .string), 
             AWSShapeMember(label: "SortOrder", required: false, type: .enum)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The access level to use to obtain results. The default is User.
@@ -4839,6 +6371,14 @@ extension ServiceCatalog {
             self.sortOrder = sortOrder
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pageSize, name:"pageSize", max: 100)
+            try validate(pageSize, name:"pageSize", min: 0)
+            try validate(pageToken, name:"pageToken", max: 2024)
+            try validate(pageToken, name:"pageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case accessLevelFilter = "AccessLevelFilter"
@@ -4856,6 +6396,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisionedProducts", required: false, type: .list), 
             AWSShapeMember(label: "TotalResultsCount", required: false, type: .integer)
         ]
+
         /// The page token to use to retrieve the next set of results. If there are no additional results, this value is null.
         public let nextPageToken: String?
         /// Information about the provisioned products.
@@ -4867,6 +6408,14 @@ extension ServiceCatalog {
             self.nextPageToken = nextPageToken
             self.provisionedProducts = provisionedProducts
             self.totalResultsCount = totalResultsCount
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2024)
+            try validate(nextPageToken, name:"nextPageToken", pattern: "[\\u0009\\u000a\\u000d\\u0020-\\uD7FF\\uE000-\\uFFFD]*")
+            try provisionedProducts?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4882,6 +6431,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string), 
             AWSShapeMember(label: "ServiceActionId", required: true, type: .string)
         ]
+
         /// The product identifier. For example, prod-abcdzk7xy33qa.
         public let productId: String
         /// The identifier of the provisioning artifact. For example, pa-4abcdjnxjj6ne.
@@ -4893,6 +6443,18 @@ extension ServiceCatalog {
             self.productId = productId
             self.provisioningArtifactId = provisioningArtifactId
             self.serviceActionId = serviceActionId
+        }
+
+        public func validate() throws {
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(serviceActionId, name:"serviceActionId", max: 100)
+            try validate(serviceActionId, name:"serviceActionId", min: 1)
+            try validate(serviceActionId, name:"serviceActionId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4929,6 +6491,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Definition", required: false, type: .map), 
             AWSShapeMember(label: "ServiceActionSummary", required: false, type: .structure)
         ]
+
         /// A map that defines the self-service action.
         public let definition: [ServiceActionDefinitionKey: String]?
         /// Summary information about the self-service action.
@@ -4937,6 +6500,10 @@ extension ServiceCatalog {
         public init(definition: [ServiceActionDefinitionKey: String]? = nil, serviceActionSummary: ServiceActionSummary? = nil) {
             self.definition = definition
             self.serviceActionSummary = serviceActionSummary
+        }
+
+        public func validate() throws {
+            try serviceActionSummary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4952,6 +6519,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The self-service action definition type. For example, SSM_AUTOMATION.
         public let definitionType: ServiceActionDefinitionType?
         /// The self-service action description.
@@ -4968,6 +6536,16 @@ extension ServiceCatalog {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 1024)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case definitionType = "DefinitionType"
             case description = "Description"
@@ -4981,6 +6559,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ShareErrors", required: false, type: .list), 
             AWSShapeMember(label: "SuccessfulShares", required: false, type: .list)
         ]
+
         /// List of errors.
         public let shareErrors: [ShareError]?
         /// List of accounts for whom the operation succeeded.
@@ -4989,6 +6568,15 @@ extension ServiceCatalog {
         public init(shareErrors: [ShareError]? = nil, successfulShares: [String]? = nil) {
             self.shareErrors = shareErrors
             self.successfulShares = successfulShares
+        }
+
+        public func validate() throws {
+            try shareErrors?.forEach {
+                try $0.validate()
+            }
+            try successfulShares?.forEach {
+                try validate($0, name:"successfulShares[]", pattern: "^[0-9]{12}$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5003,6 +6591,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Error", required: false, type: .string), 
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// List of accounts impacted by the error.
         public let accounts: [String]?
         /// Error type that happened when processing the operation.
@@ -5014,6 +6603,12 @@ extension ServiceCatalog {
             self.accounts = accounts
             self.error = error
             self.message = message
+        }
+
+        public func validate() throws {
+            try accounts?.forEach {
+                try validate($0, name:"accounts[]", pattern: "^[0-9]{12}$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5044,6 +6639,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Region", required: false, type: .string), 
             AWSShapeMember(label: "StackInstanceStatus", required: false, type: .enum)
         ]
+
         /// The name of the AWS account that the stack instance is associated with.
         public let account: String?
         /// The name of the AWS region that the stack instance is associated with.
@@ -5055,6 +6651,10 @@ extension ServiceCatalog {
             self.account = account
             self.region = region
             self.stackInstanceStatus = stackInstanceStatus
+        }
+
+        public func validate() throws {
+            try validate(account, name:"account", pattern: "^[0-9]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5090,6 +6690,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The tag key.
         public let key: String
         /// The value for this key.
@@ -5098,6 +6699,15 @@ extension ServiceCatalog {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5113,6 +6723,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The TagOption active state.
         public let active: Bool?
         /// The TagOption identifier.
@@ -5129,6 +6740,17 @@ extension ServiceCatalog {
             self.value = value
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case active = "Active"
             case id = "Id"
@@ -5142,6 +6764,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The TagOption key.
         public let key: String?
         /// The TagOption value.
@@ -5150,6 +6773,17 @@ extension ServiceCatalog {
         public init(key: String? = nil, values: [String]? = nil) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 256)
+                try validate($0, name:"values[]", min: 1)
+                try validate($0, name:"values[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5166,6 +6800,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisionedProductName", required: false, type: .string), 
             AWSShapeMember(label: "TerminateToken", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// If set to true, AWS Service Catalog stops managing the specified provisioned product even if it cannot delete the underlying resources.
@@ -5177,12 +6812,25 @@ extension ServiceCatalog {
         /// An idempotency token that uniquely identifies the termination request. This token is only valid during the termination process. After the provisioned product is terminated, subsequent requests to terminate the same provisioned product always return ResourceNotFound.
         public let terminateToken: String
 
-        public init(acceptLanguage: String? = nil, ignoreErrors: Bool? = nil, provisionedProductId: String? = nil, provisionedProductName: String? = nil, terminateToken: String) {
+        public init(acceptLanguage: String? = nil, ignoreErrors: Bool? = nil, provisionedProductId: String? = nil, provisionedProductName: String? = nil, terminateToken: String = TerminateProvisionedProductInput.idempotencyToken()) {
             self.acceptLanguage = acceptLanguage
             self.ignoreErrors = ignoreErrors
             self.provisionedProductId = provisionedProductId
             self.provisionedProductName = provisionedProductName
             self.terminateToken = terminateToken
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", min: 1)
+            try validate(provisionedProductId, name:"provisionedProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductName, name:"provisionedProductName", max: 1224)
+            try validate(provisionedProductName, name:"provisionedProductName", min: 1)
+            try validate(provisionedProductName, name:"provisionedProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}|arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(terminateToken, name:"terminateToken", max: 128)
+            try validate(terminateToken, name:"terminateToken", min: 1)
+            try validate(terminateToken, name:"terminateToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5198,11 +6846,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RecordDetail", required: false, type: .structure)
         ]
+
         /// Information about the result of this request.
         public let recordDetail: RecordDetail?
 
         public init(recordDetail: RecordDetail? = nil) {
             self.recordDetail = recordDetail
+        }
+
+        public func validate() throws {
+            try recordDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5217,6 +6870,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Id", required: true, type: .string), 
             AWSShapeMember(label: "Parameters", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The updated description of the constraint.
@@ -5233,6 +6887,14 @@ extension ServiceCatalog {
             self.parameters = parameters
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(description, name:"description", max: 2000)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case description = "Description"
@@ -5247,6 +6909,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ConstraintParameters", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Information about the constraint.
         public let constraintDetail: ConstraintDetail?
         /// The constraint parameters.
@@ -5258,6 +6921,10 @@ extension ServiceCatalog {
             self.constraintDetail = constraintDetail
             self.constraintParameters = constraintParameters
             self.status = status
+        }
+
+        public func validate() throws {
+            try constraintDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5277,6 +6944,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProviderName", required: false, type: .string), 
             AWSShapeMember(label: "RemoveTags", required: false, type: .list)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The tags to add.
@@ -5302,6 +6970,27 @@ extension ServiceCatalog {
             self.removeTags = removeTags
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try addTags?.forEach {
+                try $0.validate()
+            }
+            try validate(addTags, name:"addTags", max: 20)
+            try validate(description, name:"description", max: 2000)
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(providerName, name:"providerName", max: 50)
+            try validate(providerName, name:"providerName", min: 1)
+            try removeTags?.forEach {
+                try validate($0, name:"removeTags[]", max: 128)
+                try validate($0, name:"removeTags[]", min: 1)
+                try validate($0, name:"removeTags[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case addTags = "AddTags"
@@ -5318,6 +7007,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "PortfolioDetail", required: false, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Information about the portfolio.
         public let portfolioDetail: PortfolioDetail?
         /// Information about the tags associated with the portfolio.
@@ -5326,6 +7016,14 @@ extension ServiceCatalog {
         public init(portfolioDetail: PortfolioDetail? = nil, tags: [Tag]? = nil) {
             self.portfolioDetail = portfolioDetail
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try portfolioDetail?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5348,6 +7046,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "SupportEmail", required: false, type: .string), 
             AWSShapeMember(label: "SupportUrl", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The tags to add to the product.
@@ -5385,6 +7084,29 @@ extension ServiceCatalog {
             self.supportUrl = supportUrl
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try addTags?.forEach {
+                try $0.validate()
+            }
+            try validate(addTags, name:"addTags", max: 20)
+            try validate(description, name:"description", max: 8191)
+            try validate(distributor, name:"distributor", max: 8191)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(name, name:"name", max: 8191)
+            try validate(owner, name:"owner", max: 8191)
+            try removeTags?.forEach {
+                try validate($0, name:"removeTags[]", max: 128)
+                try validate($0, name:"removeTags[]", min: 1)
+                try validate($0, name:"removeTags[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+            try validate(supportDescription, name:"supportDescription", max: 8191)
+            try validate(supportEmail, name:"supportEmail", max: 254)
+            try validate(supportUrl, name:"supportUrl", max: 2083)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case addTags = "AddTags"
@@ -5405,6 +7127,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductViewDetail", required: false, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Information about the product view.
         public let productViewDetail: ProductViewDetail?
         /// Information about the tags associated with the product.
@@ -5413,6 +7136,14 @@ extension ServiceCatalog {
         public init(productViewDetail: ProductViewDetail? = nil, tags: [Tag]? = nil) {
             self.productViewDetail = productViewDetail
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try productViewDetail?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5434,6 +7165,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "UpdateToken", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The new path identifier. This value is optional if the product has a default path, and required if the product has more than one path.
@@ -5455,7 +7187,7 @@ extension ServiceCatalog {
         /// The idempotency token that uniquely identifies the provisioning update request.
         public let updateToken: String
 
-        public init(acceptLanguage: String? = nil, pathId: String? = nil, productId: String? = nil, provisionedProductId: String? = nil, provisionedProductName: String? = nil, provisioningArtifactId: String? = nil, provisioningParameters: [UpdateProvisioningParameter]? = nil, provisioningPreferences: UpdateProvisioningPreferences? = nil, tags: [Tag]? = nil, updateToken: String) {
+        public init(acceptLanguage: String? = nil, pathId: String? = nil, productId: String? = nil, provisionedProductId: String? = nil, provisionedProductName: String? = nil, provisioningArtifactId: String? = nil, provisioningParameters: [UpdateProvisioningParameter]? = nil, provisioningPreferences: UpdateProvisioningPreferences? = nil, tags: [Tag]? = nil, updateToken: String = UpdateProvisionedProductInput.idempotencyToken()) {
             self.acceptLanguage = acceptLanguage
             self.pathId = pathId
             self.productId = productId
@@ -5466,6 +7198,36 @@ extension ServiceCatalog {
             self.provisioningPreferences = provisioningPreferences
             self.tags = tags
             self.updateToken = updateToken
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(pathId, name:"pathId", max: 100)
+            try validate(pathId, name:"pathId", min: 1)
+            try validate(pathId, name:"pathId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductId, name:"provisionedProductId", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", min: 1)
+            try validate(provisionedProductId, name:"provisionedProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisionedProductName, name:"provisionedProductName", max: 1224)
+            try validate(provisionedProductName, name:"provisionedProductName", min: 1)
+            try validate(provisionedProductName, name:"provisionedProductName", pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}|arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try provisioningParameters?.forEach {
+                try $0.validate()
+            }
+            try provisioningPreferences?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(updateToken, name:"updateToken", max: 128)
+            try validate(updateToken, name:"updateToken", min: 1)
+            try validate(updateToken, name:"updateToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5486,11 +7248,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RecordDetail", required: false, type: .structure)
         ]
+
         /// Information about the result of the request.
         public let recordDetail: RecordDetail?
 
         public init(recordDetail: RecordDetail? = nil) {
             self.recordDetail = recordDetail
+        }
+
+        public func validate() throws {
+            try recordDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5505,6 +7272,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisionedProductId", required: true, type: .string), 
             AWSShapeMember(label: "ProvisionedProductProperties", required: true, type: .map)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// The idempotency token that uniquely identifies the provisioning product update request.
@@ -5514,11 +7282,21 @@ extension ServiceCatalog {
         /// A map that contains the provisioned product properties to be updated. The OWNER key only accepts user ARNs. The owner is the user that is allowed to see, update, terminate, and execute service actions in the provisioned product. The administrator can change the owner of a provisioned product to another IAM user within the same account. Both end user owners and administrators can see ownership history of the provisioned product using the ListRecordHistory API. The new owner can describe all past records for the provisioned product using the DescribeRecord API. The previous owner can no longer use DescribeRecord, but can still see the product's history from when he was an owner using ListRecordHistory. If a provisioned product ownership is assigned to an end user, they can see and perform any action through the API or Service Catalog console such as update, terminate, and execute service actions. If an end user provisions a product and the owner is updated to someone else, they will no longer be able to see or perform any actions through API or the Service Catalog console on that provisioned product.
         public let provisionedProductProperties: [PropertyKey: String]
 
-        public init(acceptLanguage: String? = nil, idempotencyToken: String, provisionedProductId: String, provisionedProductProperties: [PropertyKey: String]) {
+        public init(acceptLanguage: String? = nil, idempotencyToken: String = UpdateProvisionedProductPropertiesInput.idempotencyToken(), provisionedProductId: String, provisionedProductProperties: [PropertyKey: String]) {
             self.acceptLanguage = acceptLanguage
             self.idempotencyToken = idempotencyToken
             self.provisionedProductId = provisionedProductId
             self.provisionedProductProperties = provisionedProductProperties
+        }
+
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 128)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(provisionedProductId, name:"provisionedProductId", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", min: 1)
+            try validate(provisionedProductId, name:"provisionedProductId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5536,6 +7314,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "RecordId", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The provisioned product identifier.
         public let provisionedProductId: String?
         /// A map that contains the properties updated.
@@ -5550,6 +7329,15 @@ extension ServiceCatalog {
             self.provisionedProductProperties = provisionedProductProperties
             self.recordId = recordId
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(provisionedProductId, name:"provisionedProductId", max: 100)
+            try validate(provisionedProductId, name:"provisionedProductId", min: 1)
+            try validate(provisionedProductId, name:"provisionedProductId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(recordId, name:"recordId", max: 100)
+            try validate(recordId, name:"recordId", min: 1)
+            try validate(recordId, name:"recordId", pattern: "^[a-zA-Z0-9_\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5570,6 +7358,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProductId", required: true, type: .string), 
             AWSShapeMember(label: "ProvisioningArtifactId", required: true, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// Indicates whether the product version is active.
@@ -5595,6 +7384,16 @@ extension ServiceCatalog {
             self.provisioningArtifactId = provisioningArtifactId
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(productId, name:"productId", max: 100)
+            try validate(productId, name:"productId", min: 1)
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", max: 100)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", min: 1)
+            try validate(provisioningArtifactId, name:"provisioningArtifactId", pattern: "^[a-zA-Z0-9_\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case active = "Active"
@@ -5612,6 +7411,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "ProvisioningArtifactDetail", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The URL of the CloudFormation template in Amazon S3.
         public let info: [String: String]?
         /// Information about the provisioning artifact.
@@ -5623,6 +7423,10 @@ extension ServiceCatalog {
             self.info = info
             self.provisioningArtifactDetail = provisioningArtifactDetail
             self.status = status
+        }
+
+        public func validate() throws {
+            try provisioningArtifactDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5638,6 +7442,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "UsePreviousValue", required: false, type: .boolean), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The parameter key.
         public let key: String?
         /// If set to true, Value is ignored and the previous parameter value is kept.
@@ -5649,6 +7454,12 @@ extension ServiceCatalog {
             self.key = key
             self.usePreviousValue = usePreviousValue
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 1000)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 4096)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5668,6 +7479,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "StackSetOperationType", required: false, type: .enum), 
             AWSShapeMember(label: "StackSetRegions", required: false, type: .list)
         ]
+
         /// One or more AWS accounts that will have access to the provisioned product. Applicable only to a CFN_STACKSET provisioned product type. The AWS accounts specified should be within the list of accounts in the STACKSET constraint. To get the list of accounts in the STACKSET constraint, use the DescribeProvisioningParameters operation. If no values are specified, the default value is all accounts from the STACKSET constraint.
         public let stackSetAccounts: [String]?
         /// The number of accounts, per region, for which this operation can fail before AWS Service Catalog stops the operation in that region. If the operation is stopped in a region, AWS Service Catalog doesn't attempt the operation in any subsequent regions. Applicable only to a CFN_STACKSET provisioned product type. Conditional: You must specify either StackSetFailureToleranceCount or StackSetFailureTolerancePercentage, but not both. The default value is 0 if no value is specified.
@@ -5693,6 +7505,18 @@ extension ServiceCatalog {
             self.stackSetRegions = stackSetRegions
         }
 
+        public func validate() throws {
+            try stackSetAccounts?.forEach {
+                try validate($0, name:"stackSetAccounts[]", pattern: "^[0-9]{12}$")
+            }
+            try validate(stackSetFailureToleranceCount, name:"stackSetFailureToleranceCount", min: 0)
+            try validate(stackSetFailureTolerancePercentage, name:"stackSetFailureTolerancePercentage", max: 100)
+            try validate(stackSetFailureTolerancePercentage, name:"stackSetFailureTolerancePercentage", min: 0)
+            try validate(stackSetMaxConcurrencyCount, name:"stackSetMaxConcurrencyCount", min: 1)
+            try validate(stackSetMaxConcurrencyPercentage, name:"stackSetMaxConcurrencyPercentage", max: 100)
+            try validate(stackSetMaxConcurrencyPercentage, name:"stackSetMaxConcurrencyPercentage", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case stackSetAccounts = "StackSetAccounts"
             case stackSetFailureToleranceCount = "StackSetFailureToleranceCount"
@@ -5712,6 +7536,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Id", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The language code.    en - English (default)    jp - Japanese    zh - Chinese  
         public let acceptLanguage: String?
         /// A map that defines the self-service action.
@@ -5731,6 +7556,17 @@ extension ServiceCatalog {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(acceptLanguage, name:"acceptLanguage", max: 100)
+            try validate(description, name:"description", max: 1024)
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "^[a-zA-Z0-9_\\-]*")
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptLanguage = "AcceptLanguage"
             case definition = "Definition"
@@ -5744,11 +7580,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServiceActionDetail", required: false, type: .structure)
         ]
+
         /// Detailed information about the self-service action.
         public let serviceActionDetail: ServiceActionDetail?
 
         public init(serviceActionDetail: ServiceActionDetail? = nil) {
             self.serviceActionDetail = serviceActionDetail
+        }
+
+        public func validate() throws {
+            try serviceActionDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5762,6 +7603,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Id", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The updated active state.
         public let active: Bool?
         /// The TagOption identifier.
@@ -5775,6 +7617,14 @@ extension ServiceCatalog {
             self.value = value
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case active = "Active"
             case id = "Id"
@@ -5786,11 +7636,16 @@ extension ServiceCatalog {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagOptionDetail", required: false, type: .structure)
         ]
+
         /// Information about the TagOption.
         public let tagOptionDetail: TagOptionDetail?
 
         public init(tagOptionDetail: TagOptionDetail? = nil) {
             self.tagOptionDetail = tagOptionDetail
+        }
+
+        public func validate() throws {
+            try tagOptionDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5803,6 +7658,7 @@ extension ServiceCatalog {
             AWSShapeMember(label: "Type", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The usage instruction type for the value.
         public let `type`: String?
         /// The usage instruction value for this type.

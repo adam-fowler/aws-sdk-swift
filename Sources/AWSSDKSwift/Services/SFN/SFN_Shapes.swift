@@ -10,6 +10,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -18,6 +19,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -32,6 +40,7 @@ extension SFN {
             AWSShapeMember(label: "creationDate", required: true, type: .timestamp), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the activity.
         public let activityArn: String
         /// The date the activity is created.
@@ -43,6 +52,13 @@ extension SFN {
             self.activityArn = activityArn
             self.creationDate = creationDate
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(activityArn, name:"activityArn", max: 256)
+            try validate(activityArn, name:"activityArn", min: 1)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -57,6 +73,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -65,6 +82,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -80,6 +104,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "timeoutInSeconds", required: false, type: .long)
         ]
+
         /// The maximum allowed duration between two heartbeats for the activity task.
         public let heartbeatInSeconds: Int64?
         /// The JSON data input to the activity task.
@@ -96,6 +121,12 @@ extension SFN {
             self.timeoutInSeconds = timeoutInSeconds
         }
 
+        public func validate() throws {
+            try validate(input, name:"input", max: 32768)
+            try validate(resource, name:"resource", max: 256)
+            try validate(resource, name:"resource", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case heartbeatInSeconds = "heartbeatInSeconds"
             case input = "input"
@@ -108,11 +139,16 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "workerName", required: false, type: .string)
         ]
+
         /// The name of the worker that the task is assigned to. These names are provided by the workers when calling GetActivityTask.
         public let workerName: String?
 
         public init(workerName: String? = nil) {
             self.workerName = workerName
+        }
+
+        public func validate() throws {
+            try validate(workerName, name:"workerName", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -124,11 +160,16 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "output", required: false, type: .string)
         ]
+
         /// The JSON data output by the activity task.
         public let output: String?
 
         public init(output: String? = nil) {
             self.output = output
+        }
+
+        public func validate() throws {
+            try validate(output, name:"output", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -141,6 +182,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the timeout.
         public let cause: String?
         /// The error code of the failure.
@@ -149,6 +191,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -162,6 +211,7 @@ extension SFN {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// The name of the activity to create. This name must be unique for your AWS account and region for 90 days. For more information, see  Limits Related to State Machine Executions in the AWS Step Functions Developer Guide. A name must not contain:   whitespace   brackets &lt; &gt; { } [ ]    wildcard characters ? *    special characters " # % \ ^ | ~ ` $ &amp; , ; : /    control characters (U+0000-001F, U+007F-009F)  
         public let name: String
         /// The list of tags to add to a resource.
@@ -170,6 +220,14 @@ extension SFN {
         public init(name: String, tags: [Tag]? = nil) {
             self.name = name
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -183,6 +241,7 @@ extension SFN {
             AWSShapeMember(label: "activityArn", required: true, type: .string), 
             AWSShapeMember(label: "creationDate", required: true, type: .timestamp)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the created activity.
         public let activityArn: String
         /// The date the activity is created.
@@ -191,6 +250,11 @@ extension SFN {
         public init(activityArn: String, creationDate: TimeStamp) {
             self.activityArn = activityArn
             self.creationDate = creationDate
+        }
+
+        public func validate() throws {
+            try validate(activityArn, name:"activityArn", max: 256)
+            try validate(activityArn, name:"activityArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -206,6 +270,7 @@ extension SFN {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// The Amazon States Language definition of the state machine. See Amazon States Language.
         public let definition: String
         /// The name of the state machine.  A name must not contain:   whitespace   brackets &lt; &gt; { } [ ]    wildcard characters ? *    special characters " # % \ ^ | ~ ` $ &amp; , ; : /    control characters (U+0000-001F, U+007F-009F)  
@@ -222,6 +287,18 @@ extension SFN {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(definition, name:"definition", max: 1048576)
+            try validate(definition, name:"definition", min: 1)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(roleArn, name:"roleArn", max: 256)
+            try validate(roleArn, name:"roleArn", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case definition = "definition"
             case name = "name"
@@ -235,6 +312,7 @@ extension SFN {
             AWSShapeMember(label: "creationDate", required: true, type: .timestamp), 
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string)
         ]
+
         /// The date the state machine is created.
         public let creationDate: TimeStamp
         /// The Amazon Resource Name (ARN) that identifies the created state machine.
@@ -243,6 +321,11 @@ extension SFN {
         public init(creationDate: TimeStamp, stateMachineArn: String) {
             self.creationDate = creationDate
             self.stateMachineArn = stateMachineArn
+        }
+
+        public func validate() throws {
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -255,11 +338,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "activityArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the activity to delete.
         public let activityArn: String
 
         public init(activityArn: String) {
             self.activityArn = activityArn
+        }
+
+        public func validate() throws {
+            try validate(activityArn, name:"activityArn", max: 256)
+            try validate(activityArn, name:"activityArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -268,6 +357,7 @@ extension SFN {
     }
 
     public struct DeleteActivityOutput: AWSShape {
+
 
         public init() {
         }
@@ -278,11 +368,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the state machine to delete.
         public let stateMachineArn: String
 
         public init(stateMachineArn: String) {
             self.stateMachineArn = stateMachineArn
+        }
+
+        public func validate() throws {
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -291,6 +387,7 @@ extension SFN {
     }
 
     public struct DeleteStateMachineOutput: AWSShape {
+
 
         public init() {
         }
@@ -301,11 +398,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "activityArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the activity to describe.
         public let activityArn: String
 
         public init(activityArn: String) {
             self.activityArn = activityArn
+        }
+
+        public func validate() throws {
+            try validate(activityArn, name:"activityArn", max: 256)
+            try validate(activityArn, name:"activityArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -319,6 +422,7 @@ extension SFN {
             AWSShapeMember(label: "creationDate", required: true, type: .timestamp), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the activity.
         public let activityArn: String
         /// The date the activity is created.
@@ -332,6 +436,13 @@ extension SFN {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(activityArn, name:"activityArn", max: 256)
+            try validate(activityArn, name:"activityArn", min: 1)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activityArn = "activityArn"
             case creationDate = "creationDate"
@@ -343,11 +454,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "executionArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the execution to describe.
         public let executionArn: String
 
         public init(executionArn: String) {
             self.executionArn = executionArn
+        }
+
+        public func validate() throws {
+            try validate(executionArn, name:"executionArn", max: 256)
+            try validate(executionArn, name:"executionArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -366,6 +483,7 @@ extension SFN {
             AWSShapeMember(label: "status", required: true, type: .enum), 
             AWSShapeMember(label: "stopDate", required: false, type: .timestamp)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the execution.
         public let executionArn: String
         /// The string that contains the JSON input data of the execution.
@@ -394,6 +512,17 @@ extension SFN {
             self.stopDate = stopDate
         }
 
+        public func validate() throws {
+            try validate(executionArn, name:"executionArn", max: 256)
+            try validate(executionArn, name:"executionArn", min: 1)
+            try validate(input, name:"input", max: 32768)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(output, name:"output", max: 32768)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionArn = "executionArn"
             case input = "input"
@@ -410,11 +539,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "executionArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the execution you want state machine information for.
         public let executionArn: String
 
         public init(executionArn: String) {
             self.executionArn = executionArn
+        }
+
+        public func validate() throws {
+            try validate(executionArn, name:"executionArn", max: 256)
+            try validate(executionArn, name:"executionArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -430,6 +565,7 @@ extension SFN {
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string), 
             AWSShapeMember(label: "updateDate", required: true, type: .timestamp)
         ]
+
         /// The Amazon States Language definition of the state machine. See Amazon States Language.
         public let definition: String
         /// The name of the state machine associated with the execution.
@@ -449,6 +585,17 @@ extension SFN {
             self.updateDate = updateDate
         }
 
+        public func validate() throws {
+            try validate(definition, name:"definition", max: 1048576)
+            try validate(definition, name:"definition", min: 1)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(roleArn, name:"roleArn", max: 256)
+            try validate(roleArn, name:"roleArn", min: 1)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case definition = "definition"
             case name = "name"
@@ -462,11 +609,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the state machine to describe.
         public let stateMachineArn: String
 
         public init(stateMachineArn: String) {
             self.stateMachineArn = stateMachineArn
+        }
+
+        public func validate() throws {
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -483,6 +636,7 @@ extension SFN {
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The date the state machine is created.
         public let creationDate: TimeStamp
         /// The Amazon States Language definition of the state machine. See Amazon States Language.
@@ -505,6 +659,17 @@ extension SFN {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(definition, name:"definition", max: 1048576)
+            try validate(definition, name:"definition", min: 1)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(roleArn, name:"roleArn", max: 256)
+            try validate(roleArn, name:"roleArn", min: 1)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "creationDate"
             case definition = "definition"
@@ -520,6 +685,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -528,6 +694,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -541,6 +714,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -549,6 +723,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -566,6 +747,7 @@ extension SFN {
             AWSShapeMember(label: "status", required: true, type: .enum), 
             AWSShapeMember(label: "stopDate", required: false, type: .timestamp)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the execution.
         public let executionArn: String
         /// The name of the execution. A name must not contain:   whitespace   brackets &lt; &gt; { } [ ]    wildcard characters ? *    special characters " # % \ ^ | ~ ` $ &amp; , ; : /    control characters (U+0000-001F, U+007F-009F)  
@@ -588,6 +770,15 @@ extension SFN {
             self.stopDate = stopDate
         }
 
+        public func validate() throws {
+            try validate(executionArn, name:"executionArn", max: 256)
+            try validate(executionArn, name:"executionArn", min: 1)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionArn = "executionArn"
             case name = "name"
@@ -603,6 +794,7 @@ extension SFN {
             AWSShapeMember(label: "input", required: false, type: .string), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The JSON data input to the execution.
         public let input: String?
         /// The Amazon Resource Name (ARN) of the IAM role used for executing AWS Lambda tasks.
@@ -611,6 +803,12 @@ extension SFN {
         public init(input: String? = nil, roleArn: String? = nil) {
             self.input = input
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(input, name:"input", max: 32768)
+            try validate(roleArn, name:"roleArn", max: 256)
+            try validate(roleArn, name:"roleArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -632,11 +830,16 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "output", required: false, type: .string)
         ]
+
         /// The JSON data output by the execution.
         public let output: String?
 
         public init(output: String? = nil) {
             self.output = output
+        }
+
+        public func validate() throws {
+            try validate(output, name:"output", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -649,6 +852,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the timeout.
         public let cause: String?
         /// The error code of the failure.
@@ -657,6 +861,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -670,6 +881,7 @@ extension SFN {
             AWSShapeMember(label: "activityArn", required: true, type: .string), 
             AWSShapeMember(label: "workerName", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the activity to retrieve tasks from (assigned when you create the task using CreateActivity.)
         public let activityArn: String
         /// You can provide an arbitrary name in order to identify the worker that the task is assigned to. This name is used when it is logged in the execution history.
@@ -678,6 +890,13 @@ extension SFN {
         public init(activityArn: String, workerName: String? = nil) {
             self.activityArn = activityArn
             self.workerName = workerName
+        }
+
+        public func validate() throws {
+            try validate(activityArn, name:"activityArn", max: 256)
+            try validate(activityArn, name:"activityArn", min: 1)
+            try validate(workerName, name:"workerName", max: 80)
+            try validate(workerName, name:"workerName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -691,6 +910,7 @@ extension SFN {
             AWSShapeMember(label: "input", required: false, type: .string), 
             AWSShapeMember(label: "taskToken", required: false, type: .string)
         ]
+
         /// The string that contains the JSON input data for the task.
         public let input: String?
         /// A token that identifies the scheduled task. This token must be copied and included in subsequent calls to SendTaskHeartbeat, SendTaskSuccess or SendTaskFailure in order to report the progress or completion of the task.
@@ -699,6 +919,12 @@ extension SFN {
         public init(input: String? = nil, taskToken: String? = nil) {
             self.input = input
             self.taskToken = taskToken
+        }
+
+        public func validate() throws {
+            try validate(input, name:"input", max: 65536)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -714,6 +940,7 @@ extension SFN {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "reverseOrder", required: false, type: .boolean)
         ]
+
         /// The Amazon Resource Name (ARN) of the execution.
         public let executionArn: String
         /// The maximum number of results that are returned per call. You can use nextToken to obtain further pages of results. The default is 100 and the maximum allowed page size is 1000. A value of 0 uses the default. This is only an upper limit. The actual number of results returned per call might be fewer than the specified maximum.
@@ -730,6 +957,15 @@ extension SFN {
             self.reverseOrder = reverseOrder
         }
 
+        public func validate() throws {
+            try validate(executionArn, name:"executionArn", max: 256)
+            try validate(executionArn, name:"executionArn", min: 1)
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionArn = "executionArn"
             case maxResults = "maxResults"
@@ -743,6 +979,7 @@ extension SFN {
             AWSShapeMember(label: "events", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The list of events that occurred in the execution.
         public let events: [HistoryEvent]
         /// If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an HTTP 400 InvalidToken error.
@@ -751,6 +988,14 @@ extension SFN {
         public init(events: [HistoryEvent], nextToken: String? = nil) {
             self.events = events
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try events.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -793,6 +1038,7 @@ extension SFN {
             AWSShapeMember(label: "timestamp", required: true, type: .timestamp), 
             AWSShapeMember(label: "type", required: true, type: .enum)
         ]
+
         public let activityFailedEventDetails: ActivityFailedEventDetails?
         public let activityScheduledEventDetails: ActivityScheduledEventDetails?
         /// Contains details about an activity schedule event that failed during an execution.
@@ -872,6 +1118,36 @@ extension SFN {
             self.taskTimedOutEventDetails = taskTimedOutEventDetails
             self.timestamp = timestamp
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try activityFailedEventDetails?.validate()
+            try activityScheduledEventDetails?.validate()
+            try activityScheduleFailedEventDetails?.validate()
+            try activityStartedEventDetails?.validate()
+            try activitySucceededEventDetails?.validate()
+            try activityTimedOutEventDetails?.validate()
+            try executionAbortedEventDetails?.validate()
+            try executionFailedEventDetails?.validate()
+            try executionStartedEventDetails?.validate()
+            try executionSucceededEventDetails?.validate()
+            try executionTimedOutEventDetails?.validate()
+            try lambdaFunctionFailedEventDetails?.validate()
+            try lambdaFunctionScheduledEventDetails?.validate()
+            try lambdaFunctionScheduleFailedEventDetails?.validate()
+            try lambdaFunctionStartFailedEventDetails?.validate()
+            try lambdaFunctionSucceededEventDetails?.validate()
+            try lambdaFunctionTimedOutEventDetails?.validate()
+            try stateEnteredEventDetails?.validate()
+            try stateExitedEventDetails?.validate()
+            try taskFailedEventDetails?.validate()
+            try taskScheduledEventDetails?.validate()
+            try taskStartedEventDetails?.validate()
+            try taskStartFailedEventDetails?.validate()
+            try taskSubmitFailedEventDetails?.validate()
+            try taskSubmittedEventDetails?.validate()
+            try taskSucceededEventDetails?.validate()
+            try taskTimedOutEventDetails?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -963,6 +1239,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -971,6 +1248,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -984,6 +1268,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -992,6 +1277,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1006,6 +1298,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "timeoutInSeconds", required: false, type: .long)
         ]
+
         /// The JSON data input to the lambda function.
         public let input: String?
         /// The Amazon Resource Name (ARN) of the scheduled lambda function.
@@ -1017,6 +1310,12 @@ extension SFN {
             self.input = input
             self.resource = resource
             self.timeoutInSeconds = timeoutInSeconds
+        }
+
+        public func validate() throws {
+            try validate(input, name:"input", max: 32768)
+            try validate(resource, name:"resource", max: 256)
+            try validate(resource, name:"resource", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1031,6 +1330,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -1039,6 +1339,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1051,11 +1358,16 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "output", required: false, type: .string)
         ]
+
         /// The JSON data output by the lambda function.
         public let output: String?
 
         public init(output: String? = nil) {
             self.output = output
+        }
+
+        public func validate() throws {
+            try validate(output, name:"output", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1068,6 +1380,7 @@ extension SFN {
             AWSShapeMember(label: "cause", required: false, type: .string), 
             AWSShapeMember(label: "error", required: false, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the timeout.
         public let cause: String?
         /// The error code of the failure.
@@ -1076,6 +1389,13 @@ extension SFN {
         public init(cause: String? = nil, error: String? = nil) {
             self.cause = cause
             self.error = error
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1089,6 +1409,7 @@ extension SFN {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results that are returned per call. You can use nextToken to obtain further pages of results. The default is 100 and the maximum allowed page size is 1000. A value of 0 uses the default. This is only an upper limit. The actual number of results returned per call might be fewer than the specified maximum.
         public let maxResults: Int32?
         /// If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an HTTP 400 InvalidToken error.
@@ -1097,6 +1418,13 @@ extension SFN {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1110,6 +1438,7 @@ extension SFN {
             AWSShapeMember(label: "activities", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The list of activities.
         public let activities: [ActivityListItem]
         /// If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an HTTP 400 InvalidToken error.
@@ -1118,6 +1447,14 @@ extension SFN {
         public init(activities: [ActivityListItem], nextToken: String? = nil) {
             self.activities = activities
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try activities.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1133,6 +1470,7 @@ extension SFN {
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string), 
             AWSShapeMember(label: "statusFilter", required: false, type: .enum)
         ]
+
         /// The maximum number of results that are returned per call. You can use nextToken to obtain further pages of results. The default is 100 and the maximum allowed page size is 1000. A value of 0 uses the default. This is only an upper limit. The actual number of results returned per call might be fewer than the specified maximum.
         public let maxResults: Int32?
         /// If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an HTTP 400 InvalidToken error.
@@ -1149,6 +1487,15 @@ extension SFN {
             self.statusFilter = statusFilter
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -1162,6 +1509,7 @@ extension SFN {
             AWSShapeMember(label: "executions", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The list of matching executions.
         public let executions: [ExecutionListItem]
         /// If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an HTTP 400 InvalidToken error.
@@ -1170,6 +1518,14 @@ extension SFN {
         public init(executions: [ExecutionListItem], nextToken: String? = nil) {
             self.executions = executions
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try executions.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1183,6 +1539,7 @@ extension SFN {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results that are returned per call. You can use nextToken to obtain further pages of results. The default is 100 and the maximum allowed page size is 1000. A value of 0 uses the default. This is only an upper limit. The actual number of results returned per call might be fewer than the specified maximum.
         public let maxResults: Int32?
         /// If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an HTTP 400 InvalidToken error.
@@ -1191,6 +1548,13 @@ extension SFN {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1204,6 +1568,7 @@ extension SFN {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "stateMachines", required: true, type: .list)
         ]
+
         /// If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an HTTP 400 InvalidToken error.
         public let nextToken: String?
         public let stateMachines: [StateMachineListItem]
@@ -1211,6 +1576,14 @@ extension SFN {
         public init(nextToken: String? = nil, stateMachines: [StateMachineListItem]) {
             self.nextToken = nextToken
             self.stateMachines = stateMachines
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try stateMachines.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1223,11 +1596,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) for the Step Functions state machine or activity.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1239,11 +1618,18 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// An array of tags associated with the resource.
         public let tags: [Tag]?
 
         public init(tags: [Tag]? = nil) {
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1257,6 +1643,7 @@ extension SFN {
             AWSShapeMember(label: "error", required: false, type: .string), 
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -1270,6 +1657,15 @@ extension SFN {
             self.taskToken = taskToken
         }
 
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case error = "error"
@@ -1278,6 +1674,7 @@ extension SFN {
     }
 
     public struct SendTaskFailureOutput: AWSShape {
+
 
         public init() {
         }
@@ -1288,11 +1685,17 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         /// The token that represents this task. Task tokens are generated by the service when the tasks are assigned to a worker (see GetActivityTaskOutput$taskToken).
         public let taskToken: String
 
         public init(taskToken: String) {
             self.taskToken = taskToken
+        }
+
+        public func validate() throws {
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1301,6 +1704,7 @@ extension SFN {
     }
 
     public struct SendTaskHeartbeatOutput: AWSShape {
+
 
         public init() {
         }
@@ -1312,6 +1716,7 @@ extension SFN {
             AWSShapeMember(label: "output", required: true, type: .string), 
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         /// The JSON output of the task.
         public let output: String
         /// The token that represents this task. Task tokens are generated by the service when the tasks are assigned to a worker (see GetActivityTaskOutput$taskToken).
@@ -1322,6 +1727,12 @@ extension SFN {
             self.taskToken = taskToken
         }
 
+        public func validate() throws {
+            try validate(output, name:"output", max: 32768)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case output = "output"
             case taskToken = "taskToken"
@@ -1329,6 +1740,7 @@ extension SFN {
     }
 
     public struct SendTaskSuccessOutput: AWSShape {
+
 
         public init() {
         }
@@ -1341,6 +1753,7 @@ extension SFN {
             AWSShapeMember(label: "name", required: false, type: .string), 
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string)
         ]
+
         /// The string that contains the JSON input data for the execution, for example:  "input": "{\"first_name\" : \"test\"}"   If you don't include any JSON input data, you still must include the two braces, for example: "input": "{}"  
         public let input: String?
         /// The name of the execution. This name must be unique for your AWS account, region, and state machine for 90 days. For more information, see  Limits Related to State Machine Executions in the AWS Step Functions Developer Guide. A name must not contain:   whitespace   brackets &lt; &gt; { } [ ]    wildcard characters ? *    special characters " # % \ ^ | ~ ` $ &amp; , ; : /    control characters (U+0000-001F, U+007F-009F)  
@@ -1352,6 +1765,14 @@ extension SFN {
             self.input = input
             self.name = name
             self.stateMachineArn = stateMachineArn
+        }
+
+        public func validate() throws {
+            try validate(input, name:"input", max: 32768)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1366,6 +1787,7 @@ extension SFN {
             AWSShapeMember(label: "executionArn", required: true, type: .string), 
             AWSShapeMember(label: "startDate", required: true, type: .timestamp)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the execution.
         public let executionArn: String
         /// The date the execution is started.
@@ -1374,6 +1796,11 @@ extension SFN {
         public init(executionArn: String, startDate: TimeStamp) {
             self.executionArn = executionArn
             self.startDate = startDate
+        }
+
+        public func validate() throws {
+            try validate(executionArn, name:"executionArn", max: 256)
+            try validate(executionArn, name:"executionArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1387,6 +1814,7 @@ extension SFN {
             AWSShapeMember(label: "input", required: false, type: .string), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The string that contains the JSON input data for the state.
         public let input: String?
         /// The name of the state.
@@ -1395,6 +1823,12 @@ extension SFN {
         public init(input: String? = nil, name: String) {
             self.input = input
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(input, name:"input", max: 32768)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1408,6 +1842,7 @@ extension SFN {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "output", required: false, type: .string)
         ]
+
         /// The name of the state. A name must not contain:   whitespace   brackets &lt; &gt; { } [ ]    wildcard characters ? *    special characters " # % \ ^ | ~ ` $ &amp; , ; : /    control characters (U+0000-001F, U+007F-009F)  
         public let name: String
         /// The JSON output data of the state.
@@ -1416,6 +1851,12 @@ extension SFN {
         public init(name: String, output: String? = nil) {
             self.name = name
             self.output = output
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(output, name:"output", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1430,6 +1871,7 @@ extension SFN {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string)
         ]
+
         /// The date the state machine is created.
         public let creationDate: TimeStamp
         /// The name of the state machine. A name must not contain:   whitespace   brackets &lt; &gt; { } [ ]    wildcard characters ? *    special characters " # % \ ^ | ~ ` $ &amp; , ; : /    control characters (U+0000-001F, U+007F-009F)  
@@ -1441,6 +1883,13 @@ extension SFN {
             self.creationDate = creationDate
             self.name = name
             self.stateMachineArn = stateMachineArn
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1462,6 +1911,7 @@ extension SFN {
             AWSShapeMember(label: "error", required: false, type: .string), 
             AWSShapeMember(label: "executionArn", required: true, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -1475,6 +1925,15 @@ extension SFN {
             self.executionArn = executionArn
         }
 
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
+            try validate(executionArn, name:"executionArn", max: 256)
+            try validate(executionArn, name:"executionArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case error = "error"
@@ -1486,6 +1945,7 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "stopDate", required: true, type: .timestamp)
         ]
+
         /// The date the execution is stopped.
         public let stopDate: TimeStamp
 
@@ -1503,6 +1963,7 @@ extension SFN {
             AWSShapeMember(label: "key", required: false, type: .string), 
             AWSShapeMember(label: "value", required: false, type: .string)
         ]
+
         /// The key of a tag.
         public let key: String?
         /// The value of a tag.
@@ -1511,6 +1972,13 @@ extension SFN {
         public init(key: String? = nil, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1524,6 +1992,7 @@ extension SFN {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the Step Functions state machine or activity.
         public let resourceArn: String
         /// The list of tags to add to a resource. Tags may only contain unicode letters, digits, whitespace, or these symbols: _ . : / = + - @.
@@ -1534,6 +2003,14 @@ extension SFN {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tags = "tags"
@@ -1541,6 +2018,7 @@ extension SFN {
     }
 
     public struct TagResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -1554,6 +2032,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -1568,6 +2047,17 @@ extension SFN {
             self.error = error
             self.resource = resource
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1586,6 +2076,7 @@ extension SFN {
             AWSShapeMember(label: "resourceType", required: true, type: .string), 
             AWSShapeMember(label: "timeoutInSeconds", required: false, type: .long)
         ]
+
         /// The JSON data passed to the resource referenced in a task state.
         public let parameters: String
         /// The region of the scheduled task
@@ -1605,6 +2096,17 @@ extension SFN {
             self.timeoutInSeconds = timeoutInSeconds
         }
 
+        public func validate() throws {
+            try validate(parameters, name:"parameters", max: 32768)
+            try validate(parameters, name:"parameters", min: 0)
+            try validate(region, name:"region", max: 80)
+            try validate(region, name:"region", min: 1)
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case parameters = "parameters"
             case region = "region"
@@ -1621,6 +2123,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -1635,6 +2138,17 @@ extension SFN {
             self.error = error
             self.resource = resource
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1650,6 +2164,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .string)
         ]
+
         /// The service name of the resource in a task state.
         public let resource: String
         /// The action of the resource called by a task state.
@@ -1658,6 +2173,13 @@ extension SFN {
         public init(resource: String, resourceType: String) {
             self.resource = resource
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1673,6 +2195,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -1687,6 +2210,17 @@ extension SFN {
             self.error = error
             self.resource = resource
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1703,6 +2237,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .string)
         ]
+
         /// The response from a resource when a task has started.
         public let output: String?
         /// The service name of the resource in a task state.
@@ -1714,6 +2249,14 @@ extension SFN {
             self.output = output
             self.resource = resource
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(output, name:"output", max: 32768)
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1729,6 +2272,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .string)
         ]
+
         /// The full JSON response from a resource when a task has succeeded. This response becomes the output of the related task.
         public let output: String?
         /// The service name of the resource in a task state.
@@ -1740,6 +2284,14 @@ extension SFN {
             self.output = output
             self.resource = resource
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(output, name:"output", max: 32768)
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1756,6 +2308,7 @@ extension SFN {
             AWSShapeMember(label: "resource", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .string)
         ]
+
         /// A more detailed explanation of the cause of the failure.
         public let cause: String?
         /// The error code of the failure.
@@ -1772,6 +2325,17 @@ extension SFN {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(cause, name:"cause", max: 32768)
+            try validate(cause, name:"cause", min: 0)
+            try validate(error, name:"error", max: 256)
+            try validate(error, name:"error", min: 0)
+            try validate(resource, name:"resource", max: 80)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resourceType, name:"resourceType", max: 80)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case error = "error"
@@ -1785,6 +2349,7 @@ extension SFN {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tagKeys", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the Step Functions state machine or activity.
         public let resourceArn: String
         /// The list of tags to remove from the resource.
@@ -1795,6 +2360,15 @@ extension SFN {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tagKeys = "tagKeys"
@@ -1802,6 +2376,7 @@ extension SFN {
     }
 
     public struct UntagResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -1814,6 +2389,7 @@ extension SFN {
             AWSShapeMember(label: "roleArn", required: false, type: .string), 
             AWSShapeMember(label: "stateMachineArn", required: true, type: .string)
         ]
+
         /// The Amazon States Language definition of the state machine. See Amazon States Language.
         public let definition: String?
         /// The Amazon Resource Name (ARN) of the IAM role of the state machine.
@@ -1827,6 +2403,15 @@ extension SFN {
             self.stateMachineArn = stateMachineArn
         }
 
+        public func validate() throws {
+            try validate(definition, name:"definition", max: 1048576)
+            try validate(definition, name:"definition", min: 1)
+            try validate(roleArn, name:"roleArn", max: 256)
+            try validate(roleArn, name:"roleArn", min: 1)
+            try validate(stateMachineArn, name:"stateMachineArn", max: 256)
+            try validate(stateMachineArn, name:"stateMachineArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case definition = "definition"
             case roleArn = "roleArn"
@@ -1838,6 +2423,7 @@ extension SFN {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "updateDate", required: true, type: .timestamp)
         ]
+
         /// The date and time the state machine was updated.
         public let updateDate: TimeStamp
 

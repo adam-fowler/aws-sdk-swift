@@ -18,6 +18,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "S", required: false, type: .string), 
             AWSShapeMember(label: "SS", required: false, type: .list)
         ]
+
         /// A Binary data type.
         public let b: Data?
         /// A Boolean data type.
@@ -72,6 +73,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "StreamArn", required: true, type: .string)
         ]
+
         /// The shard ID of the first item that this operation will evaluate. Use the value that was returned for LastEvaluatedShardId in the previous operation. 
         public let exclusiveStartShardId: String?
         /// The maximum number of shard objects to return. The upper limit is 100.
@@ -85,6 +87,14 @@ extension DynamoDBStreams {
             self.streamArn = streamArn
         }
 
+        public func validate() throws {
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", max: 65)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", min: 28)
+            try validate(limit, name:"limit", min: 1)
+            try validate(streamArn, name:"streamArn", max: 1024)
+            try validate(streamArn, name:"streamArn", min: 37)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case exclusiveStartShardId = "ExclusiveStartShardId"
             case limit = "Limit"
@@ -96,11 +106,16 @@ extension DynamoDBStreams {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StreamDescription", required: false, type: .structure)
         ]
+
         /// A complete description of the stream, including its creation date and time, the DynamoDB table associated with the stream, the shard IDs within the stream, and the beginning and ending sequence numbers of stream records within the shards.
         public let streamDescription: StreamDescription?
 
         public init(streamDescription: StreamDescription? = nil) {
             self.streamDescription = streamDescription
+        }
+
+        public func validate() throws {
+            try streamDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -113,6 +128,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "ShardIterator", required: true, type: .string)
         ]
+
         /// The maximum number of records to return from the shard. The upper limit is 1000.
         public let limit: Int32?
         /// A shard iterator that was retrieved from a previous GetShardIterator operation. This iterator can be used to access the stream records in this shard.
@@ -121,6 +137,12 @@ extension DynamoDBStreams {
         public init(limit: Int32? = nil, shardIterator: String) {
             self.limit = limit
             self.shardIterator = shardIterator
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", min: 1)
+            try validate(shardIterator, name:"shardIterator", max: 2048)
+            try validate(shardIterator, name:"shardIterator", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -134,6 +156,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "NextShardIterator", required: false, type: .string), 
             AWSShapeMember(label: "Records", required: false, type: .list)
         ]
+
         /// The next position in the shard from which to start sequentially reading stream records. If set to null, the shard has been closed and the requested iterator will not return any more data.
         public let nextShardIterator: String?
         /// The stream records from the shard, which were retrieved using the shard iterator.
@@ -142,6 +165,14 @@ extension DynamoDBStreams {
         public init(nextShardIterator: String? = nil, records: [Record]? = nil) {
             self.nextShardIterator = nextShardIterator
             self.records = records
+        }
+
+        public func validate() throws {
+            try validate(nextShardIterator, name:"nextShardIterator", max: 2048)
+            try validate(nextShardIterator, name:"nextShardIterator", min: 1)
+            try records?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -157,6 +188,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "ShardIteratorType", required: true, type: .enum), 
             AWSShapeMember(label: "StreamArn", required: true, type: .string)
         ]
+
         /// The sequence number of a stream record in the shard from which to start reading.
         public let sequenceNumber: String?
         /// The identifier of the shard. The iterator will be returned for this shard ID.
@@ -173,6 +205,15 @@ extension DynamoDBStreams {
             self.streamArn = streamArn
         }
 
+        public func validate() throws {
+            try validate(sequenceNumber, name:"sequenceNumber", max: 40)
+            try validate(sequenceNumber, name:"sequenceNumber", min: 21)
+            try validate(shardId, name:"shardId", max: 65)
+            try validate(shardId, name:"shardId", min: 28)
+            try validate(streamArn, name:"streamArn", max: 1024)
+            try validate(streamArn, name:"streamArn", min: 37)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case sequenceNumber = "SequenceNumber"
             case shardId = "ShardId"
@@ -185,11 +226,17 @@ extension DynamoDBStreams {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ShardIterator", required: false, type: .string)
         ]
+
         /// The position in the shard from which to start reading stream records sequentially. A shard iterator specifies this position using the sequence number of a stream record in a shard.
         public let shardIterator: String?
 
         public init(shardIterator: String? = nil) {
             self.shardIterator = shardIterator
+        }
+
+        public func validate() throws {
+            try validate(shardIterator, name:"shardIterator", max: 2048)
+            try validate(shardIterator, name:"shardIterator", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -202,6 +249,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "PrincipalId", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .string)
         ]
+
         /// A unique identifier for the entity that made the call. For Time To Live, the principalId is "dynamodb.amazonaws.com".
         public let principalId: String?
         /// The type of the identity. For Time To Live, the type is "Service".
@@ -223,6 +271,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "AttributeName", required: true, type: .string), 
             AWSShapeMember(label: "KeyType", required: true, type: .enum)
         ]
+
         /// The name of a key attribute.
         public let attributeName: String
         /// The attribute data, consisting of the data type and the attribute value itself.
@@ -231,6 +280,11 @@ extension DynamoDBStreams {
         public init(attributeName: String, keyType: KeyType) {
             self.attributeName = attributeName
             self.keyType = keyType
+        }
+
+        public func validate() throws {
+            try validate(attributeName, name:"attributeName", max: 255)
+            try validate(attributeName, name:"attributeName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -251,6 +305,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "TableName", required: false, type: .string)
         ]
+
         /// The ARN (Amazon Resource Name) of the first item that this operation will evaluate. Use the value that was returned for LastEvaluatedStreamArn in the previous operation. 
         public let exclusiveStartStreamArn: String?
         /// The maximum number of streams to return. The upper limit is 100.
@@ -262,6 +317,15 @@ extension DynamoDBStreams {
             self.exclusiveStartStreamArn = exclusiveStartStreamArn
             self.limit = limit
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(exclusiveStartStreamArn, name:"exclusiveStartStreamArn", max: 1024)
+            try validate(exclusiveStartStreamArn, name:"exclusiveStartStreamArn", min: 37)
+            try validate(limit, name:"limit", min: 1)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -276,6 +340,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "LastEvaluatedStreamArn", required: false, type: .string), 
             AWSShapeMember(label: "Streams", required: false, type: .list)
         ]
+
         /// The stream ARN of the item where the operation stopped, inclusive of the previous result set. Use this value to start a new operation, excluding this value in the new request. If LastEvaluatedStreamArn is empty, then the "last page" of results has been processed and there is no more data to be retrieved. If LastEvaluatedStreamArn is not empty, it does not necessarily mean that there is more data in the result set. The only way to know when you have reached the end of the result set is when LastEvaluatedStreamArn is empty.
         public let lastEvaluatedStreamArn: String?
         /// A list of stream descriptors associated with the current account and endpoint.
@@ -284,6 +349,14 @@ extension DynamoDBStreams {
         public init(lastEvaluatedStreamArn: String? = nil, streams: [Stream]? = nil) {
             self.lastEvaluatedStreamArn = lastEvaluatedStreamArn
             self.streams = streams
+        }
+
+        public func validate() throws {
+            try validate(lastEvaluatedStreamArn, name:"lastEvaluatedStreamArn", max: 1024)
+            try validate(lastEvaluatedStreamArn, name:"lastEvaluatedStreamArn", min: 37)
+            try streams?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -309,6 +382,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "eventVersion", required: false, type: .string), 
             AWSShapeMember(label: "userIdentity", required: false, type: .structure)
         ]
+
         /// The region in which the GetRecords request was received.
         public let awsRegion: String?
         /// The main body of the stream record, containing all of the DynamoDB-specific fields.
@@ -334,6 +408,10 @@ extension DynamoDBStreams {
             self.userIdentity = userIdentity
         }
 
+        public func validate() throws {
+            try dynamodb?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case awsRegion = "awsRegion"
             case dynamodb = "dynamodb"
@@ -350,6 +428,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "EndingSequenceNumber", required: false, type: .string), 
             AWSShapeMember(label: "StartingSequenceNumber", required: false, type: .string)
         ]
+
         /// The last sequence number.
         public let endingSequenceNumber: String?
         /// The first sequence number.
@@ -358,6 +437,13 @@ extension DynamoDBStreams {
         public init(endingSequenceNumber: String? = nil, startingSequenceNumber: String? = nil) {
             self.endingSequenceNumber = endingSequenceNumber
             self.startingSequenceNumber = startingSequenceNumber
+        }
+
+        public func validate() throws {
+            try validate(endingSequenceNumber, name:"endingSequenceNumber", max: 40)
+            try validate(endingSequenceNumber, name:"endingSequenceNumber", min: 21)
+            try validate(startingSequenceNumber, name:"startingSequenceNumber", max: 40)
+            try validate(startingSequenceNumber, name:"startingSequenceNumber", min: 21)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -372,6 +458,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "SequenceNumberRange", required: false, type: .structure), 
             AWSShapeMember(label: "ShardId", required: false, type: .string)
         ]
+
         /// The shard ID of the current shard's parent.
         public let parentShardId: String?
         /// The range of possible sequence numbers for the shard.
@@ -383,6 +470,14 @@ extension DynamoDBStreams {
             self.parentShardId = parentShardId
             self.sequenceNumberRange = sequenceNumberRange
             self.shardId = shardId
+        }
+
+        public func validate() throws {
+            try validate(parentShardId, name:"parentShardId", max: 65)
+            try validate(parentShardId, name:"parentShardId", min: 28)
+            try sequenceNumberRange?.validate()
+            try validate(shardId, name:"shardId", max: 65)
+            try validate(shardId, name:"shardId", min: 28)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -406,6 +501,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "StreamLabel", required: false, type: .string), 
             AWSShapeMember(label: "TableName", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) for the stream.
         public let streamArn: String?
         /// A timestamp, in ISO 8601 format, for this stream. Note that LatestStreamLabel is not a unique identifier for the stream, because it is possible that a stream from another table might have the same timestamp. However, the combination of the following three elements is guaranteed to be unique:   the AWS customer ID.   the table name   the StreamLabel   
@@ -417,6 +513,14 @@ extension DynamoDBStreams {
             self.streamArn = streamArn
             self.streamLabel = streamLabel
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(streamArn, name:"streamArn", max: 1024)
+            try validate(streamArn, name:"streamArn", min: 37)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -438,6 +542,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "StreamViewType", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: false, type: .string)
         ]
+
         /// The date and time when the request to create this stream was issued.
         public let creationRequestDateTime: TimeStamp?
         /// The key attribute(s) of the stream's DynamoDB table.
@@ -469,6 +574,24 @@ extension DynamoDBStreams {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try keySchema?.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try validate(lastEvaluatedShardId, name:"lastEvaluatedShardId", max: 65)
+            try validate(lastEvaluatedShardId, name:"lastEvaluatedShardId", min: 28)
+            try shards?.forEach {
+                try $0.validate()
+            }
+            try validate(streamArn, name:"streamArn", max: 1024)
+            try validate(streamArn, name:"streamArn", min: 37)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationRequestDateTime = "CreationRequestDateTime"
             case keySchema = "KeySchema"
@@ -492,6 +615,7 @@ extension DynamoDBStreams {
             AWSShapeMember(label: "SizeBytes", required: false, type: .long), 
             AWSShapeMember(label: "StreamViewType", required: false, type: .enum)
         ]
+
         /// The approximate date and time when the stream record was created, in UNIX epoch time format.
         public let approximateCreationDateTime: TimeStamp?
         /// The primary key attribute(s) for the DynamoDB item that was modified.
@@ -515,6 +639,12 @@ extension DynamoDBStreams {
             self.sequenceNumber = sequenceNumber
             self.sizeBytes = sizeBytes
             self.streamViewType = streamViewType
+        }
+
+        public func validate() throws {
+            try validate(sequenceNumber, name:"sequenceNumber", max: 40)
+            try validate(sequenceNumber, name:"sequenceNumber", min: 21)
+            try validate(sizeBytes, name:"sizeBytes", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

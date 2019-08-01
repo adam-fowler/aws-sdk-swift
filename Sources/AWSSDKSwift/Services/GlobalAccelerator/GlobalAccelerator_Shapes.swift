@@ -16,6 +16,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The Amazon Resource Name (ARN) of the accelerator.
         public let acceleratorArn: String?
         /// The date and time that the accelerator was created.
@@ -44,6 +45,14 @@ extension GlobalAccelerator {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+            try ipSets?.forEach {
+                try $0.validate()
+            }
+            try validate(name, name:"name", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceleratorArn = "AcceleratorArn"
             case createdTime = "CreatedTime"
@@ -62,6 +71,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "FlowLogsS3Bucket", required: false, type: .string), 
             AWSShapeMember(label: "FlowLogsS3Prefix", required: false, type: .string)
         ]
+
         /// Indicates whether flow logs are enabled. The default value is false. If the value is true, FlowLogsS3Bucket and FlowLogsS3Prefix must be specified. For more information, see Flow Logs in the AWS Global Accelerator Developer Guide.
         public let flowLogsEnabled: Bool?
         /// The name of the Amazon S3 bucket for the flow logs. Attribute is required if FlowLogsEnabled is true. The bucket must exist and have a bucket policy that grants AWS Global Accelerator permission to write to the bucket.
@@ -73,6 +83,11 @@ extension GlobalAccelerator {
             self.flowLogsEnabled = flowLogsEnabled
             self.flowLogsS3Bucket = flowLogsS3Bucket
             self.flowLogsS3Prefix = flowLogsS3Prefix
+        }
+
+        public func validate() throws {
+            try validate(flowLogsS3Bucket, name:"flowLogsS3Bucket", max: 255)
+            try validate(flowLogsS3Prefix, name:"flowLogsS3Prefix", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -101,6 +116,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "IpAddressType", required: false, type: .enum), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Indicates whether an accelerator is enabled. The value is true or false. The default value is true.  If the value is set to true, an accelerator cannot be deleted. If set to false, the accelerator can be deleted.
         public let enabled: Bool?
         /// A unique, case-sensitive identifier that you provide to ensure the idempotency—that is, the uniqueness—of an accelerator.
@@ -117,6 +133,11 @@ extension GlobalAccelerator {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(idempotencyToken, name:"idempotencyToken", max: 255)
+            try validate(name, name:"name", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case enabled = "Enabled"
             case idempotencyToken = "IdempotencyToken"
@@ -129,11 +150,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Accelerator", required: false, type: .structure)
         ]
+
         /// The accelerator that is created by specifying a listener and the supported IP address types.
         public let accelerator: Accelerator?
 
         public init(accelerator: Accelerator? = nil) {
             self.accelerator = accelerator
+        }
+
+        public func validate() throws {
+            try accelerator?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -154,6 +180,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "ThresholdCount", required: false, type: .integer), 
             AWSShapeMember(label: "TrafficDialPercentage", required: false, type: .float)
         ]
+
         /// The list of endpoint objects.
         public let endpointConfigurations: [EndpointConfiguration]?
         /// The name of the AWS Region where the endpoint group is located. A listener can have only one endpoint group in a specific Region.
@@ -188,6 +215,26 @@ extension GlobalAccelerator {
             self.trafficDialPercentage = trafficDialPercentage
         }
 
+        public func validate() throws {
+            try endpointConfigurations?.forEach {
+                try $0.validate()
+            }
+            try validate(endpointConfigurations, name:"endpointConfigurations", max: 10)
+            try validate(endpointConfigurations, name:"endpointConfigurations", min: 0)
+            try validate(endpointGroupRegion, name:"endpointGroupRegion", max: 255)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", max: 30)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", min: 10)
+            try validate(healthCheckPath, name:"healthCheckPath", max: 255)
+            try validate(healthCheckPort, name:"healthCheckPort", max: 65535)
+            try validate(healthCheckPort, name:"healthCheckPort", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 255)
+            try validate(listenerArn, name:"listenerArn", max: 255)
+            try validate(thresholdCount, name:"thresholdCount", max: 10)
+            try validate(thresholdCount, name:"thresholdCount", min: 1)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", max: 100)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endpointConfigurations = "EndpointConfigurations"
             case endpointGroupRegion = "EndpointGroupRegion"
@@ -206,11 +253,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EndpointGroup", required: false, type: .structure)
         ]
+
         /// The information about the endpoint group that was created.
         public let endpointGroup: EndpointGroup?
 
         public init(endpointGroup: EndpointGroup? = nil) {
             self.endpointGroup = endpointGroup
+        }
+
+        public func validate() throws {
+            try endpointGroup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -226,6 +278,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "PortRanges", required: true, type: .list), 
             AWSShapeMember(label: "Protocol", required: true, type: .enum)
         ]
+
         /// The Amazon Resource Name (ARN) of your accelerator.
         public let acceleratorArn: String
         /// Client affinity lets you direct all requests from a user to the same endpoint, if you have stateful applications, regardless of the port and protocol of the client request. Clienty affinity gives you control over whether to always route each client to the same specific endpoint. AWS Global Accelerator uses a consistent-flow hashing algorithm to choose the optimal endpoint for a connection. If client affinity is NONE, Global Accelerator uses the "five-tuple" (5-tuple) properties—source IP address, source port, destination IP address, destination port, and protocol—to select the hash value, and then chooses the best endpoint. However, with this setting, if someone uses different ports to connect to Global Accelerator, their connections might not be always routed to the same endpoint because the hash value changes.  If you want a given client to always be routed to the same endpoint, set client affinity to SOURCE_IP instead. When you use the SOURCE_IP setting, Global Accelerator uses the "two-tuple" (2-tuple) properties— source (client) IP address and destination IP address—to select the hash value. The default value is NONE.
@@ -245,6 +298,16 @@ extension GlobalAccelerator {
             self.`protocol` = `protocol`
         }
 
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 255)
+            try portRanges.forEach {
+                try $0.validate()
+            }
+            try validate(portRanges, name:"portRanges", max: 10)
+            try validate(portRanges, name:"portRanges", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceleratorArn = "AcceleratorArn"
             case clientAffinity = "ClientAffinity"
@@ -258,11 +321,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Listener", required: false, type: .structure)
         ]
+
         /// The listener that you've created.
         public let listener: Listener?
 
         public init(listener: Listener? = nil) {
             self.listener = listener
+        }
+
+        public func validate() throws {
+            try listener?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -274,11 +342,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AcceleratorArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of an accelerator.
         public let acceleratorArn: String
 
         public init(acceleratorArn: String) {
             self.acceleratorArn = acceleratorArn
+        }
+
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -290,11 +363,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EndpointGroupArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the endpoint group to delete.
         public let endpointGroupArn: String
 
         public init(endpointGroupArn: String) {
             self.endpointGroupArn = endpointGroupArn
+        }
+
+        public func validate() throws {
+            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -306,11 +384,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ListenerArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the listener.
         public let listenerArn: String
 
         public init(listenerArn: String) {
             self.listenerArn = listenerArn
+        }
+
+        public func validate() throws {
+            try validate(listenerArn, name:"listenerArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -322,11 +405,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AcceleratorArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the accelerator with the attributes that you want to describe. Value is required.
         public let acceleratorArn: String?
 
         public init(acceleratorArn: String? = nil) {
             self.acceleratorArn = acceleratorArn
+        }
+
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -338,11 +426,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AcceleratorAttributes", required: false, type: .structure)
         ]
+
         /// The attributes of the accelerator.
         public let acceleratorAttributes: AcceleratorAttributes?
 
         public init(acceleratorAttributes: AcceleratorAttributes? = nil) {
             self.acceleratorAttributes = acceleratorAttributes
+        }
+
+        public func validate() throws {
+            try acceleratorAttributes?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -354,11 +447,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AcceleratorArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the accelerator to describe.
         public let acceleratorArn: String
 
         public init(acceleratorArn: String) {
             self.acceleratorArn = acceleratorArn
+        }
+
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -370,11 +468,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Accelerator", required: false, type: .structure)
         ]
+
         /// The description of the accelerator.
         public let accelerator: Accelerator?
 
         public init(accelerator: Accelerator? = nil) {
             self.accelerator = accelerator
+        }
+
+        public func validate() throws {
+            try accelerator?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -386,11 +489,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EndpointGroupArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the endpoint group to describe.
         public let endpointGroupArn: String
 
         public init(endpointGroupArn: String) {
             self.endpointGroupArn = endpointGroupArn
+        }
+
+        public func validate() throws {
+            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -402,11 +510,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EndpointGroup", required: false, type: .structure)
         ]
+
         /// The description of an endpoint group.
         public let endpointGroup: EndpointGroup?
 
         public init(endpointGroup: EndpointGroup? = nil) {
             self.endpointGroup = endpointGroup
+        }
+
+        public func validate() throws {
+            try endpointGroup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -418,11 +531,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ListenerArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the listener to describe.
         public let listenerArn: String
 
         public init(listenerArn: String) {
             self.listenerArn = listenerArn
+        }
+
+        public func validate() throws {
+            try validate(listenerArn, name:"listenerArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -434,11 +552,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Listener", required: false, type: .structure)
         ]
+
         /// The description of a listener.
         public let listener: Listener?
 
         public init(listener: Listener? = nil) {
             self.listener = listener
+        }
+
+        public func validate() throws {
+            try listener?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -451,6 +574,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "EndpointId", required: false, type: .string), 
             AWSShapeMember(label: "Weight", required: false, type: .integer)
         ]
+
         /// An ID for the endpoint. If the endpoint is a Network Load Balancer or Application Load Balancer, this is the Amazon Resource Name (ARN) of the resource. If the endpoint is an Elastic IP address, this is the Elastic IP address allocation ID.
         public let endpointId: String?
         /// The weight associated with the endpoint. When you add weights to endpoints, you configure AWS Global Accelerator to route traffic based on proportions that you specify. For example, you might specify endpoint weights of 4, 5, 5, and 6 (sum=20). The result is that 4/20 of your traffic, on average, is routed to the first endpoint, 5/20 is routed both to the second and third endpoints, and 6/20 is routed to the last endpoint. For more information, see Endpoint Weights in the AWS Global Accelerator Developer Guide.
@@ -459,6 +583,12 @@ extension GlobalAccelerator {
         public init(endpointId: String? = nil, weight: Int32? = nil) {
             self.endpointId = endpointId
             self.weight = weight
+        }
+
+        public func validate() throws {
+            try validate(endpointId, name:"endpointId", max: 255)
+            try validate(weight, name:"weight", max: 255)
+            try validate(weight, name:"weight", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -474,6 +604,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "HealthState", required: false, type: .enum), 
             AWSShapeMember(label: "Weight", required: false, type: .integer)
         ]
+
         /// An ID for the endpoint. If the endpoint is a Network Load Balancer or Application Load Balancer, this is the Amazon Resource Name (ARN) of the resource. If the endpoint is an Elastic IP address, this is the Elastic IP address allocation ID.
         public let endpointId: String?
         /// The reason code associated with why the endpoint is not healthy. If the endpoint state is healthy, a reason code is not provided. If the endpoint state is unhealthy, the reason code can be one of the following values:    Timeout: The health check requests to the endpoint are timing out before returning a status.    Failed: The health check failed, for example because the endpoint response was invalid (malformed).   If the endpoint state is initial, the reason code can be one of the following values:    ProvisioningInProgress: The endpoint is in the process of being provisioned.    InitialHealthChecking: Global Accelerator is still setting up the minimum number of health checks for the endpoint that are required to determine its health status.  
@@ -488,6 +619,13 @@ extension GlobalAccelerator {
             self.healthReason = healthReason
             self.healthState = healthState
             self.weight = weight
+        }
+
+        public func validate() throws {
+            try validate(endpointId, name:"endpointId", max: 255)
+            try validate(healthReason, name:"healthReason", max: 255)
+            try validate(weight, name:"weight", max: 255)
+            try validate(weight, name:"weight", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -510,6 +648,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "ThresholdCount", required: false, type: .integer), 
             AWSShapeMember(label: "TrafficDialPercentage", required: false, type: .float)
         ]
+
         /// The list of endpoint objects.
         public let endpointDescriptions: [EndpointDescription]?
         /// The Amazon Resource Name (ARN) of the endpoint group.
@@ -539,6 +678,23 @@ extension GlobalAccelerator {
             self.healthCheckProtocol = healthCheckProtocol
             self.thresholdCount = thresholdCount
             self.trafficDialPercentage = trafficDialPercentage
+        }
+
+        public func validate() throws {
+            try endpointDescriptions?.forEach {
+                try $0.validate()
+            }
+            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
+            try validate(endpointGroupRegion, name:"endpointGroupRegion", max: 255)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", max: 30)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", min: 10)
+            try validate(healthCheckPath, name:"healthCheckPath", max: 255)
+            try validate(healthCheckPort, name:"healthCheckPort", max: 65535)
+            try validate(healthCheckPort, name:"healthCheckPort", min: 1)
+            try validate(thresholdCount, name:"thresholdCount", max: 10)
+            try validate(thresholdCount, name:"thresholdCount", min: 1)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", max: 100)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -578,6 +734,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "IpAddresses", required: false, type: .list), 
             AWSShapeMember(label: "IpFamily", required: false, type: .string)
         ]
+
         /// The array of IP addresses in the IP address set. An IP address set can have a maximum of two IP addresses.
         public let ipAddresses: [String]?
         /// The types of IP addresses included in this IP set.
@@ -586,6 +743,12 @@ extension GlobalAccelerator {
         public init(ipAddresses: [String]? = nil, ipFamily: String? = nil) {
             self.ipAddresses = ipAddresses
             self.ipFamily = ipFamily
+        }
+
+        public func validate() throws {
+            try validate(ipAddresses, name:"ipAddresses", max: 2)
+            try validate(ipAddresses, name:"ipAddresses", min: 0)
+            try validate(ipFamily, name:"ipFamily", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -599,6 +762,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The number of Global Accelerator objects that you want to return with this call. The default value is 10.
         public let maxResults: Int32?
         /// The token for the next set of results. You receive this token from a previous call.
@@ -607,6 +771,12 @@ extension GlobalAccelerator {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -620,6 +790,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "Accelerators", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of accelerators for a customer account.
         public let accelerators: [Accelerator]?
         /// The token for the next set of results. You receive this token from a previous call.
@@ -628,6 +799,13 @@ extension GlobalAccelerator {
         public init(accelerators: [Accelerator]? = nil, nextToken: String? = nil) {
             self.accelerators = accelerators
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try accelerators?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -642,6 +820,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the listener.
         public let listenerArn: String
         /// The number of endpoint group objects that you want to return with this call. The default value is 10.
@@ -653,6 +832,13 @@ extension GlobalAccelerator {
             self.listenerArn = listenerArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(listenerArn, name:"listenerArn", max: 255)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -667,6 +853,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "EndpointGroups", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of the endpoint groups associated with a listener.
         public let endpointGroups: [EndpointGroup]?
         /// The token for the next set of results. You receive this token from a previous call.
@@ -675,6 +862,13 @@ extension GlobalAccelerator {
         public init(endpointGroups: [EndpointGroup]? = nil, nextToken: String? = nil) {
             self.endpointGroups = endpointGroups
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try endpointGroups?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -689,6 +883,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the accelerator for which you want to list listener objects.
         public let acceleratorArn: String
         /// The number of listener objects that you want to return with this call. The default value is 10.
@@ -700,6 +895,13 @@ extension GlobalAccelerator {
             self.acceleratorArn = acceleratorArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -714,6 +916,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "Listeners", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of listeners for an accelerator.
         public let listeners: [Listener]?
         /// The token for the next set of results. You receive this token from a previous call.
@@ -722,6 +925,13 @@ extension GlobalAccelerator {
         public init(listeners: [Listener]? = nil, nextToken: String? = nil) {
             self.listeners = listeners
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try listeners?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -737,6 +947,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "PortRanges", required: false, type: .list), 
             AWSShapeMember(label: "Protocol", required: false, type: .enum)
         ]
+
         /// Client affinity lets you direct all requests from a user to the same endpoint, if you have stateful applications, regardless of the port and protocol of the client request. Clienty affinity gives you control over whether to always route each client to the same specific endpoint. AWS Global Accelerator uses a consistent-flow hashing algorithm to choose the optimal endpoint for a connection. If client affinity is NONE, Global Accelerator uses the "five-tuple" (5-tuple) properties—source IP address, source port, destination IP address, destination port, and protocol—to select the hash value, and then chooses the best endpoint. However, with this setting, if someone uses different ports to connect to Global Accelerator, their connections might not be always routed to the same endpoint because the hash value changes.  If you want a given client to always be routed to the same endpoint, set client affinity to SOURCE_IP instead. When you use the SOURCE_IP setting, Global Accelerator uses the "two-tuple" (2-tuple) properties— source (client) IP address and destination IP address—to select the hash value. The default value is NONE.
         public let clientAffinity: ClientAffinity?
         /// The Amazon Resource Name (ARN) of the listener.
@@ -753,6 +964,15 @@ extension GlobalAccelerator {
             self.`protocol` = `protocol`
         }
 
+        public func validate() throws {
+            try validate(listenerArn, name:"listenerArn", max: 255)
+            try portRanges?.forEach {
+                try $0.validate()
+            }
+            try validate(portRanges, name:"portRanges", max: 10)
+            try validate(portRanges, name:"portRanges", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientAffinity = "ClientAffinity"
             case listenerArn = "ListenerArn"
@@ -766,6 +986,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "FromPort", required: false, type: .integer), 
             AWSShapeMember(label: "ToPort", required: false, type: .integer)
         ]
+
         /// The first port in the range of ports, inclusive.
         public let fromPort: Int32?
         /// The last port in the range of ports, inclusive.
@@ -774,6 +995,13 @@ extension GlobalAccelerator {
         public init(fromPort: Int32? = nil, toPort: Int32? = nil) {
             self.fromPort = fromPort
             self.toPort = toPort
+        }
+
+        public func validate() throws {
+            try validate(fromPort, name:"fromPort", max: 65535)
+            try validate(fromPort, name:"fromPort", min: 1)
+            try validate(toPort, name:"toPort", max: 65535)
+            try validate(toPort, name:"toPort", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -795,6 +1023,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "FlowLogsS3Bucket", required: false, type: .string), 
             AWSShapeMember(label: "FlowLogsS3Prefix", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the accelerator that you want to update. Attribute is required.
         public let acceleratorArn: String?
         /// Update whether flow logs are enabled. The default value is false. If the value is true, FlowLogsS3Bucket and FlowLogsS3Prefix must be specified. For more information, see Flow Logs in the AWS Global Accelerator Developer Guide.
@@ -811,6 +1040,12 @@ extension GlobalAccelerator {
             self.flowLogsS3Prefix = flowLogsS3Prefix
         }
 
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+            try validate(flowLogsS3Bucket, name:"flowLogsS3Bucket", max: 255)
+            try validate(flowLogsS3Prefix, name:"flowLogsS3Prefix", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceleratorArn = "AcceleratorArn"
             case flowLogsEnabled = "FlowLogsEnabled"
@@ -823,11 +1058,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AcceleratorAttributes", required: false, type: .structure)
         ]
+
         /// Updated attributes for the accelerator.
         public let acceleratorAttributes: AcceleratorAttributes?
 
         public init(acceleratorAttributes: AcceleratorAttributes? = nil) {
             self.acceleratorAttributes = acceleratorAttributes
+        }
+
+        public func validate() throws {
+            try acceleratorAttributes?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -842,6 +1082,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "IpAddressType", required: false, type: .enum), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the accelerator to update.
         public let acceleratorArn: String
         /// Indicates whether an accelerator is enabled. The value is true or false. The default value is true.  If the value is set to true, the accelerator cannot be deleted. If set to false, the accelerator can be deleted.
@@ -858,6 +1099,11 @@ extension GlobalAccelerator {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+            try validate(name, name:"name", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceleratorArn = "AcceleratorArn"
             case enabled = "Enabled"
@@ -870,11 +1116,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Accelerator", required: false, type: .structure)
         ]
+
         /// Information about the updated accelerator.
         public let accelerator: Accelerator?
 
         public init(accelerator: Accelerator? = nil) {
             self.accelerator = accelerator
+        }
+
+        public func validate() throws {
+            try accelerator?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -893,6 +1144,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "ThresholdCount", required: false, type: .integer), 
             AWSShapeMember(label: "TrafficDialPercentage", required: false, type: .float)
         ]
+
         /// The list of endpoint objects.
         public let endpointConfigurations: [EndpointConfiguration]?
         /// The Amazon Resource Name (ARN) of the endpoint group.
@@ -921,6 +1173,24 @@ extension GlobalAccelerator {
             self.trafficDialPercentage = trafficDialPercentage
         }
 
+        public func validate() throws {
+            try endpointConfigurations?.forEach {
+                try $0.validate()
+            }
+            try validate(endpointConfigurations, name:"endpointConfigurations", max: 10)
+            try validate(endpointConfigurations, name:"endpointConfigurations", min: 0)
+            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", max: 30)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", min: 10)
+            try validate(healthCheckPath, name:"healthCheckPath", max: 255)
+            try validate(healthCheckPort, name:"healthCheckPort", max: 65535)
+            try validate(healthCheckPort, name:"healthCheckPort", min: 1)
+            try validate(thresholdCount, name:"thresholdCount", max: 10)
+            try validate(thresholdCount, name:"thresholdCount", min: 1)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", max: 100)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endpointConfigurations = "EndpointConfigurations"
             case endpointGroupArn = "EndpointGroupArn"
@@ -937,11 +1207,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EndpointGroup", required: false, type: .structure)
         ]
+
         /// The information about the endpoint group that was updated.
         public let endpointGroup: EndpointGroup?
 
         public init(endpointGroup: EndpointGroup? = nil) {
             self.endpointGroup = endpointGroup
+        }
+
+        public func validate() throws {
+            try endpointGroup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -956,6 +1231,7 @@ extension GlobalAccelerator {
             AWSShapeMember(label: "PortRanges", required: false, type: .list), 
             AWSShapeMember(label: "Protocol", required: false, type: .enum)
         ]
+
         /// Client affinity lets you direct all requests from a user to the same endpoint, if you have stateful applications, regardless of the port and protocol of the client request. Clienty affinity gives you control over whether to always route each client to the same specific endpoint. AWS Global Accelerator uses a consistent-flow hashing algorithm to choose the optimal endpoint for a connection. If client affinity is NONE, Global Accelerator uses the "five-tuple" (5-tuple) properties—source IP address, source port, destination IP address, destination port, and protocol—to select the hash value, and then chooses the best endpoint. However, with this setting, if someone uses different ports to connect to Global Accelerator, their connections might not be always routed to the same endpoint because the hash value changes.  If you want a given client to always be routed to the same endpoint, set client affinity to SOURCE_IP instead. When you use the SOURCE_IP setting, Global Accelerator uses the "two-tuple" (2-tuple) properties— source (client) IP address and destination IP address—to select the hash value. The default value is NONE.
         public let clientAffinity: ClientAffinity?
         /// The Amazon Resource Name (ARN) of the listener to update.
@@ -972,6 +1248,15 @@ extension GlobalAccelerator {
             self.`protocol` = `protocol`
         }
 
+        public func validate() throws {
+            try validate(listenerArn, name:"listenerArn", max: 255)
+            try portRanges?.forEach {
+                try $0.validate()
+            }
+            try validate(portRanges, name:"portRanges", max: 10)
+            try validate(portRanges, name:"portRanges", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientAffinity = "ClientAffinity"
             case listenerArn = "ListenerArn"
@@ -984,11 +1269,16 @@ extension GlobalAccelerator {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Listener", required: false, type: .structure)
         ]
+
         /// Information for the updated listener.
         public let listener: Listener?
 
         public init(listener: Listener? = nil) {
             self.listener = listener
+        }
+
+        public func validate() throws {
+            try listener?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

@@ -17,6 +17,7 @@ extension S3Control {
             AWSShapeMember(label: "Report", required: true, type: .structure), 
             AWSShapeMember(label: "RoleArn", required: true, type: .string)
         ]
+
         public let accountId: String
         /// An idempotency token to ensure that you don't accidentally submit the same request twice. You can use any string up to the maximum length.
         public let clientRequestToken: String
@@ -35,7 +36,7 @@ extension S3Control {
         /// The Amazon Resource Name (ARN) for the Identity and Access Management (IAM) Role that batch operations will use to execute this job's operation on each object in the manifest.
         public let roleArn: String
 
-        public init(accountId: String, clientRequestToken: String, confirmationRequired: Bool? = nil, description: String? = nil, manifest: JobManifest, operation: JobOperation, priority: Int32, report: JobReport, roleArn: String) {
+        public init(accountId: String, clientRequestToken: String = CreateJobRequest.idempotencyToken(), confirmationRequired: Bool? = nil, description: String? = nil, manifest: JobManifest, operation: JobOperation, priority: Int32, report: JobReport, roleArn: String) {
             self.accountId = accountId
             self.clientRequestToken = clientRequestToken
             self.confirmationRequired = confirmationRequired
@@ -45,6 +46,21 @@ extension S3Control {
             self.priority = priority
             self.report = report
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 1)
+            try manifest.validate()
+            try operation.validate()
+            try validate(priority, name:"priority", max: 2147483647)
+            try validate(priority, name:"priority", min: 0)
+            try report.validate()
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -64,11 +80,17 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: false, type: .string)
         ]
+
         /// The ID for this job. Amazon S3 generates this ID automatically and returns it after a successful Create Job request.
         public let jobId: String?
 
         public init(jobId: String? = nil) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -80,11 +102,16 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountId", location: .header(locationName: "x-amz-account-id"), required: true, type: .string)
         ]
+
         /// The account ID for the AWS account whose block public access configuration you want to delete.
         public let accountId: String
 
         public init(accountId: String) {
             self.accountId = accountId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -97,6 +124,7 @@ extension S3Control {
             AWSShapeMember(label: "AccountId", location: .header(locationName: "x-amz-account-id"), required: true, type: .string), 
             AWSShapeMember(label: "JobId", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         public let accountId: String
         /// The ID for the job whose information you want to retrieve.
         public let jobId: String
@@ -104,6 +132,12 @@ extension S3Control {
         public init(accountId: String, jobId: String) {
             self.accountId = accountId
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -116,11 +150,16 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Job", required: false, type: .structure)
         ]
+
         /// Contains the configuration parameters and status for the job specified in the Describe Job request.
         public let job: JobDescriptor?
 
         public init(job: JobDescriptor? = nil) {
             self.job = job
+        }
+
+        public func validate() throws {
+            try job?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -134,6 +173,7 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PublicAccessBlockConfiguration", required: false, type: .structure)
         ]
+
         public let publicAccessBlockConfiguration: PublicAccessBlockConfiguration?
 
         public init(publicAccessBlockConfiguration: PublicAccessBlockConfiguration? = nil) {
@@ -149,10 +189,15 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountId", location: .header(locationName: "x-amz-account-id"), required: true, type: .string)
         ]
+
         public let accountId: String
 
         public init(accountId: String) {
             self.accountId = accountId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -180,6 +225,7 @@ extension S3Control {
             AWSShapeMember(label: "SuspendedDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "TerminationDate", required: false, type: .timestamp)
         ]
+
         /// Indicates whether confirmation is required before Amazon S3 begins running the specified job. Confirmation is required only for jobs created through the Amazon S3 console.
         public let confirmationRequired: Bool?
         /// A timestamp indicating when this job was created.
@@ -234,6 +280,30 @@ extension S3Control {
             self.terminationDate = terminationDate
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 1)
+            try failureReasons?.forEach {
+                try $0.validate()
+            }
+            try validate(jobArn, name:"jobArn", max: 1024)
+            try validate(jobArn, name:"jobArn", min: 1)
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
+            try manifest?.validate()
+            try operation?.validate()
+            try validate(priority, name:"priority", max: 2147483647)
+            try validate(priority, name:"priority", min: 0)
+            try progressSummary?.validate()
+            try report?.validate()
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 1)
+            try validate(statusUpdateReason, name:"statusUpdateReason", max: 256)
+            try validate(statusUpdateReason, name:"statusUpdateReason", min: 1)
+            try validate(suspendedCause, name:"suspendedCause", max: 1024)
+            try validate(suspendedCause, name:"suspendedCause", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case confirmationRequired = "ConfirmationRequired"
             case creationTime = "CreationTime"
@@ -260,6 +330,7 @@ extension S3Control {
             AWSShapeMember(label: "FailureCode", required: false, type: .string), 
             AWSShapeMember(label: "FailureReason", required: false, type: .string)
         ]
+
         /// The failure code, if any, for the specified job.
         public let failureCode: String?
         /// The failure reason, if any, for the specified job.
@@ -268,6 +339,13 @@ extension S3Control {
         public init(failureCode: String? = nil, failureReason: String? = nil) {
             self.failureCode = failureCode
             self.failureReason = failureReason
+        }
+
+        public func validate() throws {
+            try validate(failureCode, name:"failureCode", max: 64)
+            try validate(failureCode, name:"failureCode", min: 1)
+            try validate(failureReason, name:"failureReason", max: 256)
+            try validate(failureReason, name:"failureReason", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -287,6 +365,7 @@ extension S3Control {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "TerminationDate", required: false, type: .timestamp)
         ]
+
         /// A timestamp indicating when the specified job was created.
         public let creationTime: TimeStamp?
         /// The user-specified description that was included in the specified job's Create Job request.
@@ -315,6 +394,16 @@ extension S3Control {
             self.terminationDate = terminationDate
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 1)
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
+            try validate(priority, name:"priority", max: 2147483647)
+            try validate(priority, name:"priority", min: 0)
+            try progressSummary?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "CreationTime"
             case description = "Description"
@@ -332,6 +421,7 @@ extension S3Control {
             AWSShapeMember(label: "Location", required: true, type: .structure), 
             AWSShapeMember(label: "Spec", required: true, type: .structure)
         ]
+
         /// Contains the information required to locate the specified job's manifest.
         public let location: JobManifestLocation
         /// Describes the format of the specified job's manifest. If the manifest is in CSV format, also describes the columns contained within the manifest.
@@ -340,6 +430,10 @@ extension S3Control {
         public init(location: JobManifestLocation, spec: JobManifestSpec) {
             self.location = location
             self.spec = spec
+        }
+
+        public func validate() throws {
+            try location.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -368,6 +462,7 @@ extension S3Control {
             AWSShapeMember(label: "ObjectArn", required: true, type: .string), 
             AWSShapeMember(label: "ObjectVersionId", required: false, type: .string)
         ]
+
         /// The ETag for the specified manifest object.
         public let eTag: String
         /// The Amazon Resource Name (ARN) for a manifest object.
@@ -379,6 +474,15 @@ extension S3Control {
             self.eTag = eTag
             self.objectArn = objectArn
             self.objectVersionId = objectVersionId
+        }
+
+        public func validate() throws {
+            try validate(eTag, name:"eTag", max: 1024)
+            try validate(eTag, name:"eTag", min: 1)
+            try validate(objectArn, name:"objectArn", max: 2000)
+            try validate(objectArn, name:"objectArn", min: 1)
+            try validate(objectVersionId, name:"objectVersionId", max: 2000)
+            try validate(objectVersionId, name:"objectVersionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -393,6 +497,7 @@ extension S3Control {
             AWSShapeMember(label: "Fields", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "Format", required: true, type: .enum)
         ]
+
         /// If the specified manifest object is in the S3BatchOperations_CSV_20180820 format, this element describes which columns contain the required data.
         public let fields: [JobManifestFieldName]?
         /// Indicates which of the available formats the specified manifest uses.
@@ -417,6 +522,7 @@ extension S3Control {
             AWSShapeMember(label: "S3PutObjectCopy", required: false, type: .structure), 
             AWSShapeMember(label: "S3PutObjectTagging", required: false, type: .structure)
         ]
+
         /// Directs the specified job to invoke an AWS Lambda function on each object in the manifest.
         public let lambdaInvoke: LambdaInvokeOperation?
         /// Directs the specified job to execute an Initiate Glacier Restore call on each object in the manifest.
@@ -436,6 +542,14 @@ extension S3Control {
             self.s3PutObjectTagging = s3PutObjectTagging
         }
 
+        public func validate() throws {
+            try lambdaInvoke?.validate()
+            try s3InitiateRestoreObject?.validate()
+            try s3PutObjectAcl?.validate()
+            try s3PutObjectCopy?.validate()
+            try s3PutObjectTagging?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case lambdaInvoke = "LambdaInvoke"
             case s3InitiateRestoreObject = "S3InitiateRestoreObject"
@@ -451,6 +565,7 @@ extension S3Control {
             AWSShapeMember(label: "NumberOfTasksSucceeded", required: false, type: .long), 
             AWSShapeMember(label: "TotalNumberOfTasks", required: false, type: .long)
         ]
+
         public let numberOfTasksFailed: Int64?
         public let numberOfTasksSucceeded: Int64?
         public let totalNumberOfTasks: Int64?
@@ -459,6 +574,12 @@ extension S3Control {
             self.numberOfTasksFailed = numberOfTasksFailed
             self.numberOfTasksSucceeded = numberOfTasksSucceeded
             self.totalNumberOfTasks = totalNumberOfTasks
+        }
+
+        public func validate() throws {
+            try validate(numberOfTasksFailed, name:"numberOfTasksFailed", min: 0)
+            try validate(numberOfTasksSucceeded, name:"numberOfTasksSucceeded", min: 0)
+            try validate(totalNumberOfTasks, name:"totalNumberOfTasks", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -476,6 +597,7 @@ extension S3Control {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "ReportScope", required: false, type: .enum)
         ]
+
         /// The bucket where specified job-completion report will be stored.
         public let bucket: String?
         /// Indicates whether the specified job will generate a job-completion report.
@@ -493,6 +615,13 @@ extension S3Control {
             self.format = format
             self.prefix = prefix
             self.reportScope = reportScope
+        }
+
+        public func validate() throws {
+            try validate(bucket, name:"bucket", max: 128)
+            try validate(bucket, name:"bucket", min: 1)
+            try validate(prefix, name:"prefix", max: 512)
+            try validate(prefix, name:"prefix", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -536,11 +665,17 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FunctionArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) for the AWS Lambda function that the specified job will invoke for each object in the manifest.
         public let functionArn: String?
 
         public init(functionArn: String? = nil) {
             self.functionArn = functionArn
+        }
+
+        public func validate() throws {
+            try validate(functionArn, name:"functionArn", max: 1024)
+            try validate(functionArn, name:"functionArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -555,6 +690,7 @@ extension S3Control {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         public let accountId: String
         /// The List Jobs request returns jobs that match the statuses listed in this element.
         public let jobStatuses: [JobStatus]?
@@ -570,6 +706,14 @@ extension S3Control {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "x-amz-account-id"
             case jobStatuses = "jobStatuses"
@@ -583,6 +727,7 @@ extension S3Control {
             AWSShapeMember(label: "Jobs", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of current jobs and jobs that have ended within the last 30 days.
         public let jobs: [JobListDescriptor]?
         /// If the List Jobs request produced more than the maximum number of results, you can pass this value into a subsequent List Jobs request in order to retrieve the next page of results.
@@ -591,6 +736,14 @@ extension S3Control {
         public init(jobs: [JobListDescriptor]? = nil, nextToken: String? = nil) {
             self.jobs = jobs
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobs?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -615,6 +768,7 @@ extension S3Control {
             AWSShapeMember(label: "IgnorePublicAcls", location: .body(locationName: "IgnorePublicAcls"), required: false, type: .boolean), 
             AWSShapeMember(label: "RestrictPublicBuckets", location: .body(locationName: "RestrictPublicBuckets"), required: false, type: .boolean)
         ]
+
         public let blockPublicAcls: Bool?
         public let blockPublicPolicy: Bool?
         public let ignorePublicAcls: Bool?
@@ -643,12 +797,17 @@ extension S3Control {
             AWSShapeMember(label: "AccountId", location: .header(locationName: "x-amz-account-id"), required: true, type: .string), 
             AWSShapeMember(label: "PublicAccessBlockConfiguration", location: .body(locationName: "PublicAccessBlockConfiguration"), required: true, type: .structure)
         ]
+
         public let accountId: String
         public let publicAccessBlockConfiguration: PublicAccessBlockConfiguration
 
         public init(accountId: String, publicAccessBlockConfiguration: PublicAccessBlockConfiguration) {
             self.accountId = accountId
             self.publicAccessBlockConfiguration = publicAccessBlockConfiguration
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -668,12 +827,20 @@ extension S3Control {
             AWSShapeMember(label: "Grants", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "Owner", required: true, type: .structure)
         ]
+
         public let grants: [S3Grant]?
         public let owner: S3ObjectOwner
 
         public init(grants: [S3Grant]? = nil, owner: S3ObjectOwner) {
             self.grants = grants
             self.owner = owner
+        }
+
+        public func validate() throws {
+            try grants?.forEach {
+                try $0.validate()
+            }
+            try owner.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -687,12 +854,17 @@ extension S3Control {
             AWSShapeMember(label: "AccessControlList", required: false, type: .structure), 
             AWSShapeMember(label: "CannedAccessControlList", required: false, type: .enum)
         ]
+
         public let accessControlList: S3AccessControlList?
         public let cannedAccessControlList: S3CannedAccessControlList?
 
         public init(accessControlList: S3AccessControlList? = nil, cannedAccessControlList: S3CannedAccessControlList? = nil) {
             self.accessControlList = accessControlList
             self.cannedAccessControlList = cannedAccessControlList
+        }
+
+        public func validate() throws {
+            try accessControlList?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -731,6 +903,7 @@ extension S3Control {
             AWSShapeMember(label: "TargetResource", required: false, type: .string), 
             AWSShapeMember(label: "UnModifiedSinceConstraint", required: false, type: .timestamp)
         ]
+
         public let accessControlGrants: [S3Grant]?
         public let cannedAccessControlList: S3CannedAccessControlList?
         public let metadataDirective: S3MetadataDirective?
@@ -767,6 +940,24 @@ extension S3Control {
             self.unModifiedSinceConstraint = unModifiedSinceConstraint
         }
 
+        public func validate() throws {
+            try accessControlGrants?.forEach {
+                try $0.validate()
+            }
+            try newObjectMetadata?.validate()
+            try newObjectTagging?.forEach {
+                try $0.validate()
+            }
+            try validate(redirectLocation, name:"redirectLocation", max: 2048)
+            try validate(redirectLocation, name:"redirectLocation", min: 1)
+            try validate(sSEAwsKmsKeyId, name:"sSEAwsKmsKeyId", max: 2000)
+            try validate(sSEAwsKmsKeyId, name:"sSEAwsKmsKeyId", min: 1)
+            try validate(targetKeyPrefix, name:"targetKeyPrefix", max: 1024)
+            try validate(targetKeyPrefix, name:"targetKeyPrefix", min: 1)
+            try validate(targetResource, name:"targetResource", max: 128)
+            try validate(targetResource, name:"targetResource", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accessControlGrants = "AccessControlGrants"
             case cannedAccessControlList = "CannedAccessControlList"
@@ -798,12 +989,17 @@ extension S3Control {
             AWSShapeMember(label: "Grantee", required: false, type: .structure), 
             AWSShapeMember(label: "Permission", required: false, type: .enum)
         ]
+
         public let grantee: S3Grantee?
         public let permission: S3Permission?
 
         public init(grantee: S3Grantee? = nil, permission: S3Permission? = nil) {
             self.grantee = grantee
             self.permission = permission
+        }
+
+        public func validate() throws {
+            try grantee?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -818,6 +1014,7 @@ extension S3Control {
             AWSShapeMember(label: "Identifier", required: false, type: .string), 
             AWSShapeMember(label: "TypeIdentifier", required: false, type: .enum)
         ]
+
         public let displayName: String?
         public let identifier: String?
         public let typeIdentifier: S3GranteeTypeIdentifier?
@@ -826,6 +1023,13 @@ extension S3Control {
             self.displayName = displayName
             self.identifier = identifier
             self.typeIdentifier = typeIdentifier
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 1024)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(identifier, name:"identifier", max: 1024)
+            try validate(identifier, name:"identifier", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -847,12 +1051,17 @@ extension S3Control {
             AWSShapeMember(label: "ExpirationInDays", required: false, type: .integer), 
             AWSShapeMember(label: "GlacierJobTier", required: false, type: .enum)
         ]
+
         public let expirationInDays: Int32?
         public let glacierJobTier: S3GlacierJobTier?
 
         public init(expirationInDays: Int32? = nil, glacierJobTier: S3GlacierJobTier? = nil) {
             self.expirationInDays = expirationInDays
             self.glacierJobTier = glacierJobTier
+        }
+
+        public func validate() throws {
+            try validate(expirationInDays, name:"expirationInDays", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -893,6 +1102,7 @@ extension S3Control {
             AWSShapeMember(label: "SSEAlgorithm", required: false, type: .enum), 
             AWSShapeMember(label: "UserMetadata", required: false, type: .map, encoding: .map(entry:"entry", key: "key", value: "value"))
         ]
+
         public let cacheControl: String?
         public let contentDisposition: String?
         public let contentEncoding: String?
@@ -919,6 +1129,22 @@ extension S3Control {
             self.userMetadata = userMetadata
         }
 
+        public func validate() throws {
+            try validate(cacheControl, name:"cacheControl", max: 1024)
+            try validate(cacheControl, name:"cacheControl", min: 1)
+            try validate(contentDisposition, name:"contentDisposition", max: 1024)
+            try validate(contentDisposition, name:"contentDisposition", min: 1)
+            try validate(contentEncoding, name:"contentEncoding", max: 1024)
+            try validate(contentEncoding, name:"contentEncoding", min: 1)
+            try validate(contentLanguage, name:"contentLanguage", max: 1024)
+            try validate(contentLanguage, name:"contentLanguage", min: 1)
+            try validate(contentLength, name:"contentLength", min: 0)
+            try validate(contentMD5, name:"contentMD5", max: 1024)
+            try validate(contentMD5, name:"contentMD5", min: 1)
+            try validate(contentType, name:"contentType", max: 1024)
+            try validate(contentType, name:"contentType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cacheControl = "CacheControl"
             case contentDisposition = "ContentDisposition"
@@ -939,12 +1165,20 @@ extension S3Control {
             AWSShapeMember(label: "DisplayName", required: false, type: .string), 
             AWSShapeMember(label: "ID", required: false, type: .string)
         ]
+
         public let displayName: String?
         public let id: String?
 
         public init(displayName: String? = nil, id: String? = nil) {
             self.displayName = displayName
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 1024)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(id, name:"id", max: 1024)
+            try validate(id, name:"id", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -972,10 +1206,15 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccessControlPolicy", required: false, type: .structure)
         ]
+
         public let accessControlPolicy: S3AccessControlPolicy?
 
         public init(accessControlPolicy: S3AccessControlPolicy? = nil) {
             self.accessControlPolicy = accessControlPolicy
+        }
+
+        public func validate() throws {
+            try accessControlPolicy?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -987,10 +1226,17 @@ extension S3Control {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagSet", required: false, type: .list, encoding: .list(member:"member"))
         ]
+
         public let tagSet: [S3Tag]?
 
         public init(tagSet: [S3Tag]? = nil) {
             self.tagSet = tagSet
+        }
+
+        public func validate() throws {
+            try tagSet?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1013,12 +1259,19 @@ extension S3Control {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         public let key: String
         public let value: String
 
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 1024)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 1024)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1033,6 +1286,7 @@ extension S3Control {
             AWSShapeMember(label: "JobId", location: .uri(locationName: "id"), required: true, type: .string), 
             AWSShapeMember(label: "Priority", location: .querystring(locationName: "priority"), required: true, type: .integer)
         ]
+
         public let accountId: String
         /// The ID for the job whose priority you want to update.
         public let jobId: String
@@ -1043,6 +1297,14 @@ extension S3Control {
             self.accountId = accountId
             self.jobId = jobId
             self.priority = priority
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
+            try validate(priority, name:"priority", max: 2147483647)
+            try validate(priority, name:"priority", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1057,6 +1319,7 @@ extension S3Control {
             AWSShapeMember(label: "JobId", required: true, type: .string), 
             AWSShapeMember(label: "Priority", required: true, type: .integer)
         ]
+
         /// The ID for the job whose priority Amazon S3 updated.
         public let jobId: String
         /// The new priority assigned to the specified job.
@@ -1065,6 +1328,13 @@ extension S3Control {
         public init(jobId: String, priority: Int32) {
             self.jobId = jobId
             self.priority = priority
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
+            try validate(priority, name:"priority", max: 2147483647)
+            try validate(priority, name:"priority", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1080,6 +1350,7 @@ extension S3Control {
             AWSShapeMember(label: "RequestedJobStatus", location: .querystring(locationName: "requestedJobStatus"), required: true, type: .enum), 
             AWSShapeMember(label: "StatusUpdateReason", location: .querystring(locationName: "statusUpdateReason"), required: false, type: .string)
         ]
+
         public let accountId: String
         /// The ID of the job whose status you want to update.
         public let jobId: String
@@ -1093,6 +1364,14 @@ extension S3Control {
             self.jobId = jobId
             self.requestedJobStatus = requestedJobStatus
             self.statusUpdateReason = statusUpdateReason
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 64)
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
+            try validate(statusUpdateReason, name:"statusUpdateReason", max: 256)
+            try validate(statusUpdateReason, name:"statusUpdateReason", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1109,6 +1388,7 @@ extension S3Control {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "StatusUpdateReason", required: false, type: .string)
         ]
+
         /// The ID for the job whose status was updated.
         public let jobId: String?
         /// The current status for the specified job.
@@ -1120,6 +1400,13 @@ extension S3Control {
             self.jobId = jobId
             self.status = status
             self.statusUpdateReason = statusUpdateReason
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 36)
+            try validate(jobId, name:"jobId", min: 5)
+            try validate(statusUpdateReason, name:"statusUpdateReason", max: 256)
+            try validate(statusUpdateReason, name:"statusUpdateReason", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

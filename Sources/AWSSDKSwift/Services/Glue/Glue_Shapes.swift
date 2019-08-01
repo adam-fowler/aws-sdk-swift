@@ -14,6 +14,7 @@ extension Glue {
             AWSShapeMember(label: "SecurityConfiguration", required: false, type: .string), 
             AWSShapeMember(label: "Timeout", required: false, type: .integer)
         ]
+
         /// The job arguments used when this trigger fires. For this job run, they replace the default arguments set in the job definition itself. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
         public let arguments: [String: String]?
         /// The name of the crawler to be used with this action.
@@ -36,6 +37,20 @@ extension Glue {
             self.timeout = timeout
         }
 
+        public func validate() throws {
+            try validate(crawlerName, name:"crawlerName", max: 255)
+            try validate(crawlerName, name:"crawlerName", min: 1)
+            try validate(crawlerName, name:"crawlerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try notificationProperty?.validate()
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(timeout, name:"timeout", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arguments = "Arguments"
             case crawlerName = "CrawlerName"
@@ -53,6 +68,7 @@ extension Glue {
             AWSShapeMember(label: "PartitionInputList", required: true, type: .list), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the catalog in which the partion is to be created. Currently, this should be the AWS account ID.
         public let catalogId: String?
         /// The name of the metadata database in which the partition is to be created.
@@ -69,6 +85,23 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionInputList.forEach {
+                try $0.validate()
+            }
+            try validate(partitionInputList, name:"partitionInputList", max: 100)
+            try validate(partitionInputList, name:"partitionInputList", min: 0)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -81,11 +114,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Errors", required: false, type: .list)
         ]
+
         /// Errors encountered when trying to create the requested partitions.
         public let errors: [PartitionError]?
 
         public init(errors: [PartitionError]? = nil) {
             self.errors = errors
+        }
+
+        public func validate() throws {
+            try errors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -98,6 +138,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogId", required: false, type: .string), 
             AWSShapeMember(label: "ConnectionNameList", required: true, type: .list)
         ]
+
         /// The ID of the Data Catalog in which the connections reside. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
         /// A list of names of the connections to delete.
@@ -106,6 +147,19 @@ extension Glue {
         public init(catalogId: String? = nil, connectionNameList: [String]) {
             self.catalogId = catalogId
             self.connectionNameList = connectionNameList
+        }
+
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try connectionNameList.forEach {
+                try validate($0, name:"connectionNameList[]", max: 255)
+                try validate($0, name:"connectionNameList[]", min: 1)
+                try validate($0, name:"connectionNameList[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(connectionNameList, name:"connectionNameList", max: 25)
+            try validate(connectionNameList, name:"connectionNameList", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -119,6 +173,7 @@ extension Glue {
             AWSShapeMember(label: "Errors", required: false, type: .map), 
             AWSShapeMember(label: "Succeeded", required: false, type: .list)
         ]
+
         /// A map of the names of connections that were not successfully deleted to error details.
         public let errors: [String: ErrorDetail]?
         /// A list of names of the connection definitions that were successfully deleted.
@@ -127,6 +182,14 @@ extension Glue {
         public init(errors: [String: ErrorDetail]? = nil, succeeded: [String]? = nil) {
             self.errors = errors
             self.succeeded = succeeded
+        }
+
+        public func validate() throws {
+            try succeeded?.forEach {
+                try validate($0, name:"succeeded[]", max: 255)
+                try validate($0, name:"succeeded[]", min: 1)
+                try validate($0, name:"succeeded[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -142,6 +205,7 @@ extension Glue {
             AWSShapeMember(label: "PartitionsToDelete", required: true, type: .list), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the partition to be deleted resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database in which the table in question resides.
@@ -158,6 +222,23 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionsToDelete.forEach {
+                try $0.validate()
+            }
+            try validate(partitionsToDelete, name:"partitionsToDelete", max: 25)
+            try validate(partitionsToDelete, name:"partitionsToDelete", min: 0)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -170,11 +251,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Errors", required: false, type: .list)
         ]
+
         /// Errors encountered when trying to delete the requested partitions.
         public let errors: [PartitionError]?
 
         public init(errors: [PartitionError]? = nil) {
             self.errors = errors
+        }
+
+        public func validate() throws {
+            try errors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -188,6 +276,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "TablesToDelete", required: true, type: .list)
         ]
+
         /// The ID of the Data Catalog where the table resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the tables to delete reside. For Hive compatibility, this name is entirely lowercase.
@@ -201,6 +290,22 @@ extension Glue {
             self.tablesToDelete = tablesToDelete
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try tablesToDelete.forEach {
+                try validate($0, name:"tablesToDelete[]", max: 255)
+                try validate($0, name:"tablesToDelete[]", min: 1)
+                try validate($0, name:"tablesToDelete[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(tablesToDelete, name:"tablesToDelete", max: 100)
+            try validate(tablesToDelete, name:"tablesToDelete", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -212,11 +317,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Errors", required: false, type: .list)
         ]
+
         /// A list of errors encountered in attempting to delete the specified tables.
         public let errors: [TableError]?
 
         public init(errors: [TableError]? = nil) {
             self.errors = errors
+        }
+
+        public func validate() throws {
+            try errors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -231,6 +343,7 @@ extension Glue {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "VersionIds", required: true, type: .list)
         ]
+
         /// The ID of the Data Catalog where the tables reside. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The database in the catalog in which the table resides. For Hive compatibility, this name is entirely lowercase.
@@ -247,6 +360,25 @@ extension Glue {
             self.versionIds = versionIds
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try versionIds.forEach {
+                try validate($0, name:"versionIds[]", max: 255)
+                try validate($0, name:"versionIds[]", min: 1)
+                try validate($0, name:"versionIds[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(versionIds, name:"versionIds", max: 100)
+            try validate(versionIds, name:"versionIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -259,11 +391,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Errors", required: false, type: .list)
         ]
+
         /// A list of errors encountered while trying to delete the specified table versions.
         public let errors: [TableVersionError]?
 
         public init(errors: [TableVersionError]? = nil) {
             self.errors = errors
+        }
+
+        public func validate() throws {
+            try errors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -275,11 +414,22 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CrawlerNames", required: true, type: .list)
         ]
+
         /// A list of crawler names, which might be the names returned from the ListCrawlers operation.
         public let crawlerNames: [String]
 
         public init(crawlerNames: [String]) {
             self.crawlerNames = crawlerNames
+        }
+
+        public func validate() throws {
+            try crawlerNames.forEach {
+                try validate($0, name:"crawlerNames[]", max: 255)
+                try validate($0, name:"crawlerNames[]", min: 1)
+                try validate($0, name:"crawlerNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(crawlerNames, name:"crawlerNames", max: 100)
+            try validate(crawlerNames, name:"crawlerNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -292,6 +442,7 @@ extension Glue {
             AWSShapeMember(label: "Crawlers", required: false, type: .list), 
             AWSShapeMember(label: "CrawlersNotFound", required: false, type: .list)
         ]
+
         /// A list of crawler definitions.
         public let crawlers: [Crawler]?
         /// A list of names of crawlers that were not found.
@@ -300,6 +451,19 @@ extension Glue {
         public init(crawlers: [Crawler]? = nil, crawlersNotFound: [String]? = nil) {
             self.crawlers = crawlers
             self.crawlersNotFound = crawlersNotFound
+        }
+
+        public func validate() throws {
+            try crawlers?.forEach {
+                try $0.validate()
+            }
+            try crawlersNotFound?.forEach {
+                try validate($0, name:"crawlersNotFound[]", max: 255)
+                try validate($0, name:"crawlersNotFound[]", min: 1)
+                try validate($0, name:"crawlersNotFound[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(crawlersNotFound, name:"crawlersNotFound", max: 100)
+            try validate(crawlersNotFound, name:"crawlersNotFound", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -312,11 +476,17 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DevEndpointNames", required: true, type: .list)
         ]
+
         /// The list of DevEndpoint names, which may be the names returned from the ListDevEndpoint operation.
         public let devEndpointNames: [String]
 
         public init(devEndpointNames: [String]) {
             self.devEndpointNames = devEndpointNames
+        }
+
+        public func validate() throws {
+            try validate(devEndpointNames, name:"devEndpointNames", max: 25)
+            try validate(devEndpointNames, name:"devEndpointNames", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -329,6 +499,7 @@ extension Glue {
             AWSShapeMember(label: "DevEndpoints", required: false, type: .list), 
             AWSShapeMember(label: "DevEndpointsNotFound", required: false, type: .list)
         ]
+
         /// A list of DevEndpoint definitions.
         public let devEndpoints: [DevEndpoint]?
         /// A list of DevEndpoints not found.
@@ -337,6 +508,14 @@ extension Glue {
         public init(devEndpoints: [DevEndpoint]? = nil, devEndpointsNotFound: [String]? = nil) {
             self.devEndpoints = devEndpoints
             self.devEndpointsNotFound = devEndpointsNotFound
+        }
+
+        public func validate() throws {
+            try devEndpoints?.forEach {
+                try $0.validate()
+            }
+            try validate(devEndpointsNotFound, name:"devEndpointsNotFound", max: 25)
+            try validate(devEndpointsNotFound, name:"devEndpointsNotFound", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -349,11 +528,20 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobNames", required: true, type: .list)
         ]
+
         /// A list of job names, which might be the names returned from the ListJobs operation.
         public let jobNames: [String]
 
         public init(jobNames: [String]) {
             self.jobNames = jobNames
+        }
+
+        public func validate() throws {
+            try jobNames.forEach {
+                try validate($0, name:"jobNames[]", max: 255)
+                try validate($0, name:"jobNames[]", min: 1)
+                try validate($0, name:"jobNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -366,6 +554,7 @@ extension Glue {
             AWSShapeMember(label: "Jobs", required: false, type: .list), 
             AWSShapeMember(label: "JobsNotFound", required: false, type: .list)
         ]
+
         /// A list of job definitions.
         public let jobs: [Job]?
         /// A list of names of jobs not found.
@@ -374,6 +563,17 @@ extension Glue {
         public init(jobs: [Job]? = nil, jobsNotFound: [String]? = nil) {
             self.jobs = jobs
             self.jobsNotFound = jobsNotFound
+        }
+
+        public func validate() throws {
+            try jobs?.forEach {
+                try $0.validate()
+            }
+            try jobsNotFound?.forEach {
+                try validate($0, name:"jobsNotFound[]", max: 255)
+                try validate($0, name:"jobsNotFound[]", min: 1)
+                try validate($0, name:"jobsNotFound[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -389,6 +589,7 @@ extension Glue {
             AWSShapeMember(label: "PartitionsToGet", required: true, type: .list), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the partitions in question reside. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the partitions reside.
@@ -405,6 +606,23 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionsToGet.forEach {
+                try $0.validate()
+            }
+            try validate(partitionsToGet, name:"partitionsToGet", max: 1000)
+            try validate(partitionsToGet, name:"partitionsToGet", min: 0)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -418,6 +636,7 @@ extension Glue {
             AWSShapeMember(label: "Partitions", required: false, type: .list), 
             AWSShapeMember(label: "UnprocessedKeys", required: false, type: .list)
         ]
+
         /// A list of the requested partitions.
         public let partitions: [Partition]?
         /// A list of the partition values in the request for which partions were not returned.
@@ -426,6 +645,17 @@ extension Glue {
         public init(partitions: [Partition]? = nil, unprocessedKeys: [PartitionValueList]? = nil) {
             self.partitions = partitions
             self.unprocessedKeys = unprocessedKeys
+        }
+
+        public func validate() throws {
+            try partitions?.forEach {
+                try $0.validate()
+            }
+            try unprocessedKeys?.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedKeys, name:"unprocessedKeys", max: 1000)
+            try validate(unprocessedKeys, name:"unprocessedKeys", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -438,11 +668,20 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TriggerNames", required: true, type: .list)
         ]
+
         /// A list of trigger names, which may be the names returned from the ListTriggers operation.
         public let triggerNames: [String]
 
         public init(triggerNames: [String]) {
             self.triggerNames = triggerNames
+        }
+
+        public func validate() throws {
+            try triggerNames.forEach {
+                try validate($0, name:"triggerNames[]", max: 255)
+                try validate($0, name:"triggerNames[]", min: 1)
+                try validate($0, name:"triggerNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -455,6 +694,7 @@ extension Glue {
             AWSShapeMember(label: "Triggers", required: false, type: .list), 
             AWSShapeMember(label: "TriggersNotFound", required: false, type: .list)
         ]
+
         /// A list of trigger definitions.
         public let triggers: [Trigger]?
         /// A list of names of triggers not found.
@@ -463,6 +703,17 @@ extension Glue {
         public init(triggers: [Trigger]? = nil, triggersNotFound: [String]? = nil) {
             self.triggers = triggers
             self.triggersNotFound = triggersNotFound
+        }
+
+        public func validate() throws {
+            try triggers?.forEach {
+                try $0.validate()
+            }
+            try triggersNotFound?.forEach {
+                try validate($0, name:"triggersNotFound[]", max: 255)
+                try validate($0, name:"triggersNotFound[]", min: 1)
+                try validate($0, name:"triggersNotFound[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -476,6 +727,7 @@ extension Glue {
             AWSShapeMember(label: "IncludeGraph", required: false, type: .boolean), 
             AWSShapeMember(label: "Names", required: true, type: .list)
         ]
+
         /// Specifies whether to include a graph when returning the workflow resource metadata.
         public let includeGraph: Bool?
         /// A list of workflow names, which may be the names returned from the ListWorkflows operation.
@@ -484,6 +736,16 @@ extension Glue {
         public init(includeGraph: Bool? = nil, names: [String]) {
             self.includeGraph = includeGraph
             self.names = names
+        }
+
+        public func validate() throws {
+            try names.forEach {
+                try validate($0, name:"names[]", max: 255)
+                try validate($0, name:"names[]", min: 1)
+                try validate($0, name:"names[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(names, name:"names", max: 25)
+            try validate(names, name:"names", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -497,6 +759,7 @@ extension Glue {
             AWSShapeMember(label: "MissingWorkflows", required: false, type: .list), 
             AWSShapeMember(label: "Workflows", required: false, type: .list)
         ]
+
         /// A list of names of workflows not found.
         public let missingWorkflows: [String]?
         /// A list of workflow resource metadata.
@@ -505,6 +768,21 @@ extension Glue {
         public init(missingWorkflows: [String]? = nil, workflows: [Workflow]? = nil) {
             self.missingWorkflows = missingWorkflows
             self.workflows = workflows
+        }
+
+        public func validate() throws {
+            try missingWorkflows?.forEach {
+                try validate($0, name:"missingWorkflows[]", max: 255)
+                try validate($0, name:"missingWorkflows[]", min: 1)
+                try validate($0, name:"missingWorkflows[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(missingWorkflows, name:"missingWorkflows", max: 25)
+            try validate(missingWorkflows, name:"missingWorkflows", min: 1)
+            try workflows?.forEach {
+                try $0.validate()
+            }
+            try validate(workflows, name:"workflows", max: 25)
+            try validate(workflows, name:"workflows", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -519,6 +797,7 @@ extension Glue {
             AWSShapeMember(label: "JobName", required: false, type: .string), 
             AWSShapeMember(label: "JobRunId", required: false, type: .string)
         ]
+
         /// Specifies details about the error that was encountered.
         public let errorDetail: ErrorDetail?
         /// The name of the job definition that is used in the job run in question.
@@ -530,6 +809,16 @@ extension Glue {
             self.errorDetail = errorDetail
             self.jobName = jobName
             self.jobRunId = jobRunId
+        }
+
+        public func validate() throws {
+            try errorDetail?.validate()
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(jobRunId, name:"jobRunId", max: 255)
+            try validate(jobRunId, name:"jobRunId", min: 1)
+            try validate(jobRunId, name:"jobRunId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -544,6 +833,7 @@ extension Glue {
             AWSShapeMember(label: "JobName", required: true, type: .string), 
             AWSShapeMember(label: "JobRunIds", required: true, type: .list)
         ]
+
         /// The name of the job definition for which to stop job runs.
         public let jobName: String
         /// A list of the JobRunIds that should be stopped for that job definition.
@@ -552,6 +842,19 @@ extension Glue {
         public init(jobName: String, jobRunIds: [String]) {
             self.jobName = jobName
             self.jobRunIds = jobRunIds
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try jobRunIds.forEach {
+                try validate($0, name:"jobRunIds[]", max: 255)
+                try validate($0, name:"jobRunIds[]", min: 1)
+                try validate($0, name:"jobRunIds[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(jobRunIds, name:"jobRunIds", max: 25)
+            try validate(jobRunIds, name:"jobRunIds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -565,6 +868,7 @@ extension Glue {
             AWSShapeMember(label: "Errors", required: false, type: .list), 
             AWSShapeMember(label: "SuccessfulSubmissions", required: false, type: .list)
         ]
+
         /// A list of the errors that were encountered in trying to stop JobRuns, including the JobRunId for which each error was encountered and details about the error.
         public let errors: [BatchStopJobRunError]?
         /// A list of the JobRuns that were successfully submitted for stopping.
@@ -573,6 +877,15 @@ extension Glue {
         public init(errors: [BatchStopJobRunError]? = nil, successfulSubmissions: [BatchStopJobRunSuccessfulSubmission]? = nil) {
             self.errors = errors
             self.successfulSubmissions = successfulSubmissions
+        }
+
+        public func validate() throws {
+            try errors?.forEach {
+                try $0.validate()
+            }
+            try successfulSubmissions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -586,6 +899,7 @@ extension Glue {
             AWSShapeMember(label: "JobName", required: false, type: .string), 
             AWSShapeMember(label: "JobRunId", required: false, type: .string)
         ]
+
         /// The name of the job definition used in the job run that was stopped.
         public let jobName: String?
         /// The JobRunId of the job run that was stopped.
@@ -594,6 +908,15 @@ extension Glue {
         public init(jobName: String? = nil, jobRunId: String? = nil) {
             self.jobName = jobName
             self.jobRunId = jobRunId
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(jobRunId, name:"jobRunId", max: 255)
+            try validate(jobRunId, name:"jobRunId", min: 1)
+            try validate(jobRunId, name:"jobRunId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -613,6 +936,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The database in which the table metadata resides.
         public let databaseName: String
         /// The name of the table in question.
@@ -621,6 +945,15 @@ extension Glue {
         public init(databaseName: String, tableName: String) {
             self.databaseName = databaseName
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -635,6 +968,7 @@ extension Glue {
             AWSShapeMember(label: "ImportedBy", required: false, type: .string), 
             AWSShapeMember(label: "ImportTime", required: false, type: .timestamp)
         ]
+
         /// True if the migration has completed, or False otherwise.
         public let importCompleted: Bool?
         /// The name of the person who initiated the migration.
@@ -646,6 +980,12 @@ extension Glue {
             self.importCompleted = importCompleted
             self.importedBy = importedBy
             self.importTime = importTime
+        }
+
+        public func validate() throws {
+            try validate(importedBy, name:"importedBy", max: 255)
+            try validate(importedBy, name:"importedBy", min: 1)
+            try validate(importedBy, name:"importedBy", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -660,6 +1000,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "Tables", required: true, type: .list)
         ]
+
         /// The name of the database to be synchronized.
         public let databaseName: String
         /// A list of the tables to be synchronized.
@@ -668,6 +1009,18 @@ extension Glue {
         public init(databaseName: String, tables: [String]) {
             self.databaseName = databaseName
             self.tables = tables
+        }
+
+        public func validate() throws {
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try tables.forEach {
+                try validate($0, name:"tables[]", max: 255)
+                try validate($0, name:"tables[]", min: 1)
+                try validate($0, name:"tables[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(tables, name:"tables", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -683,6 +1036,7 @@ extension Glue {
             AWSShapeMember(label: "JsonClassifier", required: false, type: .structure), 
             AWSShapeMember(label: "XMLClassifier", required: false, type: .structure)
         ]
+
         /// A classifier for comma-separated values (CSV).
         public let csvClassifier: CsvClassifier?
         /// A classifier that uses grok.
@@ -699,6 +1053,13 @@ extension Glue {
             self.xMLClassifier = xMLClassifier
         }
 
+        public func validate() throws {
+            try csvClassifier?.validate()
+            try grokClassifier?.validate()
+            try jsonClassifier?.validate()
+            try xMLClassifier?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case csvClassifier = "CsvClassifier"
             case grokClassifier = "GrokClassifier"
@@ -712,6 +1073,7 @@ extension Glue {
             AWSShapeMember(label: "CloudWatchEncryptionMode", required: false, type: .enum), 
             AWSShapeMember(label: "KmsKeyArn", required: false, type: .string)
         ]
+
         /// The encryption mode to use for CloudWatch data.
         public let cloudWatchEncryptionMode: CloudWatchEncryptionMode?
         /// The AWS ARN of the KMS key to be used to encrypt the data.
@@ -720,6 +1082,10 @@ extension Glue {
         public init(cloudWatchEncryptionMode: CloudWatchEncryptionMode? = nil, kmsKeyArn: String? = nil) {
             self.cloudWatchEncryptionMode = cloudWatchEncryptionMode
             self.kmsKeyArn = kmsKeyArn
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyArn, name:"kmsKeyArn", pattern: "arn:aws:kms:.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -740,6 +1106,7 @@ extension Glue {
             AWSShapeMember(label: "Target", required: true, type: .string), 
             AWSShapeMember(label: "TargetParameter", required: false, type: .string)
         ]
+
         /// The ID of the node at which the edge starts.
         public let source: String
         /// The ID of the node at which the edge ends.
@@ -751,6 +1118,15 @@ extension Glue {
             self.source = source
             self.target = target
             self.targetParameter = targetParameter
+        }
+
+        public func validate() throws {
+            try validate(source, name:"source", max: 255)
+            try validate(source, name:"source", min: 1)
+            try validate(source, name:"source", pattern: "[A-Za-z_][A-Za-z0-9_]*")
+            try validate(target, name:"target", max: 255)
+            try validate(target, name:"target", min: 1)
+            try validate(target, name:"target", pattern: "[A-Za-z_][A-Za-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -767,6 +1143,7 @@ extension Glue {
             AWSShapeMember(label: "LineNumber", required: false, type: .integer), 
             AWSShapeMember(label: "NodeType", required: true, type: .string)
         ]
+
         /// Properties of the node, in the form of name-value pairs.
         public let args: [CodeGenNodeArg]
         /// A node identifier that is unique within the node's graph.
@@ -783,6 +1160,14 @@ extension Glue {
             self.nodeType = nodeType
         }
 
+        public func validate() throws {
+            try validate(args, name:"args", max: 50)
+            try validate(args, name:"args", min: 0)
+            try validate(id, name:"id", max: 255)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "[A-Za-z_][A-Za-z0-9_]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case args = "Args"
             case id = "Id"
@@ -797,6 +1182,7 @@ extension Glue {
             AWSShapeMember(label: "Param", required: false, type: .boolean), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The name of the argument or property.
         public let name: String
         /// True if the value is used as a parameter.
@@ -823,6 +1209,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .string)
         ]
+
         /// Free-form text comment.
         public let comment: String?
         /// The name of the Column.
@@ -834,6 +1221,18 @@ extension Glue {
             self.comment = comment
             self.name = name
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(comment, name:"comment", max: 255)
+            try validate(comment, name:"comment", min: 0)
+            try validate(comment, name:"comment", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(`type`, name:"`type`", max: 131072)
+            try validate(`type`, name:"`type`", min: 0)
+            try validate(`type`, name:"`type`", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -851,6 +1250,7 @@ extension Glue {
             AWSShapeMember(label: "LogicalOperator", required: false, type: .enum), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The name of the crawler to which this condition applies.
         public let crawlerName: String?
         /// The state of the crawler to which this condition applies.
@@ -868,6 +1268,15 @@ extension Glue {
             self.jobName = jobName
             self.logicalOperator = logicalOperator
             self.state = state
+        }
+
+        public func validate() throws {
+            try validate(crawlerName, name:"crawlerName", max: 255)
+            try validate(crawlerName, name:"crawlerName", min: 1)
+            try validate(crawlerName, name:"crawlerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -891,6 +1300,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "PhysicalConnectionRequirements", required: false, type: .structure)
         ]
+
         /// These key-value pairs define parameters for the connection:    HOST - The host URI: either the fully qualified domain name (FQDN) or the IPv4 address of the database host.    PORT - The port number, between 1024 and 65535, of the port on which the database host is listening for database connections.    USER_NAME - The name under which to log in to the database. The value string for USER_NAME is "USERNAME".    PASSWORD - A password, if one is used, for the user name.    ENCRYPTED_PASSWORD - When you enable connection password protection by setting ConnectionPasswordEncryption in the Data Catalog encryption settings, this field stores the encrypted password.    JDBC_DRIVER_JAR_URI - The Amazon S3 path of the JAR file that contains the JDBC driver to use.    JDBC_DRIVER_CLASS_NAME - The class name of the JDBC driver to use.    JDBC_ENGINE - The name of the JDBC engine to use.    JDBC_ENGINE_VERSION - The version of the JDBC engine to use.    CONFIG_FILES - (Reserved for future use).    INSTANCE_ID - The instance ID to use.    JDBC_CONNECTION_URL - The URL for the JDBC connection.    JDBC_ENFORCE_SSL - A Boolean string (true, false) specifying whether Secure Sockets Layer (SSL) with hostname matching will be enforced for the JDBC connection on the client. The default is false.  
         public let connectionProperties: [ConnectionPropertyKey: String]?
         /// The type of the connection. Currently, only JDBC is supported; SFTP is not supported.
@@ -922,6 +1332,26 @@ extension Glue {
             self.physicalConnectionRequirements = physicalConnectionRequirements
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(lastUpdatedBy, name:"lastUpdatedBy", max: 255)
+            try validate(lastUpdatedBy, name:"lastUpdatedBy", min: 1)
+            try validate(lastUpdatedBy, name:"lastUpdatedBy", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try matchCriteria?.forEach {
+                try validate($0, name:"matchCriteria[]", max: 255)
+                try validate($0, name:"matchCriteria[]", min: 1)
+                try validate($0, name:"matchCriteria[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(matchCriteria, name:"matchCriteria", max: 10)
+            try validate(matchCriteria, name:"matchCriteria", min: 0)
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try physicalConnectionRequirements?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case connectionProperties = "ConnectionProperties"
             case connectionType = "ConnectionType"
@@ -944,6 +1374,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "PhysicalConnectionRequirements", required: false, type: .structure)
         ]
+
         /// These key-value pairs define parameters for the connection.
         public let connectionProperties: [ConnectionPropertyKey: String]
         /// The type of the connection. Currently, only JDBC is supported; SFTP is not supported.
@@ -966,6 +1397,23 @@ extension Glue {
             self.physicalConnectionRequirements = physicalConnectionRequirements
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try matchCriteria?.forEach {
+                try validate($0, name:"matchCriteria[]", max: 255)
+                try validate($0, name:"matchCriteria[]", min: 1)
+                try validate($0, name:"matchCriteria[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(matchCriteria, name:"matchCriteria", max: 10)
+            try validate(matchCriteria, name:"matchCriteria", min: 0)
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try physicalConnectionRequirements?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case connectionProperties = "ConnectionProperties"
             case connectionType = "ConnectionType"
@@ -981,6 +1429,7 @@ extension Glue {
             AWSShapeMember(label: "AwsKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "ReturnConnectionPasswordEncrypted", required: true, type: .boolean)
         ]
+
         /// An AWS KMS key that is used to encrypt the connection password.  If connection password protection is enabled, the caller of CreateConnection and UpdateConnection needs at least kms:Encrypt permission on the specified AWS KMS key, to encrypt passwords before storing them in the Data Catalog.  You can set the decrypt permission to enable or restrict access on the password key according to your security requirements.
         public let awsKmsKeyId: String?
         /// When the ReturnConnectionPasswordEncrypted flag is set to "true", passwords remain encrypted in the responses of GetConnection and GetConnections. This encryption takes effect independently from catalog encryption. 
@@ -989,6 +1438,12 @@ extension Glue {
         public init(awsKmsKeyId: String? = nil, returnConnectionPasswordEncrypted: Bool) {
             self.awsKmsKeyId = awsKmsKeyId
             self.returnConnectionPasswordEncrypted = returnConnectionPasswordEncrypted
+        }
+
+        public func validate() throws {
+            try validate(awsKmsKeyId, name:"awsKmsKeyId", max: 255)
+            try validate(awsKmsKeyId, name:"awsKmsKeyId", min: 1)
+            try validate(awsKmsKeyId, name:"awsKmsKeyId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1024,6 +1479,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Connections", required: false, type: .list)
         ]
+
         /// A list of connections used by the job.
         public let connections: [String]?
 
@@ -1045,6 +1501,7 @@ extension Glue {
             AWSShapeMember(label: "StartedOn", required: false, type: .timestamp), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The date and time on which the crawl completed.
         public let completedOn: TimeStamp?
         /// The error message associated with the crawl.
@@ -1065,6 +1522,18 @@ extension Glue {
             self.logStream = logStream
             self.startedOn = startedOn
             self.state = state
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", max: 2048)
+            try validate(errorMessage, name:"errorMessage", min: 0)
+            try validate(errorMessage, name:"errorMessage", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(logGroup, name:"logGroup", max: 512)
+            try validate(logGroup, name:"logGroup", min: 1)
+            try validate(logGroup, name:"logGroup", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStream, name:"logStream", max: 512)
+            try validate(logStream, name:"logStream", min: 1)
+            try validate(logStream, name:"logStream", pattern: "[^:*]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1105,6 +1574,7 @@ extension Glue {
             AWSShapeMember(label: "Targets", required: false, type: .structure), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// A list of UTF-8 strings that specify the custom classifiers that are associated with the crawler.
         public let classifiers: [String]?
         /// Crawler configuration information. This versioned JSON string allows users to specify aspects of a crawler's behavior. For more information, see Configuring a Crawler.
@@ -1160,6 +1630,26 @@ extension Glue {
             self.version = version
         }
 
+        public func validate() throws {
+            try classifiers?.forEach {
+                try validate($0, name:"classifiers[]", max: 255)
+                try validate($0, name:"classifiers[]", min: 1)
+                try validate($0, name:"classifiers[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(crawlerSecurityConfiguration, name:"crawlerSecurityConfiguration", max: 128)
+            try validate(crawlerSecurityConfiguration, name:"crawlerSecurityConfiguration", min: 0)
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try lastCrawl?.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(tablePrefix, name:"tablePrefix", max: 128)
+            try validate(tablePrefix, name:"tablePrefix", min: 0)
+            try targets?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case classifiers = "Classifiers"
             case configuration = "Configuration"
@@ -1192,6 +1682,7 @@ extension Glue {
             AWSShapeMember(label: "TablesUpdated", required: false, type: .integer), 
             AWSShapeMember(label: "TimeLeftSeconds", required: false, type: .double)
         ]
+
         /// The name of the crawler.
         public let crawlerName: String?
         /// The duration of the crawler's most recent run, in seconds.
@@ -1220,6 +1711,18 @@ extension Glue {
             self.timeLeftSeconds = timeLeftSeconds
         }
 
+        public func validate() throws {
+            try validate(crawlerName, name:"crawlerName", max: 255)
+            try validate(crawlerName, name:"crawlerName", min: 1)
+            try validate(crawlerName, name:"crawlerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(lastRuntimeSeconds, name:"lastRuntimeSeconds", min: 0)
+            try validate(medianRuntimeSeconds, name:"medianRuntimeSeconds", min: 0)
+            try validate(tablesCreated, name:"tablesCreated", min: 0)
+            try validate(tablesDeleted, name:"tablesDeleted", min: 0)
+            try validate(tablesUpdated, name:"tablesUpdated", min: 0)
+            try validate(timeLeftSeconds, name:"timeLeftSeconds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case crawlerName = "CrawlerName"
             case lastRuntimeSeconds = "LastRuntimeSeconds"
@@ -1236,11 +1739,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Crawls", required: false, type: .list)
         ]
+
         /// A list of crawls represented by the crawl node.
         public let crawls: [Crawl]?
 
         public init(crawls: [Crawl]? = nil) {
             self.crawls = crawls
+        }
+
+        public func validate() throws {
+            try crawls?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1262,6 +1772,7 @@ extension Glue {
             AWSShapeMember(label: "JdbcTargets", required: false, type: .list), 
             AWSShapeMember(label: "S3Targets", required: false, type: .list)
         ]
+
         /// Specifies AWS Glue Data Catalog targets.
         public let catalogTargets: [CatalogTarget]?
         /// Specifies Amazon DynamoDB targets.
@@ -1276,6 +1787,12 @@ extension Glue {
             self.dynamoDBTargets = dynamoDBTargets
             self.jdbcTargets = jdbcTargets
             self.s3Targets = s3Targets
+        }
+
+        public func validate() throws {
+            try catalogTargets?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1293,6 +1810,7 @@ extension Glue {
             AWSShapeMember(label: "JsonClassifier", required: false, type: .structure), 
             AWSShapeMember(label: "XMLClassifier", required: false, type: .structure)
         ]
+
         /// A CsvClassifier object specifying the classifier to create.
         public let csvClassifier: CreateCsvClassifierRequest?
         /// A GrokClassifier object specifying the classifier to create.
@@ -1309,6 +1827,13 @@ extension Glue {
             self.xMLClassifier = xMLClassifier
         }
 
+        public func validate() throws {
+            try csvClassifier?.validate()
+            try grokClassifier?.validate()
+            try jsonClassifier?.validate()
+            try xMLClassifier?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case csvClassifier = "CsvClassifier"
             case grokClassifier = "GrokClassifier"
@@ -1318,6 +1843,7 @@ extension Glue {
     }
 
     public struct CreateClassifierResponse: AWSShape {
+
 
         public init() {
         }
@@ -1329,6 +1855,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogId", required: false, type: .string), 
             AWSShapeMember(label: "ConnectionInput", required: true, type: .structure)
         ]
+
         /// The ID of the Data Catalog in which to create the connection. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
         /// A ConnectionInput object defining the connection to create.
@@ -1339,6 +1866,13 @@ extension Glue {
             self.connectionInput = connectionInput
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try connectionInput.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case connectionInput = "ConnectionInput"
@@ -1346,6 +1880,7 @@ extension Glue {
     }
 
     public struct CreateConnectionResponse: AWSShape {
+
 
         public init() {
         }
@@ -1367,6 +1902,7 @@ extension Glue {
             AWSShapeMember(label: "Tags", required: false, type: .map), 
             AWSShapeMember(label: "Targets", required: true, type: .structure)
         ]
+
         /// A list of custom classifiers that the user has registered. By default, all built-in classifiers are included in a crawl, but these custom classifiers always override the default classifiers for a given classification.
         public let classifiers: [String]?
         /// The crawler configuration information. This versioned JSON string allows users to specify aspects of a crawler's behavior. For more information, see Configuring a Crawler.
@@ -1407,6 +1943,25 @@ extension Glue {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try classifiers?.forEach {
+                try validate($0, name:"classifiers[]", max: 255)
+                try validate($0, name:"classifiers[]", min: 1)
+                try validate($0, name:"classifiers[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(crawlerSecurityConfiguration, name:"crawlerSecurityConfiguration", max: 128)
+            try validate(crawlerSecurityConfiguration, name:"crawlerSecurityConfiguration", min: 0)
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(tablePrefix, name:"tablePrefix", max: 128)
+            try validate(tablePrefix, name:"tablePrefix", min: 0)
+            try targets.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case classifiers = "Classifiers"
             case configuration = "Configuration"
@@ -1425,6 +1980,7 @@ extension Glue {
 
     public struct CreateCrawlerResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -1440,6 +1996,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "QuoteSymbol", required: false, type: .string)
         ]
+
         /// Enables the processing of files that contain only one column.
         public let allowSingleColumn: Bool?
         /// Indicates whether the CSV file contains a header.
@@ -1465,6 +2022,23 @@ extension Glue {
             self.quoteSymbol = quoteSymbol
         }
 
+        public func validate() throws {
+            try validate(delimiter, name:"delimiter", max: 1)
+            try validate(delimiter, name:"delimiter", min: 1)
+            try validate(delimiter, name:"delimiter", pattern: "[^\\r\\n]")
+            try header?.forEach {
+                try validate($0, name:"header[]", max: 255)
+                try validate($0, name:"header[]", min: 1)
+                try validate($0, name:"header[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(quoteSymbol, name:"quoteSymbol", max: 1)
+            try validate(quoteSymbol, name:"quoteSymbol", min: 1)
+            try validate(quoteSymbol, name:"quoteSymbol", pattern: "[^\\r\\n]")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowSingleColumn = "AllowSingleColumn"
             case containsHeader = "ContainsHeader"
@@ -1481,6 +2055,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogId", required: false, type: .string), 
             AWSShapeMember(label: "DatabaseInput", required: true, type: .structure)
         ]
+
         /// The ID of the Data Catalog in which to create the database. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// A DatabaseInput object defining the metadata database to create in the catalog.
@@ -1491,6 +2066,13 @@ extension Glue {
             self.databaseInput = databaseInput
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try databaseInput.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseInput = "DatabaseInput"
@@ -1498,6 +2080,7 @@ extension Glue {
     }
 
     public struct CreateDatabaseResponse: AWSShape {
+
 
         public init() {
         }
@@ -1519,6 +2102,7 @@ extension Glue {
             AWSShapeMember(label: "SubnetId", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// A map of arguments used to configure the DevEndpoint.
         public let arguments: [String: String]?
         /// The name to be assigned to the new DevEndpoint.
@@ -1559,6 +2143,14 @@ extension Glue {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(publicKeys, name:"publicKeys", max: 5)
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws:iam::\\d{12}:role/.*")
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arguments = "Arguments"
             case endpointName = "EndpointName"
@@ -1594,6 +2186,7 @@ extension Glue {
             AWSShapeMember(label: "YarnEndpointAddress", required: false, type: .string), 
             AWSShapeMember(label: "ZeppelinRemoteSparkInterpreterPort", required: false, type: .integer)
         ]
+
         /// The map of arguments used to configure this DevEndpoint.
         public let arguments: [String: String]?
         /// The AWS availability zone where this DevEndpoint is located.
@@ -1646,6 +2239,13 @@ extension Glue {
             self.zeppelinRemoteSparkInterpreterPort = zeppelinRemoteSparkInterpreterPort
         }
 
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws:iam::\\d{12}:role/.*")
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arguments = "Arguments"
             case availabilityZone = "AvailabilityZone"
@@ -1673,6 +2273,7 @@ extension Glue {
             AWSShapeMember(label: "GrokPattern", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// An identifier of the data format that the classifier matches, such as Twitter, JSON, Omniture logs, Amazon CloudWatch Logs, and so on.
         public let classification: String
         /// Optional custom grok patterns used by this classifier.
@@ -1687,6 +2288,18 @@ extension Glue {
             self.customPatterns = customPatterns
             self.grokPattern = grokPattern
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(customPatterns, name:"customPatterns", max: 16000)
+            try validate(customPatterns, name:"customPatterns", min: 0)
+            try validate(customPatterns, name:"customPatterns", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(grokPattern, name:"grokPattern", max: 2048)
+            try validate(grokPattern, name:"grokPattern", min: 1)
+            try validate(grokPattern, name:"grokPattern", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1716,6 +2329,7 @@ extension Glue {
             AWSShapeMember(label: "Timeout", required: false, type: .integer), 
             AWSShapeMember(label: "WorkerType", required: false, type: .string)
         ]
+
         /// The JobCommand that executes this job.
         public let command: JobCommand
         /// The connections used for this job.
@@ -1768,6 +2382,24 @@ extension Glue {
             self.workerType = workerType
         }
 
+        public func validate() throws {
+            try command.validate()
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try notificationProperty?.validate()
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(timeout, name:"timeout", min: 1)
+            try validate(workerType, name:"workerType", max: 255)
+            try validate(workerType, name:"workerType", min: 1)
+            try validate(workerType, name:"workerType", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case command = "Command"
             case connections = "Connections"
@@ -1792,11 +2424,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The unique name that was provided for this job definition.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1809,6 +2448,7 @@ extension Glue {
             AWSShapeMember(label: "JsonPath", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// A JsonPath string defining the JSON data for the classifier to classify. AWS Glue supports a subset of JsonPath, as described in Writing JsonPath Custom Classifiers.
         public let jsonPath: String
         /// The name of the classifier.
@@ -1817,6 +2457,12 @@ extension Glue {
         public init(jsonPath: String, name: String) {
             self.jsonPath = jsonPath
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1832,6 +2478,7 @@ extension Glue {
             AWSShapeMember(label: "PartitionInput", required: true, type: .structure), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the catalog in which the partion is to be created. Currently, this should be the AWS account ID.
         public let catalogId: String?
         /// The name of the metadata database in which the partition is to be created.
@@ -1848,6 +2495,19 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionInput.validate()
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -1857,6 +2517,7 @@ extension Glue {
     }
 
     public struct CreatePartitionResponse: AWSShape {
+
 
         public init() {
         }
@@ -1869,6 +2530,7 @@ extension Glue {
             AWSShapeMember(label: "DagNodes", required: false, type: .list), 
             AWSShapeMember(label: "Language", required: false, type: .enum)
         ]
+
         /// A list of the edges in the DAG.
         public let dagEdges: [CodeGenEdge]?
         /// A list of the nodes in the DAG.
@@ -1880,6 +2542,15 @@ extension Glue {
             self.dagEdges = dagEdges
             self.dagNodes = dagNodes
             self.language = language
+        }
+
+        public func validate() throws {
+            try dagEdges?.forEach {
+                try $0.validate()
+            }
+            try dagNodes?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1894,6 +2565,7 @@ extension Glue {
             AWSShapeMember(label: "PythonScript", required: false, type: .string), 
             AWSShapeMember(label: "ScalaCode", required: false, type: .string)
         ]
+
         /// The Python script generated from the DAG.
         public let pythonScript: String?
         /// The Scala code generated from the DAG.
@@ -1915,6 +2587,7 @@ extension Glue {
             AWSShapeMember(label: "EncryptionConfiguration", required: true, type: .structure), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The encryption configuration for the new security configuration.
         public let encryptionConfiguration: EncryptionConfiguration
         /// The name for the new security configuration.
@@ -1923,6 +2596,13 @@ extension Glue {
         public init(encryptionConfiguration: EncryptionConfiguration, name: String) {
             self.encryptionConfiguration = encryptionConfiguration
             self.name = name
+        }
+
+        public func validate() throws {
+            try encryptionConfiguration.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1936,6 +2616,7 @@ extension Glue {
             AWSShapeMember(label: "CreatedTimestamp", required: false, type: .timestamp), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The time at which the new security configuration was created.
         public let createdTimestamp: TimeStamp?
         /// The name assigned to the new security configuration.
@@ -1944,6 +2625,12 @@ extension Glue {
         public init(createdTimestamp: TimeStamp? = nil, name: String? = nil) {
             self.createdTimestamp = createdTimestamp
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1958,6 +2645,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "TableInput", required: true, type: .structure)
         ]
+
         /// The ID of the Data Catalog in which to create the Table. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The catalog database in which to create the new table. For Hive compatibility, this name is entirely lowercase.
@@ -1971,6 +2659,16 @@ extension Glue {
             self.tableInput = tableInput
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try tableInput.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -1979,6 +2677,7 @@ extension Glue {
     }
 
     public struct CreateTableResponse: AWSShape {
+
 
         public init() {
         }
@@ -1997,6 +2696,7 @@ extension Glue {
             AWSShapeMember(label: "Type", required: true, type: .enum), 
             AWSShapeMember(label: "WorkflowName", required: false, type: .string)
         ]
+
         /// The actions initiated by this trigger when it fires.
         public let actions: [Action]
         /// A description of the new trigger.
@@ -2028,6 +2728,22 @@ extension Glue {
             self.workflowName = workflowName
         }
 
+        public func validate() throws {
+            try actions.forEach {
+                try $0.validate()
+            }
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try predicate?.validate()
+            try validate(workflowName, name:"workflowName", max: 255)
+            try validate(workflowName, name:"workflowName", min: 1)
+            try validate(workflowName, name:"workflowName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actions = "Actions"
             case description = "Description"
@@ -2045,11 +2761,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the trigger.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2063,6 +2786,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "FunctionInput", required: true, type: .structure)
         ]
+
         /// The ID of the Data Catalog in which to create the function. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database in which to create the function.
@@ -2076,6 +2800,16 @@ extension Glue {
             self.functionInput = functionInput
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try functionInput.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -2084,6 +2818,7 @@ extension Glue {
     }
 
     public struct CreateUserDefinedFunctionResponse: AWSShape {
+
 
         public init() {
         }
@@ -2097,6 +2832,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// A collection of properties to be used as part of each execution of the workflow.
         public let defaultRunProperties: [String: String]?
         /// A description of the workflow.
@@ -2113,6 +2849,12 @@ extension Glue {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultRunProperties = "DefaultRunProperties"
             case description = "Description"
@@ -2125,11 +2867,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the workflow which was provided as part of the request.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2143,6 +2892,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "RowTag", required: false, type: .string)
         ]
+
         /// An identifier of the data format that the classifier matches.
         public let classification: String
         /// The name of the classifier.
@@ -2154,6 +2904,12 @@ extension Glue {
             self.classification = classification
             self.name = name
             self.rowTag = rowTag
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2176,6 +2932,7 @@ extension Glue {
             AWSShapeMember(label: "QuoteSymbol", required: false, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// Enables the processing of files that contain only one column.
         public let allowSingleColumn: Bool?
         /// Indicates whether the CSV file contains a header.
@@ -2210,6 +2967,23 @@ extension Glue {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(delimiter, name:"delimiter", max: 1)
+            try validate(delimiter, name:"delimiter", min: 1)
+            try validate(delimiter, name:"delimiter", pattern: "[^\\r\\n]")
+            try header?.forEach {
+                try validate($0, name:"header[]", max: 255)
+                try validate($0, name:"header[]", min: 1)
+                try validate($0, name:"header[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(quoteSymbol, name:"quoteSymbol", max: 1)
+            try validate(quoteSymbol, name:"quoteSymbol", min: 1)
+            try validate(quoteSymbol, name:"quoteSymbol", pattern: "[^\\r\\n]")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowSingleColumn = "AllowSingleColumn"
             case containsHeader = "ContainsHeader"
@@ -2236,6 +3010,7 @@ extension Glue {
             AWSShapeMember(label: "ConnectionPasswordEncryption", required: false, type: .structure), 
             AWSShapeMember(label: "EncryptionAtRest", required: false, type: .structure)
         ]
+
         /// When connection password protection is enabled, the Data Catalog uses a customer-provided key to encrypt the password as part of CreateConnection or UpdateConnection and store it in the ENCRYPTED_PASSWORD field in the connection properties. You can enable catalog encryption or only password encryption.
         public let connectionPasswordEncryption: ConnectionPasswordEncryption?
         /// Specifies the encryption-at-rest configuration for the Data Catalog.
@@ -2244,6 +3019,11 @@ extension Glue {
         public init(connectionPasswordEncryption: ConnectionPasswordEncryption? = nil, encryptionAtRest: EncryptionAtRest? = nil) {
             self.connectionPasswordEncryption = connectionPasswordEncryption
             self.encryptionAtRest = encryptionAtRest
+        }
+
+        public func validate() throws {
+            try connectionPasswordEncryption?.validate()
+            try encryptionAtRest?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2260,6 +3040,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Parameters", required: false, type: .map)
         ]
+
         /// The time at which the metadata database was created in the catalog.
         public let createTime: TimeStamp?
         /// Description of the database.
@@ -2279,6 +3060,18 @@ extension Glue {
             self.parameters = parameters
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(locationUri, name:"locationUri", max: 1024)
+            try validate(locationUri, name:"locationUri", min: 1)
+            try validate(locationUri, name:"locationUri", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createTime = "CreateTime"
             case description = "Description"
@@ -2295,6 +3088,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Parameters", required: false, type: .map)
         ]
+
         /// Description of the database
         public let description: String?
         /// The location of the database (for example, an HDFS path).
@@ -2309,6 +3103,18 @@ extension Glue {
             self.locationUri = locationUri
             self.name = name
             self.parameters = parameters
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(locationUri, name:"locationUri", max: 1024)
+            try validate(locationUri, name:"locationUri", min: 1)
+            try validate(locationUri, name:"locationUri", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2330,11 +3136,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Name of the classifier to remove.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2343,6 +3156,7 @@ extension Glue {
     }
 
     public struct DeleteClassifierResponse: AWSShape {
+
 
         public init() {
         }
@@ -2354,6 +3168,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogId", required: false, type: .string), 
             AWSShapeMember(label: "ConnectionName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog in which the connection resides. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the connection to delete.
@@ -2364,6 +3179,15 @@ extension Glue {
             self.connectionName = connectionName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(connectionName, name:"connectionName", max: 255)
+            try validate(connectionName, name:"connectionName", min: 1)
+            try validate(connectionName, name:"connectionName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case connectionName = "ConnectionName"
@@ -2371,6 +3195,7 @@ extension Glue {
     }
 
     public struct DeleteConnectionResponse: AWSShape {
+
 
         public init() {
         }
@@ -2381,11 +3206,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the crawler to remove.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2394,6 +3226,7 @@ extension Glue {
     }
 
     public struct DeleteCrawlerResponse: AWSShape {
+
 
         public init() {
         }
@@ -2405,6 +3238,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogId", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog in which the database resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the Database to delete. For Hive compatibility, this must be all lowercase.
@@ -2415,6 +3249,15 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case name = "Name"
@@ -2422,6 +3265,7 @@ extension Glue {
     }
 
     public struct DeleteDatabaseResponse: AWSShape {
+
 
         public init() {
         }
@@ -2432,6 +3276,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EndpointName", required: true, type: .string)
         ]
+
         /// The name of the DevEndpoint.
         public let endpointName: String
 
@@ -2446,6 +3291,7 @@ extension Glue {
 
     public struct DeleteDevEndpointResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -2455,11 +3301,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobName", required: true, type: .string)
         ]
+
         /// The name of the job definition to delete.
         public let jobName: String
 
         public init(jobName: String) {
             self.jobName = jobName
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2471,11 +3324,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobName", required: false, type: .string)
         ]
+
         /// The name of the job definition that was deleted.
         public let jobName: String?
 
         public init(jobName: String? = nil) {
             self.jobName = jobName
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2490,6 +3350,7 @@ extension Glue {
             AWSShapeMember(label: "PartitionValues", required: true, type: .list), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the partition to be deleted resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database in which the table in question resides.
@@ -2506,6 +3367,21 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionValues.forEach {
+                try validate($0, name:"partitionValues[]", max: 1024)
+            }
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -2516,6 +3392,7 @@ extension Glue {
 
     public struct DeletePartitionResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -2525,11 +3402,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyHashCondition", required: false, type: .string)
         ]
+
         /// The hash value returned when this policy was set.
         public let policyHashCondition: String?
 
         public init(policyHashCondition: String? = nil) {
             self.policyHashCondition = policyHashCondition
+        }
+
+        public func validate() throws {
+            try validate(policyHashCondition, name:"policyHashCondition", max: 255)
+            try validate(policyHashCondition, name:"policyHashCondition", min: 1)
+            try validate(policyHashCondition, name:"policyHashCondition", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2538,6 +3422,7 @@ extension Glue {
     }
 
     public struct DeleteResourcePolicyResponse: AWSShape {
+
 
         public init() {
         }
@@ -2548,11 +3433,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the security configuration to delete.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2561,6 +3453,7 @@ extension Glue {
     }
 
     public struct DeleteSecurityConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -2573,6 +3466,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the table resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database in which the table resides. For Hive compatibility, this name is entirely lowercase.
@@ -2586,6 +3480,18 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -2594,6 +3500,7 @@ extension Glue {
     }
 
     public struct DeleteTableResponse: AWSShape {
+
 
         public init() {
         }
@@ -2607,6 +3514,7 @@ extension Glue {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "VersionId", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the tables reside. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The database in the catalog in which the table resides. For Hive compatibility, this name is entirely lowercase.
@@ -2623,6 +3531,21 @@ extension Glue {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(versionId, name:"versionId", max: 255)
+            try validate(versionId, name:"versionId", min: 1)
+            try validate(versionId, name:"versionId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -2633,6 +3556,7 @@ extension Glue {
 
     public struct DeleteTableVersionResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -2642,11 +3566,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the trigger to delete.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2658,11 +3589,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the trigger that was deleted.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2676,6 +3614,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "FunctionName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the function to be deleted is located. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the function is located.
@@ -2689,6 +3628,18 @@ extension Glue {
             self.functionName = functionName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(functionName, name:"functionName", max: 255)
+            try validate(functionName, name:"functionName", min: 1)
+            try validate(functionName, name:"functionName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -2697,6 +3648,7 @@ extension Glue {
     }
 
     public struct DeleteUserDefinedFunctionResponse: AWSShape {
+
 
         public init() {
         }
@@ -2707,11 +3659,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Name of the workflow to be deleted.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2723,11 +3682,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// Name of the workflow specified in input.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2760,6 +3726,7 @@ extension Glue {
             AWSShapeMember(label: "YarnEndpointAddress", required: false, type: .string), 
             AWSShapeMember(label: "ZeppelinRemoteSparkInterpreterPort", required: false, type: .integer)
         ]
+
         /// A map of arguments used to configure the DevEndpoint. Note that currently, we only support "--enable-glue-datacatalog": "" as a valid argument.
         public let arguments: [String: String]?
         /// The AWS availability zone where this DevEndpoint is located.
@@ -2830,6 +3797,14 @@ extension Glue {
             self.zeppelinRemoteSparkInterpreterPort = zeppelinRemoteSparkInterpreterPort
         }
 
+        public func validate() throws {
+            try validate(publicKeys, name:"publicKeys", max: 5)
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws:iam::\\d{12}:role/.*")
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arguments = "Arguments"
             case availabilityZone = "AvailabilityZone"
@@ -2861,6 +3836,7 @@ extension Glue {
             AWSShapeMember(label: "ExtraJarsS3Path", required: false, type: .string), 
             AWSShapeMember(label: "ExtraPythonLibsS3Path", required: false, type: .string)
         ]
+
         /// Path to one or more Java Jars in an S3 bucket that should be loaded in your DevEndpoint. Please note that only pure Java/Scala libraries can currently be used on a DevEndpoint.
         public let extraJarsS3Path: String?
         /// Path(s) to one or more Python libraries in an S3 bucket that should be loaded in your DevEndpoint. Multiple values must be complete paths separated by a comma. Please note that only pure Python libraries can currently be used on a DevEndpoint. Libraries that rely on C extensions, such as the pandas Python data analysis library, are not yet supported.
@@ -2881,6 +3857,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Path", required: false, type: .string)
         ]
+
         /// The name of the DynamoDB table to crawl.
         public let path: String?
 
@@ -2898,6 +3875,7 @@ extension Glue {
             AWSShapeMember(label: "DestinationId", required: false, type: .string), 
             AWSShapeMember(label: "SourceId", required: false, type: .string)
         ]
+
         /// The unique of the node within the workflow where the edge ends.
         public let destinationId: String?
         /// The unique of the node within the workflow where the edge starts.
@@ -2906,6 +3884,15 @@ extension Glue {
         public init(destinationId: String? = nil, sourceId: String? = nil) {
             self.destinationId = destinationId
             self.sourceId = sourceId
+        }
+
+        public func validate() throws {
+            try validate(destinationId, name:"destinationId", max: 255)
+            try validate(destinationId, name:"destinationId", min: 1)
+            try validate(destinationId, name:"destinationId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(sourceId, name:"sourceId", max: 255)
+            try validate(sourceId, name:"sourceId", min: 1)
+            try validate(sourceId, name:"sourceId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2919,6 +3906,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogEncryptionMode", required: true, type: .enum), 
             AWSShapeMember(label: "SseAwsKmsKeyId", required: false, type: .string)
         ]
+
         /// The encryption-at-rest mode for encrypting Data Catalog data.
         public let catalogEncryptionMode: CatalogEncryptionMode
         /// The ID of the AWS KMS key to use for encryption at rest.
@@ -2927,6 +3915,12 @@ extension Glue {
         public init(catalogEncryptionMode: CatalogEncryptionMode, sseAwsKmsKeyId: String? = nil) {
             self.catalogEncryptionMode = catalogEncryptionMode
             self.sseAwsKmsKeyId = sseAwsKmsKeyId
+        }
+
+        public func validate() throws {
+            try validate(sseAwsKmsKeyId, name:"sseAwsKmsKeyId", max: 255)
+            try validate(sseAwsKmsKeyId, name:"sseAwsKmsKeyId", min: 1)
+            try validate(sseAwsKmsKeyId, name:"sseAwsKmsKeyId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2941,6 +3935,7 @@ extension Glue {
             AWSShapeMember(label: "JobBookmarksEncryption", required: false, type: .structure), 
             AWSShapeMember(label: "S3Encryption", required: false, type: .list)
         ]
+
         /// The encryption configuration for CloudWatch.
         public let cloudWatchEncryption: CloudWatchEncryption?
         /// The encryption configuration for Job Bookmarks.
@@ -2952,6 +3947,14 @@ extension Glue {
             self.cloudWatchEncryption = cloudWatchEncryption
             self.jobBookmarksEncryption = jobBookmarksEncryption
             self.s3Encryption = s3Encryption
+        }
+
+        public func validate() throws {
+            try cloudWatchEncryption?.validate()
+            try jobBookmarksEncryption?.validate()
+            try s3Encryption?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2966,6 +3969,7 @@ extension Glue {
             AWSShapeMember(label: "ErrorCode", required: false, type: .string), 
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string)
         ]
+
         /// The code associated with this error.
         public let errorCode: String?
         /// A message describing the error.
@@ -2974,6 +3978,15 @@ extension Glue {
         public init(errorCode: String? = nil, errorMessage: String? = nil) {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
+        }
+
+        public func validate() throws {
+            try validate(errorCode, name:"errorCode", max: 255)
+            try validate(errorCode, name:"errorCode", min: 1)
+            try validate(errorCode, name:"errorCode", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(errorMessage, name:"errorMessage", max: 2048)
+            try validate(errorMessage, name:"errorMessage", min: 0)
+            try validate(errorMessage, name:"errorMessage", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2986,6 +3999,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "MaxConcurrentRuns", required: false, type: .integer)
         ]
+
         /// The maximum number of concurrent runs allowed for the job. The default is 1. An error is returned when this threshold is reached. The maximum value you can specify is controlled by a service limit.
         public let maxConcurrentRuns: Int32?
 
@@ -3009,11 +4023,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CatalogId", required: false, type: .string)
         ]
+
         /// The ID of the catalog to migrate. Currently, this should be the AWS account ID.
         public let catalogId: String?
 
         public init(catalogId: String? = nil) {
             self.catalogId = catalogId
+        }
+
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3025,11 +4046,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImportStatus", required: false, type: .structure)
         ]
+
         /// The status of the specified catalog migration.
         public let importStatus: CatalogImportStatus?
 
         public init(importStatus: CatalogImportStatus? = nil) {
             self.importStatus = importStatus
+        }
+
+        public func validate() throws {
+            try importStatus?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3041,11 +4067,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Name of the classifier to retrieve.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3057,11 +4090,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Classifier", required: false, type: .structure)
         ]
+
         /// The requested classifier.
         public let classifier: Classifier?
 
         public init(classifier: Classifier? = nil) {
             self.classifier = classifier
+        }
+
+        public func validate() throws {
+            try classifier?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3074,6 +4112,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The size of the list to return (optional).
         public let maxResults: Int32?
         /// An optional continuation token.
@@ -3082,6 +4121,11 @@ extension Glue {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3095,6 +4139,7 @@ extension Glue {
             AWSShapeMember(label: "Classifiers", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The requested list of classifier objects.
         public let classifiers: [Classifier]?
         /// A continuation token.
@@ -3103,6 +4148,12 @@ extension Glue {
         public init(classifiers: [Classifier]? = nil, nextToken: String? = nil) {
             self.classifiers = classifiers
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try classifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3117,6 +4168,7 @@ extension Glue {
             AWSShapeMember(label: "HidePassword", required: false, type: .boolean), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog in which the connection resides. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
         /// Allows you to retrieve the connection metadata without returning the password. For instance, the AWS Glue console uses this flag to retrieve the connection, and does not display the password. Set this parameter when the caller might not have permission to use the AWS KMS key to decrypt the password, but does have permission to access the rest of the connection properties.
@@ -3130,6 +4182,15 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case hidePassword = "HidePassword"
@@ -3141,11 +4202,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Connection", required: false, type: .structure)
         ]
+
         /// The requested connection definition.
         public let connection: Connection?
 
         public init(connection: Connection? = nil) {
             self.connection = connection
+        }
+
+        public func validate() throws {
+            try connection?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3158,6 +4224,7 @@ extension Glue {
             AWSShapeMember(label: "ConnectionType", required: false, type: .enum), 
             AWSShapeMember(label: "MatchCriteria", required: false, type: .list)
         ]
+
         /// The type of connections to return. Currently, only JDBC is supported; SFTP is not supported.
         public let connectionType: ConnectionType?
         /// A criteria string that must match the criteria recorded in the connection definition for that connection definition to be returned.
@@ -3166,6 +4233,16 @@ extension Glue {
         public init(connectionType: ConnectionType? = nil, matchCriteria: [String]? = nil) {
             self.connectionType = connectionType
             self.matchCriteria = matchCriteria
+        }
+
+        public func validate() throws {
+            try matchCriteria?.forEach {
+                try validate($0, name:"matchCriteria[]", max: 255)
+                try validate($0, name:"matchCriteria[]", min: 1)
+                try validate($0, name:"matchCriteria[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(matchCriteria, name:"matchCriteria", max: 10)
+            try validate(matchCriteria, name:"matchCriteria", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3182,6 +4259,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ID of the Data Catalog in which the connections reside. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
         /// A filter that controls which connections will be returned.
@@ -3201,6 +4279,15 @@ extension Glue {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case filter = "Filter"
@@ -3215,6 +4302,7 @@ extension Glue {
             AWSShapeMember(label: "ConnectionList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of requested connection definitions.
         public let connectionList: [Connection]?
         /// A continuation token, if the list of connections returned does not include the last of the filtered connections.
@@ -3223,6 +4311,12 @@ extension Glue {
         public init(connectionList: [Connection]? = nil, nextToken: String? = nil) {
             self.connectionList = connectionList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try connectionList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3237,6 +4331,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of the names of crawlers about which to retrieve metrics.
         public let crawlerNameList: [String]?
         /// The maximum size of a list to return.
@@ -3248,6 +4343,18 @@ extension Glue {
             self.crawlerNameList = crawlerNameList
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try crawlerNameList?.forEach {
+                try validate($0, name:"crawlerNameList[]", max: 255)
+                try validate($0, name:"crawlerNameList[]", min: 1)
+                try validate($0, name:"crawlerNameList[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(crawlerNameList, name:"crawlerNameList", max: 100)
+            try validate(crawlerNameList, name:"crawlerNameList", min: 0)
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3262,6 +4369,7 @@ extension Glue {
             AWSShapeMember(label: "CrawlerMetricsList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of metrics for the specified crawler.
         public let crawlerMetricsList: [CrawlerMetrics]?
         /// A continuation token, if the returned list does not contain the last metric available.
@@ -3270,6 +4378,12 @@ extension Glue {
         public init(crawlerMetricsList: [CrawlerMetrics]? = nil, nextToken: String? = nil) {
             self.crawlerMetricsList = crawlerMetricsList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try crawlerMetricsList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3282,11 +4396,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the crawler to retrieve metadata for.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3298,11 +4419,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Crawler", required: false, type: .structure)
         ]
+
         /// The metadata for the specified crawler.
         public let crawler: Crawler?
 
         public init(crawler: Crawler? = nil) {
             self.crawler = crawler
+        }
+
+        public func validate() throws {
+            try crawler?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3315,6 +4441,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The number of crawlers to return on each call.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation request.
@@ -3323,6 +4450,11 @@ extension Glue {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3336,6 +4468,7 @@ extension Glue {
             AWSShapeMember(label: "Crawlers", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of crawler metadata.
         public let crawlers: [Crawler]?
         /// A continuation token, if the returned list has not reached the end of those defined in this customer account.
@@ -3344,6 +4477,12 @@ extension Glue {
         public init(crawlers: [Crawler]? = nil, nextToken: String? = nil) {
             self.crawlers = crawlers
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try crawlers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3356,11 +4495,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CatalogId", required: false, type: .string)
         ]
+
         /// The ID of the Data Catalog for which to retrieve the security configuration. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
 
         public init(catalogId: String? = nil) {
             self.catalogId = catalogId
+        }
+
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3372,11 +4518,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DataCatalogEncryptionSettings", required: false, type: .structure)
         ]
+
         /// The requested security configuration.
         public let dataCatalogEncryptionSettings: DataCatalogEncryptionSettings?
 
         public init(dataCatalogEncryptionSettings: DataCatalogEncryptionSettings? = nil) {
             self.dataCatalogEncryptionSettings = dataCatalogEncryptionSettings
+        }
+
+        public func validate() throws {
+            try dataCatalogEncryptionSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3389,6 +4540,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogId", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog in which the database resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the database to retrieve. For Hive compatibility, this should be all lowercase.
@@ -3397,6 +4549,15 @@ extension Glue {
         public init(catalogId: String? = nil, name: String) {
             self.catalogId = catalogId
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3409,11 +4570,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Database", required: false, type: .structure)
         ]
+
         /// The definition of the specified database in the catalog.
         public let database: Database?
 
         public init(database: Database? = nil) {
             self.database = database
+        }
+
+        public func validate() throws {
+            try database?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3427,6 +4593,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ID of the Data Catalog from which to retrieve Databases. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The maximum number of databases to return in one response.
@@ -3438,6 +4605,14 @@ extension Glue {
             self.catalogId = catalogId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3452,6 +4627,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseList", required: true, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of Database objects from the specified catalog.
         public let databaseList: [Database]
         /// A continuation token for paginating the returned list of tokens, returned if the current segment of the list is not the last.
@@ -3460,6 +4636,12 @@ extension Glue {
         public init(databaseList: [Database], nextToken: String? = nil) {
             self.databaseList = databaseList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try databaseList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3472,6 +4654,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PythonScript", required: false, type: .string)
         ]
+
         /// The Python script to transform.
         public let pythonScript: String?
 
@@ -3489,6 +4672,7 @@ extension Glue {
             AWSShapeMember(label: "DagEdges", required: false, type: .list), 
             AWSShapeMember(label: "DagNodes", required: false, type: .list)
         ]
+
         /// A list of the edges in the resulting DAG.
         public let dagEdges: [CodeGenEdge]?
         /// A list of the nodes in the resulting DAG.
@@ -3497,6 +4681,15 @@ extension Glue {
         public init(dagEdges: [CodeGenEdge]? = nil, dagNodes: [CodeGenNode]? = nil) {
             self.dagEdges = dagEdges
             self.dagNodes = dagNodes
+        }
+
+        public func validate() throws {
+            try dagEdges?.forEach {
+                try $0.validate()
+            }
+            try dagNodes?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3509,6 +4702,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EndpointName", required: true, type: .string)
         ]
+
         /// Name of the DevEndpoint for which to retrieve information.
         public let endpointName: String
 
@@ -3525,11 +4719,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DevEndpoint", required: false, type: .structure)
         ]
+
         /// A DevEndpoint definition.
         public let devEndpoint: DevEndpoint?
 
         public init(devEndpoint: DevEndpoint? = nil) {
             self.devEndpoint = devEndpoint
+        }
+
+        public func validate() throws {
+            try devEndpoint?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3542,6 +4741,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum size of information to return.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation call.
@@ -3550,6 +4750,11 @@ extension Glue {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3563,6 +4768,7 @@ extension Glue {
             AWSShapeMember(label: "DevEndpoints", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of DevEndpoint definitions.
         public let devEndpoints: [DevEndpoint]?
         /// A continuation token, if not all DevEndpoint definitions have yet been returned.
@@ -3571,6 +4777,12 @@ extension Glue {
         public init(devEndpoints: [DevEndpoint]? = nil, nextToken: String? = nil) {
             self.devEndpoints = devEndpoints
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try devEndpoints?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3583,11 +4795,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobName", required: true, type: .string)
         ]
+
         /// The name of the job definition to retrieve.
         public let jobName: String
 
         public init(jobName: String) {
             self.jobName = jobName
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3599,11 +4818,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Job", required: false, type: .structure)
         ]
+
         /// The requested job definition.
         public let job: Job?
 
         public init(job: Job? = nil) {
             self.job = job
+        }
+
+        public func validate() throws {
+            try job?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3617,6 +4841,7 @@ extension Glue {
             AWSShapeMember(label: "PredecessorsIncluded", required: false, type: .boolean), 
             AWSShapeMember(label: "RunId", required: true, type: .string)
         ]
+
         /// Name of the job definition being run.
         public let jobName: String
         /// True if a list of predecessor runs should be returned.
@@ -3630,6 +4855,15 @@ extension Glue {
             self.runId = runId
         }
 
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(runId, name:"runId", max: 255)
+            try validate(runId, name:"runId", min: 1)
+            try validate(runId, name:"runId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case jobName = "JobName"
             case predecessorsIncluded = "PredecessorsIncluded"
@@ -3641,11 +4875,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobRun", required: false, type: .structure)
         ]
+
         /// The requested job-run metadata.
         public let jobRun: JobRun?
 
         public init(jobRun: JobRun? = nil) {
             self.jobRun = jobRun
+        }
+
+        public func validate() throws {
+            try jobRun?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3659,6 +4898,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the job definition for which to retrieve all job runs.
         public let jobName: String
         /// The maximum size of the response.
@@ -3670,6 +4910,14 @@ extension Glue {
             self.jobName = jobName
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3684,6 +4932,7 @@ extension Glue {
             AWSShapeMember(label: "JobRuns", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of job-run metadata objects.
         public let jobRuns: [JobRun]?
         /// A continuation token, if not all requested job runs have been returned.
@@ -3692,6 +4941,12 @@ extension Glue {
         public init(jobRuns: [JobRun]? = nil, nextToken: String? = nil) {
             self.jobRuns = jobRuns
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobRuns?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3705,6 +4960,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum size of the response.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation call.
@@ -3713,6 +4969,11 @@ extension Glue {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3726,6 +4987,7 @@ extension Glue {
             AWSShapeMember(label: "Jobs", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of job definitions.
         public let jobs: [Job]?
         /// A continuation token, if not all job definitions have yet been returned.
@@ -3734,6 +4996,12 @@ extension Glue {
         public init(jobs: [Job]? = nil, nextToken: String? = nil) {
             self.jobs = jobs
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobs?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3748,6 +5016,7 @@ extension Glue {
             AWSShapeMember(label: "Sinks", required: false, type: .list), 
             AWSShapeMember(label: "Source", required: true, type: .structure)
         ]
+
         /// Parameters for the mapping.
         public let location: Location?
         /// A list of target tables.
@@ -3761,6 +5030,14 @@ extension Glue {
             self.source = source
         }
 
+        public func validate() throws {
+            try location?.validate()
+            try sinks?.forEach {
+                try $0.validate()
+            }
+            try source.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case location = "Location"
             case sinks = "Sinks"
@@ -3772,6 +5049,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Mapping", required: true, type: .list)
         ]
+
         /// A list of mappings to the specified targets.
         public let mapping: [MappingEntry]
 
@@ -3791,6 +5069,7 @@ extension Glue {
             AWSShapeMember(label: "PartitionValues", required: true, type: .list), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the partition in question resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the partition resides.
@@ -3807,6 +5086,21 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionValues.forEach {
+                try validate($0, name:"partitionValues[]", max: 1024)
+            }
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -3819,11 +5113,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Partition", required: false, type: .structure)
         ]
+
         /// The requested information, in the form of a Partition object.
         public let partition: Partition?
 
         public init(partition: Partition? = nil) {
             self.partition = partition
+        }
+
+        public func validate() throws {
+            try partition?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3841,6 +5140,7 @@ extension Glue {
             AWSShapeMember(label: "Segment", required: false, type: .structure), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the partitions in question reside. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the partitions reside.
@@ -3866,6 +5166,24 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(expression, name:"expression", max: 2048)
+            try validate(expression, name:"expression", min: 0)
+            try validate(expression, name:"expression", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try segment?.validate()
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -3882,6 +5200,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Partitions", required: false, type: .list)
         ]
+
         /// A continuation token, if the returned list of partitions does not does not include the last one.
         public let nextToken: String?
         /// A list of requested partitions.
@@ -3890,6 +5209,12 @@ extension Glue {
         public init(nextToken: String? = nil, partitions: [Partition]? = nil) {
             self.nextToken = nextToken
             self.partitions = partitions
+        }
+
+        public func validate() throws {
+            try partitions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3906,6 +5231,7 @@ extension Glue {
             AWSShapeMember(label: "Sinks", required: false, type: .list), 
             AWSShapeMember(label: "Source", required: true, type: .structure)
         ]
+
         /// The programming language of the code to perform the mapping.
         public let language: Language?
         /// The parameters for the mapping.
@@ -3925,6 +5251,14 @@ extension Glue {
             self.source = source
         }
 
+        public func validate() throws {
+            try location?.validate()
+            try sinks?.forEach {
+                try $0.validate()
+            }
+            try source.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case language = "Language"
             case location = "Location"
@@ -3939,6 +5273,7 @@ extension Glue {
             AWSShapeMember(label: "PythonScript", required: false, type: .string), 
             AWSShapeMember(label: "ScalaCode", required: false, type: .string)
         ]
+
         /// A Python script to perform the mapping.
         public let pythonScript: String?
         /// The Scala code to perform the mapping.
@@ -3957,6 +5292,7 @@ extension Glue {
 
     public struct GetResourcePolicyRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -3969,6 +5305,7 @@ extension Glue {
             AWSShapeMember(label: "PolicyInJson", required: false, type: .string), 
             AWSShapeMember(label: "UpdateTime", required: false, type: .timestamp)
         ]
+
         /// The date and time at which the policy was created.
         public let createTime: TimeStamp?
         /// Contains the hash value associated with this policy.
@@ -3985,6 +5322,14 @@ extension Glue {
             self.updateTime = updateTime
         }
 
+        public func validate() throws {
+            try validate(policyHash, name:"policyHash", max: 255)
+            try validate(policyHash, name:"policyHash", min: 1)
+            try validate(policyHash, name:"policyHash", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(policyInJson, name:"policyInJson", max: 10240)
+            try validate(policyInJson, name:"policyInJson", min: 2)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createTime = "CreateTime"
             case policyHash = "PolicyHash"
@@ -3997,11 +5342,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the security configuration to retrieve.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4013,11 +5365,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SecurityConfiguration", required: false, type: .structure)
         ]
+
         /// The requested security configuration
         public let securityConfiguration: SecurityConfiguration?
 
         public init(securityConfiguration: SecurityConfiguration? = nil) {
             self.securityConfiguration = securityConfiguration
+        }
+
+        public func validate() throws {
+            try securityConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4030,6 +5387,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results to return.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation call.
@@ -4038,6 +5396,11 @@ extension Glue {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4051,6 +5414,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SecurityConfigurations", required: false, type: .list)
         ]
+
         /// A continuation token, if there are more security configurations to return.
         public let nextToken: String?
         /// A list of security configurations.
@@ -4059,6 +5423,12 @@ extension Glue {
         public init(nextToken: String? = nil, securityConfigurations: [SecurityConfiguration]? = nil) {
             self.nextToken = nextToken
             self.securityConfigurations = securityConfigurations
+        }
+
+        public func validate() throws {
+            try securityConfigurations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4073,6 +5443,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the table resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the database in the catalog in which the table resides. For Hive compatibility, this name is entirely lowercase.
@@ -4086,6 +5457,18 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -4097,11 +5480,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Table", required: false, type: .structure)
         ]
+
         /// The Table object that defines the specified table.
         public let table: Table?
 
         public init(table: Table? = nil) {
             self.table = table
+        }
+
+        public func validate() throws {
+            try table?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4116,6 +5504,7 @@ extension Glue {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         /// The ID of the Data Catalog where the tables reside. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The database in the catalog in which the table resides. For Hive compatibility, this name is entirely lowercase.
@@ -4132,6 +5521,21 @@ extension Glue {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(versionId, name:"versionId", max: 255)
+            try validate(versionId, name:"versionId", min: 1)
+            try validate(versionId, name:"versionId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -4144,11 +5548,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableVersion", required: false, type: .structure)
         ]
+
         /// The requested table version.
         public let tableVersion: TableVersion?
 
         public init(tableVersion: TableVersion? = nil) {
             self.tableVersion = tableVersion
+        }
+
+        public func validate() throws {
+            try tableVersion?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4164,6 +5573,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the tables reside. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The database in the catalog in which the table resides. For Hive compatibility, this name is entirely lowercase.
@@ -4183,6 +5593,20 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -4197,6 +5621,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TableVersions", required: false, type: .list)
         ]
+
         /// A continuation token, if the list of available versions does not include the last one.
         public let nextToken: String?
         /// A list of strings identifying available versions of the specified table.
@@ -4205,6 +5630,12 @@ extension Glue {
         public init(nextToken: String? = nil, tableVersions: [TableVersion]? = nil) {
             self.nextToken = nextToken
             self.tableVersions = tableVersions
+        }
+
+        public func validate() throws {
+            try tableVersions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4221,6 +5652,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ID of the Data Catalog where the tables reside. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The database in the catalog whose tables to list. For Hive compatibility, this name is entirely lowercase.
@@ -4240,6 +5672,20 @@ extension Glue {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(expression, name:"expression", max: 2048)
+            try validate(expression, name:"expression", min: 0)
+            try validate(expression, name:"expression", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -4254,6 +5700,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TableList", required: false, type: .list)
         ]
+
         /// A continuation token, present if the current list segment is not the last.
         public let nextToken: String?
         /// A list of the requested Table objects.
@@ -4262,6 +5709,12 @@ extension Glue {
         public init(nextToken: String? = nil, tableList: [Table]? = nil) {
             self.nextToken = nextToken
             self.tableList = tableList
+        }
+
+        public func validate() throws {
+            try tableList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4274,11 +5727,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource for which to retrieve tags.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 10240)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws:glue:.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4290,6 +5750,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The requested tags.
         public let tags: [String: String]?
 
@@ -4306,11 +5767,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the trigger to retrieve.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4322,11 +5790,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Trigger", required: false, type: .structure)
         ]
+
         /// The requested trigger definition.
         public let trigger: Trigger?
 
         public init(trigger: Trigger? = nil) {
             self.trigger = trigger
+        }
+
+        public func validate() throws {
+            try trigger?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4340,6 +5813,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the job to retrieve triggers for. The trigger that can start this job is returned, and if there is no such trigger, all triggers are returned.
         public let dependentJobName: String?
         /// The maximum size of the response.
@@ -4351,6 +5825,14 @@ extension Glue {
             self.dependentJobName = dependentJobName
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(dependentJobName, name:"dependentJobName", max: 255)
+            try validate(dependentJobName, name:"dependentJobName", min: 1)
+            try validate(dependentJobName, name:"dependentJobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4365,6 +5847,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Triggers", required: false, type: .list)
         ]
+
         /// A continuation token, if not all the requested triggers have yet been returned.
         public let nextToken: String?
         /// A list of triggers for the specified job.
@@ -4373,6 +5856,12 @@ extension Glue {
         public init(nextToken: String? = nil, triggers: [Trigger]? = nil) {
             self.nextToken = nextToken
             self.triggers = triggers
+        }
+
+        public func validate() throws {
+            try triggers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4387,6 +5876,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseName", required: true, type: .string), 
             AWSShapeMember(label: "FunctionName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the function to be retrieved is located. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the function is located.
@@ -4400,6 +5890,18 @@ extension Glue {
             self.functionName = functionName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(functionName, name:"functionName", max: 255)
+            try validate(functionName, name:"functionName", min: 1)
+            try validate(functionName, name:"functionName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -4411,11 +5913,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserDefinedFunction", required: false, type: .structure)
         ]
+
         /// The requested function definition.
         public let userDefinedFunction: UserDefinedFunction?
 
         public init(userDefinedFunction: UserDefinedFunction? = nil) {
             self.userDefinedFunction = userDefinedFunction
+        }
+
+        public func validate() throws {
+            try userDefinedFunction?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4431,6 +5938,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Pattern", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the functions to be retrieved are located. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the functions are located.
@@ -4450,6 +5958,20 @@ extension Glue {
             self.pattern = pattern
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(pattern, name:"pattern", max: 255)
+            try validate(pattern, name:"pattern", min: 1)
+            try validate(pattern, name:"pattern", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -4464,6 +5986,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "UserDefinedFunctions", required: false, type: .list)
         ]
+
         /// A continuation token, if the list of functions returned does not include the last requested function.
         public let nextToken: String?
         /// A list of requested function definitions.
@@ -4472,6 +5995,12 @@ extension Glue {
         public init(nextToken: String? = nil, userDefinedFunctions: [UserDefinedFunction]? = nil) {
             self.nextToken = nextToken
             self.userDefinedFunctions = userDefinedFunctions
+        }
+
+        public func validate() throws {
+            try userDefinedFunctions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4485,6 +6014,7 @@ extension Glue {
             AWSShapeMember(label: "IncludeGraph", required: false, type: .boolean), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Specifies whether to include a graph when returning the workflow resource metadata.
         public let includeGraph: Bool?
         /// The name of the workflow to retrieve.
@@ -4493,6 +6023,12 @@ extension Glue {
         public init(includeGraph: Bool? = nil, name: String) {
             self.includeGraph = includeGraph
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4505,11 +6041,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Workflow", required: false, type: .structure)
         ]
+
         /// The resource metadata for the workflow.
         public let workflow: Workflow?
 
         public init(workflow: Workflow? = nil) {
             self.workflow = workflow
+        }
+
+        public func validate() throws {
+            try workflow?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4522,6 +6063,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "RunId", required: true, type: .string)
         ]
+
         /// Name of the workflow which was run.
         public let name: String
         /// The ID of the workflow run whose run properties should be returned.
@@ -4530,6 +6072,15 @@ extension Glue {
         public init(name: String, runId: String) {
             self.name = name
             self.runId = runId
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(runId, name:"runId", max: 255)
+            try validate(runId, name:"runId", min: 1)
+            try validate(runId, name:"runId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4542,6 +6093,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RunProperties", required: false, type: .map)
         ]
+
         /// The workflow run properties which were set during the specified run.
         public let runProperties: [String: String]?
 
@@ -4560,6 +6112,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "RunId", required: true, type: .string)
         ]
+
         /// Specifies whether to include the workflow graph in response or not.
         public let includeGraph: Bool?
         /// Name of the workflow being run.
@@ -4573,6 +6126,15 @@ extension Glue {
             self.runId = runId
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(runId, name:"runId", max: 255)
+            try validate(runId, name:"runId", min: 1)
+            try validate(runId, name:"runId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case includeGraph = "IncludeGraph"
             case name = "Name"
@@ -4584,11 +6146,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Run", required: false, type: .structure)
         ]
+
         /// The requested workflow run metadata.
         public let run: WorkflowRun?
 
         public init(run: WorkflowRun? = nil) {
             self.run = run
+        }
+
+        public func validate() throws {
+            try run?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4603,6 +6170,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Specifies whether to include the workflow graph in response or not.
         public let includeGraph: Bool?
         /// The maximum number of workflow runs to be included in the response.
@@ -4619,6 +6187,14 @@ extension Glue {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case includeGraph = "IncludeGraph"
             case maxResults = "MaxResults"
@@ -4632,6 +6208,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Runs", required: false, type: .list)
         ]
+
         /// A continuation token, if not all requested workflow runs have been returned.
         public let nextToken: String?
         /// A list of workflow run metadata objects.
@@ -4640,6 +6217,14 @@ extension Glue {
         public init(nextToken: String? = nil, runs: [WorkflowRun]? = nil) {
             self.nextToken = nextToken
             self.runs = runs
+        }
+
+        public func validate() throws {
+            try runs?.forEach {
+                try $0.validate()
+            }
+            try validate(runs, name:"runs", max: 1000)
+            try validate(runs, name:"runs", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4658,6 +6243,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// An identifier of the data format that the classifier matches, such as Twitter, JSON, Omniture logs, and so on.
         public let classification: String
         /// The time that this classifier was registered.
@@ -4683,6 +6269,18 @@ extension Glue {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(customPatterns, name:"customPatterns", max: 16000)
+            try validate(customPatterns, name:"customPatterns", min: 0)
+            try validate(customPatterns, name:"customPatterns", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(grokPattern, name:"grokPattern", max: 2048)
+            try validate(grokPattern, name:"grokPattern", min: 1)
+            try validate(grokPattern, name:"grokPattern", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case classification = "Classification"
             case creationTime = "CreationTime"
@@ -4698,11 +6296,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CatalogId", required: false, type: .string)
         ]
+
         /// The ID of the catalog to import. Currently, this should be the AWS account ID.
         public let catalogId: String?
 
         public init(catalogId: String? = nil) {
             self.catalogId = catalogId
+        }
+
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4711,6 +6316,7 @@ extension Glue {
     }
 
     public struct ImportCatalogToGlueResponse: AWSShape {
+
 
         public init() {
         }
@@ -4723,6 +6329,7 @@ extension Glue {
             AWSShapeMember(label: "Exclusions", required: false, type: .list), 
             AWSShapeMember(label: "Path", required: false, type: .string)
         ]
+
         /// The name of the connection to use to connect to the JDBC target.
         public let connectionName: String?
         /// A list of glob patterns used to exclude from the crawl. For more information, see Catalog Tables with a Crawler.
@@ -4763,6 +6370,7 @@ extension Glue {
             AWSShapeMember(label: "Timeout", required: false, type: .integer), 
             AWSShapeMember(label: "WorkerType", required: false, type: .enum)
         ]
+
         /// The JobCommand that executes this job.
         public let command: JobCommand?
         /// The connections used for this job.
@@ -4818,6 +6426,21 @@ extension Glue {
             self.workerType = workerType
         }
 
+        public func validate() throws {
+            try command?.validate()
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try notificationProperty?.validate()
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(timeout, name:"timeout", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case command = "Command"
             case connections = "Connections"
@@ -4847,6 +6470,7 @@ extension Glue {
             AWSShapeMember(label: "Run", required: false, type: .integer), 
             AWSShapeMember(label: "Version", required: false, type: .integer)
         ]
+
         /// The attempt ID number.
         public let attempt: Int32?
         /// The bookmark itself.
@@ -4880,6 +6504,7 @@ extension Glue {
             AWSShapeMember(label: "JobBookmarksEncryptionMode", required: false, type: .enum), 
             AWSShapeMember(label: "KmsKeyArn", required: false, type: .string)
         ]
+
         /// The encryption mode to use for Job bookmarks data.
         public let jobBookmarksEncryptionMode: JobBookmarksEncryptionMode?
         /// The AWS ARN of the KMS key to be used to encrypt the data.
@@ -4888,6 +6513,10 @@ extension Glue {
         public init(jobBookmarksEncryptionMode: JobBookmarksEncryptionMode? = nil, kmsKeyArn: String? = nil) {
             self.jobBookmarksEncryptionMode = jobBookmarksEncryptionMode
             self.kmsKeyArn = kmsKeyArn
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyArn, name:"kmsKeyArn", pattern: "arn:aws:kms:.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4908,6 +6537,7 @@ extension Glue {
             AWSShapeMember(label: "PythonVersion", required: false, type: .string), 
             AWSShapeMember(label: "ScriptLocation", required: false, type: .string)
         ]
+
         /// The name of the job command. For an Apache Spark ETL job, this must be glueetl. For a Python shell job, it must be pythonshell.
         public let name: String?
         /// The Python version being used to execute a Python shell job. Allowed values are 2 or 3.
@@ -4921,6 +6551,10 @@ extension Glue {
             self.scriptLocation = scriptLocation
         }
 
+        public func validate() throws {
+            try validate(pythonVersion, name:"pythonVersion", pattern: "^[2-3]$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case pythonVersion = "PythonVersion"
@@ -4932,11 +6566,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobRuns", required: false, type: .list)
         ]
+
         /// The information for the job runs represented by the job node.
         public let jobRuns: [JobRun]?
 
         public init(jobRuns: [JobRun]? = nil) {
             self.jobRuns = jobRuns
+        }
+
+        public func validate() throws {
+            try jobRuns?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4967,6 +6608,7 @@ extension Glue {
             AWSShapeMember(label: "TriggerName", required: false, type: .string), 
             AWSShapeMember(label: "WorkerType", required: false, type: .enum)
         ]
+
         /// The job arguments associated with this run. For this job run, they replace the default arguments set in the job definition itself. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
         public let arguments: [String: String]?
         /// The number of the attempt to run this job.
@@ -5031,6 +6673,29 @@ extension Glue {
             self.workerType = workerType
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 255)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try notificationProperty?.validate()
+            try predecessorRuns?.forEach {
+                try $0.validate()
+            }
+            try validate(previousRunId, name:"previousRunId", max: 255)
+            try validate(previousRunId, name:"previousRunId", min: 1)
+            try validate(previousRunId, name:"previousRunId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(timeout, name:"timeout", min: 1)
+            try validate(triggerName, name:"triggerName", max: 255)
+            try validate(triggerName, name:"triggerName", min: 1)
+            try validate(triggerName, name:"triggerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arguments = "Arguments"
             case attempt = "Attempt"
@@ -5083,6 +6748,7 @@ extension Glue {
             AWSShapeMember(label: "Timeout", required: false, type: .integer), 
             AWSShapeMember(label: "WorkerType", required: false, type: .enum)
         ]
+
         /// The JobCommand that executes this job (required).
         public let command: JobCommand?
         /// The connections used for this job.
@@ -5129,6 +6795,18 @@ extension Glue {
             self.workerType = workerType
         }
 
+        public func validate() throws {
+            try command?.validate()
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try notificationProperty?.validate()
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(timeout, name:"timeout", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case command = "Command"
             case connections = "Connections"
@@ -5155,6 +6833,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// The time that this classifier was registered.
         public let creationTime: TimeStamp?
         /// A JsonPath string defining the JSON data for the classifier to classify. AWS Glue supports a subset of JsonPath, as described in Writing JsonPath Custom Classifiers.
@@ -5172,6 +6851,12 @@ extension Glue {
             self.lastUpdated = lastUpdated
             self.name = name
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5198,6 +6883,7 @@ extension Glue {
             AWSShapeMember(label: "StartTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// If an error occurred, the error information about the last crawl.
         public let errorMessage: String?
         /// The log group for the last crawl.
@@ -5218,6 +6904,21 @@ extension Glue {
             self.messagePrefix = messagePrefix
             self.startTime = startTime
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", max: 2048)
+            try validate(errorMessage, name:"errorMessage", min: 0)
+            try validate(errorMessage, name:"errorMessage", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(logGroup, name:"logGroup", max: 512)
+            try validate(logGroup, name:"logGroup", min: 1)
+            try validate(logGroup, name:"logGroup", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStream, name:"logStream", max: 512)
+            try validate(logStream, name:"logStream", min: 1)
+            try validate(logStream, name:"logStream", pattern: "[^:*]*")
+            try validate(messagePrefix, name:"messagePrefix", max: 255)
+            try validate(messagePrefix, name:"messagePrefix", min: 1)
+            try validate(messagePrefix, name:"messagePrefix", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5243,6 +6944,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The maximum size of a list to return.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation request.
@@ -5254,6 +6956,11 @@ extension Glue {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5268,6 +6975,7 @@ extension Glue {
             AWSShapeMember(label: "CrawlerNames", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of all crawlers in the account, or the crawlers with the specified tags.
         public let crawlerNames: [String]?
         /// A continuation token, if the returned list does not contain the last metric available.
@@ -5276,6 +6984,16 @@ extension Glue {
         public init(crawlerNames: [String]? = nil, nextToken: String? = nil) {
             self.crawlerNames = crawlerNames
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try crawlerNames?.forEach {
+                try validate($0, name:"crawlerNames[]", max: 255)
+                try validate($0, name:"crawlerNames[]", min: 1)
+                try validate($0, name:"crawlerNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(crawlerNames, name:"crawlerNames", max: 100)
+            try validate(crawlerNames, name:"crawlerNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5290,6 +7008,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The maximum size of a list to return.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation request.
@@ -5301,6 +7020,11 @@ extension Glue {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5315,6 +7039,7 @@ extension Glue {
             AWSShapeMember(label: "DevEndpointNames", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of all the DevEndpoints in the account, or the DevEndpoints with the specified tags.
         public let devEndpointNames: [String]?
         /// A continuation token, if the returned list does not contain the last metric available.
@@ -5323,6 +7048,14 @@ extension Glue {
         public init(devEndpointNames: [String]? = nil, nextToken: String? = nil) {
             self.devEndpointNames = devEndpointNames
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try devEndpointNames?.forEach {
+                try validate($0, name:"devEndpointNames[]", max: 255)
+                try validate($0, name:"devEndpointNames[]", min: 1)
+                try validate($0, name:"devEndpointNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5337,6 +7070,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The maximum size of a list to return.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation request.
@@ -5348,6 +7082,11 @@ extension Glue {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5362,6 +7101,7 @@ extension Glue {
             AWSShapeMember(label: "JobNames", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of all jobs in the account, or the jobs with the specified tags.
         public let jobNames: [String]?
         /// A continuation token, if the returned list does not contain the last metric available.
@@ -5370,6 +7110,14 @@ extension Glue {
         public init(jobNames: [String]? = nil, nextToken: String? = nil) {
             self.jobNames = jobNames
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobNames?.forEach {
+                try validate($0, name:"jobNames[]", max: 255)
+                try validate($0, name:"jobNames[]", min: 1)
+                try validate($0, name:"jobNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5385,6 +7133,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         ///  The name of the job for which to retrieve triggers. The trigger that can start this job is returned. If there is no such trigger, all triggers are returned.
         public let dependentJobName: String?
         /// The maximum size of a list to return.
@@ -5401,6 +7150,14 @@ extension Glue {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(dependentJobName, name:"dependentJobName", max: 255)
+            try validate(dependentJobName, name:"dependentJobName", min: 1)
+            try validate(dependentJobName, name:"dependentJobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dependentJobName = "DependentJobName"
             case maxResults = "MaxResults"
@@ -5414,6 +7171,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TriggerNames", required: false, type: .list)
         ]
+
         /// A continuation token, if the returned list does not contain the last metric available.
         public let nextToken: String?
         /// The names of all triggers in the account, or the triggers with the specified tags.
@@ -5422,6 +7180,14 @@ extension Glue {
         public init(nextToken: String? = nil, triggerNames: [String]? = nil) {
             self.nextToken = nextToken
             self.triggerNames = triggerNames
+        }
+
+        public func validate() throws {
+            try triggerNames?.forEach {
+                try validate($0, name:"triggerNames[]", max: 255)
+                try validate($0, name:"triggerNames[]", min: 1)
+                try validate($0, name:"triggerNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5435,6 +7201,7 @@ extension Glue {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum size of a list to return.
         public let maxResults: Int32?
         /// A continuation token, if this is a continuation request.
@@ -5443,6 +7210,11 @@ extension Glue {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5456,6 +7228,7 @@ extension Glue {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Workflows", required: false, type: .list)
         ]
+
         /// A continuation token, if not all workflow names have been returned.
         public let nextToken: String?
         /// List of names of workflows in the account.
@@ -5464,6 +7237,16 @@ extension Glue {
         public init(nextToken: String? = nil, workflows: [String]? = nil) {
             self.nextToken = nextToken
             self.workflows = workflows
+        }
+
+        public func validate() throws {
+            try workflows?.forEach {
+                try validate($0, name:"workflows[]", max: 255)
+                try validate($0, name:"workflows[]", min: 1)
+                try validate($0, name:"workflows[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(workflows, name:"workflows", max: 25)
+            try validate(workflows, name:"workflows", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5478,6 +7261,7 @@ extension Glue {
             AWSShapeMember(label: "Jdbc", required: false, type: .list), 
             AWSShapeMember(label: "S3", required: false, type: .list)
         ]
+
         /// An Amazon DynamoDB table location.
         public let dynamoDB: [CodeGenNodeArg]?
         /// A JDBC location.
@@ -5489,6 +7273,15 @@ extension Glue {
             self.dynamoDB = dynamoDB
             self.jdbc = jdbc
             self.s3 = s3
+        }
+
+        public func validate() throws {
+            try validate(dynamoDB, name:"dynamoDB", max: 50)
+            try validate(dynamoDB, name:"dynamoDB", min: 0)
+            try validate(jdbc, name:"jdbc", max: 50)
+            try validate(jdbc, name:"jdbc", min: 0)
+            try validate(s3, name:"s3", max: 50)
+            try validate(s3, name:"s3", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5518,6 +7311,7 @@ extension Glue {
             AWSShapeMember(label: "TargetTable", required: false, type: .string), 
             AWSShapeMember(label: "TargetType", required: false, type: .string)
         ]
+
         /// The source path.
         public let sourcePath: String?
         /// The name of the source table.
@@ -5559,6 +7353,7 @@ extension Glue {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "UniqueId", required: false, type: .string)
         ]
+
         /// Details of the crawler when the node represents a crawler.
         public let crawlerDetails: CrawlerNodeDetails?
         /// Details of the Job when the node represents a Job.
@@ -5579,6 +7374,18 @@ extension Glue {
             self.triggerDetails = triggerDetails
             self.`type` = `type`
             self.uniqueId = uniqueId
+        }
+
+        public func validate() throws {
+            try crawlerDetails?.validate()
+            try jobDetails?.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try triggerDetails?.validate()
+            try validate(uniqueId, name:"uniqueId", max: 255)
+            try validate(uniqueId, name:"uniqueId", min: 1)
+            try validate(uniqueId, name:"uniqueId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5602,11 +7409,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NotifyDelayAfter", required: false, type: .integer)
         ]
+
         /// After a job run starts, the number of minutes to wait before sending a job run delay notification.
         public let notifyDelayAfter: Int32?
 
         public init(notifyDelayAfter: Int32? = nil) {
             self.notifyDelayAfter = notifyDelayAfter
+        }
+
+        public func validate() throws {
+            try validate(notifyDelayAfter, name:"notifyDelayAfter", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5619,6 +7431,7 @@ extension Glue {
             AWSShapeMember(label: "Column", required: true, type: .string), 
             AWSShapeMember(label: "SortOrder", required: true, type: .integer)
         ]
+
         /// The name of the column.
         public let column: String
         /// Indicates that the column is sorted in ascending order (== 1), or in descending order (==0).
@@ -5627,6 +7440,14 @@ extension Glue {
         public init(column: String, sortOrder: Int32) {
             self.column = column
             self.sortOrder = sortOrder
+        }
+
+        public func validate() throws {
+            try validate(column, name:"column", max: 255)
+            try validate(column, name:"column", min: 1)
+            try validate(column, name:"column", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(sortOrder, name:"sortOrder", max: 1)
+            try validate(sortOrder, name:"sortOrder", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5646,6 +7467,7 @@ extension Glue {
             AWSShapeMember(label: "TableName", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The time at which the partition was created.
         public let creationTime: TimeStamp?
         /// The name of the catalog database where the table in question is located.
@@ -5674,6 +7496,19 @@ extension Glue {
             self.values = values
         }
 
+        public func validate() throws {
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try storageDescriptor?.validate()
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 1024)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "CreationTime"
             case databaseName = "DatabaseName"
@@ -5691,6 +7526,7 @@ extension Glue {
             AWSShapeMember(label: "ErrorDetail", required: false, type: .structure), 
             AWSShapeMember(label: "PartitionValues", required: false, type: .list)
         ]
+
         /// Details about the partition error.
         public let errorDetail: ErrorDetail?
         /// The values that define the partition.
@@ -5699,6 +7535,13 @@ extension Glue {
         public init(errorDetail: ErrorDetail? = nil, partitionValues: [String]? = nil) {
             self.errorDetail = errorDetail
             self.partitionValues = partitionValues
+        }
+
+        public func validate() throws {
+            try errorDetail?.validate()
+            try partitionValues?.forEach {
+                try validate($0, name:"partitionValues[]", max: 1024)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5715,6 +7558,7 @@ extension Glue {
             AWSShapeMember(label: "StorageDescriptor", required: false, type: .structure), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The last time at which the partition was accessed.
         public let lastAccessTime: TimeStamp?
         /// The last time at which column statistics were computed for this partition.
@@ -5734,6 +7578,13 @@ extension Glue {
             self.values = values
         }
 
+        public func validate() throws {
+            try storageDescriptor?.validate()
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 1024)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case lastAccessTime = "LastAccessTime"
             case lastAnalyzedTime = "LastAnalyzedTime"
@@ -5747,11 +7598,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The list of values.
         public let values: [String]
 
         public init(values: [String]) {
             self.values = values
+        }
+
+        public func validate() throws {
+            try values.forEach {
+                try validate($0, name:"values[]", max: 1024)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5765,6 +7623,7 @@ extension Glue {
             AWSShapeMember(label: "SecurityGroupIdList", required: false, type: .list), 
             AWSShapeMember(label: "SubnetId", required: false, type: .string)
         ]
+
         /// The connection's Availability Zone. This field is redundant because the specified subnet implies the Availability Zone to be used. Currently the field must be populated, but it will be deprecated in the future.
         public let availabilityZone: String?
         /// The security group ID list used by the connection.
@@ -5776,6 +7635,22 @@ extension Glue {
             self.availabilityZone = availabilityZone
             self.securityGroupIdList = securityGroupIdList
             self.subnetId = subnetId
+        }
+
+        public func validate() throws {
+            try validate(availabilityZone, name:"availabilityZone", max: 255)
+            try validate(availabilityZone, name:"availabilityZone", min: 1)
+            try validate(availabilityZone, name:"availabilityZone", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try securityGroupIdList?.forEach {
+                try validate($0, name:"securityGroupIdList[]", max: 255)
+                try validate($0, name:"securityGroupIdList[]", min: 1)
+                try validate($0, name:"securityGroupIdList[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(securityGroupIdList, name:"securityGroupIdList", max: 50)
+            try validate(securityGroupIdList, name:"securityGroupIdList", min: 0)
+            try validate(subnetId, name:"subnetId", max: 255)
+            try validate(subnetId, name:"subnetId", min: 1)
+            try validate(subnetId, name:"subnetId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5790,6 +7665,7 @@ extension Glue {
             AWSShapeMember(label: "JobName", required: false, type: .string), 
             AWSShapeMember(label: "RunId", required: false, type: .string)
         ]
+
         /// The name of the job definition used by the predecessor job run.
         public let jobName: String?
         /// The job-run ID of the predecessor job run.
@@ -5798,6 +7674,15 @@ extension Glue {
         public init(jobName: String? = nil, runId: String? = nil) {
             self.jobName = jobName
             self.runId = runId
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(runId, name:"runId", max: 255)
+            try validate(runId, name:"runId", min: 1)
+            try validate(runId, name:"runId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5811,6 +7696,7 @@ extension Glue {
             AWSShapeMember(label: "Conditions", required: false, type: .list), 
             AWSShapeMember(label: "Logical", required: false, type: .enum)
         ]
+
         /// A list of the conditions that determine when the trigger will fire.
         public let conditions: [Condition]?
         /// An optional field if only one condition is listed. If multiple conditions are listed, then this field is required.
@@ -5819,6 +7705,12 @@ extension Glue {
         public init(conditions: [Condition]? = nil, logical: Logical? = nil) {
             self.conditions = conditions
             self.logical = logical
+        }
+
+        public func validate() throws {
+            try conditions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5839,6 +7731,7 @@ extension Glue {
             AWSShapeMember(label: "CatalogId", required: false, type: .string), 
             AWSShapeMember(label: "DataCatalogEncryptionSettings", required: true, type: .structure)
         ]
+
         /// The ID of the Data Catalog for which to set the security configuration. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
         /// The security configuration to set.
@@ -5849,6 +7742,13 @@ extension Glue {
             self.dataCatalogEncryptionSettings = dataCatalogEncryptionSettings
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try dataCatalogEncryptionSettings.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case dataCatalogEncryptionSettings = "DataCatalogEncryptionSettings"
@@ -5856,6 +7756,7 @@ extension Glue {
     }
 
     public struct PutDataCatalogEncryptionSettingsResponse: AWSShape {
+
 
         public init() {
         }
@@ -5868,6 +7769,7 @@ extension Glue {
             AWSShapeMember(label: "PolicyHashCondition", required: false, type: .string), 
             AWSShapeMember(label: "PolicyInJson", required: true, type: .string)
         ]
+
         /// A value of MUST_EXIST is used to update a policy. A value of NOT_EXIST is used to create a new policy. If a value of NONE or a null value is used, the call will not depend on the existence of a policy.
         public let policyExistsCondition: ExistCondition?
         /// The hash value returned when the previous policy was set using PutResourcePolicy. Its purpose is to prevent concurrent modifications of a policy. Do not use this parameter if no previous policy has been set.
@@ -5881,6 +7783,14 @@ extension Glue {
             self.policyInJson = policyInJson
         }
 
+        public func validate() throws {
+            try validate(policyHashCondition, name:"policyHashCondition", max: 255)
+            try validate(policyHashCondition, name:"policyHashCondition", min: 1)
+            try validate(policyHashCondition, name:"policyHashCondition", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(policyInJson, name:"policyInJson", max: 10240)
+            try validate(policyInJson, name:"policyInJson", min: 2)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case policyExistsCondition = "PolicyExistsCondition"
             case policyHashCondition = "PolicyHashCondition"
@@ -5892,11 +7802,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyHash", required: false, type: .string)
         ]
+
         /// A hash of the policy that has just been set. This must be included in a subsequent call that overwrites or updates this policy.
         public let policyHash: String?
 
         public init(policyHash: String? = nil) {
             self.policyHash = policyHash
+        }
+
+        public func validate() throws {
+            try validate(policyHash, name:"policyHash", max: 255)
+            try validate(policyHash, name:"policyHash", min: 1)
+            try validate(policyHash, name:"policyHash", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5910,6 +7827,7 @@ extension Glue {
             AWSShapeMember(label: "RunId", required: true, type: .string), 
             AWSShapeMember(label: "RunProperties", required: true, type: .map)
         ]
+
         /// Name of the workflow which was run.
         public let name: String
         /// The ID of the workflow run for which the run properties should be updated.
@@ -5923,6 +7841,15 @@ extension Glue {
             self.runProperties = runProperties
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(runId, name:"runId", max: 255)
+            try validate(runId, name:"runId", min: 1)
+            try validate(runId, name:"runId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case runId = "RunId"
@@ -5931,6 +7858,7 @@ extension Glue {
     }
 
     public struct PutWorkflowRunPropertiesResponse: AWSShape {
+
 
         public init() {
         }
@@ -5941,6 +7869,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobName", required: true, type: .string)
         ]
+
         /// The name of the job in question.
         public let jobName: String
 
@@ -5957,6 +7886,7 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobBookmarkEntry", required: false, type: .structure)
         ]
+
         /// The reset bookmark entry.
         public let jobBookmarkEntry: JobBookmarkEntry?
 
@@ -5981,6 +7911,7 @@ extension Glue {
             AWSShapeMember(label: "ResourceType", required: false, type: .enum), 
             AWSShapeMember(label: "Uri", required: false, type: .string)
         ]
+
         /// The type of the resource.
         public let resourceType: ResourceType?
         /// The URI for accessing the resource.
@@ -5989,6 +7920,12 @@ extension Glue {
         public init(resourceType: ResourceType? = nil, uri: String? = nil) {
             self.resourceType = resourceType
             self.uri = uri
+        }
+
+        public func validate() throws {
+            try validate(uri, name:"uri", max: 1024)
+            try validate(uri, name:"uri", min: 1)
+            try validate(uri, name:"uri", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6002,6 +7939,7 @@ extension Glue {
             AWSShapeMember(label: "KmsKeyArn", required: false, type: .string), 
             AWSShapeMember(label: "S3EncryptionMode", required: false, type: .enum)
         ]
+
         /// The AWS ARN of the KMS key to be used to encrypt the data.
         public let kmsKeyArn: String?
         /// The encryption mode to use for S3 data.
@@ -6010,6 +7948,10 @@ extension Glue {
         public init(kmsKeyArn: String? = nil, s3EncryptionMode: S3EncryptionMode? = nil) {
             self.kmsKeyArn = kmsKeyArn
             self.s3EncryptionMode = s3EncryptionMode
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyArn, name:"kmsKeyArn", pattern: "arn:aws:kms:.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6030,6 +7972,7 @@ extension Glue {
             AWSShapeMember(label: "Exclusions", required: false, type: .list), 
             AWSShapeMember(label: "Path", required: false, type: .string)
         ]
+
         /// A list of glob patterns used to exclude from the crawl. For more information, see Catalog Tables with a Crawler.
         public let exclusions: [String]?
         /// The path to the Amazon S3 target.
@@ -6051,6 +7994,7 @@ extension Glue {
             AWSShapeMember(label: "ScheduleExpression", required: false, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// A cron expression used to specify the schedule. For more information, see Time-Based Schedules for Jobs and Crawlers. For example, to run something every day at 12:15 UTC, specify cron(15 12 * * ? *).
         public let scheduleExpression: String?
         /// The state of the schedule.
@@ -6079,6 +8023,7 @@ extension Glue {
             AWSShapeMember(label: "DeleteBehavior", required: false, type: .enum), 
             AWSShapeMember(label: "UpdateBehavior", required: false, type: .enum)
         ]
+
         /// The deletion behavior when the crawler finds a deleted object.
         public let deleteBehavior: DeleteBehavior?
         /// The update behavior when the crawler finds a changed schema.
@@ -6101,6 +8046,7 @@ extension Glue {
             AWSShapeMember(label: "EncryptionConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The time at which this security configuration was created.
         public let createdTimeStamp: TimeStamp?
         /// The encryption configuration associated with this security configuration.
@@ -6112,6 +8058,13 @@ extension Glue {
             self.createdTimeStamp = createdTimeStamp
             self.encryptionConfiguration = encryptionConfiguration
             self.name = name
+        }
+
+        public func validate() throws {
+            try encryptionConfiguration?.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6126,6 +8079,7 @@ extension Glue {
             AWSShapeMember(label: "SegmentNumber", required: true, type: .integer), 
             AWSShapeMember(label: "TotalSegments", required: true, type: .integer)
         ]
+
         /// The zero-based index number of the this segment. For example, if the total number of segments is 4, SegmentNumber values will range from zero through three.
         public let segmentNumber: Int32
         /// The total numer of segments.
@@ -6134,6 +8088,12 @@ extension Glue {
         public init(segmentNumber: Int32, totalSegments: Int32) {
             self.segmentNumber = segmentNumber
             self.totalSegments = totalSegments
+        }
+
+        public func validate() throws {
+            try validate(segmentNumber, name:"segmentNumber", min: 0)
+            try validate(totalSegments, name:"totalSegments", max: 10)
+            try validate(totalSegments, name:"totalSegments", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6148,6 +8108,7 @@ extension Glue {
             AWSShapeMember(label: "Parameters", required: false, type: .map), 
             AWSShapeMember(label: "SerializationLibrary", required: false, type: .string)
         ]
+
         /// Name of the SerDe.
         public let name: String?
         /// These key-value pairs define initialization parameters for the SerDe.
@@ -6159,6 +8120,15 @@ extension Glue {
             self.name = name
             self.parameters = parameters
             self.serializationLibrary = serializationLibrary
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(serializationLibrary, name:"serializationLibrary", max: 255)
+            try validate(serializationLibrary, name:"serializationLibrary", min: 1)
+            try validate(serializationLibrary, name:"serializationLibrary", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6174,6 +8144,7 @@ extension Glue {
             AWSShapeMember(label: "SkewedColumnValueLocationMaps", required: false, type: .map), 
             AWSShapeMember(label: "SkewedColumnValues", required: false, type: .list)
         ]
+
         /// A list of names of columns that contain skewed values.
         public let skewedColumnNames: [String]?
         /// A mapping of skewed values to the columns that contain them.
@@ -6187,6 +8158,14 @@ extension Glue {
             self.skewedColumnValues = skewedColumnValues
         }
 
+        public func validate() throws {
+            try skewedColumnNames?.forEach {
+                try validate($0, name:"skewedColumnNames[]", max: 255)
+                try validate($0, name:"skewedColumnNames[]", min: 1)
+                try validate($0, name:"skewedColumnNames[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case skewedColumnNames = "SkewedColumnNames"
             case skewedColumnValueLocationMaps = "SkewedColumnValueLocationMaps"
@@ -6198,11 +8177,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Name of the crawler to start.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6211,6 +8197,7 @@ extension Glue {
     }
 
     public struct StartCrawlerResponse: AWSShape {
+
 
         public init() {
         }
@@ -6221,11 +8208,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CrawlerName", required: true, type: .string)
         ]
+
         /// Name of the crawler to schedule.
         public let crawlerName: String
 
         public init(crawlerName: String) {
             self.crawlerName = crawlerName
+        }
+
+        public func validate() throws {
+            try validate(crawlerName, name:"crawlerName", max: 255)
+            try validate(crawlerName, name:"crawlerName", min: 1)
+            try validate(crawlerName, name:"crawlerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6234,6 +8228,7 @@ extension Glue {
     }
 
     public struct StartCrawlerScheduleResponse: AWSShape {
+
 
         public init() {
         }
@@ -6252,6 +8247,7 @@ extension Glue {
             AWSShapeMember(label: "Timeout", required: false, type: .integer), 
             AWSShapeMember(label: "WorkerType", required: false, type: .string)
         ]
+
         /// The job arguments specifically for this run. For this job run, they replace the default arguments set in the job definition itself. You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes. For information about how to specify and consume your own Job arguments, see the Calling AWS Glue APIs in Python topic in the developer guide. For information about the key-value pairs that AWS Glue consumes to set up your job, see the Special Parameters Used by AWS Glue topic in the developer guide.
         public let arguments: [String: String]?
         /// The name of the job definition to use.
@@ -6283,6 +8279,23 @@ extension Glue {
             self.workerType = workerType
         }
 
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(jobRunId, name:"jobRunId", max: 255)
+            try validate(jobRunId, name:"jobRunId", min: 1)
+            try validate(jobRunId, name:"jobRunId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try notificationProperty?.validate()
+            try validate(securityConfiguration, name:"securityConfiguration", max: 255)
+            try validate(securityConfiguration, name:"securityConfiguration", min: 1)
+            try validate(securityConfiguration, name:"securityConfiguration", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(timeout, name:"timeout", min: 1)
+            try validate(workerType, name:"workerType", max: 255)
+            try validate(workerType, name:"workerType", min: 1)
+            try validate(workerType, name:"workerType", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arguments = "Arguments"
             case jobName = "JobName"
@@ -6300,11 +8313,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobRunId", required: false, type: .string)
         ]
+
         /// The ID assigned to this job run.
         public let jobRunId: String?
 
         public init(jobRunId: String? = nil) {
             self.jobRunId = jobRunId
+        }
+
+        public func validate() throws {
+            try validate(jobRunId, name:"jobRunId", max: 255)
+            try validate(jobRunId, name:"jobRunId", min: 1)
+            try validate(jobRunId, name:"jobRunId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6316,11 +8336,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the trigger to start.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6332,11 +8359,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the trigger that was started.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6348,11 +8382,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the workflow to start.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6364,11 +8405,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RunId", required: false, type: .string)
         ]
+
         /// An Id for the new run.
         public let runId: String?
 
         public init(runId: String? = nil) {
             self.runId = runId
+        }
+
+        public func validate() throws {
+            try validate(runId, name:"runId", max: 255)
+            try validate(runId, name:"runId", min: 1)
+            try validate(runId, name:"runId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6380,11 +8428,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Name of the crawler to stop.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6393,6 +8448,7 @@ extension Glue {
     }
 
     public struct StopCrawlerResponse: AWSShape {
+
 
         public init() {
         }
@@ -6403,11 +8459,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CrawlerName", required: true, type: .string)
         ]
+
         /// Name of the crawler whose schedule state to set.
         public let crawlerName: String
 
         public init(crawlerName: String) {
             self.crawlerName = crawlerName
+        }
+
+        public func validate() throws {
+            try validate(crawlerName, name:"crawlerName", max: 255)
+            try validate(crawlerName, name:"crawlerName", min: 1)
+            try validate(crawlerName, name:"crawlerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6416,6 +8479,7 @@ extension Glue {
     }
 
     public struct StopCrawlerScheduleResponse: AWSShape {
+
 
         public init() {
         }
@@ -6426,11 +8490,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the trigger to stop.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6442,11 +8513,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the trigger that was stopped.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6469,6 +8547,7 @@ extension Glue {
             AWSShapeMember(label: "SortColumns", required: false, type: .list), 
             AWSShapeMember(label: "StoredAsSubDirectories", required: false, type: .boolean)
         ]
+
         /// A list of reducer grouping columns, clustering columns, and bucketing columns in the table.
         public let bucketColumns: [String]?
         /// A list of the Columns in the table.
@@ -6509,6 +8588,28 @@ extension Glue {
             self.storedAsSubDirectories = storedAsSubDirectories
         }
 
+        public func validate() throws {
+            try bucketColumns?.forEach {
+                try validate($0, name:"bucketColumns[]", max: 255)
+                try validate($0, name:"bucketColumns[]", min: 1)
+                try validate($0, name:"bucketColumns[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try columns?.forEach {
+                try $0.validate()
+            }
+            try validate(inputFormat, name:"inputFormat", max: 128)
+            try validate(inputFormat, name:"inputFormat", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(location, name:"location", max: 2056)
+            try validate(location, name:"location", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(outputFormat, name:"outputFormat", max: 128)
+            try validate(outputFormat, name:"outputFormat", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try serdeInfo?.validate()
+            try skewedInfo?.validate()
+            try sortColumns?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucketColumns = "BucketColumns"
             case columns = "Columns"
@@ -6544,6 +8645,7 @@ extension Glue {
             AWSShapeMember(label: "ViewExpandedText", required: false, type: .string), 
             AWSShapeMember(label: "ViewOriginalText", required: false, type: .string)
         ]
+
         /// Person or entity who created the table.
         public let createdBy: String?
         /// Time when the table definition was created in the Data Catalog.
@@ -6596,6 +8698,32 @@ extension Glue {
             self.viewOriginalText = viewOriginalText
         }
 
+        public func validate() throws {
+            try validate(createdBy, name:"createdBy", max: 255)
+            try validate(createdBy, name:"createdBy", min: 1)
+            try validate(createdBy, name:"createdBy", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(owner, name:"owner", max: 255)
+            try validate(owner, name:"owner", min: 1)
+            try validate(owner, name:"owner", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionKeys?.forEach {
+                try $0.validate()
+            }
+            try validate(retention, name:"retention", min: 0)
+            try storageDescriptor?.validate()
+            try validate(tableType, name:"tableType", max: 255)
+            try validate(viewExpandedText, name:"viewExpandedText", max: 409600)
+            try validate(viewOriginalText, name:"viewOriginalText", max: 409600)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdBy = "CreatedBy"
             case createTime = "CreateTime"
@@ -6621,6 +8749,7 @@ extension Glue {
             AWSShapeMember(label: "ErrorDetail", required: false, type: .structure), 
             AWSShapeMember(label: "TableName", required: false, type: .string)
         ]
+
         /// Detail about the error.
         public let errorDetail: ErrorDetail?
         /// Name of the table. For Hive compatibility, this must be entirely lowercase.
@@ -6629,6 +8758,13 @@ extension Glue {
         public init(errorDetail: ErrorDetail? = nil, tableName: String? = nil) {
             self.errorDetail = errorDetail
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try errorDetail?.validate()
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6652,6 +8788,7 @@ extension Glue {
             AWSShapeMember(label: "ViewExpandedText", required: false, type: .string), 
             AWSShapeMember(label: "ViewOriginalText", required: false, type: .string)
         ]
+
         /// Description of the table.
         public let description: String?
         /// Last time the table was accessed.
@@ -6692,6 +8829,26 @@ extension Glue {
             self.viewOriginalText = viewOriginalText
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(owner, name:"owner", max: 255)
+            try validate(owner, name:"owner", min: 1)
+            try validate(owner, name:"owner", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionKeys?.forEach {
+                try $0.validate()
+            }
+            try validate(retention, name:"retention", min: 0)
+            try storageDescriptor?.validate()
+            try validate(tableType, name:"tableType", max: 255)
+            try validate(viewExpandedText, name:"viewExpandedText", max: 409600)
+            try validate(viewOriginalText, name:"viewOriginalText", max: 409600)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case lastAccessTime = "LastAccessTime"
@@ -6713,6 +8870,7 @@ extension Glue {
             AWSShapeMember(label: "Table", required: false, type: .structure), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         /// The table in question
         public let table: Table?
         /// The ID value that identifies this table version. A VersionId is a string representation of an integer. Each version is incremented by 1.
@@ -6721,6 +8879,13 @@ extension Glue {
         public init(table: Table? = nil, versionId: String? = nil) {
             self.table = table
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try table?.validate()
+            try validate(versionId, name:"versionId", max: 255)
+            try validate(versionId, name:"versionId", min: 1)
+            try validate(versionId, name:"versionId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6735,6 +8900,7 @@ extension Glue {
             AWSShapeMember(label: "TableName", required: false, type: .string), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         /// Detail about the error.
         public let errorDetail: ErrorDetail?
         /// The name of the table in question.
@@ -6746,6 +8912,16 @@ extension Glue {
             self.errorDetail = errorDetail
             self.tableName = tableName
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try errorDetail?.validate()
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(versionId, name:"versionId", max: 255)
+            try validate(versionId, name:"versionId", min: 1)
+            try validate(versionId, name:"versionId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6760,6 +8936,7 @@ extension Glue {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagsToAdd", required: true, type: .map)
         ]
+
         /// The ARN of the AWS Glue resource to which to add the tags. For more information about AWS Glue resource ARNs, see the AWS Glue ARN string pattern.
         public let resourceArn: String
         /// Tags to add to this resource.
@@ -6770,6 +8947,12 @@ extension Glue {
             self.tagsToAdd = tagsToAdd
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 10240)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws:glue:.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tagsToAdd = "TagsToAdd"
@@ -6777,6 +8960,7 @@ extension Glue {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -6795,6 +8979,7 @@ extension Glue {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "WorkflowName", required: false, type: .string)
         ]
+
         /// The actions initiated by this trigger.
         public let actions: [Action]?
         /// A description of this trigger.
@@ -6826,6 +9011,25 @@ extension Glue {
             self.workflowName = workflowName
         }
 
+        public func validate() throws {
+            try actions?.forEach {
+                try $0.validate()
+            }
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(id, name:"id", max: 255)
+            try validate(id, name:"id", min: 1)
+            try validate(id, name:"id", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try predicate?.validate()
+            try validate(workflowName, name:"workflowName", max: 255)
+            try validate(workflowName, name:"workflowName", min: 1)
+            try validate(workflowName, name:"workflowName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actions = "Actions"
             case description = "Description"
@@ -6843,11 +9047,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Trigger", required: false, type: .structure)
         ]
+
         /// The information of the trigger represented by the trigger node.
         public let trigger: Trigger?
 
         public init(trigger: Trigger? = nil) {
             self.trigger = trigger
+        }
+
+        public func validate() throws {
+            try trigger?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6882,6 +9091,7 @@ extension Glue {
             AWSShapeMember(label: "Predicate", required: false, type: .structure), 
             AWSShapeMember(label: "Schedule", required: false, type: .string)
         ]
+
         /// The actions initiated by this trigger.
         public let actions: [Action]?
         /// A description of this trigger.
@@ -6901,6 +9111,19 @@ extension Glue {
             self.schedule = schedule
         }
 
+        public func validate() throws {
+            try actions?.forEach {
+                try $0.validate()
+            }
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try predicate?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actions = "Actions"
             case description = "Description"
@@ -6915,6 +9138,7 @@ extension Glue {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagsToRemove", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource from which to remove the tags.
         public let resourceArn: String
         /// Tags to remove from this resource.
@@ -6925,6 +9149,18 @@ extension Glue {
             self.tagsToRemove = tagsToRemove
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 10240)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws:glue:.*")
+            try tagsToRemove.forEach {
+                try validate($0, name:"tagsToRemove[]", max: 128)
+                try validate($0, name:"tagsToRemove[]", min: 1)
+            }
+            try validate(tagsToRemove, name:"tagsToRemove", max: 50)
+            try validate(tagsToRemove, name:"tagsToRemove", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tagsToRemove = "TagsToRemove"
@@ -6932,6 +9168,7 @@ extension Glue {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -6951,6 +9188,7 @@ extension Glue {
             AWSShapeMember(label: "JsonClassifier", required: false, type: .structure), 
             AWSShapeMember(label: "XMLClassifier", required: false, type: .structure)
         ]
+
         /// A CsvClassifier object with updated fields.
         public let csvClassifier: UpdateCsvClassifierRequest?
         /// A GrokClassifier object with updated fields.
@@ -6967,6 +9205,13 @@ extension Glue {
             self.xMLClassifier = xMLClassifier
         }
 
+        public func validate() throws {
+            try csvClassifier?.validate()
+            try grokClassifier?.validate()
+            try jsonClassifier?.validate()
+            try xMLClassifier?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case csvClassifier = "CsvClassifier"
             case grokClassifier = "GrokClassifier"
@@ -6976,6 +9221,7 @@ extension Glue {
     }
 
     public struct UpdateClassifierResponse: AWSShape {
+
 
         public init() {
         }
@@ -6988,6 +9234,7 @@ extension Glue {
             AWSShapeMember(label: "ConnectionInput", required: true, type: .structure), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog in which the connection resides. If none is provided, the AWS account ID is used by default.
         public let catalogId: String?
         /// A ConnectionInput object that redefines the connection in question.
@@ -7001,6 +9248,16 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try connectionInput.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case connectionInput = "ConnectionInput"
@@ -7009,6 +9266,7 @@ extension Glue {
     }
 
     public struct UpdateConnectionResponse: AWSShape {
+
 
         public init() {
         }
@@ -7029,6 +9287,7 @@ extension Glue {
             AWSShapeMember(label: "TablePrefix", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .structure)
         ]
+
         /// A list of custom classifiers that the user has registered. By default, all built-in classifiers are included in a crawl, but these custom classifiers always override the default classifiers for a given classification.
         public let classifiers: [String]?
         /// The crawler configuration information. This versioned JSON string allows users to specify aspects of a crawler's behavior. For more information, see Configuring a Crawler.
@@ -7066,6 +9325,25 @@ extension Glue {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try classifiers?.forEach {
+                try validate($0, name:"classifiers[]", max: 255)
+                try validate($0, name:"classifiers[]", min: 1)
+                try validate($0, name:"classifiers[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(crawlerSecurityConfiguration, name:"crawlerSecurityConfiguration", max: 128)
+            try validate(crawlerSecurityConfiguration, name:"crawlerSecurityConfiguration", min: 0)
+            try validate(description, name:"description", max: 2048)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(tablePrefix, name:"tablePrefix", max: 128)
+            try validate(tablePrefix, name:"tablePrefix", min: 0)
+            try targets?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case classifiers = "Classifiers"
             case configuration = "Configuration"
@@ -7083,6 +9361,7 @@ extension Glue {
 
     public struct UpdateCrawlerResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -7093,6 +9372,7 @@ extension Glue {
             AWSShapeMember(label: "CrawlerName", required: true, type: .string), 
             AWSShapeMember(label: "Schedule", required: false, type: .string)
         ]
+
         /// The name of the crawler whose schedule to update.
         public let crawlerName: String
         /// The updated cron expression used to specify the schedule. For more information, see Time-Based Schedules for Jobs and Crawlers. For example, to run something every day at 12:15 UTC, specify cron(15 12 * * ? *).
@@ -7103,6 +9383,12 @@ extension Glue {
             self.schedule = schedule
         }
 
+        public func validate() throws {
+            try validate(crawlerName, name:"crawlerName", max: 255)
+            try validate(crawlerName, name:"crawlerName", min: 1)
+            try validate(crawlerName, name:"crawlerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case crawlerName = "CrawlerName"
             case schedule = "Schedule"
@@ -7110,6 +9396,7 @@ extension Glue {
     }
 
     public struct UpdateCrawlerScheduleResponse: AWSShape {
+
 
         public init() {
         }
@@ -7126,6 +9413,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "QuoteSymbol", required: false, type: .string)
         ]
+
         /// Enables the processing of files that contain only one column.
         public let allowSingleColumn: Bool?
         /// Indicates whether the CSV file contains a header.
@@ -7151,6 +9439,23 @@ extension Glue {
             self.quoteSymbol = quoteSymbol
         }
 
+        public func validate() throws {
+            try validate(delimiter, name:"delimiter", max: 1)
+            try validate(delimiter, name:"delimiter", min: 1)
+            try validate(delimiter, name:"delimiter", pattern: "[^\\r\\n]")
+            try header?.forEach {
+                try validate($0, name:"header[]", max: 255)
+                try validate($0, name:"header[]", min: 1)
+                try validate($0, name:"header[]", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            }
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(quoteSymbol, name:"quoteSymbol", max: 1)
+            try validate(quoteSymbol, name:"quoteSymbol", min: 1)
+            try validate(quoteSymbol, name:"quoteSymbol", pattern: "[^\\r\\n]")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowSingleColumn = "AllowSingleColumn"
             case containsHeader = "ContainsHeader"
@@ -7168,6 +9473,7 @@ extension Glue {
             AWSShapeMember(label: "DatabaseInput", required: true, type: .structure), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog in which the metadata database resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// A DatabaseInput object specifying the new definition of the metadata database in the catalog.
@@ -7181,6 +9487,16 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try databaseInput.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseInput = "DatabaseInput"
@@ -7189,6 +9505,7 @@ extension Glue {
     }
 
     public struct UpdateDatabaseResponse: AWSShape {
+
 
         public init() {
         }
@@ -7206,6 +9523,7 @@ extension Glue {
             AWSShapeMember(label: "PublicKey", required: false, type: .string), 
             AWSShapeMember(label: "UpdateEtlLibraries", required: false, type: .boolean)
         ]
+
         /// The map of arguments to add the map of arguments used to configure the DevEndpoint.
         public let addArguments: [String: String]?
         /// The list of public keys for the DevEndpoint to use.
@@ -7234,6 +9552,11 @@ extension Glue {
             self.updateEtlLibraries = updateEtlLibraries
         }
 
+        public func validate() throws {
+            try validate(addPublicKeys, name:"addPublicKeys", max: 5)
+            try validate(deletePublicKeys, name:"deletePublicKeys", max: 5)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addArguments = "AddArguments"
             case addPublicKeys = "AddPublicKeys"
@@ -7248,6 +9571,7 @@ extension Glue {
 
     public struct UpdateDevEndpointResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -7260,6 +9584,7 @@ extension Glue {
             AWSShapeMember(label: "GrokPattern", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// An identifier of the data format that the classifier matches, such as Twitter, JSON, Omniture logs, Amazon CloudWatch Logs, and so on.
         public let classification: String?
         /// Optional custom grok patterns used by this classifier.
@@ -7276,6 +9601,18 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(customPatterns, name:"customPatterns", max: 16000)
+            try validate(customPatterns, name:"customPatterns", min: 0)
+            try validate(customPatterns, name:"customPatterns", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(grokPattern, name:"grokPattern", max: 2048)
+            try validate(grokPattern, name:"grokPattern", min: 1)
+            try validate(grokPattern, name:"grokPattern", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\t]*")
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case classification = "Classification"
             case customPatterns = "CustomPatterns"
@@ -7289,6 +9626,7 @@ extension Glue {
             AWSShapeMember(label: "JobName", required: true, type: .string), 
             AWSShapeMember(label: "JobUpdate", required: true, type: .structure)
         ]
+
         /// The name of the job definition to update.
         public let jobName: String
         /// Specifies the values with which to update the job definition.
@@ -7297,6 +9635,13 @@ extension Glue {
         public init(jobName: String, jobUpdate: JobUpdate) {
             self.jobName = jobName
             self.jobUpdate = jobUpdate
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try jobUpdate.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7309,11 +9654,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobName", required: false, type: .string)
         ]
+
         /// Returns the name of the updated job definition.
         public let jobName: String?
 
         public init(jobName: String? = nil) {
             self.jobName = jobName
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 255)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7326,6 +9678,7 @@ extension Glue {
             AWSShapeMember(label: "JsonPath", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// A JsonPath string defining the JSON data for the classifier to classify. AWS Glue supports a subset of JsonPath, as described in Writing JsonPath Custom Classifiers.
         public let jsonPath: String?
         /// The name of the classifier.
@@ -7334,6 +9687,12 @@ extension Glue {
         public init(jsonPath: String? = nil, name: String) {
             self.jsonPath = jsonPath
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7350,6 +9709,7 @@ extension Glue {
             AWSShapeMember(label: "PartitionValueList", required: true, type: .list), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the partition to be updated resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database in which the table in question resides.
@@ -7369,6 +9729,24 @@ extension Glue {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try partitionInput.validate()
+            try partitionValueList.forEach {
+                try validate($0, name:"partitionValueList[]", max: 1024)
+            }
+            try validate(partitionValueList, name:"partitionValueList", max: 100)
+            try validate(partitionValueList, name:"partitionValueList", min: 0)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 1)
+            try validate(tableName, name:"tableName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -7379,6 +9757,7 @@ extension Glue {
     }
 
     public struct UpdatePartitionResponse: AWSShape {
+
 
         public init() {
         }
@@ -7392,6 +9771,7 @@ extension Glue {
             AWSShapeMember(label: "SkipArchive", required: false, type: .boolean), 
             AWSShapeMember(label: "TableInput", required: true, type: .structure)
         ]
+
         /// The ID of the Data Catalog where the table resides. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database in which the table resides. For Hive compatibility, this name is entirely lowercase.
@@ -7408,6 +9788,16 @@ extension Glue {
             self.tableInput = tableInput
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try tableInput.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -7417,6 +9807,7 @@ extension Glue {
     }
 
     public struct UpdateTableResponse: AWSShape {
+
 
         public init() {
         }
@@ -7428,6 +9819,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "TriggerUpdate", required: true, type: .structure)
         ]
+
         /// The name of the trigger to update.
         public let name: String
         /// The new values with which to update the trigger.
@@ -7436,6 +9828,13 @@ extension Glue {
         public init(name: String, triggerUpdate: TriggerUpdate) {
             self.name = name
             self.triggerUpdate = triggerUpdate
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try triggerUpdate.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7448,11 +9847,16 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Trigger", required: false, type: .structure)
         ]
+
         /// The resulting trigger definition.
         public let trigger: Trigger?
 
         public init(trigger: Trigger? = nil) {
             self.trigger = trigger
+        }
+
+        public func validate() throws {
+            try trigger?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7467,6 +9871,7 @@ extension Glue {
             AWSShapeMember(label: "FunctionInput", required: true, type: .structure), 
             AWSShapeMember(label: "FunctionName", required: true, type: .string)
         ]
+
         /// The ID of the Data Catalog where the function to be updated is located. If none is supplied, the AWS account ID is used by default.
         public let catalogId: String?
         /// The name of the catalog database where the function to be updated is located.
@@ -7483,6 +9888,19 @@ extension Glue {
             self.functionName = functionName
         }
 
+        public func validate() throws {
+            try validate(catalogId, name:"catalogId", max: 255)
+            try validate(catalogId, name:"catalogId", min: 1)
+            try validate(catalogId, name:"catalogId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(databaseName, name:"databaseName", max: 255)
+            try validate(databaseName, name:"databaseName", min: 1)
+            try validate(databaseName, name:"databaseName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try functionInput.validate()
+            try validate(functionName, name:"functionName", max: 255)
+            try validate(functionName, name:"functionName", min: 1)
+            try validate(functionName, name:"functionName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case catalogId = "CatalogId"
             case databaseName = "DatabaseName"
@@ -7492,6 +9910,7 @@ extension Glue {
     }
 
     public struct UpdateUserDefinedFunctionResponse: AWSShape {
+
 
         public init() {
         }
@@ -7504,6 +9923,7 @@ extension Glue {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// A collection of properties to be used as part of each execution of the workflow.
         public let defaultRunProperties: [String: String]?
         /// The description of the workflow.
@@ -7517,6 +9937,12 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultRunProperties = "DefaultRunProperties"
             case description = "Description"
@@ -7528,11 +9954,18 @@ extension Glue {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the workflow which was specified in input.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7546,6 +9979,7 @@ extension Glue {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "RowTag", required: false, type: .string)
         ]
+
         /// An identifier of the data format that the classifier matches.
         public let classification: String?
         /// The name of the classifier.
@@ -7557,6 +9991,12 @@ extension Glue {
             self.classification = classification
             self.name = name
             self.rowTag = rowTag
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7575,6 +10015,7 @@ extension Glue {
             AWSShapeMember(label: "OwnerType", required: false, type: .enum), 
             AWSShapeMember(label: "ResourceUris", required: false, type: .list)
         ]
+
         /// The Java class that contains the function code.
         public let className: String?
         /// The time at which the function was created.
@@ -7597,6 +10038,23 @@ extension Glue {
             self.resourceUris = resourceUris
         }
 
+        public func validate() throws {
+            try validate(className, name:"className", max: 255)
+            try validate(className, name:"className", min: 1)
+            try validate(className, name:"className", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(functionName, name:"functionName", max: 255)
+            try validate(functionName, name:"functionName", min: 1)
+            try validate(functionName, name:"functionName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(ownerName, name:"ownerName", max: 255)
+            try validate(ownerName, name:"ownerName", min: 1)
+            try validate(ownerName, name:"ownerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try resourceUris?.forEach {
+                try $0.validate()
+            }
+            try validate(resourceUris, name:"resourceUris", max: 1000)
+            try validate(resourceUris, name:"resourceUris", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case className = "ClassName"
             case createTime = "CreateTime"
@@ -7615,6 +10073,7 @@ extension Glue {
             AWSShapeMember(label: "OwnerType", required: false, type: .enum), 
             AWSShapeMember(label: "ResourceUris", required: false, type: .list)
         ]
+
         /// The Java class that contains the function code.
         public let className: String?
         /// The name of the function.
@@ -7632,6 +10091,23 @@ extension Glue {
             self.ownerName = ownerName
             self.ownerType = ownerType
             self.resourceUris = resourceUris
+        }
+
+        public func validate() throws {
+            try validate(className, name:"className", max: 255)
+            try validate(className, name:"className", min: 1)
+            try validate(className, name:"className", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(functionName, name:"functionName", max: 255)
+            try validate(functionName, name:"functionName", min: 1)
+            try validate(functionName, name:"functionName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(ownerName, name:"ownerName", max: 255)
+            try validate(ownerName, name:"ownerName", min: 1)
+            try validate(ownerName, name:"ownerName", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try resourceUris?.forEach {
+                try $0.validate()
+            }
+            try validate(resourceUris, name:"resourceUris", max: 1000)
+            try validate(resourceUris, name:"resourceUris", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7660,6 +10136,7 @@ extension Glue {
             AWSShapeMember(label: "LastRun", required: false, type: .structure), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The date and time when the workflow was created.
         public let createdOn: TimeStamp?
         /// A collection of properties to be used as part of each execution of the workflow.
@@ -7685,6 +10162,14 @@ extension Glue {
             self.name = name
         }
 
+        public func validate() throws {
+            try graph?.validate()
+            try lastRun?.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdOn = "CreatedOn"
             case defaultRunProperties = "DefaultRunProperties"
@@ -7701,6 +10186,7 @@ extension Glue {
             AWSShapeMember(label: "Edges", required: false, type: .list), 
             AWSShapeMember(label: "Nodes", required: false, type: .list)
         ]
+
         /// A list of all the directed connections between the nodes belonging to the workflow.
         public let edges: [Edge]?
         /// A list of the the AWS Glue components belong to the workflow represented as nodes.
@@ -7709,6 +10195,15 @@ extension Glue {
         public init(edges: [Edge]? = nil, nodes: [Node]? = nil) {
             self.edges = edges
             self.nodes = nodes
+        }
+
+        public func validate() throws {
+            try edges?.forEach {
+                try $0.validate()
+            }
+            try nodes?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7728,6 +10223,7 @@ extension Glue {
             AWSShapeMember(label: "WorkflowRunId", required: false, type: .string), 
             AWSShapeMember(label: "WorkflowRunProperties", required: false, type: .map)
         ]
+
         /// The date and time when the workflow run completed.
         public let completedOn: TimeStamp?
         /// The graph representing all the AWS Glue components that belong to the workflow as nodes and directed connections between them as edges.
@@ -7756,6 +10252,16 @@ extension Glue {
             self.workflowRunProperties = workflowRunProperties
         }
 
+        public func validate() throws {
+            try graph?.validate()
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+            try validate(workflowRunId, name:"workflowRunId", max: 255)
+            try validate(workflowRunId, name:"workflowRunId", min: 1)
+            try validate(workflowRunId, name:"workflowRunId", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case completedOn = "CompletedOn"
             case graph = "Graph"
@@ -7777,6 +10283,7 @@ extension Glue {
             AWSShapeMember(label: "TimeoutActions", required: false, type: .integer), 
             AWSShapeMember(label: "TotalActions", required: false, type: .integer)
         ]
+
         /// Total number of Actions which have failed.
         public let failedActions: Int32?
         /// Total number Actions in running state.
@@ -7824,6 +10331,7 @@ extension Glue {
             AWSShapeMember(label: "RowTag", required: false, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// An identifier of the data format that the classifier matches.
         public let classification: String
         /// The time that this classifier was registered.
@@ -7844,6 +10352,12 @@ extension Glue {
             self.name = name
             self.rowTag = rowTag
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\t]*")
         }
 
         private enum CodingKeys: String, CodingKey {

@@ -11,6 +11,7 @@ extension DataSync {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The Amazon Resource Name (ARN) of the agent.
         public let agentArn: String?
         /// The name of the agent.
@@ -22,6 +23,14 @@ extension DataSync {
             self.agentArn = agentArn
             self.name = name
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(agentArn, name:"agentArn", max: 128)
+            try validate(agentArn, name:"agentArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:agent/agent-[0-9a-z]{17}$")
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -47,11 +56,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TaskExecutionArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the task execution to cancel.
         public let taskExecutionArn: String
 
         public init(taskExecutionArn: String) {
             self.taskExecutionArn = taskExecutionArn
+        }
+
+        public func validate() throws {
+            try validate(taskExecutionArn, name:"taskExecutionArn", max: 128)
+            try validate(taskExecutionArn, name:"taskExecutionArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}/execution/exec-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -60,6 +75,7 @@ extension DataSync {
     }
 
     public struct CancelTaskExecutionResponse: AWSShape {
+
 
         public init() {
         }
@@ -72,6 +88,7 @@ extension DataSync {
             AWSShapeMember(label: "AgentName", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Your agent activation key. You can get the activation key either by sending an HTTP GET request with redirects that enable you to get the agent IP address (port 80). Alternatively, you can get it from the AWS DataSync console.  The redirect URL returned in the response provides you the activation key for your agent in the query string parameter activationKey. It might also include other activation-related parameters; however, these are merely defaults. The arguments you pass to this API call determine the actual configuration of your agent. For more information, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-agents.html#activating-agent" (Activating a Agent) in the AWS DataSync User Guide. 
         public let activationKey: String
         /// The name you configured for your agent. This value is a text reference that is used to identify the agent in the console.
@@ -85,6 +102,19 @@ extension DataSync {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(activationKey, name:"activationKey", max: 29)
+            try validate(activationKey, name:"activationKey", pattern: "[A-Z0-9]{5}(-[A-Z0-9]{5}){4}")
+            try validate(agentName, name:"agentName", max: 256)
+            try validate(agentName, name:"agentName", min: 1)
+            try validate(agentName, name:"agentName", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 55)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activationKey = "ActivationKey"
             case agentName = "AgentName"
@@ -96,11 +126,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AgentArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the agent. Use the ListAgents operation to return a list of agents for your account and AWS Region.
         public let agentArn: String?
 
         public init(agentArn: String? = nil) {
             self.agentArn = agentArn
+        }
+
+        public func validate() throws {
+            try validate(agentArn, name:"agentArn", max: 128)
+            try validate(agentArn, name:"agentArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:agent/agent-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -115,6 +151,7 @@ extension DataSync {
             AWSShapeMember(label: "Subdirectory", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The subnet and security group that the Amazon EFS file system uses. The security group that you provide needs to be able to communicate with the security group on the mount target in the subnet specified. The exact relationship between security group M (of the mount target) and security group S (which you provide for DataSync to use at this stage) is as follows:     Security group M (which you associate with the mount target) must allow inbound access for the Transmission Control Protocol (TCP) on the NFS port (2049) from security group S. You can enable inbound connections either by IP address (CIDR range) or security group.    Security group S (provided to DataSync to access EFS) should have a rule that enables outbound connections to the NFS port on one of the file system’s mount targets. You can enable outbound connections either by IP address (CIDR range) or security group. For information about security groups and mount targets, see "https://docs.aws.amazon.com/efs/latest/ug/security-considerations.html#network-access" (Security Groups for Amazon EC2 Instances and Mount Targets) in the Amazon EFS User Guide.  
         public let ec2Config: Ec2Config
         /// The Amazon Resource Name (ARN) for the Amazon EFS file system.
@@ -131,6 +168,19 @@ extension DataSync {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try ec2Config.validate()
+            try validate(efsFilesystemArn, name:"efsFilesystemArn", max: 128)
+            try validate(efsFilesystemArn, name:"efsFilesystemArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):elasticfilesystem:[a-z\\-0-9]*:[0-9]{12}:file-system/fs-.*$")
+            try validate(subdirectory, name:"subdirectory", max: 4096)
+            try validate(subdirectory, name:"subdirectory", pattern: "^[a-zA-Z0-9_\\-\\./]*$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 55)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case ec2Config = "Ec2Config"
             case efsFilesystemArn = "EfsFilesystemArn"
@@ -143,11 +193,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the Amazon EFS file system location that is created.
         public let locationArn: String?
 
         public init(locationArn: String? = nil) {
             self.locationArn = locationArn
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -163,6 +219,7 @@ extension DataSync {
             AWSShapeMember(label: "Subdirectory", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The NFS mount options that DataSync can use to mount your NFS share.
         public let mountOptions: NfsMountOptions?
         /// Contains a list of Amazon Resource Names (ARNs) of agents that are used to connect to an NFS server.
@@ -182,6 +239,19 @@ extension DataSync {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try onPremConfig.validate()
+            try validate(serverHostname, name:"serverHostname", max: 255)
+            try validate(serverHostname, name:"serverHostname", pattern: "^(([a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9\\-]*[A-Za-z0-9])$")
+            try validate(subdirectory, name:"subdirectory", max: 4096)
+            try validate(subdirectory, name:"subdirectory", pattern: "^[a-zA-Z0-9_\\-\\./]+$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 55)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case mountOptions = "MountOptions"
             case onPremConfig = "OnPremConfig"
@@ -195,11 +265,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the source NFS file system location that is created.
         public let locationArn: String?
 
         public init(locationArn: String? = nil) {
             self.locationArn = locationArn
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -214,6 +290,7 @@ extension DataSync {
             AWSShapeMember(label: "Subdirectory", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the Amazon S3 bucket.
         public let s3BucketArn: String
         public let s3Config: S3Config
@@ -229,6 +306,19 @@ extension DataSync {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(s3BucketArn, name:"s3BucketArn", max: 76)
+            try validate(s3BucketArn, name:"s3BucketArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):s3:::([^/]*)$")
+            try s3Config.validate()
+            try validate(subdirectory, name:"subdirectory", max: 4096)
+            try validate(subdirectory, name:"subdirectory", pattern: "^[a-zA-Z0-9_\\-\\./]*$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 55)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case s3BucketArn = "S3BucketArn"
             case s3Config = "S3Config"
@@ -241,11 +331,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the source Amazon S3 bucket location that is created.
         public let locationArn: String?
 
         public init(locationArn: String? = nil) {
             self.locationArn = locationArn
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -263,6 +359,7 @@ extension DataSync {
             AWSShapeMember(label: "SourceLocationArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the Amazon CloudWatch log group that is used to monitor and log events in the task.  For more information on these groups, see "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html" (Working with Log Groups and Log Streams) in the Amazon CloudWatch User Guide. For more information about how to useCloudWatchLogs with DataSync, see "https://docs.aws.amazon.com/datasync/latest/userguide/monitor-datasync.html" (Monitoring Your Task)
         public let cloudWatchLogGroupArn: String?
         /// The Amazon Resource Name (ARN) of an AWS storage resource's location. 
@@ -288,6 +385,29 @@ extension DataSync {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(cloudWatchLogGroupArn, name:"cloudWatchLogGroupArn", max: 562)
+            try validate(cloudWatchLogGroupArn, name:"cloudWatchLogGroupArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):logs:[a-z\\-0-9]*:[0-9]{12}:log-group:([^:\\*]*)$")
+            try validate(destinationLocationArn, name:"destinationLocationArn", max: 128)
+            try validate(destinationLocationArn, name:"destinationLocationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try excludes?.forEach {
+                try $0.validate()
+            }
+            try validate(excludes, name:"excludes", max: 1)
+            try validate(excludes, name:"excludes", min: 0)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            try options?.validate()
+            try validate(sourceLocationArn, name:"sourceLocationArn", max: 128)
+            try validate(sourceLocationArn, name:"sourceLocationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 55)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudWatchLogGroupArn = "CloudWatchLogGroupArn"
             case destinationLocationArn = "DestinationLocationArn"
@@ -303,11 +423,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TaskArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the task.
         public let taskArn: String?
 
         public init(taskArn: String? = nil) {
             self.taskArn = taskArn
+        }
+
+        public func validate() throws {
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -319,11 +445,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AgentArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the agent to delete. Use the ListAgents operation to return a list of agents for your account and AWS Region.
         public let agentArn: String
 
         public init(agentArn: String) {
             self.agentArn = agentArn
+        }
+
+        public func validate() throws {
+            try validate(agentArn, name:"agentArn", max: 128)
+            try validate(agentArn, name:"agentArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:agent/agent-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -332,6 +464,7 @@ extension DataSync {
     }
 
     public struct DeleteAgentResponse: AWSShape {
+
 
         public init() {
         }
@@ -342,11 +475,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the location to delete.
         public let locationArn: String
 
         public init(locationArn: String) {
             self.locationArn = locationArn
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -355,6 +494,7 @@ extension DataSync {
     }
 
     public struct DeleteLocationResponse: AWSShape {
+
 
         public init() {
         }
@@ -365,11 +505,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TaskArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the task to delete.
         public let taskArn: String
 
         public init(taskArn: String) {
             self.taskArn = taskArn
+        }
+
+        public func validate() throws {
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -378,6 +524,7 @@ extension DataSync {
     }
 
     public struct DeleteTaskResponse: AWSShape {
+
 
         public init() {
         }
@@ -388,11 +535,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AgentArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the agent to describe.
         public let agentArn: String
 
         public init(agentArn: String) {
             self.agentArn = agentArn
+        }
+
+        public func validate() throws {
+            try validate(agentArn, name:"agentArn", max: 128)
+            try validate(agentArn, name:"agentArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:agent/agent-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -410,6 +563,7 @@ extension DataSync {
             AWSShapeMember(label: "PrivateLinkConfig", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The Amazon Resource Name (ARN) of the agent.
         public let agentArn: String?
         /// The time that the agent was activated (that is, created in your account).
@@ -433,6 +587,15 @@ extension DataSync {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(agentArn, name:"agentArn", max: 128)
+            try validate(agentArn, name:"agentArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:agent/agent-[0-9a-z]{17}$")
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            try privateLinkConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case agentArn = "AgentArn"
             case creationTime = "CreationTime"
@@ -448,11 +611,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the EFS location to describe.
         public let locationArn: String
 
         public init(locationArn: String) {
             self.locationArn = locationArn
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -467,6 +636,7 @@ extension DataSync {
             AWSShapeMember(label: "LocationArn", required: false, type: .string), 
             AWSShapeMember(label: "LocationUri", required: false, type: .string)
         ]
+
         /// The time that the EFS location was created.
         public let creationTime: TimeStamp?
         public let ec2Config: Ec2Config?
@@ -482,6 +652,13 @@ extension DataSync {
             self.locationUri = locationUri
         }
 
+        public func validate() throws {
+            try ec2Config?.validate()
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try validate(locationUri, name:"locationUri", pattern: "(efs|nfs|s3)://[a-zA-Z0-9.\\-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "CreationTime"
             case ec2Config = "Ec2Config"
@@ -494,11 +671,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationArn", required: true, type: .string)
         ]
+
         /// The Amazon resource Name (ARN) of the NFS location to describe.
         public let locationArn: String
 
         public init(locationArn: String) {
             self.locationArn = locationArn
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -514,6 +697,7 @@ extension DataSync {
             AWSShapeMember(label: "MountOptions", required: false, type: .structure), 
             AWSShapeMember(label: "OnPremConfig", required: false, type: .structure)
         ]
+
         /// The time that the NFS location was created.
         public let creationTime: TimeStamp?
         /// The Amazon resource Name (ARN) of the NFS location that was described.
@@ -532,6 +716,13 @@ extension DataSync {
             self.onPremConfig = onPremConfig
         }
 
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try validate(locationUri, name:"locationUri", pattern: "(efs|nfs|s3)://[a-zA-Z0-9.\\-]+")
+            try onPremConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "CreationTime"
             case locationArn = "LocationArn"
@@ -545,11 +736,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the Amazon S3 bucket location to describe.
         public let locationArn: String
 
         public init(locationArn: String) {
             self.locationArn = locationArn
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -564,6 +761,7 @@ extension DataSync {
             AWSShapeMember(label: "LocationUri", required: false, type: .string), 
             AWSShapeMember(label: "S3Config", required: false, type: .structure)
         ]
+
         /// The time that the Amazon S3 bucket location was created.
         public let creationTime: TimeStamp?
         /// The Amazon Resource Name (ARN) of the Amazon S3 bucket location.
@@ -579,6 +777,13 @@ extension DataSync {
             self.s3Config = s3Config
         }
 
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try validate(locationUri, name:"locationUri", pattern: "(efs|nfs|s3)://[a-zA-Z0-9.\\-]+")
+            try s3Config?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "CreationTime"
             case locationArn = "LocationArn"
@@ -591,11 +796,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TaskExecutionArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the task that is being executed.
         public let taskExecutionArn: String
 
         public init(taskExecutionArn: String) {
             self.taskExecutionArn = taskExecutionArn
+        }
+
+        public func validate() throws {
+            try validate(taskExecutionArn, name:"taskExecutionArn", max: 128)
+            try validate(taskExecutionArn, name:"taskExecutionArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}/execution/exec-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -618,6 +829,7 @@ extension DataSync {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "TaskExecutionArn", required: false, type: .string)
         ]
+
         /// The physical number of bytes transferred over the network.
         public let bytesTransferred: Int64?
         /// The number of logical bytes written to the destination AWS storage resource.
@@ -657,6 +869,23 @@ extension DataSync {
             self.taskExecutionArn = taskExecutionArn
         }
 
+        public func validate() throws {
+            try excludes?.forEach {
+                try $0.validate()
+            }
+            try validate(excludes, name:"excludes", max: 1)
+            try validate(excludes, name:"excludes", min: 0)
+            try includes?.forEach {
+                try $0.validate()
+            }
+            try validate(includes, name:"includes", max: 1)
+            try validate(includes, name:"includes", min: 0)
+            try options?.validate()
+            try result?.validate()
+            try validate(taskExecutionArn, name:"taskExecutionArn", max: 128)
+            try validate(taskExecutionArn, name:"taskExecutionArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}/execution/exec-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bytesTransferred = "BytesTransferred"
             case bytesWritten = "BytesWritten"
@@ -677,11 +906,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TaskArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the task to describe.
         public let taskArn: String
 
         public init(taskArn: String) {
             self.taskArn = taskArn
+        }
+
+        public func validate() throws {
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -704,6 +939,7 @@ extension DataSync {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "TaskArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the Amazon CloudWatch log group that was used to monitor and log events in the task. For more information on these groups, see "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html" (Working with Log Groups and Log Streams) in the Amazon CloudWatch UserGuide.
         public let cloudWatchLogGroupArn: String?
         /// The time that the task was created.
@@ -744,6 +980,28 @@ extension DataSync {
             self.taskArn = taskArn
         }
 
+        public func validate() throws {
+            try validate(cloudWatchLogGroupArn, name:"cloudWatchLogGroupArn", max: 562)
+            try validate(cloudWatchLogGroupArn, name:"cloudWatchLogGroupArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):logs:[a-z\\-0-9]*:[0-9]{12}:log-group:([^:\\*]*)$")
+            try validate(currentTaskExecutionArn, name:"currentTaskExecutionArn", max: 128)
+            try validate(currentTaskExecutionArn, name:"currentTaskExecutionArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}/execution/exec-[0-9a-f]{17}$")
+            try validate(destinationLocationArn, name:"destinationLocationArn", max: 128)
+            try validate(destinationLocationArn, name:"destinationLocationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try excludes?.forEach {
+                try $0.validate()
+            }
+            try validate(excludes, name:"excludes", max: 1)
+            try validate(excludes, name:"excludes", min: 0)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            try options?.validate()
+            try validate(sourceLocationArn, name:"sourceLocationArn", max: 128)
+            try validate(sourceLocationArn, name:"sourceLocationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudWatchLogGroupArn = "CloudWatchLogGroupArn"
             case creationTime = "CreationTime"
@@ -765,6 +1023,7 @@ extension DataSync {
             AWSShapeMember(label: "SecurityGroupArns", required: true, type: .list), 
             AWSShapeMember(label: "SubnetArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Names (ARNs) of the security groups that are configured for the Amazon EC2 resource.
         public let securityGroupArns: [String]
         /// The ARN of the subnet and the security group that DataSync uses to access the target EFS file system.
@@ -773,6 +1032,17 @@ extension DataSync {
         public init(securityGroupArns: [String], subnetArn: String) {
             self.securityGroupArns = securityGroupArns
             self.subnetArn = subnetArn
+        }
+
+        public func validate() throws {
+            try securityGroupArns.forEach {
+                try validate($0, name:"securityGroupArns[]", max: 128)
+                try validate($0, name:"securityGroupArns[]", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):ec2:[a-z\\-0-9]*:[0-9]{12}:security-group/.*$")
+            }
+            try validate(securityGroupArns, name:"securityGroupArns", max: 5)
+            try validate(securityGroupArns, name:"securityGroupArns", min: 1)
+            try validate(subnetArn, name:"subnetArn", max: 128)
+            try validate(subnetArn, name:"subnetArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):ec2:[a-z\\-0-9]*:[0-9]{12}:subnet/.*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -786,6 +1056,7 @@ extension DataSync {
             AWSShapeMember(label: "Fips", required: false, type: .boolean), 
             AWSShapeMember(label: "PrivateLink", required: false, type: .boolean)
         ]
+
         public let fips: Bool?
         public let privateLink: Bool?
 
@@ -805,6 +1076,7 @@ extension DataSync {
             AWSShapeMember(label: "FilterType", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         ///  Specifies the type of filter rule pattern to apply. DataSync only supports the SIMPLE_PATTERN rule type.
         public let filterType: FilterType?
         ///  A pattern that defines the filter. The filter might include or exclude files is a transfer.
@@ -813,6 +1085,11 @@ extension DataSync {
         public init(filterType: FilterType? = nil, value: String? = nil) {
             self.filterType = filterType
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", max: 409600)
+            try validate(value, name:"value", pattern: "^[^\\x00]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -839,6 +1116,7 @@ extension DataSync {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of agents to list.
         public let maxResults: Int32?
         /// An opaque string that indicates the position at which to begin the next list of agents.
@@ -847,6 +1125,13 @@ extension DataSync {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -860,6 +1145,7 @@ extension DataSync {
             AWSShapeMember(label: "Agents", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of agents in your account.
         public let agents: [AgentListEntry]?
         /// An opaque string that indicates the position at which to begin returning the next list of agents.
@@ -868,6 +1154,14 @@ extension DataSync {
         public init(agents: [AgentListEntry]? = nil, nextToken: String? = nil) {
             self.agents = agents
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try agents?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -881,6 +1175,7 @@ extension DataSync {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of locations to return.
         public let maxResults: Int32?
         /// An opaque string that indicates the position at which to begin the next list of locations.
@@ -889,6 +1184,13 @@ extension DataSync {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -902,6 +1204,7 @@ extension DataSync {
             AWSShapeMember(label: "Locations", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An array that contains a list of locations.
         public let locations: [LocationListEntry]?
         /// An opaque string that indicates the position at which to begin returning the next list of locations.
@@ -910,6 +1213,14 @@ extension DataSync {
         public init(locations: [LocationListEntry]? = nil, nextToken: String? = nil) {
             self.locations = locations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try locations?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -924,6 +1235,7 @@ extension DataSync {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The maximum number of locations to return.
         public let maxResults: Int32?
         /// An opaque string that indicates the position at which to begin the next list of locations.
@@ -935,6 +1247,15 @@ extension DataSync {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
+            try validate(resourceArn, name:"resourceArn", max: 128)
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:(agent|task|location)/(agent|task|loc)-[0-9a-z]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -949,6 +1270,7 @@ extension DataSync {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// An opaque string that indicates the position at which to begin returning the next list of resource tags.
         public let nextToken: String?
         /// Array of resource tags.
@@ -957,6 +1279,16 @@ extension DataSync {
         public init(nextToken: String? = nil, tags: [TagListEntry]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 55)
+            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -971,6 +1303,7 @@ extension DataSync {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TaskArn", required: false, type: .string)
         ]
+
         /// The maximum number of executed tasks to list.
         public let maxResults: Int32?
         /// An opaque string that indicates the position at which to begin the next list of the executed tasks.
@@ -982,6 +1315,15 @@ extension DataSync {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.taskArn = taskArn
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -996,6 +1338,7 @@ extension DataSync {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TaskExecutions", required: false, type: .list)
         ]
+
         /// An opaque string that indicates the position at which to begin returning the next list of executed tasks.
         public let nextToken: String?
         /// A list of executed tasks.
@@ -1004,6 +1347,14 @@ extension DataSync {
         public init(nextToken: String? = nil, taskExecutions: [TaskExecutionListEntry]? = nil) {
             self.nextToken = nextToken
             self.taskExecutions = taskExecutions
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
+            try taskExecutions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1017,6 +1368,7 @@ extension DataSync {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of tasks to return.
         public let maxResults: Int32?
         /// An opaque string that indicates the position at which to begin the next list of tasks.
@@ -1025,6 +1377,13 @@ extension DataSync {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1038,6 +1397,7 @@ extension DataSync {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tasks", required: false, type: .list)
         ]
+
         /// An opaque string that indicates the position at which to begin returning the next list of tasks.
         public let nextToken: String?
         /// A list of all the tasks that are returned.
@@ -1046,6 +1406,14 @@ extension DataSync {
         public init(nextToken: String? = nil, tasks: [TaskListEntry]? = nil) {
             self.nextToken = nextToken
             self.tasks = tasks
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 65535)
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9=_-]+")
+            try tasks?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1059,6 +1427,7 @@ extension DataSync {
             AWSShapeMember(label: "LocationArn", required: false, type: .string), 
             AWSShapeMember(label: "LocationUri", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the location. For Network File System (NFS) or Amazon EFS, the location is the export path. For Amazon S3, the location is the prefix path that you want to mount and use as the root of the location.
         public let locationArn: String?
         /// Represents a list of URLs of a location. LocationUri returns an array that contains a list of locations when the ListLocations operation is called. Format: TYPE://GLOBAL_ID/SUBDIR. TYPE designates the type of location. Valid values: NFS | EFS | S3. GLOBAL_ID is the globally unique identifier of the resource that backs the location. An example for EFS is us-east-2.fs-abcd1234. An example for Amazon S3 is the bucket name, such as myBucket. An example for NFS is a valid IPv4 address or a host name compliant with Domain Name Service (DNS). SUBDIR is a valid file system path, delimited by forward slashes as is the *nix convention. For NFS and Amazon EFS, it's the export path to mount the location. For Amazon S3, it's the prefix path that you mount to and treat as the root of the location. 
@@ -1067,6 +1436,12 @@ extension DataSync {
         public init(locationArn: String? = nil, locationUri: String? = nil) {
             self.locationArn = locationArn
             self.locationUri = locationUri
+        }
+
+        public func validate() throws {
+            try validate(locationArn, name:"locationArn", max: 128)
+            try validate(locationArn, name:"locationArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:location/loc-[0-9a-z]{17}$")
+            try validate(locationUri, name:"locationUri", pattern: "(efs|nfs|s3)://[a-zA-Z0-9.\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1085,6 +1460,7 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Version", required: false, type: .enum)
         ]
+
         /// The specific NFS version that you want DataSync to use to mount your NFS share. If you don't specify a version, DataSync defaults to AUTOMATIC. That is, DataSync automatically selects a version based on negotiation with the NFS server.
         public let version: NfsVersion?
 
@@ -1109,11 +1485,21 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AgentArns", required: true, type: .list)
         ]
+
         /// ARNs)of the agents to use for an NFS location.
         public let agentArns: [String]
 
         public init(agentArns: [String]) {
             self.agentArns = agentArns
+        }
+
+        public func validate() throws {
+            try agentArns.forEach {
+                try validate($0, name:"agentArns[]", max: 128)
+                try validate($0, name:"agentArns[]", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:agent/agent-[0-9a-z]{17}$")
+            }
+            try validate(agentArns, name:"agentArns", max: 64)
+            try validate(agentArns, name:"agentArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1133,6 +1519,7 @@ extension DataSync {
             AWSShapeMember(label: "Uid", required: false, type: .enum), 
             AWSShapeMember(label: "VerifyMode", required: false, type: .enum)
         ]
+
         /// A file metadata value that shows the last time a file was accessed (that is, when the file was read or written to). If you set Atime to BEST_EFFORT, DataSync attempts to preserve the original Atime attribute on all source files (that is, the version before the PREPARING phase). However, Atime's behavior is not fully standard across platforms, so AWS DataSync can only do this on a best-effort basis.  Default value: BEST_EFFORT. BEST_EFFORT: Attempt to preserve the per-file Atime value (recommended). NONE: Ignore Atime.  If Atime is set to BEST_EFFORT, Mtime must be set to PRESERVE.  If Atime is set to NONE, Mtime must also be NONE.  
         public let atime: Atime?
         /// A value that limits the bandwidth used by AWS DataSync. For example, if you want AWS DataSync to use a maximum of 1 MB, set this value to 1048576 (=1024*1024).
@@ -1162,6 +1549,10 @@ extension DataSync {
             self.preserveDevices = preserveDevices
             self.uid = uid
             self.verifyMode = verifyMode
+        }
+
+        public func validate() throws {
+            try validate(bytesPerSecond, name:"bytesPerSecond", min: -1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1209,6 +1600,7 @@ extension DataSync {
             AWSShapeMember(label: "SecurityGroupArns", required: false, type: .list), 
             AWSShapeMember(label: "SubnetArns", required: false, type: .list)
         ]
+
         public let privateLinkEndpoint: String?
         public let securityGroupArns: [String]?
         public let subnetArns: [String]?
@@ -1217,6 +1609,21 @@ extension DataSync {
             self.privateLinkEndpoint = privateLinkEndpoint
             self.securityGroupArns = securityGroupArns
             self.subnetArns = subnetArns
+        }
+
+        public func validate() throws {
+            try securityGroupArns?.forEach {
+                try validate($0, name:"securityGroupArns[]", max: 128)
+                try validate($0, name:"securityGroupArns[]", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):ec2:[a-z\\-0-9]*:[0-9]{12}:security-group/.*$")
+            }
+            try validate(securityGroupArns, name:"securityGroupArns", max: 1)
+            try validate(securityGroupArns, name:"securityGroupArns", min: 1)
+            try subnetArns?.forEach {
+                try validate($0, name:"subnetArns[]", max: 128)
+                try validate($0, name:"subnetArns[]", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):ec2:[a-z\\-0-9]*:[0-9]{12}:subnet/.*$")
+            }
+            try validate(subnetArns, name:"subnetArns", max: 1)
+            try validate(subnetArns, name:"subnetArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1230,11 +1637,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BucketAccessRoleArn", required: true, type: .string)
         ]
+
         /// The Amazon S3 bucket to access. This bucket is used as a parameter in the CreateLocationS3 operation. 
         public let bucketAccessRoleArn: String
 
         public init(bucketAccessRoleArn: String) {
             self.bucketAccessRoleArn = bucketAccessRoleArn
+        }
+
+        public func validate() throws {
+            try validate(bucketAccessRoleArn, name:"bucketAccessRoleArn", max: 2048)
+            try validate(bucketAccessRoleArn, name:"bucketAccessRoleArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):iam::[0-9]{12}:role/.*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1248,6 +1661,7 @@ extension DataSync {
             AWSShapeMember(label: "OverrideOptions", required: false, type: .structure), 
             AWSShapeMember(label: "TaskArn", required: true, type: .string)
         ]
+
         ///  A filter that determines which files to include in the transfer during a task execution based on the specified pattern in the filter. When multiple include filters are set, they are interpreted as an OR.
         public let includes: [FilterRule]?
         public let overrideOptions: Options?
@@ -1258,6 +1672,17 @@ extension DataSync {
             self.includes = includes
             self.overrideOptions = overrideOptions
             self.taskArn = taskArn
+        }
+
+        public func validate() throws {
+            try includes?.forEach {
+                try $0.validate()
+            }
+            try validate(includes, name:"includes", max: 1)
+            try validate(includes, name:"includes", min: 0)
+            try overrideOptions?.validate()
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1271,11 +1696,17 @@ extension DataSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TaskExecutionArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the specific task execution that was started.
         public let taskExecutionArn: String?
 
         public init(taskExecutionArn: String? = nil) {
             self.taskExecutionArn = taskExecutionArn
+        }
+
+        public func validate() throws {
+            try validate(taskExecutionArn, name:"taskExecutionArn", max: 128)
+            try validate(taskExecutionArn, name:"taskExecutionArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}/execution/exec-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1288,6 +1719,7 @@ extension DataSync {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The key for an AWS resource tag.
         public let key: String
         /// The value for an AWS resource tag.
@@ -1296,6 +1728,15 @@ extension DataSync {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 256)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1309,6 +1750,7 @@ extension DataSync {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource to apply the tag to.
         public let resourceArn: String
         /// The tags to apply.
@@ -1319,6 +1761,16 @@ extension DataSync {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 128)
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:(agent|task|location)/(agent|task|loc)-[0-9a-z]{17}$")
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 55)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tags = "Tags"
@@ -1326,6 +1778,7 @@ extension DataSync {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1337,6 +1790,7 @@ extension DataSync {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "TaskExecutionArn", required: false, type: .string)
         ]
+
         /// The status of a task execution.
         public let status: TaskExecutionStatus?
         /// The Amazon Resource Name (ARN) of the task that was executed.
@@ -1345,6 +1799,11 @@ extension DataSync {
         public init(status: TaskExecutionStatus? = nil, taskExecutionArn: String? = nil) {
             self.status = status
             self.taskExecutionArn = taskExecutionArn
+        }
+
+        public func validate() throws {
+            try validate(taskExecutionArn, name:"taskExecutionArn", max: 128)
+            try validate(taskExecutionArn, name:"taskExecutionArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}/execution/exec-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1364,6 +1823,7 @@ extension DataSync {
             AWSShapeMember(label: "VerifyDuration", required: false, type: .long), 
             AWSShapeMember(label: "VerifyStatus", required: false, type: .enum)
         ]
+
         /// Errors that AWS DataSync encountered during execution of the task. You can use this error code to help troubleshoot issues.
         public let errorCode: String?
         /// Detailed description of an error that was encountered during the task execution. You can use this information to help troubleshoot issues. 
@@ -1390,6 +1850,12 @@ extension DataSync {
             self.transferStatus = transferStatus
             self.verifyDuration = verifyDuration
             self.verifyStatus = verifyStatus
+        }
+
+        public func validate() throws {
+            try validate(prepareDuration, name:"prepareDuration", min: 0)
+            try validate(transferDuration, name:"transferDuration", min: 0)
+            try validate(verifyDuration, name:"verifyDuration", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1420,6 +1886,7 @@ extension DataSync {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "TaskArn", required: false, type: .string)
         ]
+
         /// The name of the task.
         public let name: String?
         /// The status of the task.
@@ -1431,6 +1898,14 @@ extension DataSync {
             self.name = name
             self.status = status
             self.taskArn = taskArn
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1461,6 +1936,7 @@ extension DataSync {
             AWSShapeMember(label: "Keys", required: true, type: .list), 
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The keys in the key-value pair in the tag to remove.
         public let keys: [String]
         /// The Amazon Resource Name (ARN) of the resource to remove the tag from.
@@ -1471,6 +1947,18 @@ extension DataSync {
             self.resourceArn = resourceArn
         }
 
+        public func validate() throws {
+            try keys.forEach {
+                try validate($0, name:"keys[]", max: 256)
+                try validate($0, name:"keys[]", min: 1)
+                try validate($0, name:"keys[]", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            }
+            try validate(keys, name:"keys", max: 50)
+            try validate(keys, name:"keys", min: 1)
+            try validate(resourceArn, name:"resourceArn", max: 128)
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:(agent|task|location)/(agent|task|loc)-[0-9a-z]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case keys = "Keys"
             case resourceArn = "ResourceArn"
@@ -1478,6 +1966,7 @@ extension DataSync {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1489,6 +1978,7 @@ extension DataSync {
             AWSShapeMember(label: "AgentArn", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the agent to update.
         public let agentArn: String
         /// The name that you want to use to configure the agent.
@@ -1499,6 +1989,14 @@ extension DataSync {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(agentArn, name:"agentArn", max: 128)
+            try validate(agentArn, name:"agentArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]+:[0-9]{12}:agent/agent-[0-9a-z]{17}$")
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case agentArn = "AgentArn"
             case name = "Name"
@@ -1506,6 +2004,7 @@ extension DataSync {
     }
 
     public struct UpdateAgentResponse: AWSShape {
+
 
         public init() {
         }
@@ -1520,6 +2019,7 @@ extension DataSync {
             AWSShapeMember(label: "Options", required: false, type: .structure), 
             AWSShapeMember(label: "TaskArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource name of the CloudWatch LogGroup.
         public let cloudWatchLogGroupArn: String?
         ///  A filter that determines which files to exclude from a task based on the specified pattern in the filter. Transfers all files in the task’s subdirectory, except files that match the filter that is set. 
@@ -1538,6 +2038,22 @@ extension DataSync {
             self.taskArn = taskArn
         }
 
+        public func validate() throws {
+            try validate(cloudWatchLogGroupArn, name:"cloudWatchLogGroupArn", max: 562)
+            try validate(cloudWatchLogGroupArn, name:"cloudWatchLogGroupArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):logs:[a-z\\-0-9]*:[0-9]{12}:log-group:([^:\\*]*)$")
+            try excludes?.forEach {
+                try $0.validate()
+            }
+            try validate(excludes, name:"excludes", max: 1)
+            try validate(excludes, name:"excludes", min: 0)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9\\s+=._:/-]+$")
+            try options?.validate()
+            try validate(taskArn, name:"taskArn", max: 128)
+            try validate(taskArn, name:"taskArn", pattern: "^arn:(aws|aws-cn|aws-us-gov|aws-iso|aws-iso-b):datasync:[a-z\\-0-9]*:[0-9]{12}:task/task-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudWatchLogGroupArn = "CloudWatchLogGroupArn"
             case excludes = "Excludes"
@@ -1548,6 +2064,7 @@ extension DataSync {
     }
 
     public struct UpdateTaskResponse: AWSShape {
+
 
         public init() {
         }

@@ -11,6 +11,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The ARN of the address book.
         public let addressBookArn: String?
         /// The description of the address book.
@@ -22,6 +23,16 @@ extension AlexaForBusiness {
             self.addressBookArn = addressBookArn
             self.description = description
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -37,6 +48,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The ARN of the address book.
         public let addressBookArn: String?
         /// The description of the address book.
@@ -50,6 +62,16 @@ extension AlexaForBusiness {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressBookArn = "AddressBookArn"
             case description = "Description"
@@ -61,11 +83,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The unique identifier of the skill.
         public let skillId: String
 
         public init(skillId: String) {
             self.skillId = skillId
+        }
+
+        public func validate() throws {
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -74,6 +101,7 @@ extension AlexaForBusiness {
     }
 
     public struct ApproveSkillResponse: AWSShape {
+
 
         public init() {
         }
@@ -85,6 +113,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "AddressBookArn", required: true, type: .string), 
             AWSShapeMember(label: "ContactArn", required: true, type: .string)
         ]
+
         /// The ARN of the address book with which to associate the contact.
         public let addressBookArn: String
         /// The ARN of the contact to associate with an address book.
@@ -95,6 +124,11 @@ extension AlexaForBusiness {
             self.contactArn = contactArn
         }
 
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressBookArn = "AddressBookArn"
             case contactArn = "ContactArn"
@@ -102,6 +136,7 @@ extension AlexaForBusiness {
     }
 
     public struct AssociateContactWithAddressBookResponse: AWSShape {
+
 
         public init() {
         }
@@ -113,6 +148,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "DeviceArn", required: true, type: .string), 
             AWSShapeMember(label: "NetworkProfileArn", required: true, type: .string)
         ]
+
         /// The device ARN.
         public let deviceArn: String
         /// The ARN of the network profile to associate with a device.
@@ -123,6 +159,11 @@ extension AlexaForBusiness {
             self.networkProfileArn = networkProfileArn
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case networkProfileArn = "NetworkProfileArn"
@@ -130,6 +171,7 @@ extension AlexaForBusiness {
     }
 
     public struct AssociateDeviceWithNetworkProfileResponse: AWSShape {
+
 
         public init() {
         }
@@ -141,6 +183,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "DeviceArn", required: false, type: .string), 
             AWSShapeMember(label: "RoomArn", required: false, type: .string)
         ]
+
         /// The ARN of the device to associate to a room. Required.
         public let deviceArn: String?
         /// The ARN of the room with which to associate the device. Required.
@@ -151,6 +194,11 @@ extension AlexaForBusiness {
             self.roomArn = roomArn
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case roomArn = "RoomArn"
@@ -158,6 +206,7 @@ extension AlexaForBusiness {
     }
 
     public struct AssociateDeviceWithRoomResponse: AWSShape {
+
 
         public init() {
         }
@@ -169,6 +218,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string)
         ]
+
         /// The ARN of the room with which to associate the skill group. Required.
         public let roomArn: String?
         /// The ARN of the skill group to associate with a room. Required.
@@ -179,6 +229,11 @@ extension AlexaForBusiness {
             self.skillGroupArn = skillGroupArn
         }
 
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case roomArn = "RoomArn"
             case skillGroupArn = "SkillGroupArn"
@@ -186,6 +241,7 @@ extension AlexaForBusiness {
     }
 
     public struct AssociateSkillGroupWithRoomResponse: AWSShape {
+
 
         public init() {
         }
@@ -197,6 +253,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The ARN of the skill group to associate the skill to. Required.
         public let skillGroupArn: String?
         /// The unique identifier of the skill.
@@ -207,6 +264,11 @@ extension AlexaForBusiness {
             self.skillId = skillId
         }
 
+        public func validate() throws {
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case skillGroupArn = "SkillGroupArn"
             case skillId = "SkillId"
@@ -214,6 +276,7 @@ extension AlexaForBusiness {
     }
 
     public struct AssociateSkillWithSkillGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -224,11 +287,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The private skill ID you want to make available to enrolled users.
         public let skillId: String
 
         public init(skillId: String) {
             self.skillId = skillId
+        }
+
+        public func validate() throws {
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -237,6 +305,7 @@ extension AlexaForBusiness {
     }
 
     public struct AssociateSkillWithUsersResponse: AWSShape {
+
 
         public init() {
         }
@@ -248,6 +317,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Locale", required: true, type: .enum), 
             AWSShapeMember(label: "Location", required: true, type: .string)
         ]
+
         /// The locale of the audio message. Currently, en-US is supported.
         public let locale: Locale
         /// The location of the audio file. Currently, S3 URLs are supported. Only S3 locations comprised of safe characters are valid. For more information, see Safe Characters.
@@ -256,6 +326,12 @@ extension AlexaForBusiness {
         public init(locale: Locale, location: String) {
             self.locale = locale
             self.location = location
+        }
+
+        public func validate() throws {
+            try validate(location, name:"location", max: 1200)
+            try validate(location, name:"location", min: 0)
+            try validate(location, name:"location", pattern: "https://([A-Za-z0-9_.-]+)?(s3-[A-Za-z0-9-]+|s3\\.([A-Za-z0-9-])+|s3|s3.dualstack\\.([A-Za-z0-9-])+)+.amazonaws.com/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -272,6 +348,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "S3Location", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The time of report delivery.
         public let deliveryTime: TimeStamp?
         /// The download link where a user can download the report.
@@ -291,6 +368,10 @@ extension AlexaForBusiness {
             self.status = status
         }
 
+        public func validate() throws {
+            try s3Location?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deliveryTime = "DeliveryTime"
             case downloadUrl = "DownloadUrl"
@@ -304,6 +385,7 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Interval", required: false, type: .enum)
         ]
+
         /// The interval of the content range.
         public let interval: BusinessReportInterval?
 
@@ -339,11 +421,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StartDate", required: false, type: .string)
         ]
+
         /// The start date.
         public let startDate: String?
 
         public init(startDate: String? = nil) {
             self.startDate = startDate
+        }
+
+        public func validate() throws {
+            try validate(startDate, name:"startDate", pattern: "^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -356,6 +443,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "BucketName", required: false, type: .string), 
             AWSShapeMember(label: "Path", required: false, type: .string)
         ]
+
         /// The S3 bucket name of the output reports.
         public let bucketName: String?
         /// The path of the business report.
@@ -364,6 +452,10 @@ extension AlexaForBusiness {
         public init(bucketName: String? = nil, path: String? = nil) {
             self.bucketName = bucketName
             self.path = path
+        }
+
+        public func validate() throws {
+            try validate(bucketName, name:"bucketName", pattern: "[a-z0-9-\\.]{3,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -383,6 +475,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "ScheduleArn", required: false, type: .string), 
             AWSShapeMember(label: "ScheduleName", required: false, type: .string)
         ]
+
         /// The content range of the reports.
         public let contentRange: BusinessReportContentRange?
         /// The format of the generated report (individual CSV files or zipped files of individual files).
@@ -411,6 +504,19 @@ extension AlexaForBusiness {
             self.scheduleName = scheduleName
         }
 
+        public func validate() throws {
+            try lastBusinessReport?.validate()
+            try recurrence?.validate()
+            try validate(s3BucketName, name:"s3BucketName", pattern: "[a-z0-9-\\.]{3,63}")
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", max: 100)
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", min: 0)
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", pattern: "[A-Za-z0-9!_\\-\\.\\*'()/]*")
+            try validate(scheduleArn, name:"scheduleArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(scheduleName, name:"scheduleName", max: 64)
+            try validate(scheduleName, name:"scheduleName", min: 0)
+            try validate(scheduleName, name:"scheduleName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case contentRange = "ContentRange"
             case format = "Format"
@@ -435,6 +541,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "CategoryId", required: false, type: .long), 
             AWSShapeMember(label: "CategoryName", required: false, type: .string)
         ]
+
         /// The ID of the skill store category.
         public let categoryId: Int64?
         /// The name of the skill store category.
@@ -443,6 +550,10 @@ extension AlexaForBusiness {
         public init(categoryId: Int64? = nil, categoryName: String? = nil) {
             self.categoryId = categoryId
             self.categoryName = categoryName
+        }
+
+        public func validate() throws {
+            try validate(categoryId, name:"categoryId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -462,11 +573,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DefaultConferenceProviderArn", required: false, type: .string)
         ]
+
         /// The ARN of the default conference provider.
         public let defaultConferenceProviderArn: String?
 
         public init(defaultConferenceProviderArn: String? = nil) {
             self.defaultConferenceProviderArn = defaultConferenceProviderArn
+        }
+
+        public func validate() throws {
+            try validate(defaultConferenceProviderArn, name:"defaultConferenceProviderArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -483,6 +599,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "PSTNDialIn", required: false, type: .structure), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The ARN of the newly created conference provider.
         public let arn: String?
         /// The IP endpoint and protocol for calling.
@@ -503,6 +620,15 @@ extension AlexaForBusiness {
             self.name = name
             self.pSTNDialIn = pSTNDialIn
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try iPDialIn?.validate()
+            try validate(name, name:"name", max: 50)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try pSTNDialIn?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -545,6 +671,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "PhoneNumbers", required: false, type: .list), 
             AWSShapeMember(label: "SipAddresses", required: false, type: .list)
         ]
+
         /// The ARN of the contact.
         public let contactArn: String?
         /// The name of the contact to display on the console.
@@ -570,6 +697,32 @@ extension AlexaForBusiness {
             self.sipAddresses = sipAddresses
         }
 
+        public func validate() throws {
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(firstName, name:"firstName", max: 100)
+            try validate(firstName, name:"firstName", min: 1)
+            try validate(firstName, name:"firstName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(lastName, name:"lastName", max: 100)
+            try validate(lastName, name:"lastName", min: 1)
+            try validate(lastName, name:"lastName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(phoneNumber, name:"phoneNumber", max: 50)
+            try validate(phoneNumber, name:"phoneNumber", min: 0)
+            try validate(phoneNumber, name:"phoneNumber", pattern: "^[\\+0-9\\#\\,\\(][\\+0-9\\-\\.\\/\\(\\)\\,\\#\\s]+$")
+            try phoneNumbers?.forEach {
+                try $0.validate()
+            }
+            try validate(phoneNumbers, name:"phoneNumbers", max: 3)
+            try validate(phoneNumbers, name:"phoneNumbers", min: 0)
+            try sipAddresses?.forEach {
+                try $0.validate()
+            }
+            try validate(sipAddresses, name:"sipAddresses", max: 1)
+            try validate(sipAddresses, name:"sipAddresses", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case contactArn = "ContactArn"
             case displayName = "DisplayName"
@@ -591,6 +744,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "PhoneNumbers", required: false, type: .list), 
             AWSShapeMember(label: "SipAddresses", required: false, type: .list)
         ]
+
         /// The ARN of the contact.
         public let contactArn: String?
         /// The name of the contact to display on the console.
@@ -616,6 +770,32 @@ extension AlexaForBusiness {
             self.sipAddresses = sipAddresses
         }
 
+        public func validate() throws {
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(firstName, name:"firstName", max: 100)
+            try validate(firstName, name:"firstName", min: 1)
+            try validate(firstName, name:"firstName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(lastName, name:"lastName", max: 100)
+            try validate(lastName, name:"lastName", min: 1)
+            try validate(lastName, name:"lastName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(phoneNumber, name:"phoneNumber", max: 50)
+            try validate(phoneNumber, name:"phoneNumber", min: 0)
+            try validate(phoneNumber, name:"phoneNumber", pattern: "^[\\+0-9\\#\\,\\(][\\+0-9\\-\\.\\/\\(\\)\\,\\#\\s]+$")
+            try phoneNumbers?.forEach {
+                try $0.validate()
+            }
+            try validate(phoneNumbers, name:"phoneNumbers", max: 3)
+            try validate(phoneNumbers, name:"phoneNumbers", min: 0)
+            try sipAddresses?.forEach {
+                try $0.validate()
+            }
+            try validate(sipAddresses, name:"sipAddresses", max: 1)
+            try validate(sipAddresses, name:"sipAddresses", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case contactArn = "ContactArn"
             case displayName = "DisplayName"
@@ -633,6 +813,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SsmlList", required: false, type: .list), 
             AWSShapeMember(label: "TextList", required: false, type: .list)
         ]
+
         /// The list of audio messages.
         public let audioList: [Audio]?
         /// The list of SSML messages.
@@ -644,6 +825,21 @@ extension AlexaForBusiness {
             self.audioList = audioList
             self.ssmlList = ssmlList
             self.textList = textList
+        }
+
+        public func validate() throws {
+            try audioList?.forEach {
+                try $0.validate()
+            }
+            try validate(audioList, name:"audioList", max: 1)
+            try ssmlList?.forEach {
+                try $0.validate()
+            }
+            try validate(ssmlList, name:"ssmlList", max: 1)
+            try textList?.forEach {
+                try $0.validate()
+            }
+            try validate(textList, name:"textList", max: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -659,6 +855,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// A unique, user-specified identifier for the request that ensures idempotency.
         public let clientRequestToken: String?
         /// The description of the address book.
@@ -666,10 +863,22 @@ extension AlexaForBusiness {
         /// The name of the address book.
         public let name: String
 
-        public init(clientRequestToken: String? = nil, description: String? = nil, name: String) {
+        public init(clientRequestToken: String? = CreateAddressBookRequest.idempotencyToken(), description: String? = nil, name: String) {
             self.clientRequestToken = clientRequestToken
             self.description = description
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -683,11 +892,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AddressBookArn", required: false, type: .string)
         ]
+
         /// The ARN of the newly created address book.
         public let addressBookArn: String?
 
         public init(addressBookArn: String? = nil) {
             self.addressBookArn = addressBookArn
+        }
+
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -705,6 +919,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "S3KeyPrefix", required: false, type: .string), 
             AWSShapeMember(label: "ScheduleName", required: false, type: .string)
         ]
+
         /// The client request token.
         public let clientRequestToken: String?
         /// The content range of the reports.
@@ -720,7 +935,7 @@ extension AlexaForBusiness {
         /// The name identifier of the schedule.
         public let scheduleName: String?
 
-        public init(clientRequestToken: String? = nil, contentRange: BusinessReportContentRange, format: BusinessReportFormat, recurrence: BusinessReportRecurrence? = nil, s3BucketName: String? = nil, s3KeyPrefix: String? = nil, scheduleName: String? = nil) {
+        public init(clientRequestToken: String? = CreateBusinessReportScheduleRequest.idempotencyToken(), contentRange: BusinessReportContentRange, format: BusinessReportFormat, recurrence: BusinessReportRecurrence? = nil, s3BucketName: String? = nil, s3KeyPrefix: String? = nil, scheduleName: String? = nil) {
             self.clientRequestToken = clientRequestToken
             self.contentRange = contentRange
             self.format = format
@@ -728,6 +943,20 @@ extension AlexaForBusiness {
             self.s3BucketName = s3BucketName
             self.s3KeyPrefix = s3KeyPrefix
             self.scheduleName = scheduleName
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try recurrence?.validate()
+            try validate(s3BucketName, name:"s3BucketName", pattern: "[a-z0-9-\\.]{3,63}")
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", max: 100)
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", min: 0)
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", pattern: "[A-Za-z0-9!_\\-\\.\\*'()/]*")
+            try validate(scheduleName, name:"scheduleName", max: 64)
+            try validate(scheduleName, name:"scheduleName", min: 0)
+            try validate(scheduleName, name:"scheduleName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -745,11 +974,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ScheduleArn", required: false, type: .string)
         ]
+
         /// The ARN of the business report schedule.
         public let scheduleArn: String?
 
         public init(scheduleArn: String? = nil) {
             self.scheduleArn = scheduleArn
+        }
+
+        public func validate() throws {
+            try validate(scheduleArn, name:"scheduleArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -766,6 +1000,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MeetingSetting", required: true, type: .structure), 
             AWSShapeMember(label: "PSTNDialIn", required: false, type: .structure)
         ]
+
         /// The request token of the client.
         public let clientRequestToken: String?
         /// The name of the conference provider.
@@ -779,13 +1014,24 @@ extension AlexaForBusiness {
         /// The information for PSTN conferencing.
         public let pSTNDialIn: PSTNDialIn?
 
-        public init(clientRequestToken: String? = nil, conferenceProviderName: String, conferenceProviderType: ConferenceProviderType, iPDialIn: IPDialIn? = nil, meetingSetting: MeetingSetting, pSTNDialIn: PSTNDialIn? = nil) {
+        public init(clientRequestToken: String? = CreateConferenceProviderRequest.idempotencyToken(), conferenceProviderName: String, conferenceProviderType: ConferenceProviderType, iPDialIn: IPDialIn? = nil, meetingSetting: MeetingSetting, pSTNDialIn: PSTNDialIn? = nil) {
             self.clientRequestToken = clientRequestToken
             self.conferenceProviderName = conferenceProviderName
             self.conferenceProviderType = conferenceProviderType
             self.iPDialIn = iPDialIn
             self.meetingSetting = meetingSetting
             self.pSTNDialIn = pSTNDialIn
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(conferenceProviderName, name:"conferenceProviderName", max: 50)
+            try validate(conferenceProviderName, name:"conferenceProviderName", min: 1)
+            try validate(conferenceProviderName, name:"conferenceProviderName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try iPDialIn?.validate()
+            try pSTNDialIn?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -802,11 +1048,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConferenceProviderArn", required: false, type: .string)
         ]
+
         /// The ARN of the newly-created conference provider.
         public let conferenceProviderArn: String?
 
         public init(conferenceProviderArn: String? = nil) {
             self.conferenceProviderArn = conferenceProviderArn
+        }
+
+        public func validate() throws {
+            try validate(conferenceProviderArn, name:"conferenceProviderArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -824,6 +1075,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "PhoneNumbers", required: false, type: .list), 
             AWSShapeMember(label: "SipAddresses", required: false, type: .list)
         ]
+
         /// A unique, user-specified identifier for this request that ensures idempotency.
         public let clientRequestToken: String?
         /// The name of the contact to display on the console.
@@ -839,7 +1091,7 @@ extension AlexaForBusiness {
         /// The list of SIP addresses for the contact.
         public let sipAddresses: [SipAddress]?
 
-        public init(clientRequestToken: String? = nil, displayName: String? = nil, firstName: String, lastName: String? = nil, phoneNumber: String? = nil, phoneNumbers: [PhoneNumber]? = nil, sipAddresses: [SipAddress]? = nil) {
+        public init(clientRequestToken: String? = CreateContactRequest.idempotencyToken(), displayName: String? = nil, firstName: String, lastName: String? = nil, phoneNumber: String? = nil, phoneNumbers: [PhoneNumber]? = nil, sipAddresses: [SipAddress]? = nil) {
             self.clientRequestToken = clientRequestToken
             self.displayName = displayName
             self.firstName = firstName
@@ -847,6 +1099,34 @@ extension AlexaForBusiness {
             self.phoneNumber = phoneNumber
             self.phoneNumbers = phoneNumbers
             self.sipAddresses = sipAddresses
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(firstName, name:"firstName", max: 100)
+            try validate(firstName, name:"firstName", min: 1)
+            try validate(firstName, name:"firstName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(lastName, name:"lastName", max: 100)
+            try validate(lastName, name:"lastName", min: 1)
+            try validate(lastName, name:"lastName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(phoneNumber, name:"phoneNumber", max: 50)
+            try validate(phoneNumber, name:"phoneNumber", min: 0)
+            try validate(phoneNumber, name:"phoneNumber", pattern: "^[\\+0-9\\#\\,\\(][\\+0-9\\-\\.\\/\\(\\)\\,\\#\\s]+$")
+            try phoneNumbers?.forEach {
+                try $0.validate()
+            }
+            try validate(phoneNumbers, name:"phoneNumbers", max: 3)
+            try validate(phoneNumbers, name:"phoneNumbers", min: 0)
+            try sipAddresses?.forEach {
+                try $0.validate()
+            }
+            try validate(sipAddresses, name:"sipAddresses", max: 1)
+            try validate(sipAddresses, name:"sipAddresses", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -864,11 +1144,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContactArn", required: false, type: .string)
         ]
+
         /// The ARN of the newly created address book.
         public let contactArn: String?
 
         public init(contactArn: String? = nil) {
             self.contactArn = contactArn
+        }
+
+        public func validate() throws {
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -882,6 +1167,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         ///  A unique, user-specified identifier for the request that ensures idempotency.
         public let clientRequestToken: String
         /// The description of the gateway group.
@@ -889,10 +1175,21 @@ extension AlexaForBusiness {
         /// The name of the gateway group.
         public let name: String
 
-        public init(clientRequestToken: String, description: String? = nil, name: String) {
+        public init(clientRequestToken: String = CreateGatewayGroupRequest.idempotencyToken(), description: String? = nil, name: String) {
             self.clientRequestToken = clientRequestToken
             self.description = description
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -906,11 +1203,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GatewayGroupArn", required: false, type: .string)
         ]
+
         /// The ARN of the created gateway group.
         public let gatewayGroupArn: String?
 
         public init(gatewayGroupArn: String? = nil) {
             self.gatewayGroupArn = gatewayGroupArn
+        }
+
+        public func validate() throws {
+            try validate(gatewayGroupArn, name:"gatewayGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -931,6 +1233,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Ssid", required: true, type: .string), 
             AWSShapeMember(label: "TrustAnchors", required: false, type: .list)
         ]
+
         /// The ARN of the Private Certificate Authority (PCA) created in AWS Certificate Manager (ACM). This is used to issue certificates to the devices. 
         public let certificateAuthorityArn: String?
         public let clientRequestToken: String
@@ -951,7 +1254,7 @@ extension AlexaForBusiness {
         /// The root certificates of your authentication server that is installed on your devices and used to trust your authentication server during EAP negotiation. 
         public let trustAnchors: [String]?
 
-        public init(certificateAuthorityArn: String? = nil, clientRequestToken: String, currentPassword: String? = nil, description: String? = nil, eapMethod: NetworkEapMethod? = nil, networkProfileName: String, nextPassword: String? = nil, securityType: NetworkSecurityType, ssid: String, trustAnchors: [String]? = nil) {
+        public init(certificateAuthorityArn: String? = nil, clientRequestToken: String = CreateNetworkProfileRequest.idempotencyToken(), currentPassword: String? = nil, description: String? = nil, eapMethod: NetworkEapMethod? = nil, networkProfileName: String, nextPassword: String? = nil, securityType: NetworkSecurityType, ssid: String, trustAnchors: [String]? = nil) {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.clientRequestToken = clientRequestToken
             self.currentPassword = currentPassword
@@ -962,6 +1265,33 @@ extension AlexaForBusiness {
             self.securityType = securityType
             self.ssid = ssid
             self.trustAnchors = trustAnchors
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(currentPassword, name:"currentPassword", max: 128)
+            try validate(currentPassword, name:"currentPassword", min: 5)
+            try validate(currentPassword, name:"currentPassword", pattern: "[\\x00-\\x7F]*")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(networkProfileName, name:"networkProfileName", max: 100)
+            try validate(networkProfileName, name:"networkProfileName", min: 1)
+            try validate(networkProfileName, name:"networkProfileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(nextPassword, name:"nextPassword", max: 128)
+            try validate(nextPassword, name:"nextPassword", min: 0)
+            try validate(nextPassword, name:"nextPassword", pattern: "(^$)|([\\x00-\\x7F]{5,})")
+            try validate(ssid, name:"ssid", max: 32)
+            try validate(ssid, name:"ssid", min: 1)
+            try validate(ssid, name:"ssid", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try trustAnchors?.forEach {
+                try validate($0, name:"trustAnchors[]", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            }
+            try validate(trustAnchors, name:"trustAnchors", max: 5)
+            try validate(trustAnchors, name:"trustAnchors", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -982,11 +1312,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NetworkProfileArn", required: false, type: .string)
         ]
+
         /// The ARN of the network profile associated with a device.
         public let networkProfileArn: String?
 
         public init(networkProfileArn: String? = nil) {
             self.networkProfileArn = networkProfileArn
+        }
+
+        public func validate() throws {
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1007,6 +1342,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Timezone", required: true, type: .string), 
             AWSShapeMember(label: "WakeWord", required: true, type: .enum)
         ]
+
         /// The valid address for the room.
         public let address: String
         /// The user-specified token that is used during the creation of a profile.
@@ -1028,7 +1364,7 @@ extension AlexaForBusiness {
         /// A wake word for Alexa, Echo, Amazon, or a computer.
         public let wakeWord: WakeWord
 
-        public init(address: String, clientRequestToken: String? = nil, distanceUnit: DistanceUnit, maxVolumeLimit: Int32? = nil, profileName: String, pSTNEnabled: Bool? = nil, setupModeDisabled: Bool? = nil, temperatureUnit: TemperatureUnit, timezone: String, wakeWord: WakeWord) {
+        public init(address: String, clientRequestToken: String? = CreateProfileRequest.idempotencyToken(), distanceUnit: DistanceUnit, maxVolumeLimit: Int32? = nil, profileName: String, pSTNEnabled: Bool? = nil, setupModeDisabled: Bool? = nil, temperatureUnit: TemperatureUnit, timezone: String, wakeWord: WakeWord) {
             self.address = address
             self.clientRequestToken = clientRequestToken
             self.distanceUnit = distanceUnit
@@ -1039,6 +1375,19 @@ extension AlexaForBusiness {
             self.temperatureUnit = temperatureUnit
             self.timezone = timezone
             self.wakeWord = wakeWord
+        }
+
+        public func validate() throws {
+            try validate(address, name:"address", max: 500)
+            try validate(address, name:"address", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(profileName, name:"profileName", max: 100)
+            try validate(profileName, name:"profileName", min: 1)
+            try validate(profileName, name:"profileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(timezone, name:"timezone", max: 100)
+            try validate(timezone, name:"timezone", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1059,11 +1408,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ProfileArn", required: false, type: .string)
         ]
+
         /// The ARN of the newly created room profile in the response.
         public let profileArn: String?
 
         public init(profileArn: String? = nil) {
             self.profileArn = profileArn
+        }
+
+        public func validate() throws {
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1080,6 +1434,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomName", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// A unique, user-specified identifier for this request that ensures idempotency. 
         public let clientRequestToken: String?
         /// The description for the room.
@@ -1093,13 +1448,31 @@ extension AlexaForBusiness {
         /// The tags for the room.
         public let tags: [Tag]?
 
-        public init(clientRequestToken: String? = nil, description: String? = nil, profileArn: String? = nil, providerCalendarId: String? = nil, roomName: String, tags: [Tag]? = nil) {
+        public init(clientRequestToken: String? = CreateRoomRequest.idempotencyToken(), description: String? = nil, profileArn: String? = nil, providerCalendarId: String? = nil, roomName: String, tags: [Tag]? = nil) {
             self.clientRequestToken = clientRequestToken
             self.description = description
             self.profileArn = profileArn
             self.providerCalendarId = providerCalendarId
             self.roomName = roomName
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(providerCalendarId, name:"providerCalendarId", max: 100)
+            try validate(providerCalendarId, name:"providerCalendarId", min: 0)
+            try validate(roomName, name:"roomName", max: 100)
+            try validate(roomName, name:"roomName", min: 1)
+            try validate(roomName, name:"roomName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1116,11 +1489,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RoomArn", required: false, type: .string)
         ]
+
         /// The ARN of the newly created room in the response.
         public let roomArn: String?
 
         public init(roomArn: String? = nil) {
             self.roomArn = roomArn
+        }
+
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1134,6 +1512,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "SkillGroupName", required: true, type: .string)
         ]
+
         /// A unique, user-specified identifier for this request that ensures idempotency. 
         public let clientRequestToken: String?
         /// The description for the skill group.
@@ -1141,10 +1520,22 @@ extension AlexaForBusiness {
         /// The name for the skill group.
         public let skillGroupName: String
 
-        public init(clientRequestToken: String? = nil, description: String? = nil, skillGroupName: String) {
+        public init(clientRequestToken: String? = CreateSkillGroupRequest.idempotencyToken(), description: String? = nil, skillGroupName: String) {
             self.clientRequestToken = clientRequestToken
             self.description = description
             self.skillGroupName = skillGroupName
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(skillGroupName, name:"skillGroupName", max: 100)
+            try validate(skillGroupName, name:"skillGroupName", min: 1)
+            try validate(skillGroupName, name:"skillGroupName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1158,11 +1549,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string)
         ]
+
         /// The ARN of the newly created skill group in the response.
         public let skillGroupArn: String?
 
         public init(skillGroupArn: String? = nil) {
             self.skillGroupArn = skillGroupArn
+        }
+
+        public func validate() throws {
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1179,6 +1575,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// A unique, user-specified identifier for this request that ensures idempotency. 
         public let clientRequestToken: String?
         /// The email address for the user.
@@ -1192,13 +1589,34 @@ extension AlexaForBusiness {
         /// The ARN for the user.
         public let userId: String
 
-        public init(clientRequestToken: String? = nil, email: String? = nil, firstName: String? = nil, lastName: String? = nil, tags: [Tag]? = nil, userId: String) {
+        public init(clientRequestToken: String? = CreateUserRequest.idempotencyToken(), email: String? = nil, firstName: String? = nil, lastName: String? = nil, tags: [Tag]? = nil, userId: String) {
             self.clientRequestToken = clientRequestToken
             self.email = email
             self.firstName = firstName
             self.lastName = lastName
             self.tags = tags
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try validate(email, name:"email", max: 128)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "([0-9a-zA-Z]([+-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})")
+            try validate(firstName, name:"firstName", max: 30)
+            try validate(firstName, name:"firstName", min: 0)
+            try validate(firstName, name:"firstName", pattern: "([A-Za-z\\-' 0-9._]|\\p{IsLetter})*")
+            try validate(lastName, name:"lastName", max: 30)
+            try validate(lastName, name:"lastName", min: 0)
+            try validate(lastName, name:"lastName", pattern: "([A-Za-z\\-' 0-9._]|\\p{IsLetter})*")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(userId, name:"userId", max: 128)
+            try validate(userId, name:"userId", min: 1)
+            try validate(userId, name:"userId", pattern: "[a-zA-Z0-9@_+.-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1215,11 +1633,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserArn", required: false, type: .string)
         ]
+
         /// The ARN of the newly created user in the response.
         public let userArn: String?
 
         public init(userArn: String? = nil) {
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(userArn, name:"userArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1231,11 +1654,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AddressBookArn", required: true, type: .string)
         ]
+
         /// The ARN of the address book to delete.
         public let addressBookArn: String
 
         public init(addressBookArn: String) {
             self.addressBookArn = addressBookArn
+        }
+
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1244,6 +1672,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteAddressBookResponse: AWSShape {
+
 
         public init() {
         }
@@ -1254,11 +1683,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ScheduleArn", required: true, type: .string)
         ]
+
         /// The ARN of the business report schedule.
         public let scheduleArn: String
 
         public init(scheduleArn: String) {
             self.scheduleArn = scheduleArn
+        }
+
+        public func validate() throws {
+            try validate(scheduleArn, name:"scheduleArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1267,6 +1701,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteBusinessReportScheduleResponse: AWSShape {
+
 
         public init() {
         }
@@ -1277,11 +1712,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConferenceProviderArn", required: true, type: .string)
         ]
+
         /// The ARN of the conference provider.
         public let conferenceProviderArn: String
 
         public init(conferenceProviderArn: String) {
             self.conferenceProviderArn = conferenceProviderArn
+        }
+
+        public func validate() throws {
+            try validate(conferenceProviderArn, name:"conferenceProviderArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1290,6 +1730,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteConferenceProviderResponse: AWSShape {
+
 
         public init() {
         }
@@ -1300,11 +1741,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContactArn", required: true, type: .string)
         ]
+
         /// The ARN of the contact to delete.
         public let contactArn: String
 
         public init(contactArn: String) {
             self.contactArn = contactArn
+        }
+
+        public func validate() throws {
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1313,6 +1759,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteContactResponse: AWSShape {
+
 
         public init() {
         }
@@ -1323,11 +1770,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeviceArn", required: true, type: .string)
         ]
+
         /// The ARN of the device for which to request details.
         public let deviceArn: String
 
         public init(deviceArn: String) {
             self.deviceArn = deviceArn
+        }
+
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1336,6 +1788,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteDeviceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1347,6 +1800,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "DeviceArn", required: true, type: .string), 
             AWSShapeMember(label: "DeviceUsageType", required: true, type: .enum)
         ]
+
         /// The ARN of the device.
         public let deviceArn: String
         /// The type of usage data to delete.
@@ -1357,6 +1811,10 @@ extension AlexaForBusiness {
             self.deviceUsageType = deviceUsageType
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case deviceUsageType = "DeviceUsageType"
@@ -1364,6 +1822,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteDeviceUsageDataResponse: AWSShape {
+
 
         public init() {
         }
@@ -1374,11 +1833,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GatewayGroupArn", required: true, type: .string)
         ]
+
         /// The ARN of the gateway group to delete.
         public let gatewayGroupArn: String
 
         public init(gatewayGroupArn: String) {
             self.gatewayGroupArn = gatewayGroupArn
+        }
+
+        public func validate() throws {
+            try validate(gatewayGroupArn, name:"gatewayGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1387,6 +1851,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteGatewayGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -1397,11 +1862,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NetworkProfileArn", required: true, type: .string)
         ]
+
         /// The ARN of the network profile associated with a device.
         public let networkProfileArn: String
 
         public init(networkProfileArn: String) {
             self.networkProfileArn = networkProfileArn
+        }
+
+        public func validate() throws {
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1410,6 +1880,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteNetworkProfileResponse: AWSShape {
+
 
         public init() {
         }
@@ -1420,11 +1891,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ProfileArn", required: false, type: .string)
         ]
+
         /// The ARN of the room profile to delete. Required.
         public let profileArn: String?
 
         public init(profileArn: String? = nil) {
             self.profileArn = profileArn
+        }
+
+        public func validate() throws {
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1433,6 +1909,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteProfileResponse: AWSShape {
+
 
         public init() {
         }
@@ -1443,11 +1920,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RoomArn", required: false, type: .string)
         ]
+
         /// The ARN of the room to delete. Required.
         public let roomArn: String?
 
         public init(roomArn: String? = nil) {
             self.roomArn = roomArn
+        }
+
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1456,6 +1938,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteRoomResponse: AWSShape {
+
 
         public init() {
         }
@@ -1468,6 +1951,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The room skill parameter key for which to remove details.
         public let parameterKey: String
         /// The ARN of the room from which to remove the room skill parameter details.
@@ -1481,6 +1965,13 @@ extension AlexaForBusiness {
             self.skillId = skillId
         }
 
+        public func validate() throws {
+            try validate(parameterKey, name:"parameterKey", max: 256)
+            try validate(parameterKey, name:"parameterKey", min: 1)
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case parameterKey = "ParameterKey"
             case roomArn = "RoomArn"
@@ -1489,6 +1980,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteRoomSkillParameterResponse: AWSShape {
+
 
         public init() {
         }
@@ -1500,6 +1992,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The room that the skill is authorized for.
         public let roomArn: String?
         /// The unique identifier of a skill.
@@ -1510,6 +2003,11 @@ extension AlexaForBusiness {
             self.skillId = skillId
         }
 
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case roomArn = "RoomArn"
             case skillId = "SkillId"
@@ -1517,6 +2015,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteSkillAuthorizationResponse: AWSShape {
+
 
         public init() {
         }
@@ -1527,11 +2026,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string)
         ]
+
         /// The ARN of the skill group to delete. Required.
         public let skillGroupArn: String?
 
         public init(skillGroupArn: String? = nil) {
             self.skillGroupArn = skillGroupArn
+        }
+
+        public func validate() throws {
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1540,6 +2044,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteSkillGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -1551,6 +2056,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "EnrollmentId", required: true, type: .string), 
             AWSShapeMember(label: "UserArn", required: false, type: .string)
         ]
+
         /// The ARN of the user's enrollment in the organization. Required.
         public let enrollmentId: String
         /// The ARN of the user to delete in the organization. Required.
@@ -1561,6 +2067,12 @@ extension AlexaForBusiness {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(enrollmentId, name:"enrollmentId", max: 128)
+            try validate(enrollmentId, name:"enrollmentId", min: 0)
+            try validate(userArn, name:"userArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case enrollmentId = "EnrollmentId"
             case userArn = "UserArn"
@@ -1568,6 +2080,7 @@ extension AlexaForBusiness {
     }
 
     public struct DeleteUserResponse: AWSShape {
+
 
         public init() {
         }
@@ -1581,6 +2094,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "PrivacyPolicy", required: false, type: .string), 
             AWSShapeMember(label: "Url", required: false, type: .string)
         ]
+
         /// The name of the developer.
         public let developerName: String?
         /// The email of the developer.
@@ -1595,6 +2109,12 @@ extension AlexaForBusiness {
             self.email = email
             self.privacyPolicy = privacyPolicy
             self.url = url
+        }
+
+        public func validate() throws {
+            try validate(email, name:"email", max: 128)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "([0-9a-zA-Z]([+-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1618,6 +2138,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "SoftwareVersion", required: false, type: .string)
         ]
+
         /// The ARN of a device.
         public let deviceArn: String?
         /// The name of a device.
@@ -1652,6 +2173,17 @@ extension AlexaForBusiness {
             self.softwareVersion = softwareVersion
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(deviceName, name:"deviceName", max: 100)
+            try validate(deviceName, name:"deviceName", min: 2)
+            try validate(deviceName, name:"deviceName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(deviceSerialNumber, name:"deviceSerialNumber", pattern: "[a-zA-Z0-9]{1,200}")
+            try validate(deviceType, name:"deviceType", pattern: "[a-zA-Z0-9]{1,200}")
+            try networkProfileInfo?.validate()
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case deviceName = "DeviceName"
@@ -1681,6 +2213,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomName", required: false, type: .string), 
             AWSShapeMember(label: "SoftwareVersion", required: false, type: .string)
         ]
+
         /// The ARN of a device.
         public let deviceArn: String?
         /// The name of a device.
@@ -1721,6 +2254,23 @@ extension AlexaForBusiness {
             self.softwareVersion = softwareVersion
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(deviceName, name:"deviceName", max: 100)
+            try validate(deviceName, name:"deviceName", min: 2)
+            try validate(deviceName, name:"deviceName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(deviceSerialNumber, name:"deviceSerialNumber", pattern: "[a-zA-Z0-9]{1,200}")
+            try validate(deviceType, name:"deviceType", pattern: "[a-zA-Z0-9]{1,200}")
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(networkProfileName, name:"networkProfileName", max: 100)
+            try validate(networkProfileName, name:"networkProfileName", min: 1)
+            try validate(networkProfileName, name:"networkProfileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(roomName, name:"roomName", max: 100)
+            try validate(roomName, name:"roomName", min: 1)
+            try validate(roomName, name:"roomName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case deviceName = "DeviceName"
@@ -1743,6 +2293,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The time (in epoch) when the event occurred. 
         public let timestamp: TimeStamp?
         /// The type of device event.
@@ -1775,6 +2326,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "CertificateExpirationTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "NetworkProfileArn", required: false, type: .string)
         ]
+
         /// The ARN of the certificate associated with a device.
         public let certificateArn: String?
         /// The time (in epoch) when the certificate expires.
@@ -1786,6 +2338,11 @@ extension AlexaForBusiness {
             self.certificateArn = certificateArn
             self.certificateExpirationTime = certificateExpirationTime
             self.networkProfileArn = networkProfileArn
+        }
+
+        public func validate() throws {
+            try validate(certificateArn, name:"certificateArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1809,6 +2366,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Code", required: false, type: .enum), 
             AWSShapeMember(label: "Feature", required: false, type: .enum)
         ]
+
         /// The device status detail code.
         public let code: DeviceStatusDetailCode?
         /// The list of available features on the device.
@@ -1849,6 +2407,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "ConnectionStatus", required: false, type: .enum), 
             AWSShapeMember(label: "DeviceStatusDetails", required: false, type: .list)
         ]
+
         /// The latest available information about the connection status of a device. 
         public let connectionStatus: ConnectionStatus?
         /// One or more device status detail descriptions.
@@ -1875,6 +2434,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "AddressBookArn", required: true, type: .string), 
             AWSShapeMember(label: "ContactArn", required: true, type: .string)
         ]
+
         /// The ARN of the address from which to disassociate the contact.
         public let addressBookArn: String
         /// The ARN of the contact to disassociate from an address book.
@@ -1885,6 +2445,11 @@ extension AlexaForBusiness {
             self.contactArn = contactArn
         }
 
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressBookArn = "AddressBookArn"
             case contactArn = "ContactArn"
@@ -1892,6 +2457,7 @@ extension AlexaForBusiness {
     }
 
     public struct DisassociateContactFromAddressBookResponse: AWSShape {
+
 
         public init() {
         }
@@ -1902,11 +2468,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeviceArn", required: false, type: .string)
         ]
+
         /// The ARN of the device to disassociate from a room. Required.
         public let deviceArn: String?
 
         public init(deviceArn: String? = nil) {
             self.deviceArn = deviceArn
+        }
+
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1915,6 +2486,7 @@ extension AlexaForBusiness {
     }
 
     public struct DisassociateDeviceFromRoomResponse: AWSShape {
+
 
         public init() {
         }
@@ -1926,6 +2498,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The unique identifier of a skill. Required.
         public let skillGroupArn: String?
         /// The ARN of a skill group to associate to a skill.
@@ -1936,6 +2509,11 @@ extension AlexaForBusiness {
             self.skillId = skillId
         }
 
+        public func validate() throws {
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case skillGroupArn = "SkillGroupArn"
             case skillId = "SkillId"
@@ -1943,6 +2521,7 @@ extension AlexaForBusiness {
     }
 
     public struct DisassociateSkillFromSkillGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -1953,11 +2532,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         ///  The private skill ID you want to make unavailable for enrolled users.
         public let skillId: String
 
         public init(skillId: String) {
             self.skillId = skillId
+        }
+
+        public func validate() throws {
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1966,6 +2550,7 @@ extension AlexaForBusiness {
     }
 
     public struct DisassociateSkillFromUsersResponse: AWSShape {
+
 
         public init() {
         }
@@ -1977,6 +2562,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string)
         ]
+
         /// The ARN of the room from which the skill group is to be disassociated. Required.
         public let roomArn: String?
         /// The ARN of the skill group to disassociate from a room. Required.
@@ -1987,6 +2573,11 @@ extension AlexaForBusiness {
             self.skillGroupArn = skillGroupArn
         }
 
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case roomArn = "RoomArn"
             case skillGroupArn = "SkillGroupArn"
@@ -1994,6 +2585,7 @@ extension AlexaForBusiness {
     }
 
     public struct DisassociateSkillGroupFromRoomResponse: AWSShape {
+
 
         public init() {
         }
@@ -2044,6 +2636,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The key of a filter.
         public let key: String
         /// The values of a filter.
@@ -2052,6 +2645,16 @@ extension AlexaForBusiness {
         public init(key: String, values: [String]) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 500)
+            try validate(key, name:"key", min: 1)
+            try values.forEach {
+                try validate($0, name:"values[]", max: 500)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2064,11 +2667,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RoomArn", required: true, type: .string)
         ]
+
         /// The room that the appliances are associated with.
         public let roomArn: String
 
         public init(roomArn: String) {
             self.roomArn = roomArn
+        }
+
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2077,6 +2685,7 @@ extension AlexaForBusiness {
     }
 
     public struct ForgetSmartHomeAppliancesResponse: AWSShape {
+
 
         public init() {
         }
@@ -2091,6 +2700,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "SoftwareVersion", required: false, type: .string)
         ]
+
         /// The ARN of the gateway.
         public let arn: String?
         /// The description of the gateway.
@@ -2108,6 +2718,19 @@ extension AlexaForBusiness {
             self.gatewayGroupArn = gatewayGroupArn
             self.name = name
             self.softwareVersion = softwareVersion
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(gatewayGroupArn, name:"gatewayGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(name, name:"name", max: 253)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(softwareVersion, name:"softwareVersion", max: 50)
+            try validate(softwareVersion, name:"softwareVersion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2125,6 +2748,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The ARN of the gateway group.
         public let arn: String?
         /// The description of the gateway group.
@@ -2136,6 +2760,15 @@ extension AlexaForBusiness {
             self.arn = arn
             self.description = description
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2151,6 +2784,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The ARN of the gateway group.
         public let arn: String?
         /// The description of the gateway group.
@@ -2162,6 +2796,15 @@ extension AlexaForBusiness {
             self.arn = arn
             self.description = description
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2179,6 +2822,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "SoftwareVersion", required: false, type: .string)
         ]
+
         /// The ARN of the gateway.
         public let arn: String?
         /// The description of the gateway.
@@ -2198,6 +2842,19 @@ extension AlexaForBusiness {
             self.softwareVersion = softwareVersion
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(gatewayGroupArn, name:"gatewayGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(name, name:"name", max: 253)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(softwareVersion, name:"softwareVersion", max: 50)
+            try validate(softwareVersion, name:"softwareVersion", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case description = "Description"
@@ -2211,11 +2868,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AddressBookArn", required: true, type: .string)
         ]
+
         /// The ARN of the address book for which to request details.
         public let addressBookArn: String
 
         public init(addressBookArn: String) {
             self.addressBookArn = addressBookArn
+        }
+
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2227,11 +2889,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AddressBook", required: false, type: .structure)
         ]
+
         /// The details of the requested address book.
         public let addressBook: AddressBook?
 
         public init(addressBook: AddressBook? = nil) {
             self.addressBook = addressBook
+        }
+
+        public func validate() throws {
+            try addressBook?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2240,6 +2907,7 @@ extension AlexaForBusiness {
     }
 
     public struct GetConferencePreferenceRequest: AWSShape {
+
 
         public init() {
         }
@@ -2250,11 +2918,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Preference", required: false, type: .structure)
         ]
+
         /// The conference preference.
         public let preference: ConferencePreference?
 
         public init(preference: ConferencePreference? = nil) {
             self.preference = preference
+        }
+
+        public func validate() throws {
+            try preference?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2266,11 +2939,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConferenceProviderArn", required: true, type: .string)
         ]
+
         /// The ARN of the newly created conference provider.
         public let conferenceProviderArn: String
 
         public init(conferenceProviderArn: String) {
             self.conferenceProviderArn = conferenceProviderArn
+        }
+
+        public func validate() throws {
+            try validate(conferenceProviderArn, name:"conferenceProviderArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2282,11 +2960,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConferenceProvider", required: false, type: .structure)
         ]
+
         /// The conference provider.
         public let conferenceProvider: ConferenceProvider?
 
         public init(conferenceProvider: ConferenceProvider? = nil) {
             self.conferenceProvider = conferenceProvider
+        }
+
+        public func validate() throws {
+            try conferenceProvider?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2298,11 +2981,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContactArn", required: true, type: .string)
         ]
+
         /// The ARN of the contact for which to request details.
         public let contactArn: String
 
         public init(contactArn: String) {
             self.contactArn = contactArn
+        }
+
+        public func validate() throws {
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2314,11 +3002,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Contact", required: false, type: .structure)
         ]
+
         /// The details of the requested contact.
         public let contact: Contact?
 
         public init(contact: Contact? = nil) {
             self.contact = contact
+        }
+
+        public func validate() throws {
+            try contact?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2330,11 +3023,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeviceArn", required: false, type: .string)
         ]
+
         /// The ARN of the device for which to request details. Required.
         public let deviceArn: String?
 
         public init(deviceArn: String? = nil) {
             self.deviceArn = deviceArn
+        }
+
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2346,11 +3044,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Device", required: false, type: .structure)
         ]
+
         /// The details of the device requested. Required.
         public let device: Device?
 
         public init(device: Device? = nil) {
             self.device = device
+        }
+
+        public func validate() throws {
+            try device?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2362,11 +3065,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GatewayGroupArn", required: true, type: .string)
         ]
+
         /// The ARN of the gateway group to get.
         public let gatewayGroupArn: String
 
         public init(gatewayGroupArn: String) {
             self.gatewayGroupArn = gatewayGroupArn
+        }
+
+        public func validate() throws {
+            try validate(gatewayGroupArn, name:"gatewayGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2378,10 +3086,15 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GatewayGroup", required: false, type: .structure)
         ]
+
         public let gatewayGroup: GatewayGroup?
 
         public init(gatewayGroup: GatewayGroup? = nil) {
             self.gatewayGroup = gatewayGroup
+        }
+
+        public func validate() throws {
+            try gatewayGroup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2393,11 +3106,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GatewayArn", required: true, type: .string)
         ]
+
         /// The ARN of the gateway to get.
         public let gatewayArn: String
 
         public init(gatewayArn: String) {
             self.gatewayArn = gatewayArn
+        }
+
+        public func validate() throws {
+            try validate(gatewayArn, name:"gatewayArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2409,11 +3127,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Gateway", required: false, type: .structure)
         ]
+
         /// The details of the gateway.
         public let gateway: Gateway?
 
         public init(gateway: Gateway? = nil) {
             self.gateway = gateway
+        }
+
+        public func validate() throws {
+            try gateway?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2422,6 +3145,7 @@ extension AlexaForBusiness {
     }
 
     public struct GetInvitationConfigurationRequest: AWSShape {
+
 
         public init() {
         }
@@ -2434,6 +3158,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "OrganizationName", required: false, type: .string), 
             AWSShapeMember(label: "PrivateSkillIds", required: false, type: .list)
         ]
+
         /// The email ID of the organization or individual contact that the enrolled user can use. 
         public let contactEmail: String?
         /// The name of the organization sending the enrollment invite to a user.
@@ -2447,6 +3172,20 @@ extension AlexaForBusiness {
             self.privateSkillIds = privateSkillIds
         }
 
+        public func validate() throws {
+            try validate(contactEmail, name:"contactEmail", max: 128)
+            try validate(contactEmail, name:"contactEmail", min: 1)
+            try validate(contactEmail, name:"contactEmail", pattern: "([0-9a-zA-Z]([+-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})")
+            try validate(organizationName, name:"organizationName", max: 100)
+            try validate(organizationName, name:"organizationName", min: 1)
+            try validate(organizationName, name:"organizationName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try privateSkillIds?.forEach {
+                try validate($0, name:"privateSkillIds[]", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+            }
+            try validate(privateSkillIds, name:"privateSkillIds", max: 3)
+            try validate(privateSkillIds, name:"privateSkillIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case contactEmail = "ContactEmail"
             case organizationName = "OrganizationName"
@@ -2458,11 +3197,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NetworkProfileArn", required: true, type: .string)
         ]
+
         /// The ARN of the network profile associated with a device.
         public let networkProfileArn: String
 
         public init(networkProfileArn: String) {
             self.networkProfileArn = networkProfileArn
+        }
+
+        public func validate() throws {
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2474,11 +3218,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NetworkProfile", required: false, type: .structure)
         ]
+
         /// The network profile associated with a device.
         public let networkProfile: NetworkProfile?
 
         public init(networkProfile: NetworkProfile? = nil) {
             self.networkProfile = networkProfile
+        }
+
+        public func validate() throws {
+            try networkProfile?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2490,11 +3239,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ProfileArn", required: false, type: .string)
         ]
+
         /// The ARN of the room profile for which to request details. Required.
         public let profileArn: String?
 
         public init(profileArn: String? = nil) {
             self.profileArn = profileArn
+        }
+
+        public func validate() throws {
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2506,11 +3260,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Profile", required: false, type: .structure)
         ]
+
         /// The details of the room profile requested. Required.
         public let profile: Profile?
 
         public init(profile: Profile? = nil) {
             self.profile = profile
+        }
+
+        public func validate() throws {
+            try profile?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2522,11 +3281,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RoomArn", required: false, type: .string)
         ]
+
         /// The ARN of the room for which to request details. Required.
         public let roomArn: String?
 
         public init(roomArn: String? = nil) {
             self.roomArn = roomArn
+        }
+
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2538,11 +3302,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Room", required: false, type: .structure)
         ]
+
         /// The details of the room requested.
         public let room: Room?
 
         public init(room: Room? = nil) {
             self.room = room
+        }
+
+        public func validate() throws {
+            try room?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2556,6 +3325,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The room skill parameter key for which to get details. Required.
         public let parameterKey: String
         /// The ARN of the room from which to get the room skill parameter details. 
@@ -2569,6 +3339,13 @@ extension AlexaForBusiness {
             self.skillId = skillId
         }
 
+        public func validate() throws {
+            try validate(parameterKey, name:"parameterKey", max: 256)
+            try validate(parameterKey, name:"parameterKey", min: 1)
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case parameterKey = "ParameterKey"
             case roomArn = "RoomArn"
@@ -2580,11 +3357,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RoomSkillParameter", required: false, type: .structure)
         ]
+
         /// The details of the room skill parameter requested. Required.
         public let roomSkillParameter: RoomSkillParameter?
 
         public init(roomSkillParameter: RoomSkillParameter? = nil) {
             self.roomSkillParameter = roomSkillParameter
+        }
+
+        public func validate() throws {
+            try roomSkillParameter?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2596,11 +3378,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string)
         ]
+
         /// The ARN of the skill group for which to get details. Required.
         public let skillGroupArn: String?
 
         public init(skillGroupArn: String? = nil) {
             self.skillGroupArn = skillGroupArn
+        }
+
+        public func validate() throws {
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2612,11 +3399,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillGroup", required: false, type: .structure)
         ]
+
         /// The details of the skill group requested. Required.
         public let skillGroup: SkillGroup?
 
         public init(skillGroup: SkillGroup? = nil) {
             self.skillGroup = skillGroup
+        }
+
+        public func validate() throws {
+            try skillGroup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2629,6 +3421,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "CommsProtocol", required: true, type: .enum), 
             AWSShapeMember(label: "Endpoint", required: true, type: .string)
         ]
+
         /// The protocol, including SIP, SIPS, and H323.
         public let commsProtocol: CommsProtocol
         /// The IP address.
@@ -2637,6 +3430,11 @@ extension AlexaForBusiness {
         public init(commsProtocol: CommsProtocol, endpoint: String) {
             self.commsProtocol = commsProtocol
             self.endpoint = endpoint
+        }
+
+        public func validate() throws {
+            try validate(endpoint, name:"endpoint", max: 256)
+            try validate(endpoint, name:"endpoint", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2650,6 +3448,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of schedules listed in the call.
         public let maxResults: Int32?
         /// The token used to list the remaining schedules from the previous API call.
@@ -2658,6 +3457,13 @@ extension AlexaForBusiness {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2671,6 +3477,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "BusinessReportSchedules", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The schedule of the reports.
         public let businessReportSchedules: [BusinessReportSchedule]?
         /// The token used to list the remaining schedules from the previous API call.
@@ -2679,6 +3486,14 @@ extension AlexaForBusiness {
         public init(businessReportSchedules: [BusinessReportSchedule]? = nil, nextToken: String? = nil) {
             self.businessReportSchedules = businessReportSchedules
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try businessReportSchedules?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2692,6 +3507,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of conference providers to be returned, per paginated calls.
         public let maxResults: Int32?
         /// The tokens used for pagination.
@@ -2700,6 +3516,13 @@ extension AlexaForBusiness {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2713,6 +3536,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "ConferenceProviders", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The conference providers.
         public let conferenceProviders: [ConferenceProvider]?
         /// The tokens used for pagination.
@@ -2721,6 +3545,14 @@ extension AlexaForBusiness {
         public init(conferenceProviders: [ConferenceProvider]? = nil, nextToken: String? = nil) {
             self.conferenceProviders = conferenceProviders
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try conferenceProviders?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2736,6 +3568,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ARN of a device.
         public let deviceArn: String
         /// The event type to filter device events. If EventType isn't specified, this returns a list of all device events in reverse chronological order. If EventType is specified, this returns a list of device events for that EventType in reverse chronological order. 
@@ -2752,6 +3585,14 @@ extension AlexaForBusiness {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case eventType = "EventType"
@@ -2765,6 +3606,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "DeviceEvents", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The device events requested for the device ARN.
         public let deviceEvents: [DeviceEvent]?
         /// The token returned to indicate that there is more data available.
@@ -2773,6 +3615,11 @@ extension AlexaForBusiness {
         public init(deviceEvents: [DeviceEvent]? = nil, nextToken: String? = nil) {
             self.deviceEvents = deviceEvents
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2786,6 +3633,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of gateway group summaries to return. The default is 50.
         public let maxResults: Int32?
         /// The token used to paginate though multiple pages of gateway group summaries.
@@ -2794,6 +3642,13 @@ extension AlexaForBusiness {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2807,6 +3662,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "GatewayGroups", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The gateway groups in the list.
         public let gatewayGroups: [GatewayGroupSummary]?
         /// The token used to paginate though multiple pages of gateway group summaries.
@@ -2815,6 +3671,14 @@ extension AlexaForBusiness {
         public init(gatewayGroups: [GatewayGroupSummary]? = nil, nextToken: String? = nil) {
             self.gatewayGroups = gatewayGroups
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try gatewayGroups?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2829,6 +3693,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The gateway group ARN for which to list gateways.
         public let gatewayGroupArn: String?
         /// The maximum number of gateway summaries to return. The default is 50.
@@ -2840,6 +3705,14 @@ extension AlexaForBusiness {
             self.gatewayGroupArn = gatewayGroupArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(gatewayGroupArn, name:"gatewayGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2854,6 +3727,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Gateways", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The gateways in the list.
         public let gateways: [GatewaySummary]?
         /// The token used to paginate though multiple pages of gateway summaries.
@@ -2862,6 +3736,14 @@ extension AlexaForBusiness {
         public init(gateways: [GatewaySummary]? = nil, nextToken: String? = nil) {
             self.gateways = gateways
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try gateways?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2878,6 +3760,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillType", required: false, type: .enum)
         ]
+
         /// Whether the skill is enabled under the user's account, or if it requires linking to be used.
         public let enablementType: EnablementTypeFilter?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved. Required.
@@ -2897,6 +3780,14 @@ extension AlexaForBusiness {
             self.skillType = skillType
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 10)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case enablementType = "EnablementType"
             case maxResults = "MaxResults"
@@ -2911,6 +3802,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SkillSummaries", required: false, type: .list)
         ]
+
         /// The token returned to indicate that there is more data available.
         public let nextToken: String?
         /// The list of enabled skills requested. Required.
@@ -2919,6 +3811,14 @@ extension AlexaForBusiness {
         public init(nextToken: String? = nil, skillSummaries: [SkillSummary]? = nil) {
             self.nextToken = nextToken
             self.skillSummaries = skillSummaries
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try skillSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2932,6 +3832,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of categories returned, per paginated calls.
         public let maxResults: Int32?
         /// The tokens used for pagination.
@@ -2940,6 +3841,13 @@ extension AlexaForBusiness {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2953,6 +3861,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "CategoryList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of categories.
         public let categoryList: [Category]?
         /// The tokens used for pagination.
@@ -2961,6 +3870,14 @@ extension AlexaForBusiness {
         public init(categoryList: [Category]? = nil, nextToken: String? = nil) {
             self.categoryList = categoryList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try categoryList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2975,6 +3892,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The category ID for which the skills are being retrieved from the skill store.
         public let categoryId: Int64
         /// The maximum number of skills returned per paginated calls.
@@ -2986,6 +3904,14 @@ extension AlexaForBusiness {
             self.categoryId = categoryId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(categoryId, name:"categoryId", min: 1)
+            try validate(maxResults, name:"maxResults", max: 10)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3000,6 +3926,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SkillsStoreSkills", required: false, type: .list)
         ]
+
         /// The tokens used for pagination.
         public let nextToken: String?
         /// The skill store skills.
@@ -3008,6 +3935,14 @@ extension AlexaForBusiness {
         public init(nextToken: String? = nil, skillsStoreSkills: [SkillsStoreSkill]? = nil) {
             self.nextToken = nextToken
             self.skillsStoreSkills = skillsStoreSkills
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try skillsStoreSkills?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3022,6 +3957,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "RoomArn", required: true, type: .string)
         ]
+
         /// The maximum number of appliances to be returned, per paginated calls.
         public let maxResults: Int32?
         /// The tokens used for pagination.
@@ -3033,6 +3969,14 @@ extension AlexaForBusiness {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.roomArn = roomArn
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3047,6 +3991,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SmartHomeAppliances", required: false, type: .list)
         ]
+
         /// The tokens used for pagination.
         public let nextToken: String?
         /// The smart home appliances.
@@ -3055,6 +4000,11 @@ extension AlexaForBusiness {
         public init(nextToken: String? = nil, smartHomeAppliances: [SmartHomeAppliance]? = nil) {
             self.nextToken = nextToken
             self.smartHomeAppliances = smartHomeAppliances
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3069,6 +4019,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ARN of the specified resource for which to list tags.
         public let arn: String
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved.
@@ -3080,6 +4031,14 @@ extension AlexaForBusiness {
             self.arn = arn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3094,6 +4053,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The token returned to indicate that there is more data available.
         public let nextToken: String?
         /// The tags requested for the specified resource.
@@ -3102,6 +4062,14 @@ extension AlexaForBusiness {
         public init(nextToken: String? = nil, tags: [Tag]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3119,6 +4087,7 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RequirePin", required: true, type: .enum)
         ]
+
         /// The values that indicate whether the pin is always required.
         public let requirePin: RequirePin
 
@@ -3149,6 +4118,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Ssid", required: false, type: .string), 
             AWSShapeMember(label: "TrustAnchors", required: false, type: .list)
         ]
+
         /// The ARN of the Private Certificate Authority (PCA) created in AWS Certificate Manager (ACM). This is used to issue certificates to the devices. 
         public let certificateAuthorityArn: String?
         /// The current password of the Wi-Fi network.
@@ -3183,6 +4153,31 @@ extension AlexaForBusiness {
             self.trustAnchors = trustAnchors
         }
 
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(currentPassword, name:"currentPassword", max: 128)
+            try validate(currentPassword, name:"currentPassword", min: 5)
+            try validate(currentPassword, name:"currentPassword", pattern: "[\\x00-\\x7F]*")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(networkProfileName, name:"networkProfileName", max: 100)
+            try validate(networkProfileName, name:"networkProfileName", min: 1)
+            try validate(networkProfileName, name:"networkProfileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(nextPassword, name:"nextPassword", max: 128)
+            try validate(nextPassword, name:"nextPassword", min: 0)
+            try validate(nextPassword, name:"nextPassword", pattern: "(^$)|([\\x00-\\x7F]{5,})")
+            try validate(ssid, name:"ssid", max: 32)
+            try validate(ssid, name:"ssid", min: 1)
+            try validate(ssid, name:"ssid", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try trustAnchors?.forEach {
+                try validate($0, name:"trustAnchors[]", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            }
+            try validate(trustAnchors, name:"trustAnchors", max: 5)
+            try validate(trustAnchors, name:"trustAnchors", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificateAuthorityArn = "CertificateAuthorityArn"
             case currentPassword = "CurrentPassword"
@@ -3207,6 +4202,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SecurityType", required: false, type: .enum), 
             AWSShapeMember(label: "Ssid", required: false, type: .string)
         ]
+
         /// The ARN of the Private Certificate Authority (PCA) created in AWS Certificate Manager (ACM). This is used to issue certificates to the devices.
         public let certificateAuthorityArn: String?
         /// Detailed information about a device's network profile.
@@ -3230,6 +4226,20 @@ extension AlexaForBusiness {
             self.networkProfileName = networkProfileName
             self.securityType = securityType
             self.ssid = ssid
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(networkProfileName, name:"networkProfileName", max: 100)
+            try validate(networkProfileName, name:"networkProfileName", min: 1)
+            try validate(networkProfileName, name:"networkProfileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(ssid, name:"ssid", max: 32)
+            try validate(ssid, name:"ssid", min: 1)
+            try validate(ssid, name:"ssid", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3259,6 +4269,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "OneClickPinDelay", required: true, type: .string), 
             AWSShapeMember(label: "PhoneNumber", required: true, type: .string)
         ]
+
         /// The zip code.
         public let countryCode: String
         /// The delay duration before Alexa enters the conference ID with dual-tone multi-frequency (DTMF). Each number on the dial pad corresponds to a DTMF tone, which is how we send data over the telephone network.
@@ -3275,6 +4286,15 @@ extension AlexaForBusiness {
             self.phoneNumber = phoneNumber
         }
 
+        public func validate() throws {
+            try validate(countryCode, name:"countryCode", pattern: "\\d{1,3}")
+            try validate(oneClickIdDelay, name:"oneClickIdDelay", max: 2)
+            try validate(oneClickIdDelay, name:"oneClickIdDelay", min: 1)
+            try validate(oneClickPinDelay, name:"oneClickPinDelay", max: 2)
+            try validate(oneClickPinDelay, name:"oneClickPinDelay", min: 1)
+            try validate(phoneNumber, name:"phoneNumber", pattern: "\\d{10}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case countryCode = "CountryCode"
             case oneClickIdDelay = "OneClickIdDelay"
@@ -3288,6 +4308,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Number", required: true, type: .string), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         /// The raw value of the phone number.
         public let number: String
         /// The type of the phone number.
@@ -3296,6 +4317,12 @@ extension AlexaForBusiness {
         public init(number: String, type: PhoneNumberType) {
             self.number = number
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(number, name:"number", max: 50)
+            try validate(number, name:"number", min: 0)
+            try validate(number, name:"number", pattern: "^[\\+0-9\\#\\,\\(][\\+0-9\\-\\.\\/\\(\\)\\,\\#\\s]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3326,6 +4353,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Timezone", required: false, type: .string), 
             AWSShapeMember(label: "WakeWord", required: false, type: .enum)
         ]
+
         /// The address of a room profile.
         public let address: String?
         /// The ARN of the address book.
@@ -3366,6 +4394,18 @@ extension AlexaForBusiness {
             self.wakeWord = wakeWord
         }
 
+        public func validate() throws {
+            try validate(address, name:"address", max: 500)
+            try validate(address, name:"address", min: 1)
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(profileName, name:"profileName", max: 100)
+            try validate(profileName, name:"profileName", min: 1)
+            try validate(profileName, name:"profileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(timezone, name:"timezone", max: 100)
+            try validate(timezone, name:"timezone", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case address = "Address"
             case addressBookArn = "AddressBookArn"
@@ -3393,6 +4433,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Timezone", required: false, type: .string), 
             AWSShapeMember(label: "WakeWord", required: false, type: .enum)
         ]
+
         /// The address of a room profile.
         public let address: String?
         /// The distance unit of a room profile.
@@ -3421,6 +4462,17 @@ extension AlexaForBusiness {
             self.wakeWord = wakeWord
         }
 
+        public func validate() throws {
+            try validate(address, name:"address", max: 500)
+            try validate(address, name:"address", min: 1)
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(profileName, name:"profileName", max: 100)
+            try validate(profileName, name:"profileName", min: 1)
+            try validate(profileName, name:"profileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(timezone, name:"timezone", max: 100)
+            try validate(timezone, name:"timezone", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case address = "Address"
             case distanceUnit = "DistanceUnit"
@@ -3437,11 +4489,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConferencePreference", required: true, type: .structure)
         ]
+
         /// The conference preference of a specific conference provider.
         public let conferencePreference: ConferencePreference
 
         public init(conferencePreference: ConferencePreference) {
             self.conferencePreference = conferencePreference
+        }
+
+        public func validate() throws {
+            try conferencePreference.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3450,6 +4507,7 @@ extension AlexaForBusiness {
     }
 
     public struct PutConferencePreferenceResponse: AWSShape {
+
 
         public init() {
         }
@@ -3462,6 +4520,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "OrganizationName", required: true, type: .string), 
             AWSShapeMember(label: "PrivateSkillIds", required: false, type: .list)
         ]
+
         /// The email ID of the organization or individual contact that the enrolled user can use. 
         public let contactEmail: String?
         /// The name of the organization sending the enrollment invite to a user.
@@ -3475,6 +4534,20 @@ extension AlexaForBusiness {
             self.privateSkillIds = privateSkillIds
         }
 
+        public func validate() throws {
+            try validate(contactEmail, name:"contactEmail", max: 128)
+            try validate(contactEmail, name:"contactEmail", min: 1)
+            try validate(contactEmail, name:"contactEmail", pattern: "([0-9a-zA-Z]([+-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})")
+            try validate(organizationName, name:"organizationName", max: 100)
+            try validate(organizationName, name:"organizationName", min: 1)
+            try validate(organizationName, name:"organizationName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try privateSkillIds?.forEach {
+                try validate($0, name:"privateSkillIds[]", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+            }
+            try validate(privateSkillIds, name:"privateSkillIds", max: 3)
+            try validate(privateSkillIds, name:"privateSkillIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case contactEmail = "ContactEmail"
             case organizationName = "OrganizationName"
@@ -3483,6 +4556,7 @@ extension AlexaForBusiness {
     }
 
     public struct PutInvitationConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -3495,6 +4569,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomSkillParameter", required: true, type: .structure), 
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The ARN of the room associated with the room skill parameter. Required.
         public let roomArn: String?
         /// The updated room skill parameter. Required.
@@ -3508,6 +4583,12 @@ extension AlexaForBusiness {
             self.skillId = skillId
         }
 
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try roomSkillParameter.validate()
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case roomArn = "RoomArn"
             case roomSkillParameter = "RoomSkillParameter"
@@ -3516,6 +4597,7 @@ extension AlexaForBusiness {
     }
 
     public struct PutRoomSkillParameterResponse: AWSShape {
+
 
         public init() {
         }
@@ -3528,6 +4610,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The authorization result specific to OAUTH code grant output. "Code” must be populated in the AuthorizationResult map to establish the authorization.
         public let authorizationResult: [String: String]
         /// The room that the skill is authorized for.
@@ -3541,6 +4624,11 @@ extension AlexaForBusiness {
             self.skillId = skillId
         }
 
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authorizationResult = "AuthorizationResult"
             case roomArn = "RoomArn"
@@ -3549,6 +4637,7 @@ extension AlexaForBusiness {
     }
 
     public struct PutSkillAuthorizationResponse: AWSShape {
+
 
         public init() {
         }
@@ -3563,6 +4652,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "ProductId", required: true, type: .string), 
             AWSShapeMember(label: "UserCode", required: true, type: .string)
         ]
+
         /// The device type ID for your AVS device generated by Amazon when the OEM creates a new product on Amazon's Developer Console.
         public let amazonId: String
         /// The client ID of the OEM used for code-based linking authorization on an AVS device.
@@ -3582,6 +4672,15 @@ extension AlexaForBusiness {
             self.userCode = userCode
         }
 
+        public func validate() throws {
+            try validate(amazonId, name:"amazonId", pattern: "[a-zA-Z0-9]{1,18}")
+            try validate(clientId, name:"clientId", pattern: "^\\S+{1,256}$")
+            try validate(deviceSerialNumber, name:"deviceSerialNumber", pattern: "^[a-zA-Z0-9]{1,50}$")
+            try validate(productId, name:"productId", pattern: "^[a-zA-Z0-9_]{1,256}$")
+            try validate(userCode, name:"userCode", max: 128)
+            try validate(userCode, name:"userCode", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case amazonId = "AmazonId"
             case clientId = "ClientId"
@@ -3595,11 +4694,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeviceArn", required: false, type: .string)
         ]
+
         /// The ARN of the device.
         public let deviceArn: String?
 
         public init(deviceArn: String? = nil) {
             self.deviceArn = deviceArn
+        }
+
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3611,11 +4715,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SkillId", required: true, type: .string)
         ]
+
         /// The unique identifier of the skill.
         public let skillId: String
 
         public init(skillId: String) {
             self.skillId = skillId
+        }
+
+        public func validate() throws {
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3624,6 +4733,7 @@ extension AlexaForBusiness {
     }
 
     public struct RejectSkillResponse: AWSShape {
+
 
         public init() {
         }
@@ -3642,6 +4752,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillId", required: true, type: .string), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The ARN of the skill that was requested. Required.
         public let skillId: String
         /// The ARN of the user. Required.
@@ -3650,6 +4761,11 @@ extension AlexaForBusiness {
         public init(skillId: String, userId: String) {
             self.skillId = skillId
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+            try validate(userId, name:"userId", pattern: "amzn1\\.[A-Za-z0-9+-\\/=.]{1,300}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3664,6 +4780,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomName", required: false, type: .string), 
             AWSShapeMember(label: "RoomSkillParameters", required: false, type: .list)
         ]
+
         /// The ARN of the room from which the skill request was invoked.
         public let roomArn: String?
         /// The name of the room from which the skill request was invoked.
@@ -3675,6 +4792,16 @@ extension AlexaForBusiness {
             self.roomArn = roomArn
             self.roomName = roomName
             self.roomSkillParameters = roomSkillParameters
+        }
+
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(roomName, name:"roomName", max: 100)
+            try validate(roomName, name:"roomName", min: 1)
+            try validate(roomName, name:"roomName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try roomSkillParameters?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3689,6 +4816,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "EnrollmentId", required: false, type: .string), 
             AWSShapeMember(label: "UserArn", required: false, type: .string)
         ]
+
         /// The ARN of the enrollment invitation to revoke. Required.
         public let enrollmentId: String?
         /// The ARN of the user for whom to revoke an enrollment invitation. Required.
@@ -3699,6 +4827,12 @@ extension AlexaForBusiness {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(enrollmentId, name:"enrollmentId", max: 128)
+            try validate(enrollmentId, name:"enrollmentId", min: 0)
+            try validate(userArn, name:"userArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case enrollmentId = "EnrollmentId"
             case userArn = "UserArn"
@@ -3706,6 +4840,7 @@ extension AlexaForBusiness {
     }
 
     public struct RevokeInvitationResponse: AWSShape {
+
 
         public init() {
         }
@@ -3720,6 +4855,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "RoomName", required: false, type: .string)
         ]
+
         /// The description of a room.
         public let description: String?
         /// The profile ARN of a room.
@@ -3737,6 +4873,19 @@ extension AlexaForBusiness {
             self.providerCalendarId = providerCalendarId
             self.roomArn = roomArn
             self.roomName = roomName
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(providerCalendarId, name:"providerCalendarId", max: 100)
+            try validate(providerCalendarId, name:"providerCalendarId", min: 0)
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(roomName, name:"roomName", max: 100)
+            try validate(roomName, name:"roomName", min: 1)
+            try validate(roomName, name:"roomName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3757,6 +4906,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "RoomName", required: false, type: .string)
         ]
+
         /// The description of a room.
         public let description: String?
         /// The profile ARN of a room.
@@ -3779,6 +4929,22 @@ extension AlexaForBusiness {
             self.roomName = roomName
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(profileName, name:"profileName", max: 100)
+            try validate(profileName, name:"profileName", min: 1)
+            try validate(profileName, name:"profileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(providerCalendarId, name:"providerCalendarId", max: 100)
+            try validate(providerCalendarId, name:"providerCalendarId", min: 0)
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(roomName, name:"roomName", max: 100)
+            try validate(roomName, name:"roomName", min: 1)
+            try validate(roomName, name:"roomName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case profileArn = "ProfileArn"
@@ -3794,6 +4960,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "ParameterKey", required: true, type: .string), 
             AWSShapeMember(label: "ParameterValue", required: true, type: .string)
         ]
+
         /// The parameter key of a room skill parameter. ParameterKey is an enumerated type that only takes “DEFAULT” or “SCOPE” as valid values.
         public let parameterKey: String
         /// The parameter value of a room skill parameter.
@@ -3802,6 +4969,13 @@ extension AlexaForBusiness {
         public init(parameterKey: String, parameterValue: String) {
             self.parameterKey = parameterKey
             self.parameterValue = parameterValue
+        }
+
+        public func validate() throws {
+            try validate(parameterKey, name:"parameterKey", max: 256)
+            try validate(parameterKey, name:"parameterKey", min: 1)
+            try validate(parameterValue, name:"parameterValue", max: 512)
+            try validate(parameterValue, name:"parameterValue", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3817,6 +4991,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use to list a specified set of address books. The supported filter key is AddressBookName.
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved.
@@ -3833,6 +5008,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3847,6 +5037,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// The address books that meet the specified set of filter criteria, in sort order.
         public let addressBooks: [AddressBookData]?
         /// The token returned to indicate that there is more data available.
@@ -3858,6 +5049,14 @@ extension AlexaForBusiness {
             self.addressBooks = addressBooks
             self.nextToken = nextToken
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try addressBooks?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3874,6 +5073,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use to list a specified set of address books. The supported filter keys are DisplayName, FirstName, LastName, and AddressBookArns.
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved.
@@ -3890,6 +5090,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3904,6 +5119,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// The contacts that meet the specified set of filter criteria, in sort order.
         public let contacts: [ContactData]?
         /// The token returned to indicate that there is more data available.
@@ -3915,6 +5131,14 @@ extension AlexaForBusiness {
             self.contacts = contacts
             self.nextToken = nextToken
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try contacts?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3931,6 +5155,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use to list a specified set of devices. Supported filter keys are DeviceName, DeviceStatus, DeviceStatusDetailCode, RoomName, DeviceType, DeviceSerialNumber, UnassociatedOnly, ConnectionStatus (ONLINE and OFFLINE), NetworkProfileName, NetworkProfileArn, Feature, and FailureCode.
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved.
@@ -3947,6 +5172,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3961,6 +5201,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// The devices that meet the specified set of filter criteria, in sort order.
         public let devices: [DeviceData]?
         /// The token returned to indicate that there is more data available.
@@ -3972,6 +5213,14 @@ extension AlexaForBusiness {
             self.devices = devices
             self.nextToken = nextToken
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try devices?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3988,6 +5237,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use to list a specified set of network profiles. Valid filters are NetworkProfileName, Ssid, and SecurityType.
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved. 
@@ -4004,6 +5254,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -4018,6 +5283,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// The network profiles that meet the specified set of filter criteria, in sort order. It is a list of NetworkProfileData objects. 
         public let networkProfiles: [NetworkProfileData]?
         /// An optional token returned from a prior request. Use this token for pagination of results from this action. If this parameter is specified, the response includes only results beyond the token, up to the value specified by MaxResults.
@@ -4029,6 +5295,14 @@ extension AlexaForBusiness {
             self.networkProfiles = networkProfiles
             self.nextToken = nextToken
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try networkProfiles?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4045,6 +5319,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use to list a specified set of room profiles. Supported filter keys are ProfileName and Address. Required. 
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved.
@@ -4061,6 +5336,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -4075,6 +5365,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Profiles", required: false, type: .list), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// The token returned to indicate that there is more data available.
         public let nextToken: String?
         /// The profiles that meet the specified set of filter criteria, in sort order.
@@ -4086,6 +5377,14 @@ extension AlexaForBusiness {
             self.nextToken = nextToken
             self.profiles = profiles
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try profiles?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4102,6 +5401,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use to list a specified set of rooms. The supported filter keys are RoomName and ProfileName.
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved. 
@@ -4118,6 +5418,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -4132,6 +5447,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Rooms", required: false, type: .list), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// The token returned to indicate that there is more data available.
         public let nextToken: String?
         /// The rooms that meet the specified set of filter criteria, in sort order.
@@ -4143,6 +5459,14 @@ extension AlexaForBusiness {
             self.nextToken = nextToken
             self.rooms = rooms
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try rooms?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4159,6 +5483,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use to list a specified set of skill groups. The supported filter key is SkillGroupName. 
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved. 
@@ -4175,6 +5500,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -4189,6 +5529,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillGroups", required: false, type: .list), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// The token returned to indicate that there is more data available.
         public let nextToken: String?
         /// The skill groups that meet the filter criteria, in sort order.
@@ -4200,6 +5541,14 @@ extension AlexaForBusiness {
             self.nextToken = nextToken
             self.skillGroups = skillGroups
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try skillGroups?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4216,6 +5565,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", required: false, type: .list)
         ]
+
         /// The filters to use for listing a specific set of users. Required. Supported filter keys are UserId, FirstName, LastName, Email, and EnrollmentStatus.
         public let filters: [Filter]?
         /// The maximum number of results to include in the response. If more results exist than the specified MaxResults value, a token is included in the response so that the remaining results can be retrieved. Required.
@@ -4232,6 +5582,21 @@ extension AlexaForBusiness {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 25)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sortCriteria?.forEach {
+                try $0.validate()
+            }
+            try validate(sortCriteria, name:"sortCriteria", max: 25)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -4246,6 +5611,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "TotalCount", required: false, type: .integer), 
             AWSShapeMember(label: "Users", required: false, type: .list)
         ]
+
         /// The token returned to indicate that there is more data available.
         public let nextToken: String?
         /// The total number of users returned.
@@ -4257,6 +5623,14 @@ extension AlexaForBusiness {
             self.nextToken = nextToken
             self.totalCount = totalCount
             self.users = users
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1100)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try users?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4273,6 +5647,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomFilters", required: true, type: .list), 
             AWSShapeMember(label: "TimeToLiveInSeconds", required: false, type: .integer)
         ]
+
         /// The unique, user-specified identifier for the request that ensures idempotency.
         public let clientRequestToken: String
         /// The announcement content. This can contain only one of the three possible announcement types (text, SSML or audio).
@@ -4282,11 +5657,24 @@ extension AlexaForBusiness {
         /// The time to live for an announcement. Default is 300. If delivery doesn't occur within this time, the announcement is not delivered.
         public let timeToLiveInSeconds: Int32?
 
-        public init(clientRequestToken: String, content: Content, roomFilters: [Filter], timeToLiveInSeconds: Int32? = nil) {
+        public init(clientRequestToken: String = SendAnnouncementRequest.idempotencyToken(), content: Content, roomFilters: [Filter], timeToLiveInSeconds: Int32? = nil) {
             self.clientRequestToken = clientRequestToken
             self.content = content
             self.roomFilters = roomFilters
             self.timeToLiveInSeconds = timeToLiveInSeconds
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 150)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 10)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][a-zA-Z0-9_-]*")
+            try content.validate()
+            try roomFilters.forEach {
+                try $0.validate()
+            }
+            try validate(roomFilters, name:"roomFilters", max: 25)
+            try validate(timeToLiveInSeconds, name:"timeToLiveInSeconds", max: 3600)
+            try validate(timeToLiveInSeconds, name:"timeToLiveInSeconds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4301,11 +5689,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AnnouncementArn", required: false, type: .string)
         ]
+
         /// The identifier of the announcement.
         public let announcementArn: String?
 
         public init(announcementArn: String? = nil) {
             self.announcementArn = announcementArn
+        }
+
+        public func validate() throws {
+            try validate(announcementArn, name:"announcementArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4317,11 +5710,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserArn", required: false, type: .string)
         ]
+
         /// The ARN of the user to whom to send an invitation. Required.
         public let userArn: String?
 
         public init(userArn: String? = nil) {
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(userArn, name:"userArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4330,6 +5728,7 @@ extension AlexaForBusiness {
     }
 
     public struct SendInvitationResponse: AWSShape {
+
 
         public init() {
         }
@@ -4341,6 +5740,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Type", required: true, type: .enum), 
             AWSShapeMember(label: "Uri", required: true, type: .string)
         ]
+
         /// The type of the SIP address.
         public let `type`: SipType
         /// The URI for the SIP address.
@@ -4349,6 +5749,12 @@ extension AlexaForBusiness {
         public init(type: SipType, uri: String) {
             self.`type` = `type`
             self.uri = uri
+        }
+
+        public func validate() throws {
+            try validate(uri, name:"uri", max: 256)
+            try validate(uri, name:"uri", min: 1)
+            try validate(uri, name:"uri", pattern: "^sip[s]?:([^@:]+)\\@([^@]+)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4375,6 +5781,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Reviews", required: false, type: .map), 
             AWSShapeMember(label: "SkillTypes", required: false, type: .list)
         ]
+
         /// The details about what the skill supports organized as bullet points.
         public let bulletPoints: [String]?
         /// The details about the developer that published the skill.
@@ -4409,6 +5816,10 @@ extension AlexaForBusiness {
             self.skillTypes = skillTypes
         }
 
+        public func validate() throws {
+            try developerInfo?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bulletPoints = "BulletPoints"
             case developerInfo = "DeveloperInfo"
@@ -4429,6 +5840,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillGroupName", required: false, type: .string)
         ]
+
         /// The description of a skill group.
         public let description: String?
         /// The ARN of a skill group.
@@ -4440,6 +5852,16 @@ extension AlexaForBusiness {
             self.description = description
             self.skillGroupArn = skillGroupArn
             self.skillGroupName = skillGroupName
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillGroupName, name:"skillGroupName", max: 100)
+            try validate(skillGroupName, name:"skillGroupName", min: 1)
+            try validate(skillGroupName, name:"skillGroupName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4455,6 +5877,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillGroupName", required: false, type: .string)
         ]
+
         /// The description of a skill group.
         public let description: String?
         /// The skill group ARN of a skill group.
@@ -4466,6 +5889,16 @@ extension AlexaForBusiness {
             self.description = description
             self.skillGroupArn = skillGroupArn
             self.skillGroupName = skillGroupName
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillGroupName, name:"skillGroupName", max: 100)
+            try validate(skillGroupName, name:"skillGroupName", min: 1)
+            try validate(skillGroupName, name:"skillGroupName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4483,6 +5916,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillType", required: false, type: .enum), 
             AWSShapeMember(label: "SupportsLinking", required: false, type: .boolean)
         ]
+
         /// Whether the skill is enabled under the user's account, or if it requires linking to be used.
         public let enablementType: EnablementType?
         /// The ARN of the skill summary.
@@ -4500,6 +5934,13 @@ extension AlexaForBusiness {
             self.skillName = skillName
             self.skillType = skillType
             self.supportsLinking = supportsLinking
+        }
+
+        public func validate() throws {
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+            try validate(skillName, name:"skillName", max: 100)
+            try validate(skillName, name:"skillName", min: 1)
+            try validate(skillName, name:"skillName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4534,6 +5975,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillName", required: false, type: .string), 
             AWSShapeMember(label: "SupportsLinking", required: false, type: .boolean)
         ]
+
         /// The URL where the skill icon resides.
         public let iconUrl: String?
         /// Sample utterances that interact with the skill.
@@ -4559,6 +6001,14 @@ extension AlexaForBusiness {
             self.supportsLinking = supportsLinking
         }
 
+        public func validate() throws {
+            try skillDetails?.validate()
+            try validate(skillId, name:"skillId", pattern: "(^amzn1\\.ask\\.skill\\.[0-9a-f\\-]{1,200})|(^amzn1\\.echo-sdk-ams\\.app\\.[0-9a-f\\-]{1,200})")
+            try validate(skillName, name:"skillName", max: 100)
+            try validate(skillName, name:"skillName", min: 1)
+            try validate(skillName, name:"skillName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case iconUrl = "IconUrl"
             case sampleUtterances = "SampleUtterances"
@@ -4576,6 +6026,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "FriendlyName", required: false, type: .string), 
             AWSShapeMember(label: "ManufacturerName", required: false, type: .string)
         ]
+
         /// The description of the smart home appliance.
         public let description: String?
         /// The friendly name of the smart home appliance.
@@ -4601,6 +6052,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .enum)
         ]
+
         /// The sort key of a sort object.
         public let key: String
         /// The sort value of a sort object.
@@ -4609,6 +6061,11 @@ extension AlexaForBusiness {
         public init(key: String, value: SortValue) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 500)
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4628,6 +6085,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Locale", required: true, type: .enum), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The locale of the SSML message. Currently, en-US is supported.
         public let locale: Locale
         /// The value of the SSML message in the correct SSML format. The audio tag is not supported.
@@ -4636,6 +6094,12 @@ extension AlexaForBusiness {
         public init(locale: Locale, value: String) {
             self.locale = locale
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", max: 4096)
+            try validate(value, name:"value", min: 0)
+            try validate(value, name:"value", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4650,6 +6114,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Features", required: true, type: .list), 
             AWSShapeMember(label: "RoomArn", required: false, type: .string)
         ]
+
         /// The ARN of the device to sync. Required.
         public let deviceArn: String?
         /// Request structure to start the device sync. Required.
@@ -4663,6 +6128,11 @@ extension AlexaForBusiness {
             self.roomArn = roomArn
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case features = "Features"
@@ -4671,6 +6141,7 @@ extension AlexaForBusiness {
     }
 
     public struct StartDeviceSyncResponse: AWSShape {
+
 
         public init() {
         }
@@ -4681,11 +6152,16 @@ extension AlexaForBusiness {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RoomArn", required: true, type: .string)
         ]
+
         /// The room where smart home appliance discovery was initiated.
         public let roomArn: String
 
         public init(roomArn: String) {
             self.roomArn = roomArn
+        }
+
+        public func validate() throws {
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4694,6 +6170,7 @@ extension AlexaForBusiness {
     }
 
     public struct StartSmartHomeApplianceDiscoveryResponse: AWSShape {
+
 
         public init() {
         }
@@ -4705,6 +6182,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The key of a tag. Tag keys are case-sensitive. 
         public let key: String
         /// The value of a tag. Tag values are case-sensitive and can be null.
@@ -4713,6 +6191,15 @@ extension AlexaForBusiness {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4726,6 +6213,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Arn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The ARN of the resource to which to add metadata tags. Required. 
         public let arn: String
         /// The tags to be added to the specified resource. Do not provide system tags. Required. 
@@ -4736,6 +6224,13 @@ extension AlexaForBusiness {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try tags.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case tags = "Tags"
@@ -4743,6 +6238,7 @@ extension AlexaForBusiness {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -4760,6 +6256,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Locale", required: true, type: .enum), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The locale of the text message. Currently, en-US is supported.
         public let locale: Locale
         /// The value of the text message.
@@ -4768,6 +6265,12 @@ extension AlexaForBusiness {
         public init(locale: Locale, value: String) {
             self.locale = locale
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", max: 4096)
+            try validate(value, name:"value", min: 0)
+            try validate(value, name:"value", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4781,6 +6284,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Arn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The ARN of the resource from which to remove metadata tags. Required. 
         public let arn: String
         /// The tags to be removed from the specified resource. Do not provide system tags. Required. 
@@ -4791,6 +6295,15 @@ extension AlexaForBusiness {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name:"tagKeys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case tagKeys = "TagKeys"
@@ -4798,6 +6311,7 @@ extension AlexaForBusiness {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -4810,6 +6324,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The ARN of the room to update.
         public let addressBookArn: String
         /// The updated description of the room.
@@ -4823,6 +6338,16 @@ extension AlexaForBusiness {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(addressBookArn, name:"addressBookArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressBookArn = "AddressBookArn"
             case description = "Description"
@@ -4831,6 +6356,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateAddressBookResponse: AWSShape {
+
 
         public init() {
         }
@@ -4846,6 +6372,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "ScheduleArn", required: true, type: .string), 
             AWSShapeMember(label: "ScheduleName", required: false, type: .string)
         ]
+
         /// The format of the generated report (individual CSV files or zipped files of individual files).
         public let format: BusinessReportFormat?
         /// The recurrence of the reports.
@@ -4868,6 +6395,18 @@ extension AlexaForBusiness {
             self.scheduleName = scheduleName
         }
 
+        public func validate() throws {
+            try recurrence?.validate()
+            try validate(s3BucketName, name:"s3BucketName", pattern: "[a-z0-9-\\.]{3,63}")
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", max: 100)
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", min: 0)
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", pattern: "[A-Za-z0-9!_\\-\\.\\*'()/]*")
+            try validate(scheduleArn, name:"scheduleArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(scheduleName, name:"scheduleName", max: 64)
+            try validate(scheduleName, name:"scheduleName", min: 0)
+            try validate(scheduleName, name:"scheduleName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case format = "Format"
             case recurrence = "Recurrence"
@@ -4879,6 +6418,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateBusinessReportScheduleResponse: AWSShape {
+
 
         public init() {
         }
@@ -4893,6 +6433,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "MeetingSetting", required: true, type: .structure), 
             AWSShapeMember(label: "PSTNDialIn", required: false, type: .structure)
         ]
+
         /// The ARN of the conference provider.
         public let conferenceProviderArn: String
         /// The type of the conference provider.
@@ -4912,6 +6453,12 @@ extension AlexaForBusiness {
             self.pSTNDialIn = pSTNDialIn
         }
 
+        public func validate() throws {
+            try validate(conferenceProviderArn, name:"conferenceProviderArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try iPDialIn?.validate()
+            try pSTNDialIn?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case conferenceProviderArn = "ConferenceProviderArn"
             case conferenceProviderType = "ConferenceProviderType"
@@ -4922,6 +6469,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateConferenceProviderResponse: AWSShape {
+
 
         public init() {
         }
@@ -4938,6 +6486,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "PhoneNumbers", required: false, type: .list), 
             AWSShapeMember(label: "SipAddresses", required: false, type: .list)
         ]
+
         /// The ARN of the contact to update.
         public let contactArn: String
         /// The updated display name of the contact.
@@ -4963,6 +6512,32 @@ extension AlexaForBusiness {
             self.sipAddresses = sipAddresses
         }
 
+        public func validate() throws {
+            try validate(contactArn, name:"contactArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(firstName, name:"firstName", max: 100)
+            try validate(firstName, name:"firstName", min: 1)
+            try validate(firstName, name:"firstName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(lastName, name:"lastName", max: 100)
+            try validate(lastName, name:"lastName", min: 1)
+            try validate(lastName, name:"lastName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(phoneNumber, name:"phoneNumber", max: 50)
+            try validate(phoneNumber, name:"phoneNumber", min: 0)
+            try validate(phoneNumber, name:"phoneNumber", pattern: "^[\\+0-9\\#\\,\\(][\\+0-9\\-\\.\\/\\(\\)\\,\\#\\s]+$")
+            try phoneNumbers?.forEach {
+                try $0.validate()
+            }
+            try validate(phoneNumbers, name:"phoneNumbers", max: 3)
+            try validate(phoneNumbers, name:"phoneNumbers", min: 0)
+            try sipAddresses?.forEach {
+                try $0.validate()
+            }
+            try validate(sipAddresses, name:"sipAddresses", max: 1)
+            try validate(sipAddresses, name:"sipAddresses", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case contactArn = "ContactArn"
             case displayName = "DisplayName"
@@ -4976,6 +6551,7 @@ extension AlexaForBusiness {
 
     public struct UpdateContactResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -4986,6 +6562,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "DeviceArn", required: false, type: .string), 
             AWSShapeMember(label: "DeviceName", required: false, type: .string)
         ]
+
         /// The ARN of the device to update. Required.
         public let deviceArn: String?
         /// The updated device name. Required.
@@ -4996,6 +6573,13 @@ extension AlexaForBusiness {
             self.deviceName = deviceName
         }
 
+        public func validate() throws {
+            try validate(deviceArn, name:"deviceArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(deviceName, name:"deviceName", max: 100)
+            try validate(deviceName, name:"deviceName", min: 2)
+            try validate(deviceName, name:"deviceName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceArn = "DeviceArn"
             case deviceName = "DeviceName"
@@ -5003,6 +6587,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateDeviceResponse: AWSShape {
+
 
         public init() {
         }
@@ -5015,6 +6600,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "GatewayGroupArn", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The updated description of the gateway group.
         public let description: String?
         /// The ARN of the gateway group to update.
@@ -5028,6 +6614,15 @@ extension AlexaForBusiness {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(gatewayGroupArn, name:"gatewayGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case gatewayGroupArn = "GatewayGroupArn"
@@ -5036,6 +6631,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateGatewayGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -5049,6 +6645,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "SoftwareVersion", required: false, type: .string)
         ]
+
         /// The updated description of the gateway.
         public let description: String?
         /// The ARN of the gateway to update.
@@ -5065,6 +6662,18 @@ extension AlexaForBusiness {
             self.softwareVersion = softwareVersion
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(gatewayArn, name:"gatewayArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(name, name:"name", max: 253)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(softwareVersion, name:"softwareVersion", max: 50)
+            try validate(softwareVersion, name:"softwareVersion", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case gatewayArn = "GatewayArn"
@@ -5074,6 +6683,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateGatewayResponse: AWSShape {
+
 
         public init() {
         }
@@ -5090,6 +6700,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "NextPassword", required: false, type: .string), 
             AWSShapeMember(label: "TrustAnchors", required: false, type: .list)
         ]
+
         /// The ARN of the Private Certificate Authority (PCA) created in AWS Certificate Manager (ACM). This is used to issue certificates to the devices. 
         public let certificateAuthorityArn: String?
         /// The current password of the Wi-Fi network.
@@ -5115,6 +6726,28 @@ extension AlexaForBusiness {
             self.trustAnchors = trustAnchors
         }
 
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(currentPassword, name:"currentPassword", max: 128)
+            try validate(currentPassword, name:"currentPassword", min: 5)
+            try validate(currentPassword, name:"currentPassword", pattern: "[\\x00-\\x7F]*")
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 0)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(networkProfileArn, name:"networkProfileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(networkProfileName, name:"networkProfileName", max: 100)
+            try validate(networkProfileName, name:"networkProfileName", min: 1)
+            try validate(networkProfileName, name:"networkProfileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(nextPassword, name:"nextPassword", max: 128)
+            try validate(nextPassword, name:"nextPassword", min: 0)
+            try validate(nextPassword, name:"nextPassword", pattern: "(^$)|([\\x00-\\x7F]{5,})")
+            try trustAnchors?.forEach {
+                try validate($0, name:"trustAnchors[]", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            }
+            try validate(trustAnchors, name:"trustAnchors", max: 5)
+            try validate(trustAnchors, name:"trustAnchors", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificateAuthorityArn = "CertificateAuthorityArn"
             case currentPassword = "CurrentPassword"
@@ -5127,6 +6760,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateNetworkProfileResponse: AWSShape {
+
 
         public init() {
         }
@@ -5147,6 +6781,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "Timezone", required: false, type: .string), 
             AWSShapeMember(label: "WakeWord", required: false, type: .enum)
         ]
+
         /// The updated address for the room profile.
         public let address: String?
         /// The updated distance unit for the room profile.
@@ -5184,6 +6819,17 @@ extension AlexaForBusiness {
             self.wakeWord = wakeWord
         }
 
+        public func validate() throws {
+            try validate(address, name:"address", max: 500)
+            try validate(address, name:"address", min: 1)
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(profileName, name:"profileName", max: 100)
+            try validate(profileName, name:"profileName", min: 1)
+            try validate(profileName, name:"profileName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(timezone, name:"timezone", max: 100)
+            try validate(timezone, name:"timezone", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case address = "Address"
             case distanceUnit = "DistanceUnit"
@@ -5201,6 +6847,7 @@ extension AlexaForBusiness {
 
     public struct UpdateProfileResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -5214,6 +6861,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "RoomArn", required: false, type: .string), 
             AWSShapeMember(label: "RoomName", required: false, type: .string)
         ]
+
         /// The updated description for the room.
         public let description: String?
         /// The updated profile ARN for the room.
@@ -5233,6 +6881,19 @@ extension AlexaForBusiness {
             self.roomName = roomName
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(profileArn, name:"profileArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(providerCalendarId, name:"providerCalendarId", max: 100)
+            try validate(providerCalendarId, name:"providerCalendarId", min: 0)
+            try validate(roomArn, name:"roomArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(roomName, name:"roomName", max: 100)
+            try validate(roomName, name:"roomName", min: 1)
+            try validate(roomName, name:"roomName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case profileArn = "ProfileArn"
@@ -5243,6 +6904,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateRoomResponse: AWSShape {
+
 
         public init() {
         }
@@ -5255,6 +6917,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "SkillGroupArn", required: false, type: .string), 
             AWSShapeMember(label: "SkillGroupName", required: false, type: .string)
         ]
+
         /// The updated description for the skill group.
         public let description: String?
         /// The ARN of the skill group to update. 
@@ -5268,6 +6931,16 @@ extension AlexaForBusiness {
             self.skillGroupName = skillGroupName
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 200)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+            try validate(skillGroupArn, name:"skillGroupArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
+            try validate(skillGroupName, name:"skillGroupName", max: 100)
+            try validate(skillGroupName, name:"skillGroupName", min: 1)
+            try validate(skillGroupName, name:"skillGroupName", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u007E\\u0085\\u00A0-\\uD7FF\\uE000-\\uFFFD\\u10000-\\u10FFFF]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case skillGroupArn = "SkillGroupArn"
@@ -5276,6 +6949,7 @@ extension AlexaForBusiness {
     }
 
     public struct UpdateSkillGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -5291,6 +6965,7 @@ extension AlexaForBusiness {
             AWSShapeMember(label: "LastName", required: false, type: .string), 
             AWSShapeMember(label: "UserArn", required: false, type: .string)
         ]
+
         /// The email of a user.
         public let email: String?
         /// The enrollment ARN of a user.
@@ -5311,6 +6986,21 @@ extension AlexaForBusiness {
             self.firstName = firstName
             self.lastName = lastName
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(email, name:"email", max: 128)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "([0-9a-zA-Z]([+-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})")
+            try validate(enrollmentId, name:"enrollmentId", max: 128)
+            try validate(enrollmentId, name:"enrollmentId", min: 0)
+            try validate(firstName, name:"firstName", max: 30)
+            try validate(firstName, name:"firstName", min: 0)
+            try validate(firstName, name:"firstName", pattern: "([A-Za-z\\-' 0-9._]|\\p{IsLetter})*")
+            try validate(lastName, name:"lastName", max: 30)
+            try validate(lastName, name:"lastName", min: 0)
+            try validate(lastName, name:"lastName", pattern: "([A-Za-z\\-' 0-9._]|\\p{IsLetter})*")
+            try validate(userArn, name:"userArn", pattern: "arn:[a-z0-9-\\.]{1,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[a-z0-9-\\.]{0,63}:[^/].{0,1023}")
         }
 
         private enum CodingKeys: String, CodingKey {

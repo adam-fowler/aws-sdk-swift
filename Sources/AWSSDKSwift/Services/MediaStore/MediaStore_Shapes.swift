@@ -14,6 +14,7 @@ extension MediaStore {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The state of access logging on the container. This value is false by default, indicating that AWS Elemental MediaStore does not send access logs to Amazon CloudWatch Logs. When you enable access logging on the container, MediaStore changes this value to true, indicating that the service delivers access logs for objects stored in that container to CloudWatch Logs.
         public let accessLoggingEnabled: Bool?
         /// The Amazon Resource Name (ARN) of the container. The ARN has the following format: arn:aws:&lt;region&gt;:&lt;account that owns this container&gt;:container/&lt;name of container&gt;  For example: arn:aws:mediastore:us-west-2:111122223333:container/movies 
@@ -34,6 +35,17 @@ extension MediaStore {
             self.endpoint = endpoint
             self.name = name
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1024)
+            try validate(arn, name:"arn", min: 1)
+            try validate(arn, name:"arn", pattern: "arn:aws:mediastore:[a-z]+-[a-z]+-\\d:\\d{12}:container/[\\w-]{1,255}")
+            try validate(endpoint, name:"endpoint", max: 255)
+            try validate(endpoint, name:"endpoint", min: 1)
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -61,6 +73,7 @@ extension MediaStore {
             AWSShapeMember(label: "ExposeHeaders", required: false, type: .list), 
             AWSShapeMember(label: "MaxAgeSeconds", required: false, type: .integer)
         ]
+
         /// Specifies which headers are allowed in a preflight OPTIONS request through the Access-Control-Request-Headers header. Each header name that is specified in Access-Control-Request-Headers must have a corresponding entry in the rule. Only the headers that were requested are sent back.  This element can contain only one wildcard character (*).
         public let allowedHeaders: [String]
         /// Identifies an HTTP method that the origin that is specified in the rule is allowed to execute. Each CORS rule must contain at least one AllowedMethods and one AllowedOrigins element.
@@ -80,6 +93,34 @@ extension MediaStore {
             self.maxAgeSeconds = maxAgeSeconds
         }
 
+        public func validate() throws {
+            try allowedHeaders.forEach {
+                try validate($0, name:"allowedHeaders[]", max: 8192)
+                try validate($0, name:"allowedHeaders[]", min: 1)
+                try validate($0, name:"allowedHeaders[]", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            }
+            try validate(allowedHeaders, name:"allowedHeaders", max: 100)
+            try validate(allowedHeaders, name:"allowedHeaders", min: 0)
+            try validate(allowedMethods, name:"allowedMethods", max: 4)
+            try validate(allowedMethods, name:"allowedMethods", min: 1)
+            try allowedOrigins.forEach {
+                try validate($0, name:"allowedOrigins[]", max: 2048)
+                try validate($0, name:"allowedOrigins[]", min: 1)
+                try validate($0, name:"allowedOrigins[]", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            }
+            try validate(allowedOrigins, name:"allowedOrigins", max: 100)
+            try validate(allowedOrigins, name:"allowedOrigins", min: 1)
+            try exposeHeaders?.forEach {
+                try validate($0, name:"exposeHeaders[]", max: 8192)
+                try validate($0, name:"exposeHeaders[]", min: 1)
+                try validate($0, name:"exposeHeaders[]", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            }
+            try validate(exposeHeaders, name:"exposeHeaders", max: 100)
+            try validate(exposeHeaders, name:"exposeHeaders", min: 0)
+            try validate(maxAgeSeconds, name:"maxAgeSeconds", max: 2147483647)
+            try validate(maxAgeSeconds, name:"maxAgeSeconds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowedHeaders = "AllowedHeaders"
             case allowedMethods = "AllowedMethods"
@@ -94,6 +135,7 @@ extension MediaStore {
             AWSShapeMember(label: "ContainerName", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The name for the container. The name must be from 1 to 255 characters. Container names must be unique to your AWS account within a specific region. As an example, you could create a container named movies in every region, as long as you don’t have an existing container with that name.
         public let containerName: String
         /// An array of key:value pairs that you define. These values can be anything that you want. Typically, the tag key represents a category (such as "environment") and the tag value represents a specific value within that category (such as "test," "development," or "production"). You can add up to 50 tags to each container. For more information about tagging, including naming and usage conventions, see Tagging Resources in MediaStore.
@@ -102,6 +144,15 @@ extension MediaStore {
         public init(containerName: String, tags: [Tag]? = nil) {
             self.containerName = containerName
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -114,11 +165,16 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Container", required: true, type: .structure)
         ]
+
         /// ContainerARN: The Amazon Resource Name (ARN) of the newly created container. The ARN has the following format: arn:aws:&lt;region&gt;:&lt;account that owns this container&gt;:container/&lt;name of container&gt;. For example: arn:aws:mediastore:us-west-2:111122223333:container/movies  ContainerName: The container name as specified in the request. CreationTime: Unix time stamp. Status: The status of container creation or deletion. The status is one of the following: CREATING, ACTIVE, or DELETING. While the service is creating the container, the status is CREATING. When an endpoint is available, the status changes to ACTIVE. The return value does not include the container's endpoint. To make downstream requests, you must obtain this value by using DescribeContainer or ListContainers.
         public let container: Container
 
         public init(container: Container) {
             self.container = container
+        }
+
+        public func validate() throws {
+            try container.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -130,11 +186,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container to delete. 
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -143,6 +206,7 @@ extension MediaStore {
     }
 
     public struct DeleteContainerOutput: AWSShape {
+
 
         public init() {
         }
@@ -153,11 +217,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container that holds the policy.
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -166,6 +237,7 @@ extension MediaStore {
     }
 
     public struct DeleteContainerPolicyOutput: AWSShape {
+
 
         public init() {
         }
@@ -176,11 +248,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container to remove the policy from.
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -189,6 +268,7 @@ extension MediaStore {
     }
 
     public struct DeleteCorsPolicyOutput: AWSShape {
+
 
         public init() {
         }
@@ -199,11 +279,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container that holds the object lifecycle policy.
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -212,6 +299,7 @@ extension MediaStore {
     }
 
     public struct DeleteLifecyclePolicyOutput: AWSShape {
+
 
         public init() {
         }
@@ -222,11 +310,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: false, type: .string)
         ]
+
         /// The name of the container to query.
         public let containerName: String?
 
         public init(containerName: String? = nil) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -238,11 +333,16 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Container", required: false, type: .structure)
         ]
+
         /// The name of the queried container.
         public let container: Container?
 
         public init(container: Container? = nil) {
             self.container = container
+        }
+
+        public func validate() throws {
+            try container?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -254,11 +354,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container. 
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -270,11 +377,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Policy", required: true, type: .string)
         ]
+
         /// The contents of the access policy.
         public let policy: String
 
         public init(policy: String) {
             self.policy = policy
+        }
+
+        public func validate() throws {
+            try validate(policy, name:"policy", max: 8192)
+            try validate(policy, name:"policy", min: 1)
+            try validate(policy, name:"policy", pattern: "[\\x00-\\x7F]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -286,11 +400,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container that the policy is assigned to.
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -302,11 +423,20 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CorsPolicy", required: true, type: .list)
         ]
+
         /// The CORS policy assigned to the container.
         public let corsPolicy: [CorsRule]
 
         public init(corsPolicy: [CorsRule]) {
             self.corsPolicy = corsPolicy
+        }
+
+        public func validate() throws {
+            try corsPolicy.forEach {
+                try $0.validate()
+            }
+            try validate(corsPolicy, name:"corsPolicy", max: 100)
+            try validate(corsPolicy, name:"corsPolicy", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -318,11 +448,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container that the object lifecycle policy is assigned to.
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -334,11 +471,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LifecyclePolicy", required: true, type: .string)
         ]
+
         /// The object lifecycle policy that is assigned to the container.
         public let lifecyclePolicy: String
 
         public init(lifecyclePolicy: String) {
             self.lifecyclePolicy = lifecyclePolicy
+        }
+
+        public func validate() throws {
+            try validate(lifecyclePolicy, name:"lifecyclePolicy", max: 8192)
+            try validate(lifecyclePolicy, name:"lifecyclePolicy", min: 0)
+            try validate(lifecyclePolicy, name:"lifecyclePolicy", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -351,6 +495,7 @@ extension MediaStore {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Enter the maximum number of containers in the response. Use from 1 to 255 characters. 
         public let maxResults: Int32?
         /// Only if you used MaxResults in the first command, enter the token (which was included in the previous response) to obtain the next set of containers. This token is included in a response only if there actually are more containers to list.
@@ -359,6 +504,14 @@ extension MediaStore {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[0-9A-Za-z=/+]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -372,6 +525,7 @@ extension MediaStore {
             AWSShapeMember(label: "Containers", required: true, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of the containers.
         public let containers: [Container]
         ///  NextToken is the token to use in the next call to ListContainers. This token is returned only if you included the MaxResults tag in the original command, and only if there are still containers to return. 
@@ -380,6 +534,15 @@ extension MediaStore {
         public init(containers: [Container], nextToken: String? = nil) {
             self.containers = containers
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try containers.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[0-9A-Za-z=/+]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -392,11 +555,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Resource", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) for the container.
         public let resource: String
 
         public init(resource: String) {
             self.resource = resource
+        }
+
+        public func validate() throws {
+            try validate(resource, name:"resource", max: 1024)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resource, name:"resource", pattern: "arn:aws:mediastore:[a-z]+-[a-z]+-\\d:\\d{12}:container/[\\w-]{1,255}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -408,11 +578,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// An array of key:value pairs that are assigned to the container.
         public let tags: [Tag]?
 
         public init(tags: [Tag]? = nil) {
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -433,6 +610,7 @@ extension MediaStore {
             AWSShapeMember(label: "ContainerName", required: true, type: .string), 
             AWSShapeMember(label: "Policy", required: true, type: .string)
         ]
+
         /// The name of the container.
         public let containerName: String
         /// The contents of the policy, which includes the following:    One Version tag   One Statement tag that contains the standard tags for the policy.  
@@ -443,6 +621,15 @@ extension MediaStore {
             self.policy = policy
         }
 
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
+            try validate(policy, name:"policy", max: 8192)
+            try validate(policy, name:"policy", min: 1)
+            try validate(policy, name:"policy", pattern: "[\\x00-\\x7F]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case containerName = "ContainerName"
             case policy = "Policy"
@@ -450,6 +637,7 @@ extension MediaStore {
     }
 
     public struct PutContainerPolicyOutput: AWSShape {
+
 
         public init() {
         }
@@ -461,6 +649,7 @@ extension MediaStore {
             AWSShapeMember(label: "ContainerName", required: true, type: .string), 
             AWSShapeMember(label: "CorsPolicy", required: true, type: .list)
         ]
+
         /// The name of the container that you want to assign the CORS policy to.
         public let containerName: String
         /// The CORS policy to apply to the container. 
@@ -471,6 +660,17 @@ extension MediaStore {
             self.corsPolicy = corsPolicy
         }
 
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
+            try corsPolicy.forEach {
+                try $0.validate()
+            }
+            try validate(corsPolicy, name:"corsPolicy", max: 100)
+            try validate(corsPolicy, name:"corsPolicy", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case containerName = "ContainerName"
             case corsPolicy = "CorsPolicy"
@@ -478,6 +678,7 @@ extension MediaStore {
     }
 
     public struct PutCorsPolicyOutput: AWSShape {
+
 
         public init() {
         }
@@ -489,6 +690,7 @@ extension MediaStore {
             AWSShapeMember(label: "ContainerName", required: true, type: .string), 
             AWSShapeMember(label: "LifecyclePolicy", required: true, type: .string)
         ]
+
         /// The name of the container that you want to assign the object lifecycle policy to.
         public let containerName: String
         /// The object lifecycle policy to apply to the container.
@@ -499,6 +701,15 @@ extension MediaStore {
             self.lifecyclePolicy = lifecyclePolicy
         }
 
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
+            try validate(lifecyclePolicy, name:"lifecyclePolicy", max: 8192)
+            try validate(lifecyclePolicy, name:"lifecyclePolicy", min: 0)
+            try validate(lifecyclePolicy, name:"lifecyclePolicy", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case containerName = "ContainerName"
             case lifecyclePolicy = "LifecyclePolicy"
@@ -506,6 +717,7 @@ extension MediaStore {
     }
 
     public struct PutLifecyclePolicyOutput: AWSShape {
+
 
         public init() {
         }
@@ -516,11 +728,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container that you want to start access logging on.
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -529,6 +748,7 @@ extension MediaStore {
     }
 
     public struct StartAccessLoggingOutput: AWSShape {
+
 
         public init() {
         }
@@ -539,11 +759,18 @@ extension MediaStore {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContainerName", required: true, type: .string)
         ]
+
         /// The name of the container that you want to stop access logging on.
         public let containerName: String
 
         public init(containerName: String) {
             self.containerName = containerName
+        }
+
+        public func validate() throws {
+            try validate(containerName, name:"containerName", max: 255)
+            try validate(containerName, name:"containerName", min: 1)
+            try validate(containerName, name:"containerName", pattern: "[\\w-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -552,6 +779,7 @@ extension MediaStore {
     }
 
     public struct StopAccessLoggingOutput: AWSShape {
+
 
         public init() {
         }
@@ -563,6 +791,7 @@ extension MediaStore {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// Part of the key:value pair that defines a tag. You can use a tag key to describe a category of information, such as "customer." Tag keys are case-sensitive.
         public let key: String?
         /// Part of the key:value pair that defines a tag. You can use a tag value to describe a specific value within a category, such as "companyA" or "companyB." Tag values are case-sensitive.
@@ -571,6 +800,13 @@ extension MediaStore {
         public init(key: String? = nil, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -584,6 +820,7 @@ extension MediaStore {
             AWSShapeMember(label: "Resource", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the container. 
         public let resource: String
         /// An array of key:value pairs that you want to add to the container. You need to specify only the tags that you want to add or update. For example, suppose a container already has two tags (customer:CompanyA and priority:High). You want to change the priority tag and also add a third tag (type:Contract). For TagResource, you specify the following tags: priority:Medium, type:Contract. The result is that your container has three tags: customer:CompanyA, priority:Medium, and type:Contract.
@@ -594,6 +831,15 @@ extension MediaStore {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resource, name:"resource", max: 1024)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resource, name:"resource", pattern: "arn:aws:mediastore:[a-z]+-[a-z]+-\\d:\\d{12}:container/[\\w-]{1,255}")
+            try tags.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resource = "Resource"
             case tags = "Tags"
@@ -601,6 +847,7 @@ extension MediaStore {
     }
 
     public struct TagResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -612,6 +859,7 @@ extension MediaStore {
             AWSShapeMember(label: "Resource", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the container.
         public let resource: String
         /// A comma-separated list of keys for tags that you want to remove from the container. For example, if your container has two tags (customer:CompanyA and priority:High) and you want to remove one of the tags (priority:High), you specify the key for the tag that you want to remove (priority).
@@ -622,6 +870,16 @@ extension MediaStore {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resource, name:"resource", max: 1024)
+            try validate(resource, name:"resource", min: 1)
+            try validate(resource, name:"resource", pattern: "arn:aws:mediastore:[a-z]+-[a-z]+-\\d:\\d{12}:container/[\\w-]{1,255}")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resource = "Resource"
             case tagKeys = "TagKeys"
@@ -629,6 +887,7 @@ extension MediaStore {
     }
 
     public struct UntagResourceOutput: AWSShape {
+
 
         public init() {
         }

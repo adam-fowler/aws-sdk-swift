@@ -11,6 +11,7 @@ extension CodePipeline {
             AWSShapeMember(label: "secretAccessKey", required: true, type: .string), 
             AWSShapeMember(label: "sessionToken", required: true, type: .string)
         ]
+
         /// The access key for the session.
         public let accessKeyId: String
         /// The secret access key for the session.
@@ -36,6 +37,7 @@ extension CodePipeline {
             AWSShapeMember(label: "jobId", required: true, type: .string), 
             AWSShapeMember(label: "nonce", required: true, type: .string)
         ]
+
         /// The unique system-generated ID of the job for which you want to confirm receipt.
         public let jobId: String
         /// A system-generated random number that AWS CodePipeline uses to ensure that the job is being worked on by only one job worker. Get this number from the response of the PollForJobs request that returned this job.
@@ -44,6 +46,12 @@ extension CodePipeline {
         public init(jobId: String, nonce: String) {
             self.jobId = jobId
             self.nonce = nonce
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(nonce, name:"nonce", max: 50)
+            try validate(nonce, name:"nonce", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -56,6 +64,7 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// Whether the job worker has received the specified job.
         public let status: JobStatus?
 
@@ -74,6 +83,7 @@ extension CodePipeline {
             AWSShapeMember(label: "jobId", required: true, type: .string), 
             AWSShapeMember(label: "nonce", required: true, type: .string)
         ]
+
         /// The clientToken portion of the clientId and clientToken pair used to verify that the calling entity is allowed access to the job and its details.
         public let clientToken: String
         /// The unique system-generated ID of the job.
@@ -87,6 +97,15 @@ extension CodePipeline {
             self.nonce = nonce
         }
 
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 256)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(jobId, name:"jobId", max: 512)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(nonce, name:"nonce", max: 50)
+            try validate(nonce, name:"nonce", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientToken = "clientToken"
             case jobId = "jobId"
@@ -98,6 +117,7 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The status information for the third party job, if any.
         public let status: JobStatus?
 
@@ -124,6 +144,7 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "configuration", required: false, type: .map)
         ]
+
         /// The configuration data for the action.
         public let configuration: [String: String]?
 
@@ -146,6 +167,7 @@ extension CodePipeline {
             AWSShapeMember(label: "secret", required: true, type: .boolean), 
             AWSShapeMember(label: "type", required: false, type: .enum)
         ]
+
         /// The description of the action configuration property that will be displayed to users.
         public let description: String?
         /// Whether the configuration property is a key.
@@ -171,6 +193,13 @@ extension CodePipeline {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 160)
+            try validate(description, name:"description", min: 1)
+            try validate(name, name:"name", max: 50)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case key = "key"
@@ -194,6 +223,7 @@ extension CodePipeline {
             AWSShapeMember(label: "actionExecutionId", required: false, type: .string), 
             AWSShapeMember(label: "name", required: false, type: .string)
         ]
+
         /// The system-generated unique ID that corresponds to an action's execution.
         public let actionExecutionId: String?
         /// The name of the action within the context of a job.
@@ -202,6 +232,12 @@ extension CodePipeline {
         public init(actionExecutionId: String? = nil, name: String? = nil) {
             self.actionExecutionId = actionExecutionId
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -221,6 +257,7 @@ extension CodePipeline {
             AWSShapeMember(label: "roleArn", required: false, type: .string), 
             AWSShapeMember(label: "runOrder", required: false, type: .integer)
         ]
+
         /// The configuration information for the action type.
         public let actionTypeId: ActionTypeId
         /// The action declaration's configuration.
@@ -249,6 +286,25 @@ extension CodePipeline {
             self.runOrder = runOrder
         }
 
+        public func validate() throws {
+            try actionTypeId.validate()
+            try inputArtifacts?.forEach {
+                try $0.validate()
+            }
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
+            try outputArtifacts?.forEach {
+                try $0.validate()
+            }
+            try validate(region, name:"region", max: 30)
+            try validate(region, name:"region", min: 4)
+            try validate(roleArn, name:"roleArn", max: 1024)
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws(-[\\w]+)*:iam::[0-9]{12}:role/.*")
+            try validate(runOrder, name:"runOrder", max: 999)
+            try validate(runOrder, name:"runOrder", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionTypeId = "actionTypeId"
             case configuration = "configuration"
@@ -273,6 +329,7 @@ extension CodePipeline {
             AWSShapeMember(label: "summary", required: false, type: .string), 
             AWSShapeMember(label: "token", required: false, type: .string)
         ]
+
         /// The details of an error returned by a URL external to AWS.
         public let errorDetails: ErrorDetails?
         /// The external ID of the run of the action.
@@ -304,6 +361,18 @@ extension CodePipeline {
             self.token = token
         }
 
+        public func validate() throws {
+            try errorDetails?.validate()
+            try validate(externalExecutionId, name:"externalExecutionId", max: 1500)
+            try validate(externalExecutionId, name:"externalExecutionId", min: 1)
+            try validate(externalExecutionUrl, name:"externalExecutionUrl", max: 2048)
+            try validate(externalExecutionUrl, name:"externalExecutionUrl", min: 1)
+            try validate(percentComplete, name:"percentComplete", max: 100)
+            try validate(percentComplete, name:"percentComplete", min: 0)
+            try validate(summary, name:"summary", max: 2048)
+            try validate(summary, name:"summary", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case errorDetails = "errorDetails"
             case externalExecutionId = "externalExecutionId"
@@ -330,6 +399,7 @@ extension CodePipeline {
             AWSShapeMember(label: "startTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The action execution ID.
         public let actionExecutionId: String?
         /// The name of the action.
@@ -364,6 +434,19 @@ extension CodePipeline {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(actionName, name:"actionName", max: 100)
+            try validate(actionName, name:"actionName", min: 1)
+            try validate(actionName, name:"actionName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try input?.validate()
+            try output?.validate()
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(pipelineVersion, name:"pipelineVersion", min: 1)
+            try validate(stageName, name:"stageName", max: 100)
+            try validate(stageName, name:"stageName", min: 1)
+            try validate(stageName, name:"stageName", pattern: "[A-Za-z0-9.@\\-_]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionExecutionId = "actionExecutionId"
             case actionName = "actionName"
@@ -382,11 +465,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "pipelineExecutionId", required: false, type: .string)
         ]
+
         /// The pipeline execution ID used to filter action execution history.
         public let pipelineExecutionId: String?
 
         public init(pipelineExecutionId: String? = nil) {
             self.pipelineExecutionId = pipelineExecutionId
+        }
+
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -402,6 +490,7 @@ extension CodePipeline {
             AWSShapeMember(label: "region", required: false, type: .string), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         public let actionTypeId: ActionTypeId?
         /// Configuration data for an action execution.
         public let configuration: [String: String]?
@@ -420,6 +509,17 @@ extension CodePipeline {
             self.roleArn = roleArn
         }
 
+        public func validate() throws {
+            try actionTypeId?.validate()
+            try inputArtifacts?.forEach {
+                try $0.validate()
+            }
+            try validate(region, name:"region", max: 30)
+            try validate(region, name:"region", min: 4)
+            try validate(roleArn, name:"roleArn", max: 1024)
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws(-[\\w]+)*:iam::[0-9]{12}:role/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionTypeId = "actionTypeId"
             case configuration = "configuration"
@@ -434,6 +534,7 @@ extension CodePipeline {
             AWSShapeMember(label: "executionResult", required: false, type: .structure), 
             AWSShapeMember(label: "outputArtifacts", required: false, type: .list)
         ]
+
         /// Execution result information listed in the output details for an action execution.
         public let executionResult: ActionExecutionResult?
         /// Details of output artifacts of the action that correspond to the action execution.
@@ -442,6 +543,13 @@ extension CodePipeline {
         public init(executionResult: ActionExecutionResult? = nil, outputArtifacts: [ArtifactDetail]? = nil) {
             self.executionResult = executionResult
             self.outputArtifacts = outputArtifacts
+        }
+
+        public func validate() throws {
+            try executionResult?.validate()
+            try outputArtifacts?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -456,6 +564,7 @@ extension CodePipeline {
             AWSShapeMember(label: "externalExecutionSummary", required: false, type: .string), 
             AWSShapeMember(label: "externalExecutionUrl", required: false, type: .string)
         ]
+
         /// The action provider's external ID for the action execution.
         public let externalExecutionId: String?
         /// The action provider's summary for the action execution.
@@ -467,6 +576,11 @@ extension CodePipeline {
             self.externalExecutionId = externalExecutionId
             self.externalExecutionSummary = externalExecutionSummary
             self.externalExecutionUrl = externalExecutionUrl
+        }
+
+        public func validate() throws {
+            try validate(externalExecutionUrl, name:"externalExecutionUrl", max: 2048)
+            try validate(externalExecutionUrl, name:"externalExecutionUrl", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -496,6 +610,7 @@ extension CodePipeline {
             AWSShapeMember(label: "revisionChangeId", required: true, type: .string), 
             AWSShapeMember(label: "revisionId", required: true, type: .string)
         ]
+
         /// The date and time when the most recent version of the action was created, in timestamp format.
         public let created: TimeStamp
         /// The unique identifier of the change that set the state to this revision, for example a deployment ID or timestamp.
@@ -507,6 +622,13 @@ extension CodePipeline {
             self.created = created
             self.revisionChangeId = revisionChangeId
             self.revisionId = revisionId
+        }
+
+        public func validate() throws {
+            try validate(revisionChangeId, name:"revisionChangeId", max: 100)
+            try validate(revisionChangeId, name:"revisionChangeId", min: 1)
+            try validate(revisionId, name:"revisionId", max: 1500)
+            try validate(revisionId, name:"revisionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -524,6 +646,7 @@ extension CodePipeline {
             AWSShapeMember(label: "latestExecution", required: false, type: .structure), 
             AWSShapeMember(label: "revisionUrl", required: false, type: .string)
         ]
+
         /// The name of the action.
         public let actionName: String?
         /// Represents information about the version (or revision) of an action.
@@ -543,6 +666,18 @@ extension CodePipeline {
             self.revisionUrl = revisionUrl
         }
 
+        public func validate() throws {
+            try validate(actionName, name:"actionName", max: 100)
+            try validate(actionName, name:"actionName", min: 1)
+            try validate(actionName, name:"actionName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try currentRevision?.validate()
+            try validate(entityUrl, name:"entityUrl", max: 2048)
+            try validate(entityUrl, name:"entityUrl", min: 1)
+            try latestExecution?.validate()
+            try validate(revisionUrl, name:"revisionUrl", max: 2048)
+            try validate(revisionUrl, name:"revisionUrl", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionName = "actionName"
             case currentRevision = "currentRevision"
@@ -560,6 +695,7 @@ extension CodePipeline {
             AWSShapeMember(label: "outputArtifactDetails", required: true, type: .structure), 
             AWSShapeMember(label: "settings", required: false, type: .structure)
         ]
+
         /// The configuration properties for the action type.
         public let actionConfigurationProperties: [ActionConfigurationProperty]?
         /// Represents information about an action type.
@@ -579,6 +715,17 @@ extension CodePipeline {
             self.settings = settings
         }
 
+        public func validate() throws {
+            try actionConfigurationProperties?.forEach {
+                try $0.validate()
+            }
+            try validate(actionConfigurationProperties, name:"actionConfigurationProperties", max: 10)
+            try id.validate()
+            try inputArtifactDetails.validate()
+            try outputArtifactDetails.validate()
+            try settings?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionConfigurationProperties = "actionConfigurationProperties"
             case id = "id"
@@ -595,6 +742,7 @@ extension CodePipeline {
             AWSShapeMember(label: "provider", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// A category defines what kind of action can be taken in the stage, and constrains the provider type for the action. Valid categories are limited to one of the values below.
         public let category: ActionCategory
         /// The creator of the action being called.
@@ -609,6 +757,15 @@ extension CodePipeline {
             self.owner = owner
             self.provider = provider
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(provider, name:"provider", max: 25)
+            try validate(provider, name:"provider", min: 1)
+            try validate(provider, name:"provider", pattern: "[0-9A-Za-z_-]+")
+            try validate(version, name:"version", max: 9)
+            try validate(version, name:"version", min: 1)
+            try validate(version, name:"version", pattern: "[0-9A-Za-z_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -626,6 +783,7 @@ extension CodePipeline {
             AWSShapeMember(label: "revisionUrlTemplate", required: false, type: .string), 
             AWSShapeMember(label: "thirdPartyConfigurationUrl", required: false, type: .string)
         ]
+
         /// The URL returned to the AWS CodePipeline console that provides a deep link to the resources of the external system, such as the configuration page for an AWS CodeDeploy deployment group. This link is provided as part of the action display within the pipeline.
         public let entityUrlTemplate: String?
         /// The URL returned to the AWS CodePipeline console that contains a link to the top-level landing page for the external system, such as console page for AWS CodeDeploy. This link is shown on the pipeline view page in the AWS CodePipeline console and provides a link to the execution entity of the external action.
@@ -642,6 +800,17 @@ extension CodePipeline {
             self.thirdPartyConfigurationUrl = thirdPartyConfigurationUrl
         }
 
+        public func validate() throws {
+            try validate(entityUrlTemplate, name:"entityUrlTemplate", max: 2048)
+            try validate(entityUrlTemplate, name:"entityUrlTemplate", min: 1)
+            try validate(executionUrlTemplate, name:"executionUrlTemplate", max: 2048)
+            try validate(executionUrlTemplate, name:"executionUrlTemplate", min: 1)
+            try validate(revisionUrlTemplate, name:"revisionUrlTemplate", max: 2048)
+            try validate(revisionUrlTemplate, name:"revisionUrlTemplate", min: 1)
+            try validate(thirdPartyConfigurationUrl, name:"thirdPartyConfigurationUrl", max: 2048)
+            try validate(thirdPartyConfigurationUrl, name:"thirdPartyConfigurationUrl", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityUrlTemplate = "entityUrlTemplate"
             case executionUrlTemplate = "executionUrlTemplate"
@@ -655,6 +824,7 @@ extension CodePipeline {
             AWSShapeMember(label: "status", required: true, type: .enum), 
             AWSShapeMember(label: "summary", required: true, type: .string)
         ]
+
         /// The response submitted by a reviewer assigned to an approval action request.
         public let status: ApprovalStatus
         /// The summary of the current status of the approval request.
@@ -663,6 +833,11 @@ extension CodePipeline {
         public init(status: ApprovalStatus, summary: String) {
             self.status = status
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try validate(summary, name:"summary", max: 512)
+            try validate(summary, name:"summary", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -683,6 +858,7 @@ extension CodePipeline {
             AWSShapeMember(label: "name", required: false, type: .string), 
             AWSShapeMember(label: "revision", required: false, type: .string)
         ]
+
         /// The location of an artifact.
         public let location: ArtifactLocation?
         /// The artifact's name.
@@ -694,6 +870,14 @@ extension CodePipeline {
             self.location = location
             self.name = name
             self.revision = revision
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\-]+")
+            try validate(revision, name:"revision", max: 1500)
+            try validate(revision, name:"revision", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -708,6 +892,7 @@ extension CodePipeline {
             AWSShapeMember(label: "name", required: false, type: .string), 
             AWSShapeMember(label: "s3location", required: false, type: .structure)
         ]
+
         /// The artifact object name for the action execution.
         public let name: String?
         /// The Amazon S3 artifact location for the action execution.
@@ -716,6 +901,13 @@ extension CodePipeline {
         public init(name: String? = nil, s3location: S3Location? = nil) {
             self.name = name
             self.s3location = s3location
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\-]+")
+            try s3location?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -729,6 +921,7 @@ extension CodePipeline {
             AWSShapeMember(label: "maximumCount", required: true, type: .integer), 
             AWSShapeMember(label: "minimumCount", required: true, type: .integer)
         ]
+
         /// The maximum number of artifacts allowed for the action type.
         public let maximumCount: Int32
         /// The minimum number of artifacts allowed for the action type.
@@ -737,6 +930,13 @@ extension CodePipeline {
         public init(maximumCount: Int32, minimumCount: Int32) {
             self.maximumCount = maximumCount
             self.minimumCount = minimumCount
+        }
+
+        public func validate() throws {
+            try validate(maximumCount, name:"maximumCount", max: 5)
+            try validate(maximumCount, name:"maximumCount", min: 0)
+            try validate(minimumCount, name:"minimumCount", max: 5)
+            try validate(minimumCount, name:"minimumCount", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -750,6 +950,7 @@ extension CodePipeline {
             AWSShapeMember(label: "s3Location", required: false, type: .structure), 
             AWSShapeMember(label: "type", required: false, type: .enum)
         ]
+
         /// The Amazon S3 bucket that contains the artifact.
         public let s3Location: S3ArtifactLocation?
         /// The type of artifact in the location.
@@ -780,6 +981,7 @@ extension CodePipeline {
             AWSShapeMember(label: "revisionSummary", required: false, type: .string), 
             AWSShapeMember(label: "revisionUrl", required: false, type: .string)
         ]
+
         /// The date and time when the most recent revision of the artifact was created, in timestamp format.
         public let created: TimeStamp?
         /// The name of an artifact. This name might be system-generated, such as "MyApp", or might be defined by the user when an action is created.
@@ -802,6 +1004,20 @@ extension CodePipeline {
             self.revisionUrl = revisionUrl
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\-]+")
+            try validate(revisionChangeIdentifier, name:"revisionChangeIdentifier", max: 100)
+            try validate(revisionChangeIdentifier, name:"revisionChangeIdentifier", min: 1)
+            try validate(revisionId, name:"revisionId", max: 1500)
+            try validate(revisionId, name:"revisionId", min: 1)
+            try validate(revisionSummary, name:"revisionSummary", max: 2048)
+            try validate(revisionSummary, name:"revisionSummary", min: 1)
+            try validate(revisionUrl, name:"revisionUrl", max: 2048)
+            try validate(revisionUrl, name:"revisionUrl", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case created = "created"
             case name = "name"
@@ -818,6 +1034,7 @@ extension CodePipeline {
             AWSShapeMember(label: "location", required: true, type: .string), 
             AWSShapeMember(label: "type", required: true, type: .enum)
         ]
+
         /// The encryption key used to encrypt the data in the artifact store, such as an AWS Key Management Service (AWS KMS) key. If this is undefined, the default key for Amazon S3 is used.
         public let encryptionKey: EncryptionKey?
         /// The Amazon S3 bucket used for storing the artifacts for a pipeline. You can specify the name of an S3 bucket but not a folder within the bucket. A folder to contain the pipeline artifacts is created for you based on the name of the pipeline. You can use any Amazon S3 bucket in the same AWS Region as the pipeline to store your pipeline artifacts.
@@ -829,6 +1046,13 @@ extension CodePipeline {
             self.encryptionKey = encryptionKey
             self.location = location
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try encryptionKey?.validate()
+            try validate(location, name:"location", max: 63)
+            try validate(location, name:"location", min: 3)
+            try validate(location, name:"location", pattern: "[a-zA-Z0-9\\-\\.]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -848,6 +1072,7 @@ extension CodePipeline {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "type", required: true, type: .enum)
         ]
+
         /// Reserved for future use.
         public let name: String
         /// Reserved for future use.
@@ -856,6 +1081,11 @@ extension CodePipeline {
         public init(name: String, type: BlockerType) {
             self.name = name
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -880,6 +1110,7 @@ extension CodePipeline {
             AWSShapeMember(label: "tags", required: false, type: .list), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// The category of the custom action, such as a build action or a test action.  Although Source and Approval are listed as valid values, they are not currently functional. These values are reserved for future use. 
         public let category: ActionCategory
         /// The configuration properties for the custom action.  You can refer to a name in the configuration properties of the custom action within the URL templates by following the format of {Config:name}, as long as the configuration property is both required and not secret. For more information, see Create a Custom Action for a Pipeline. 
@@ -908,6 +1139,25 @@ extension CodePipeline {
             self.version = version
         }
 
+        public func validate() throws {
+            try configurationProperties?.forEach {
+                try $0.validate()
+            }
+            try validate(configurationProperties, name:"configurationProperties", max: 10)
+            try inputArtifactDetails.validate()
+            try outputArtifactDetails.validate()
+            try validate(provider, name:"provider", max: 25)
+            try validate(provider, name:"provider", min: 1)
+            try validate(provider, name:"provider", pattern: "[0-9A-Za-z_-]+")
+            try settings?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(version, name:"version", max: 9)
+            try validate(version, name:"version", min: 1)
+            try validate(version, name:"version", pattern: "[0-9A-Za-z_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case category = "category"
             case configurationProperties = "configurationProperties"
@@ -925,6 +1175,7 @@ extension CodePipeline {
             AWSShapeMember(label: "actionType", required: true, type: .structure), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// Returns information about the details of an action type.
         public let actionType: ActionType
         /// Specifies the tags applied to the custom action.
@@ -933,6 +1184,13 @@ extension CodePipeline {
         public init(actionType: ActionType, tags: [Tag]? = nil) {
             self.actionType = actionType
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try actionType.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -946,6 +1204,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipeline", required: true, type: .structure), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// Represents the structure of actions and stages to be performed in the pipeline. 
         public let pipeline: PipelineDeclaration
         /// The tags for the pipeline.
@@ -954,6 +1213,13 @@ extension CodePipeline {
         public init(pipeline: PipelineDeclaration, tags: [Tag]? = nil) {
             self.pipeline = pipeline
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try pipeline.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -967,6 +1233,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipeline", required: false, type: .structure), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// Represents the structure of actions and stages to be performed in the pipeline. 
         public let pipeline: PipelineDeclaration?
         /// Specifies the tags applied to the pipeline.
@@ -975,6 +1242,13 @@ extension CodePipeline {
         public init(pipeline: PipelineDeclaration? = nil, tags: [Tag]? = nil) {
             self.pipeline = pipeline
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try pipeline?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -990,6 +1264,7 @@ extension CodePipeline {
             AWSShapeMember(label: "revision", required: true, type: .string), 
             AWSShapeMember(label: "revisionSummary", required: false, type: .string)
         ]
+
         /// The change identifier for the current revision.
         public let changeIdentifier: String
         /// The date and time when the most recent revision of the artifact was created, in timestamp format.
@@ -1006,6 +1281,15 @@ extension CodePipeline {
             self.revisionSummary = revisionSummary
         }
 
+        public func validate() throws {
+            try validate(changeIdentifier, name:"changeIdentifier", max: 100)
+            try validate(changeIdentifier, name:"changeIdentifier", min: 1)
+            try validate(revision, name:"revision", max: 1500)
+            try validate(revision, name:"revision", min: 1)
+            try validate(revisionSummary, name:"revisionSummary", max: 2048)
+            try validate(revisionSummary, name:"revisionSummary", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case changeIdentifier = "changeIdentifier"
             case created = "created"
@@ -1020,6 +1304,7 @@ extension CodePipeline {
             AWSShapeMember(label: "provider", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// The category of the custom action that you want to delete, such as source or deploy.
         public let category: ActionCategory
         /// The provider of the service used in the custom action, such as AWS CodeDeploy.
@@ -1033,6 +1318,15 @@ extension CodePipeline {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(provider, name:"provider", max: 25)
+            try validate(provider, name:"provider", min: 1)
+            try validate(provider, name:"provider", pattern: "[0-9A-Za-z_-]+")
+            try validate(version, name:"version", max: 9)
+            try validate(version, name:"version", min: 1)
+            try validate(version, name:"version", pattern: "[0-9A-Za-z_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case category = "category"
             case provider = "provider"
@@ -1044,11 +1338,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the pipeline to be deleted.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1060,11 +1361,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the webhook you want to delete.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1073,6 +1381,7 @@ extension CodePipeline {
     }
 
     public struct DeleteWebhookOutput: AWSShape {
+
 
         public init() {
         }
@@ -1083,11 +1392,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "webhookName", required: false, type: .string)
         ]
+
         /// The name of the webhook you want to deregister.
         public let webhookName: String?
 
         public init(webhookName: String? = nil) {
             self.webhookName = webhookName
+        }
+
+        public func validate() throws {
+            try validate(webhookName, name:"webhookName", max: 100)
+            try validate(webhookName, name:"webhookName", min: 1)
+            try validate(webhookName, name:"webhookName", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1096,6 +1412,7 @@ extension CodePipeline {
     }
 
     public struct DeregisterWebhookWithThirdPartyOutput: AWSShape {
+
 
         public init() {
         }
@@ -1109,6 +1426,7 @@ extension CodePipeline {
             AWSShapeMember(label: "stageName", required: true, type: .string), 
             AWSShapeMember(label: "transitionType", required: true, type: .enum)
         ]
+
         /// The name of the pipeline in which you want to disable the flow of artifacts from one stage to another.
         public let pipelineName: String
         /// The reason given to the user why a stage is disabled, such as waiting for manual approval or manual tests. This message is displayed in the pipeline console UI.
@@ -1125,6 +1443,18 @@ extension CodePipeline {
             self.transitionType = transitionType
         }
 
+        public func validate() throws {
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(reason, name:"reason", max: 300)
+            try validate(reason, name:"reason", min: 1)
+            try validate(reason, name:"reason", pattern: "[a-zA-Z0-9!@ \\(\\)\\.\\*\\?\\-]+")
+            try validate(stageName, name:"stageName", max: 100)
+            try validate(stageName, name:"stageName", min: 1)
+            try validate(stageName, name:"stageName", pattern: "[A-Za-z0-9.@\\-_]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case pipelineName = "pipelineName"
             case reason = "reason"
@@ -1139,6 +1469,7 @@ extension CodePipeline {
             AWSShapeMember(label: "stageName", required: true, type: .string), 
             AWSShapeMember(label: "transitionType", required: true, type: .enum)
         ]
+
         /// The name of the pipeline in which you want to enable the flow of artifacts from one stage to another.
         public let pipelineName: String
         /// The name of the stage where you want to enable the transition of artifacts, either into the stage (inbound) or from that stage to the next stage (outbound).
@@ -1150,6 +1481,15 @@ extension CodePipeline {
             self.pipelineName = pipelineName
             self.stageName = stageName
             self.transitionType = transitionType
+        }
+
+        public func validate() throws {
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(stageName, name:"stageName", max: 100)
+            try validate(stageName, name:"stageName", min: 1)
+            try validate(stageName, name:"stageName", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1164,6 +1504,7 @@ extension CodePipeline {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "type", required: true, type: .enum)
         ]
+
         /// The ID used to identify the key. For an AWS KMS key, this is the key ID or key ARN.
         public let id: String
         /// The type of encryption key, such as an AWS Key Management Service (AWS KMS) key. When creating or updating a pipeline, the value must be set to 'KMS'.
@@ -1172,6 +1513,11 @@ extension CodePipeline {
         public init(id: String, type: EncryptionKeyType) {
             self.id = id
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1190,6 +1536,7 @@ extension CodePipeline {
             AWSShapeMember(label: "code", required: false, type: .string), 
             AWSShapeMember(label: "message", required: false, type: .string)
         ]
+
         /// The system ID or error number code of the error.
         public let code: String?
         /// The text of the error message.
@@ -1198,6 +1545,11 @@ extension CodePipeline {
         public init(code: String? = nil, message: String? = nil) {
             self.code = code
             self.message = message
+        }
+
+        public func validate() throws {
+            try validate(message, name:"message", max: 5000)
+            try validate(message, name:"message", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1212,6 +1564,7 @@ extension CodePipeline {
             AWSShapeMember(label: "percentComplete", required: false, type: .integer), 
             AWSShapeMember(label: "summary", required: false, type: .string)
         ]
+
         /// The system-generated unique ID of this action used to identify this job worker in any external systems, such as AWS CodeDeploy.
         public let externalExecutionId: String?
         /// The percentage of work completed on the action, represented on a scale of zero to one hundred percent.
@@ -1223,6 +1576,15 @@ extension CodePipeline {
             self.externalExecutionId = externalExecutionId
             self.percentComplete = percentComplete
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try validate(externalExecutionId, name:"externalExecutionId", max: 1500)
+            try validate(externalExecutionId, name:"externalExecutionId", min: 1)
+            try validate(percentComplete, name:"percentComplete", max: 100)
+            try validate(percentComplete, name:"percentComplete", min: 0)
+            try validate(summary, name:"summary", max: 2048)
+            try validate(summary, name:"summary", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1238,6 +1600,7 @@ extension CodePipeline {
             AWSShapeMember(label: "message", required: true, type: .string), 
             AWSShapeMember(label: "type", required: true, type: .enum)
         ]
+
         /// The external ID of the run of the action that failed.
         public let externalExecutionId: String?
         /// The message about the failure.
@@ -1249,6 +1612,13 @@ extension CodePipeline {
             self.externalExecutionId = externalExecutionId
             self.message = message
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(externalExecutionId, name:"externalExecutionId", max: 1500)
+            try validate(externalExecutionId, name:"externalExecutionId", min: 1)
+            try validate(message, name:"message", max: 5000)
+            try validate(message, name:"message", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1272,11 +1642,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobId", required: true, type: .string)
         ]
+
         /// The unique system-generated ID for the job.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1288,11 +1663,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobDetails", required: false, type: .structure)
         ]
+
         /// The details of the job.  If AWSSessionCredentials is used, a long-running job can call GetJobDetails again to obtain new credentials. 
         public let jobDetails: JobDetails?
 
         public init(jobDetails: JobDetails? = nil) {
             self.jobDetails = jobDetails
+        }
+
+        public func validate() throws {
+            try jobDetails?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1305,6 +1685,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipelineExecutionId", required: true, type: .string), 
             AWSShapeMember(label: "pipelineName", required: true, type: .string)
         ]
+
         /// The ID of the pipeline execution about which you want to get execution details.
         public let pipelineExecutionId: String
         /// The name of the pipeline about which you want to get execution details.
@@ -1313,6 +1694,13 @@ extension CodePipeline {
         public init(pipelineExecutionId: String, pipelineName: String) {
             self.pipelineExecutionId = pipelineExecutionId
             self.pipelineName = pipelineName
+        }
+
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1325,11 +1713,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "pipelineExecution", required: false, type: .structure)
         ]
+
         /// Represents information about the execution of a pipeline.
         public let pipelineExecution: PipelineExecution?
 
         public init(pipelineExecution: PipelineExecution? = nil) {
             self.pipelineExecution = pipelineExecution
+        }
+
+        public func validate() throws {
+            try pipelineExecution?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1342,6 +1735,7 @@ extension CodePipeline {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "version", required: false, type: .integer)
         ]
+
         /// The name of the pipeline for which you want to get information. Pipeline names must be unique under an Amazon Web Services (AWS) user account.
         public let name: String
         /// The version number of the pipeline. If you do not specify a version, defaults to the most current version.
@@ -1350,6 +1744,13 @@ extension CodePipeline {
         public init(name: String, version: Int32? = nil) {
             self.name = name
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(version, name:"version", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1363,6 +1764,7 @@ extension CodePipeline {
             AWSShapeMember(label: "metadata", required: false, type: .structure), 
             AWSShapeMember(label: "pipeline", required: false, type: .structure)
         ]
+
         /// Represents the pipeline metadata information returned as part of the output of a GetPipeline action.
         public let metadata: PipelineMetadata?
         /// Represents the structure of actions and stages to be performed in the pipeline. 
@@ -1371,6 +1773,11 @@ extension CodePipeline {
         public init(metadata: PipelineMetadata? = nil, pipeline: PipelineDeclaration? = nil) {
             self.metadata = metadata
             self.pipeline = pipeline
+        }
+
+        public func validate() throws {
+            try metadata?.validate()
+            try pipeline?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1383,11 +1790,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the pipeline about which you want to get information.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1403,6 +1817,7 @@ extension CodePipeline {
             AWSShapeMember(label: "stageStates", required: false, type: .list), 
             AWSShapeMember(label: "updated", required: false, type: .timestamp)
         ]
+
         /// The date and time the pipeline was created, in timestamp format.
         public let created: TimeStamp?
         /// The name of the pipeline for which you want to get the state.
@@ -1422,6 +1837,16 @@ extension CodePipeline {
             self.updated = updated
         }
 
+        public func validate() throws {
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(pipelineVersion, name:"pipelineVersion", min: 1)
+            try stageStates?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case created = "created"
             case pipelineName = "pipelineName"
@@ -1436,6 +1861,7 @@ extension CodePipeline {
             AWSShapeMember(label: "clientToken", required: true, type: .string), 
             AWSShapeMember(label: "jobId", required: true, type: .string)
         ]
+
         /// The clientToken portion of the clientId and clientToken pair used to verify that the calling entity is allowed access to the job and its details.
         public let clientToken: String
         /// The unique system-generated ID used for identifying the job.
@@ -1444,6 +1870,13 @@ extension CodePipeline {
         public init(clientToken: String, jobId: String) {
             self.clientToken = clientToken
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 256)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(jobId, name:"jobId", max: 512)
+            try validate(jobId, name:"jobId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1456,11 +1889,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobDetails", required: false, type: .structure)
         ]
+
         /// The details of the job, including any protected values defined for the job.
         public let jobDetails: ThirdPartyJobDetails?
 
         public init(jobDetails: ThirdPartyJobDetails? = nil) {
             self.jobDetails = jobDetails
+        }
+
+        public func validate() throws {
+            try jobDetails?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1472,11 +1910,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the artifact to be worked on, for example, "My App". The input artifact of an action must exactly match the output artifact declared in a preceding action, but the input artifact does not have to be the next action in strict sequence from the action that provided the output artifact. Actions in parallel can declare different output artifacts, which are in turn consumed by different following actions.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1491,6 +1936,7 @@ extension CodePipeline {
             AWSShapeMember(label: "id", required: false, type: .string), 
             AWSShapeMember(label: "nonce", required: false, type: .string)
         ]
+
         /// The ID of the AWS account to use when performing the job.
         public let accountId: String?
         /// Additional data about a job.
@@ -1505,6 +1951,14 @@ extension CodePipeline {
             self.data = data
             self.id = id
             self.nonce = nonce
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "[0-9]{12}")
+            try data?.validate()
+            try validate(id, name:"id", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(nonce, name:"nonce", max: 50)
+            try validate(nonce, name:"nonce", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1526,6 +1980,7 @@ extension CodePipeline {
             AWSShapeMember(label: "outputArtifacts", required: false, type: .list), 
             AWSShapeMember(label: "pipelineContext", required: false, type: .structure)
         ]
+
         /// Represents information about an action configuration.
         public let actionConfiguration: ActionConfiguration?
         /// Represents information about an action type.
@@ -1554,6 +2009,20 @@ extension CodePipeline {
             self.pipelineContext = pipelineContext
         }
 
+        public func validate() throws {
+            try actionTypeId?.validate()
+            try validate(continuationToken, name:"continuationToken", max: 2048)
+            try validate(continuationToken, name:"continuationToken", min: 1)
+            try encryptionKey?.validate()
+            try inputArtifacts?.forEach {
+                try $0.validate()
+            }
+            try outputArtifacts?.forEach {
+                try $0.validate()
+            }
+            try pipelineContext?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionConfiguration = "actionConfiguration"
             case actionTypeId = "actionTypeId"
@@ -1572,6 +2041,7 @@ extension CodePipeline {
             AWSShapeMember(label: "data", required: false, type: .structure), 
             AWSShapeMember(label: "id", required: false, type: .string)
         ]
+
         /// The AWS account ID associated with the job.
         public let accountId: String?
         /// Represents additional information about a job required for a job worker to complete the job. 
@@ -1583,6 +2053,12 @@ extension CodePipeline {
             self.accountId = accountId
             self.data = data
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "[0-9]{12}")
+            try data?.validate()
+            try validate(id, name:"id", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1610,6 +2086,7 @@ extension CodePipeline {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "pipelineName", required: true, type: .string)
         ]
+
         /// Input information used to filter action execution history.
         public let filter: ActionExecutionFilter?
         /// The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned nextToken value. Action execution history is retained for up to 12 months, based on action execution start times. Default value is 100.   Detailed execution history is available for executions run on or after February 21, 2019. 
@@ -1626,6 +2103,17 @@ extension CodePipeline {
             self.pipelineName = pipelineName
         }
 
+        public func validate() throws {
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filter = "filter"
             case maxResults = "maxResults"
@@ -1639,6 +2127,7 @@ extension CodePipeline {
             AWSShapeMember(label: "actionExecutionDetails", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The details for a list of recent executions, such as action execution ID.
         public let actionExecutionDetails: [ActionExecutionDetail]?
         /// If the amount of returned information is significantly large, an identifier is also returned and can be used in a subsequent ListActionExecutions call to return the next set of action executions in the list.
@@ -1647,6 +2136,14 @@ extension CodePipeline {
         public init(actionExecutionDetails: [ActionExecutionDetail]? = nil, nextToken: String? = nil) {
             self.actionExecutionDetails = actionExecutionDetails
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try actionExecutionDetails?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1660,6 +2157,7 @@ extension CodePipeline {
             AWSShapeMember(label: "actionOwnerFilter", required: false, type: .enum), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// Filters the list of action types to those created by a specified entity.
         public let actionOwnerFilter: ActionOwner?
         /// An identifier that was returned from the previous list action types call, which can be used to return the next set of action types in the list.
@@ -1668,6 +2166,11 @@ extension CodePipeline {
         public init(actionOwnerFilter: ActionOwner? = nil, nextToken: String? = nil) {
             self.actionOwnerFilter = actionOwnerFilter
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1681,6 +2184,7 @@ extension CodePipeline {
             AWSShapeMember(label: "actionTypes", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// Provides details of the action types.
         public let actionTypes: [ActionType]
         /// If the amount of returned information is significantly large, an identifier is also returned which can be used in a subsequent list action types call to return the next set of action types in the list.
@@ -1689,6 +2193,14 @@ extension CodePipeline {
         public init(actionTypes: [ActionType], nextToken: String? = nil) {
             self.actionTypes = actionTypes
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try actionTypes.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1703,6 +2215,7 @@ extension CodePipeline {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "pipelineName", required: true, type: .string)
         ]
+
         /// The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned nextToken value. Pipeline history is limited to the most recent 12 months, based on pipeline execution start times. Default value is 100.
         public let maxResults: Int32?
         /// The token that was returned from the previous ListPipelineExecutions call, which can be used to return the next set of pipeline executions in the list.
@@ -1714,6 +2227,16 @@ extension CodePipeline {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.pipelineName = pipelineName
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1728,6 +2251,7 @@ extension CodePipeline {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "pipelineExecutionSummaries", required: false, type: .list)
         ]
+
         /// A token that can be used in the next ListPipelineExecutions call. To view all items in the list, continue to call this operation with each subsequent token until no more nextToken values are returned.
         public let nextToken: String?
         /// A list of executions in the history of a pipeline.
@@ -1736,6 +2260,14 @@ extension CodePipeline {
         public init(nextToken: String? = nil, pipelineExecutionSummaries: [PipelineExecutionSummary]? = nil) {
             self.nextToken = nextToken
             self.pipelineExecutionSummaries = pipelineExecutionSummaries
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try pipelineExecutionSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1748,11 +2280,17 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// An identifier that was returned from the previous list pipelines call, which can be used to return the next set of pipelines in the list.
         public let nextToken: String?
 
         public init(nextToken: String? = nil) {
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1765,6 +2303,7 @@ extension CodePipeline {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "pipelines", required: false, type: .list)
         ]
+
         /// If the amount of returned information is significantly large, an identifier is also returned which can be used in a subsequent list pipelines call to return the next set of pipelines in the list.
         public let nextToken: String?
         /// The list of pipelines.
@@ -1773,6 +2312,14 @@ extension CodePipeline {
         public init(nextToken: String? = nil, pipelines: [PipelineSummary]? = nil) {
             self.nextToken = nextToken
             self.pipelines = pipelines
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try pipelines?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1787,6 +2334,7 @@ extension CodePipeline {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "resourceArn", required: true, type: .string)
         ]
+
         /// The maximum number of results to return in a single call.
         public let maxResults: Int32?
         /// The token that was returned from the previous API call, which would be used to return the next page of the list. However, the ListTagsforResource call lists all available tags in one call and does not use pagination.
@@ -1798,6 +2346,14 @@ extension CodePipeline {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[\\w]+)*:codepipeline:.+:[0-9]{12}:.+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1812,6 +2368,7 @@ extension CodePipeline {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// If the amount of returned information is significantly large, an identifier is also returned and can be used in a subsequent API call to return the next page of the list. However, the ListTagsforResource call lists all available tags in one call and does not use pagination.
         public let nextToken: String?
         /// The tags for the resource.
@@ -1820,6 +2377,14 @@ extension CodePipeline {
         public init(nextToken: String? = nil, tags: [Tag]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1838,6 +2403,7 @@ extension CodePipeline {
             AWSShapeMember(label: "tags", required: false, type: .list), 
             AWSShapeMember(label: "url", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the webhook.
         public let arn: String?
         /// The detail returned for each webhook, such as the webhook authentication type and filter rules.
@@ -1863,6 +2429,15 @@ extension CodePipeline {
             self.url = url
         }
 
+        public func validate() throws {
+            try definition.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(url, name:"url", max: 1000)
+            try validate(url, name:"url", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case definition = "definition"
@@ -1879,6 +2454,7 @@ extension CodePipeline {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned nextToken value.
         public let maxResults: Int32?
         /// The token that was returned from the previous ListWebhooks call, which can be used to return the next set of webhooks in the list.
@@ -1887,6 +2463,13 @@ extension CodePipeline {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1900,6 +2483,7 @@ extension CodePipeline {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "webhooks", required: false, type: .list)
         ]
+
         /// If the amount of returned information is significantly large, an identifier is also returned and can be used in a subsequent ListWebhooks call to return the next set of webhooks in the list. 
         public let nextToken: String?
         /// The JSON detail returned for each webhook in the list output for the ListWebhooks call.
@@ -1908,6 +2492,14 @@ extension CodePipeline {
         public init(nextToken: String? = nil, webhooks: [ListWebhookItem]? = nil) {
             self.nextToken = nextToken
             self.webhooks = webhooks
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2048)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try webhooks?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1920,11 +2512,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the output of an artifact, such as "My App". The input artifact of an action must exactly match the output artifact declared in a preceding action, but the input artifact does not have to be the next action in strict sequence from the action that provided the output artifact. Actions in parallel can declare different output artifacts, which are in turn consumed by different following actions. Output artifact names must be unique within a pipeline.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1940,6 +2539,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipelineName", required: false, type: .string), 
             AWSShapeMember(label: "stage", required: false, type: .structure)
         ]
+
         /// The context of an action to a job worker within the stage of a pipeline.
         public let action: ActionContext?
         /// The Amazon Resource Name (ARN) of the pipeline.
@@ -1957,6 +2557,16 @@ extension CodePipeline {
             self.pipelineExecutionId = pipelineExecutionId
             self.pipelineName = pipelineName
             self.stage = stage
+        }
+
+        public func validate() throws {
+            try action?.validate()
+            try validate(pipelineArn, name:"pipelineArn", pattern: "arn:aws(-[\\w]+)*:codepipeline:.+:[0-9]{12}:.+")
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try stage?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1977,6 +2587,7 @@ extension CodePipeline {
             AWSShapeMember(label: "stages", required: true, type: .list), 
             AWSShapeMember(label: "version", required: false, type: .integer)
         ]
+
         /// Represents information about the Amazon S3 bucket where artifacts are stored for the pipeline. 
         public let artifactStore: ArtifactStore?
         /// A mapping of artifactStore objects and their corresponding regions. There must be an artifact store for the pipeline region and for each cross-region action within the pipeline. You can only use either artifactStore or artifactStores, not both. If you create a cross-region action in your pipeline, you must use artifactStores.
@@ -1999,6 +2610,19 @@ extension CodePipeline {
             self.version = version
         }
 
+        public func validate() throws {
+            try artifactStore?.validate()
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(roleArn, name:"roleArn", max: 1024)
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws(-[\\w]+)*:iam::[0-9]{12}:role/.*")
+            try stages.forEach {
+                try $0.validate()
+            }
+            try validate(version, name:"version", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case artifactStore = "artifactStore"
             case artifactStores = "artifactStores"
@@ -2017,6 +2641,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipelineVersion", required: false, type: .integer), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// A list of ArtifactRevision objects included in a pipeline execution.
         public let artifactRevisions: [ArtifactRevision]?
         /// The ID of the pipeline execution.
@@ -2034,6 +2659,17 @@ extension CodePipeline {
             self.pipelineName = pipelineName
             self.pipelineVersion = pipelineVersion
             self.status = status
+        }
+
+        public func validate() throws {
+            try artifactRevisions?.forEach {
+                try $0.validate()
+            }
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(pipelineVersion, name:"pipelineVersion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2061,6 +2697,7 @@ extension CodePipeline {
             AWSShapeMember(label: "startTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The date and time of the last change to the pipeline execution, in timestamp format.
         public let lastUpdateTime: TimeStamp?
         /// The ID of the pipeline execution.
@@ -2080,6 +2717,13 @@ extension CodePipeline {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try sourceRevisions?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case lastUpdateTime = "lastUpdateTime"
             case pipelineExecutionId = "pipelineExecutionId"
@@ -2095,6 +2739,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipelineArn", required: false, type: .string), 
             AWSShapeMember(label: "updated", required: false, type: .timestamp)
         ]
+
         /// The date and time the pipeline was created, in timestamp format.
         public let created: TimeStamp?
         /// The Amazon Resource Name (ARN) of the pipeline.
@@ -2106,6 +2751,10 @@ extension CodePipeline {
             self.created = created
             self.pipelineArn = pipelineArn
             self.updated = updated
+        }
+
+        public func validate() throws {
+            try validate(pipelineArn, name:"pipelineArn", pattern: "arn:aws(-[\\w]+)*:codepipeline:.+:[0-9]{12}:.+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2122,6 +2771,7 @@ extension CodePipeline {
             AWSShapeMember(label: "updated", required: false, type: .timestamp), 
             AWSShapeMember(label: "version", required: false, type: .integer)
         ]
+
         /// The date and time the pipeline was created, in timestamp format.
         public let created: TimeStamp?
         /// The name of the pipeline.
@@ -2138,6 +2788,13 @@ extension CodePipeline {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(version, name:"version", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case created = "created"
             case name = "name"
@@ -2152,6 +2809,7 @@ extension CodePipeline {
             AWSShapeMember(label: "maxBatchSize", required: false, type: .integer), 
             AWSShapeMember(label: "queryParam", required: false, type: .map)
         ]
+
         /// Represents information about an action type.
         public let actionTypeId: ActionTypeId
         /// The maximum number of jobs to return in a poll for jobs call.
@@ -2165,6 +2823,11 @@ extension CodePipeline {
             self.queryParam = queryParam
         }
 
+        public func validate() throws {
+            try actionTypeId.validate()
+            try validate(maxBatchSize, name:"maxBatchSize", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionTypeId = "actionTypeId"
             case maxBatchSize = "maxBatchSize"
@@ -2176,11 +2839,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobs", required: false, type: .list)
         ]
+
         /// Information about the jobs to take action on.
         public let jobs: [Job]?
 
         public init(jobs: [Job]? = nil) {
             self.jobs = jobs
+        }
+
+        public func validate() throws {
+            try jobs?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2193,6 +2863,7 @@ extension CodePipeline {
             AWSShapeMember(label: "actionTypeId", required: true, type: .structure), 
             AWSShapeMember(label: "maxBatchSize", required: false, type: .integer)
         ]
+
         /// Represents information about an action type.
         public let actionTypeId: ActionTypeId
         /// The maximum number of jobs to return in a poll for jobs call.
@@ -2201,6 +2872,11 @@ extension CodePipeline {
         public init(actionTypeId: ActionTypeId, maxBatchSize: Int32? = nil) {
             self.actionTypeId = actionTypeId
             self.maxBatchSize = maxBatchSize
+        }
+
+        public func validate() throws {
+            try actionTypeId.validate()
+            try validate(maxBatchSize, name:"maxBatchSize", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2213,11 +2889,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobs", required: false, type: .list)
         ]
+
         /// Information about the jobs to take action on.
         public let jobs: [ThirdPartyJob]?
 
         public init(jobs: [ThirdPartyJob]? = nil) {
             self.jobs = jobs
+        }
+
+        public func validate() throws {
+            try jobs?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2232,6 +2915,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipelineName", required: true, type: .string), 
             AWSShapeMember(label: "stageName", required: true, type: .string)
         ]
+
         /// The name of the action that will process the revision.
         public let actionName: String
         /// Represents information about the version (or revision) of an action.
@@ -2248,6 +2932,19 @@ extension CodePipeline {
             self.stageName = stageName
         }
 
+        public func validate() throws {
+            try validate(actionName, name:"actionName", max: 100)
+            try validate(actionName, name:"actionName", min: 1)
+            try validate(actionName, name:"actionName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try actionRevision.validate()
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(stageName, name:"stageName", max: 100)
+            try validate(stageName, name:"stageName", min: 1)
+            try validate(stageName, name:"stageName", pattern: "[A-Za-z0-9.@\\-_]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionName = "actionName"
             case actionRevision = "actionRevision"
@@ -2261,6 +2958,7 @@ extension CodePipeline {
             AWSShapeMember(label: "newRevision", required: false, type: .boolean), 
             AWSShapeMember(label: "pipelineExecutionId", required: false, type: .string)
         ]
+
         /// Indicates whether the artifact revision was previously used in an execution of the specified pipeline.
         public let newRevision: Bool?
         /// The ID of the current workflow state of the pipeline.
@@ -2269,6 +2967,10 @@ extension CodePipeline {
         public init(newRevision: Bool? = nil, pipelineExecutionId: String? = nil) {
             self.newRevision = newRevision
             self.pipelineExecutionId = pipelineExecutionId
+        }
+
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2285,6 +2987,7 @@ extension CodePipeline {
             AWSShapeMember(label: "stageName", required: true, type: .string), 
             AWSShapeMember(label: "token", required: true, type: .string)
         ]
+
         /// The name of the action for which approval is requested.
         public let actionName: String
         /// The name of the pipeline that contains the action. 
@@ -2304,6 +3007,20 @@ extension CodePipeline {
             self.token = token
         }
 
+        public func validate() throws {
+            try validate(actionName, name:"actionName", max: 100)
+            try validate(actionName, name:"actionName", min: 1)
+            try validate(actionName, name:"actionName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try result.validate()
+            try validate(stageName, name:"stageName", max: 100)
+            try validate(stageName, name:"stageName", min: 1)
+            try validate(stageName, name:"stageName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(token, name:"token", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionName = "actionName"
             case pipelineName = "pipelineName"
@@ -2317,6 +3034,7 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "approvedAt", required: false, type: .timestamp)
         ]
+
         /// The timestamp showing when the approval or rejection was submitted.
         public let approvedAt: TimeStamp?
 
@@ -2334,6 +3052,7 @@ extension CodePipeline {
             AWSShapeMember(label: "failureDetails", required: true, type: .structure), 
             AWSShapeMember(label: "jobId", required: true, type: .string)
         ]
+
         /// The details about the failure of a job.
         public let failureDetails: FailureDetails
         /// The unique system-generated ID of the job that failed. This is the same ID returned from PollForJobs.
@@ -2342,6 +3061,11 @@ extension CodePipeline {
         public init(failureDetails: FailureDetails, jobId: String) {
             self.failureDetails = failureDetails
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try failureDetails.validate()
+            try validate(jobId, name:"jobId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2357,6 +3081,7 @@ extension CodePipeline {
             AWSShapeMember(label: "executionDetails", required: false, type: .structure), 
             AWSShapeMember(label: "jobId", required: true, type: .string)
         ]
+
         /// A token generated by a job worker, such as an AWS CodeDeploy deployment ID, that a successful job provides to identify a custom action in progress. Future jobs will use this token in order to identify the running instance of the action. It can be reused to return additional information about the progress of the custom action. When the action is complete, no continuation token should be supplied.
         public let continuationToken: String?
         /// The ID of the current revision of the artifact successfully worked upon by the job.
@@ -2373,6 +3098,14 @@ extension CodePipeline {
             self.jobId = jobId
         }
 
+        public func validate() throws {
+            try validate(continuationToken, name:"continuationToken", max: 2048)
+            try validate(continuationToken, name:"continuationToken", min: 1)
+            try currentRevision?.validate()
+            try executionDetails?.validate()
+            try validate(jobId, name:"jobId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case continuationToken = "continuationToken"
             case currentRevision = "currentRevision"
@@ -2387,6 +3120,7 @@ extension CodePipeline {
             AWSShapeMember(label: "failureDetails", required: true, type: .structure), 
             AWSShapeMember(label: "jobId", required: true, type: .string)
         ]
+
         /// The clientToken portion of the clientId and clientToken pair used to verify that the calling entity is allowed access to the job and its details.
         public let clientToken: String
         /// Represents information about failure details.
@@ -2398,6 +3132,14 @@ extension CodePipeline {
             self.clientToken = clientToken
             self.failureDetails = failureDetails
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 256)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try failureDetails.validate()
+            try validate(jobId, name:"jobId", max: 512)
+            try validate(jobId, name:"jobId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2415,6 +3157,7 @@ extension CodePipeline {
             AWSShapeMember(label: "executionDetails", required: false, type: .structure), 
             AWSShapeMember(label: "jobId", required: true, type: .string)
         ]
+
         /// The clientToken portion of the clientId and clientToken pair used to verify that the calling entity is allowed access to the job and its details.
         public let clientToken: String
         /// A token generated by a job worker, such as an AWS CodeDeploy deployment ID, that a successful job provides to identify a partner action in progress. Future jobs will use this token in order to identify the running instance of the action. It can be reused to return additional information about the progress of the partner action. When the action is complete, no continuation token should be supplied.
@@ -2434,6 +3177,17 @@ extension CodePipeline {
             self.jobId = jobId
         }
 
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 256)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(continuationToken, name:"continuationToken", max: 2048)
+            try validate(continuationToken, name:"continuationToken", min: 1)
+            try currentRevision?.validate()
+            try executionDetails?.validate()
+            try validate(jobId, name:"jobId", max: 512)
+            try validate(jobId, name:"jobId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientToken = "clientToken"
             case continuationToken = "continuationToken"
@@ -2448,6 +3202,7 @@ extension CodePipeline {
             AWSShapeMember(label: "tags", required: false, type: .list), 
             AWSShapeMember(label: "webhook", required: true, type: .structure)
         ]
+
         /// The tags for the webhook.
         public let tags: [Tag]?
         /// The detail provided in an input file to create the webhook, such as the webhook name, the pipeline name, and the action name. Give the webhook a unique name which identifies the webhook being defined. You may choose to name the webhook after the pipeline and action it targets so that you can easily recognize what it's used for later.
@@ -2456,6 +3211,13 @@ extension CodePipeline {
         public init(tags: [Tag]? = nil, webhook: WebhookDefinition) {
             self.tags = tags
             self.webhook = webhook
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try webhook.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2468,11 +3230,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "webhook", required: false, type: .structure)
         ]
+
         /// The detail returned from creating the webhook, such as the webhook name, webhook URL, and webhook ARN.
         public let webhook: ListWebhookItem?
 
         public init(webhook: ListWebhookItem? = nil) {
             self.webhook = webhook
+        }
+
+        public func validate() throws {
+            try webhook?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2484,11 +3251,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "webhookName", required: false, type: .string)
         ]
+
         /// The name of an existing webhook created with PutWebhook to register with a supported third party. 
         public let webhookName: String?
 
         public init(webhookName: String? = nil) {
             self.webhookName = webhookName
+        }
+
+        public func validate() throws {
+            try validate(webhookName, name:"webhookName", max: 100)
+            try validate(webhookName, name:"webhookName", min: 1)
+            try validate(webhookName, name:"webhookName", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2497,6 +3271,7 @@ extension CodePipeline {
     }
 
     public struct RegisterWebhookWithThirdPartyOutput: AWSShape {
+
 
         public init() {
         }
@@ -2510,6 +3285,7 @@ extension CodePipeline {
             AWSShapeMember(label: "retryMode", required: true, type: .enum), 
             AWSShapeMember(label: "stageName", required: true, type: .string)
         ]
+
         /// The ID of the pipeline execution in the failed stage to be retried. Use the GetPipelineState action to retrieve the current pipelineExecutionId of the failed stage
         public let pipelineExecutionId: String
         /// The name of the pipeline that contains the failed stage.
@@ -2526,6 +3302,16 @@ extension CodePipeline {
             self.stageName = stageName
         }
 
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(pipelineName, name:"pipelineName", max: 100)
+            try validate(pipelineName, name:"pipelineName", min: 1)
+            try validate(pipelineName, name:"pipelineName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(stageName, name:"stageName", max: 100)
+            try validate(stageName, name:"stageName", min: 1)
+            try validate(stageName, name:"stageName", pattern: "[A-Za-z0-9.@\\-_]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case pipelineExecutionId = "pipelineExecutionId"
             case pipelineName = "pipelineName"
@@ -2538,11 +3324,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "pipelineExecutionId", required: false, type: .string)
         ]
+
         /// The ID of the current workflow execution in the failed stage.
         public let pipelineExecutionId: String?
 
         public init(pipelineExecutionId: String? = nil) {
             self.pipelineExecutionId = pipelineExecutionId
+        }
+
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2555,6 +3346,7 @@ extension CodePipeline {
             AWSShapeMember(label: "bucketName", required: true, type: .string), 
             AWSShapeMember(label: "objectKey", required: true, type: .string)
         ]
+
         /// The name of the Amazon S3 bucket.
         public let bucketName: String
         /// The key of the object in the Amazon S3 bucket, which uniquely identifies the object in the bucket.
@@ -2576,6 +3368,7 @@ extension CodePipeline {
             AWSShapeMember(label: "bucket", required: false, type: .string), 
             AWSShapeMember(label: "key", required: false, type: .string)
         ]
+
         /// The Amazon S3 artifact bucket for an action's artifacts.
         public let bucket: String?
         /// The artifact name.
@@ -2584,6 +3377,13 @@ extension CodePipeline {
         public init(bucket: String? = nil, key: String? = nil) {
             self.bucket = bucket
             self.key = key
+        }
+
+        public func validate() throws {
+            try validate(bucket, name:"bucket", max: 63)
+            try validate(bucket, name:"bucket", min: 3)
+            try validate(key, name:"key", max: 100)
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2599,6 +3399,7 @@ extension CodePipeline {
             AWSShapeMember(label: "revisionSummary", required: false, type: .string), 
             AWSShapeMember(label: "revisionUrl", required: false, type: .string)
         ]
+
         /// The name of the action that processed the revision to the source artifact.
         public let actionName: String
         /// The system-generated unique ID that identifies the revision number of the artifact.
@@ -2615,6 +3416,18 @@ extension CodePipeline {
             self.revisionUrl = revisionUrl
         }
 
+        public func validate() throws {
+            try validate(actionName, name:"actionName", max: 100)
+            try validate(actionName, name:"actionName", min: 1)
+            try validate(actionName, name:"actionName", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(revisionId, name:"revisionId", max: 1500)
+            try validate(revisionId, name:"revisionId", min: 1)
+            try validate(revisionSummary, name:"revisionSummary", max: 2048)
+            try validate(revisionSummary, name:"revisionSummary", min: 1)
+            try validate(revisionUrl, name:"revisionUrl", max: 2048)
+            try validate(revisionUrl, name:"revisionUrl", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionName = "actionName"
             case revisionId = "revisionId"
@@ -2627,11 +3440,18 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: false, type: .string)
         ]
+
         /// The name of the stage.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2645,6 +3465,7 @@ extension CodePipeline {
             AWSShapeMember(label: "blockers", required: false, type: .list), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The actions included in a stage.
         public let actions: [ActionDeclaration]
         /// Reserved for future use.
@@ -2656,6 +3477,18 @@ extension CodePipeline {
             self.actions = actions
             self.blockers = blockers
             self.name = name
+        }
+
+        public func validate() throws {
+            try actions.forEach {
+                try $0.validate()
+            }
+            try blockers?.forEach {
+                try $0.validate()
+            }
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2670,6 +3503,7 @@ extension CodePipeline {
             AWSShapeMember(label: "pipelineExecutionId", required: true, type: .string), 
             AWSShapeMember(label: "status", required: true, type: .enum)
         ]
+
         /// The ID of the pipeline execution associated with the stage.
         public let pipelineExecutionId: String
         /// The status of the stage, or for a completed stage, the last status of the stage.
@@ -2678,6 +3512,10 @@ extension CodePipeline {
         public init(pipelineExecutionId: String, status: StageExecutionStatus) {
             self.pipelineExecutionId = pipelineExecutionId
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2705,6 +3543,7 @@ extension CodePipeline {
             AWSShapeMember(label: "latestExecution", required: false, type: .structure), 
             AWSShapeMember(label: "stageName", required: false, type: .string)
         ]
+
         /// The state of the stage.
         public let actionStates: [ActionState]?
         /// The state of the inbound transition, which is either enabled or disabled.
@@ -2719,6 +3558,17 @@ extension CodePipeline {
             self.inboundTransitionState = inboundTransitionState
             self.latestExecution = latestExecution
             self.stageName = stageName
+        }
+
+        public func validate() throws {
+            try actionStates?.forEach {
+                try $0.validate()
+            }
+            try inboundTransitionState?.validate()
+            try latestExecution?.validate()
+            try validate(stageName, name:"stageName", max: 100)
+            try validate(stageName, name:"stageName", min: 1)
+            try validate(stageName, name:"stageName", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2740,14 +3590,24 @@ extension CodePipeline {
             AWSShapeMember(label: "clientRequestToken", required: false, type: .string), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The system-generated unique ID used to identify a unique execution request.
         public let clientRequestToken: String?
         /// The name of the pipeline to start.
         public let name: String
 
-        public init(clientRequestToken: String? = nil, name: String) {
+        public init(clientRequestToken: String? = StartPipelineExecutionInput.idempotencyToken(), name: String) {
             self.clientRequestToken = clientRequestToken
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2760,11 +3620,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "pipelineExecutionId", required: false, type: .string)
         ]
+
         /// The unique system-generated ID of the pipeline execution that was started.
         public let pipelineExecutionId: String?
 
         public init(pipelineExecutionId: String? = nil) {
             self.pipelineExecutionId = pipelineExecutionId
+        }
+
+        public func validate() throws {
+            try validate(pipelineExecutionId, name:"pipelineExecutionId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2777,6 +3642,7 @@ extension CodePipeline {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The tag's key.
         public let key: String
         /// The tag's value.
@@ -2785,6 +3651,13 @@ extension CodePipeline {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2798,6 +3671,7 @@ extension CodePipeline {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource you want to add tags to.
         public let resourceArn: String
         /// The tags you want to modify or add to the resource.
@@ -2808,6 +3682,13 @@ extension CodePipeline {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[\\w]+)*:codepipeline:.+:[0-9]{12}:.+")
+            try tags.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tags = "tags"
@@ -2815,6 +3696,7 @@ extension CodePipeline {
     }
 
     public struct TagResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -2826,6 +3708,7 @@ extension CodePipeline {
             AWSShapeMember(label: "clientId", required: false, type: .string), 
             AWSShapeMember(label: "jobId", required: false, type: .string)
         ]
+
         /// The clientToken portion of the clientId and clientToken pair used to verify that the calling entity is allowed access to the job and its details.
         public let clientId: String?
         /// The identifier used to identify the job in AWS CodePipeline.
@@ -2834,6 +3717,11 @@ extension CodePipeline {
         public init(clientId: String? = nil, jobId: String? = nil) {
             self.clientId = clientId
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(clientId, name:"clientId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(jobId, name:"jobId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2853,6 +3741,7 @@ extension CodePipeline {
             AWSShapeMember(label: "outputArtifacts", required: false, type: .list), 
             AWSShapeMember(label: "pipelineContext", required: false, type: .structure)
         ]
+
         /// Represents information about an action configuration.
         public let actionConfiguration: ActionConfiguration?
         /// Represents information about an action type.
@@ -2881,6 +3770,20 @@ extension CodePipeline {
             self.pipelineContext = pipelineContext
         }
 
+        public func validate() throws {
+            try actionTypeId?.validate()
+            try validate(continuationToken, name:"continuationToken", max: 2048)
+            try validate(continuationToken, name:"continuationToken", min: 1)
+            try encryptionKey?.validate()
+            try inputArtifacts?.forEach {
+                try $0.validate()
+            }
+            try outputArtifacts?.forEach {
+                try $0.validate()
+            }
+            try pipelineContext?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionConfiguration = "actionConfiguration"
             case actionTypeId = "actionTypeId"
@@ -2899,6 +3802,7 @@ extension CodePipeline {
             AWSShapeMember(label: "id", required: false, type: .string), 
             AWSShapeMember(label: "nonce", required: false, type: .string)
         ]
+
         /// The data to be returned by the third party job worker.
         public let data: ThirdPartyJobData?
         /// The identifier used to identify the job details in AWS CodePipeline.
@@ -2910,6 +3814,14 @@ extension CodePipeline {
             self.data = data
             self.id = id
             self.nonce = nonce
+        }
+
+        public func validate() throws {
+            try data?.validate()
+            try validate(id, name:"id", max: 512)
+            try validate(id, name:"id", min: 1)
+            try validate(nonce, name:"nonce", max: 50)
+            try validate(nonce, name:"nonce", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2926,6 +3838,7 @@ extension CodePipeline {
             AWSShapeMember(label: "lastChangedAt", required: false, type: .timestamp), 
             AWSShapeMember(label: "lastChangedBy", required: false, type: .string)
         ]
+
         /// The user-specified reason why the transition between two stages of a pipeline was disabled.
         public let disabledReason: String?
         /// Whether the transition between stages is enabled (true) or disabled (false).
@@ -2942,6 +3855,12 @@ extension CodePipeline {
             self.lastChangedBy = lastChangedBy
         }
 
+        public func validate() throws {
+            try validate(disabledReason, name:"disabledReason", max: 300)
+            try validate(disabledReason, name:"disabledReason", min: 1)
+            try validate(disabledReason, name:"disabledReason", pattern: "[a-zA-Z0-9!@ \\(\\)\\.\\*\\?\\-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case disabledReason = "disabledReason"
             case enabled = "enabled"
@@ -2955,6 +3874,7 @@ extension CodePipeline {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tagKeys", required: true, type: .list)
         ]
+
         ///  The Amazon Resource Name (ARN) of the resource to remove tags from.
         public let resourceArn: String
         /// The list of keys for the tags to be removed from the resource.
@@ -2965,6 +3885,14 @@ extension CodePipeline {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[\\w]+)*:codepipeline:.+:[0-9]{12}:.+")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tagKeys = "tagKeys"
@@ -2972,6 +3900,7 @@ extension CodePipeline {
     }
 
     public struct UntagResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -2982,11 +3911,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "pipeline", required: true, type: .structure)
         ]
+
         /// The name of the pipeline to be updated.
         public let pipeline: PipelineDeclaration
 
         public init(pipeline: PipelineDeclaration) {
             self.pipeline = pipeline
+        }
+
+        public func validate() throws {
+            try pipeline.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2998,11 +3932,16 @@ extension CodePipeline {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "pipeline", required: false, type: .structure)
         ]
+
         /// The structure of the updated pipeline.
         public let pipeline: PipelineDeclaration?
 
         public init(pipeline: PipelineDeclaration? = nil) {
             self.pipeline = pipeline
+        }
+
+        public func validate() throws {
+            try pipeline?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3015,6 +3954,7 @@ extension CodePipeline {
             AWSShapeMember(label: "AllowedIPRange", required: false, type: .string), 
             AWSShapeMember(label: "SecretToken", required: false, type: .string)
         ]
+
         /// The property used to configure acceptance of webhooks within a specific IP range. For IP, only the AllowedIPRange property must be set, and this property must be set to a valid CIDR range.
         public let allowedIPRange: String?
         /// The property used to configure GitHub authentication. For GITHUB_HMAC, only the SecretToken property must be set.
@@ -3023,6 +3963,13 @@ extension CodePipeline {
         public init(allowedIPRange: String? = nil, secretToken: String? = nil) {
             self.allowedIPRange = allowedIPRange
             self.secretToken = secretToken
+        }
+
+        public func validate() throws {
+            try validate(allowedIPRange, name:"allowedIPRange", max: 100)
+            try validate(allowedIPRange, name:"allowedIPRange", min: 1)
+            try validate(secretToken, name:"secretToken", max: 100)
+            try validate(secretToken, name:"secretToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3047,6 +3994,7 @@ extension CodePipeline {
             AWSShapeMember(label: "targetAction", required: true, type: .string), 
             AWSShapeMember(label: "targetPipeline", required: true, type: .string)
         ]
+
         /// Supported options are GITHUB_HMAC, IP and UNAUTHENTICATED.   For information about the authentication scheme implemented by GITHUB_HMAC, see Securing your webhooks on the GitHub Developer website.    IP will reject webhooks trigger requests unless they originate from an IP within the IP range whitelisted in the authentication configuration.    UNAUTHENTICATED will accept all webhook trigger requests regardless of origin.  
         public let authentication: WebhookAuthenticationType
         /// Properties that configure the authentication applied to incoming webhook trigger requests. The required properties depend on the authentication type. For GITHUB_HMAC, only the SecretToken property must be set. For IP, only the AllowedIPRange property must be set to a valid CIDR range. For UNAUTHENTICATED, no properties can be set.
@@ -3069,6 +4017,23 @@ extension CodePipeline {
             self.targetPipeline = targetPipeline
         }
 
+        public func validate() throws {
+            try authenticationConfiguration.validate()
+            try filters.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(targetAction, name:"targetAction", max: 100)
+            try validate(targetAction, name:"targetAction", min: 1)
+            try validate(targetAction, name:"targetAction", pattern: "[A-Za-z0-9.@\\-_]+")
+            try validate(targetPipeline, name:"targetPipeline", max: 100)
+            try validate(targetPipeline, name:"targetPipeline", min: 1)
+            try validate(targetPipeline, name:"targetPipeline", pattern: "[A-Za-z0-9.@\\-_]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authentication = "authentication"
             case authenticationConfiguration = "authenticationConfiguration"
@@ -3084,6 +4049,7 @@ extension CodePipeline {
             AWSShapeMember(label: "jsonPath", required: true, type: .string), 
             AWSShapeMember(label: "matchEquals", required: false, type: .string)
         ]
+
         /// A JsonPath expression that will be applied to the body/payload of the webhook. The value selected by the JsonPath expression must match the value specified in the MatchEquals field, otherwise the request will be ignored. For more information about JsonPath expressions, see Java JsonPath implementation in GitHub.
         public let jsonPath: String
         /// The value selected by the JsonPath expression must match what is supplied in the MatchEquals field, otherwise the request will be ignored. Properties from the target action configuration can be included as placeholders in this value by surrounding the action configuration key with curly braces. For example, if the value supplied here is "refs/heads/{Branch}" and the target action has an action configuration property called "Branch" with a value of "master", the MatchEquals value will be evaluated as "refs/heads/master". For a list of action configuration properties for built-in action types, see Pipeline Structure Reference Action Requirements.
@@ -3092,6 +4058,13 @@ extension CodePipeline {
         public init(jsonPath: String, matchEquals: String? = nil) {
             self.jsonPath = jsonPath
             self.matchEquals = matchEquals
+        }
+
+        public func validate() throws {
+            try validate(jsonPath, name:"jsonPath", max: 150)
+            try validate(jsonPath, name:"jsonPath", min: 1)
+            try validate(matchEquals, name:"matchEquals", max: 150)
+            try validate(matchEquals, name:"matchEquals", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

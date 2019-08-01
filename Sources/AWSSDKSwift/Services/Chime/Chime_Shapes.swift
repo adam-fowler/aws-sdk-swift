@@ -15,6 +15,7 @@ extension Chime {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "SupportedLicenses", required: false, type: .list)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The Amazon Chime account type. For more information about different account types, see Managing Your Amazon Chime Accounts in the Amazon Chime Administration Guide.
@@ -56,6 +57,7 @@ extension Chime {
             AWSShapeMember(label: "DisableRemoteControl", required: false, type: .boolean), 
             AWSShapeMember(label: "EnableDialOut", required: false, type: .boolean)
         ]
+
         /// Setting that stops or starts remote control of shared screens during meetings.
         public let disableRemoteControl: Bool?
         /// Setting that allows meeting participants to choose the Call me at a phone number option. For more information, see Join a Meeting without the Amazon Chime App.
@@ -86,6 +88,7 @@ extension Chime {
             AWSShapeMember(label: "E164PhoneNumber", required: true, type: .string), 
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The phone number, in E.164 format.
@@ -99,6 +102,10 @@ extension Chime {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(e164PhoneNumber, name:"e164PhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case e164PhoneNumber = "E164PhoneNumber"
@@ -107,6 +114,7 @@ extension Chime {
     }
 
     public struct AssociatePhoneNumberWithUserResponse: AWSShape {
+
 
         public init() {
         }
@@ -118,6 +126,7 @@ extension Chime {
             AWSShapeMember(label: "E164PhoneNumbers", required: false, type: .list), 
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// List of phone numbers, in E.164 format.
         public let e164PhoneNumbers: [String]?
         /// The Amazon Chime Voice Connector ID.
@@ -126,6 +135,13 @@ extension Chime {
         public init(e164PhoneNumbers: [String]? = nil, voiceConnectorId: String) {
             self.e164PhoneNumbers = e164PhoneNumbers
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try e164PhoneNumbers?.forEach {
+                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
+            }
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -138,11 +154,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberErrors", required: false, type: .list)
         ]
+
         /// If the action fails for one or more of the phone numbers in the request, a list of the phone numbers is returned, along with error codes and error messages.
         public let phoneNumberErrors: [PhoneNumberError]?
 
         public init(phoneNumberErrors: [PhoneNumberError]? = nil) {
             self.phoneNumberErrors = phoneNumberErrors
+        }
+
+        public func validate() throws {
+            try phoneNumberErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -154,11 +177,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberIds", required: true, type: .list)
         ]
+
         /// List of phone number IDs.
         public let phoneNumberIds: [String]
 
         public init(phoneNumberIds: [String]) {
             self.phoneNumberIds = phoneNumberIds
+        }
+
+        public func validate() throws {
+            try validate(phoneNumberIds, name:"phoneNumberIds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -170,11 +198,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberErrors", required: false, type: .list)
         ]
+
         /// If the action fails for one or more of the phone numbers in the request, a list of the phone numbers is returned, along with error codes and error messages.
         public let phoneNumberErrors: [PhoneNumberError]?
 
         public init(phoneNumberErrors: [PhoneNumberError]? = nil) {
             self.phoneNumberErrors = phoneNumberErrors
+        }
+
+        public func validate() throws {
+            try phoneNumberErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -187,6 +222,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserIdList", required: true, type: .list)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The request containing the user IDs to suspend.
@@ -195,6 +231,14 @@ extension Chime {
         public init(accountId: String, userIdList: [String]) {
             self.accountId = accountId
             self.userIdList = userIdList
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try userIdList.forEach {
+                try validate($0, name:"userIdList[]", pattern: ".*\\S.*")
+            }
+            try validate(userIdList, name:"userIdList", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -207,11 +251,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserErrors", required: false, type: .list)
         ]
+
         /// If the BatchSuspendUser action fails for one or more of the user IDs in the request, a list of the user IDs is returned, along with error codes and error messages.
         public let userErrors: [UserError]?
 
         public init(userErrors: [UserError]? = nil) {
             self.userErrors = userErrors
+        }
+
+        public func validate() throws {
+            try userErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -224,6 +275,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserIdList", required: true, type: .list)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The request containing the user IDs to unsuspend.
@@ -232,6 +284,14 @@ extension Chime {
         public init(accountId: String, userIdList: [String]) {
             self.accountId = accountId
             self.userIdList = userIdList
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try userIdList.forEach {
+                try validate($0, name:"userIdList[]", pattern: ".*\\S.*")
+            }
+            try validate(userIdList, name:"userIdList", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -244,11 +304,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserErrors", required: false, type: .list)
         ]
+
         /// If the BatchUnsuspendUser action fails for one or more of the user IDs in the request, a list of the user IDs is returned, along with error codes and error messages.
         public let userErrors: [UserError]?
 
         public init(userErrors: [UserError]? = nil) {
             self.userErrors = userErrors
+        }
+
+        public func validate() throws {
+            try userErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -260,11 +327,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UpdatePhoneNumberRequestItems", required: true, type: .list)
         ]
+
         /// The request containing the phone number IDs and product types to update.
         public let updatePhoneNumberRequestItems: [UpdatePhoneNumberRequestItem]
 
         public init(updatePhoneNumberRequestItems: [UpdatePhoneNumberRequestItem]) {
             self.updatePhoneNumberRequestItems = updatePhoneNumberRequestItems
+        }
+
+        public func validate() throws {
+            try updatePhoneNumberRequestItems.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -276,11 +350,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberErrors", required: false, type: .list)
         ]
+
         /// If the action fails for one or more of the phone numbers in the request, a list of the phone numbers is returned, along with error codes and error messages.
         public let phoneNumberErrors: [PhoneNumberError]?
 
         public init(phoneNumberErrors: [PhoneNumberError]? = nil) {
             self.phoneNumberErrors = phoneNumberErrors
+        }
+
+        public func validate() throws {
+            try phoneNumberErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -293,6 +374,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UpdateUserRequestItems", required: true, type: .list)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The request containing the user IDs and details to update.
@@ -301,6 +383,14 @@ extension Chime {
         public init(accountId: String, updateUserRequestItems: [UpdateUserRequestItem]) {
             self.accountId = accountId
             self.updateUserRequestItems = updateUserRequestItems
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try updateUserRequestItems.forEach {
+                try $0.validate()
+            }
+            try validate(updateUserRequestItems, name:"updateUserRequestItems", max: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -313,11 +403,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserErrors", required: false, type: .list)
         ]
+
         /// If the BatchUpdateUser action fails for one or more of the user IDs in the request, a list of the user IDs is returned, along with error codes and error messages.
         public let userErrors: [UserError]?
 
         public init(userErrors: [UserError]? = nil) {
             self.userErrors = userErrors
+        }
+
+        public func validate() throws {
+            try userErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -337,6 +434,7 @@ extension Chime {
             AWSShapeMember(label: "UpdatedTimestamp", required: false, type: .timestamp), 
             AWSShapeMember(label: "UserId", required: false, type: .string)
         ]
+
         /// The bot email address.
         public let botEmail: String?
         /// The bot ID.
@@ -390,6 +488,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CdrBucket", required: false, type: .string)
         ]
+
         /// The Amazon S3 bucket designated for call detail record storage.
         public let cdrBucket: String?
 
@@ -406,11 +505,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the Amazon Chime account.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -422,6 +528,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Account", required: false, type: .structure)
         ]
+
         /// The Amazon Chime account details.
         public let account: Account?
 
@@ -440,6 +547,7 @@ extension Chime {
             AWSShapeMember(label: "DisplayName", required: true, type: .string), 
             AWSShapeMember(label: "Domain", required: false, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The bot display name.
@@ -453,6 +561,11 @@ extension Chime {
             self.domain = domain
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(domain, name:"domain", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case displayName = "DisplayName"
@@ -464,6 +577,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bot", required: false, type: .structure)
         ]
+
         /// The bot details.
         public let bot: Bot?
 
@@ -481,6 +595,7 @@ extension Chime {
             AWSShapeMember(label: "E164PhoneNumbers", required: true, type: .list), 
             AWSShapeMember(label: "ProductType", required: true, type: .enum)
         ]
+
         /// List of phone numbers, in E.164 format.
         public let e164PhoneNumbers: [String]
         /// The phone number product type.
@@ -489,6 +604,12 @@ extension Chime {
         public init(e164PhoneNumbers: [String], productType: PhoneNumberProductType) {
             self.e164PhoneNumbers = e164PhoneNumbers
             self.productType = productType
+        }
+
+        public func validate() throws {
+            try e164PhoneNumbers.forEach {
+                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -501,11 +622,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberOrder", required: false, type: .structure)
         ]
+
         /// The phone number order details.
         public let phoneNumberOrder: PhoneNumberOrder?
 
         public init(phoneNumberOrder: PhoneNumberOrder? = nil) {
             self.phoneNumberOrder = phoneNumberOrder
+        }
+
+        public func validate() throws {
+            try phoneNumberOrder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -518,6 +644,7 @@ extension Chime {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "RequireEncryption", required: true, type: .boolean)
         ]
+
         /// The name of the Amazon Chime Voice Connector.
         public let name: String
         /// When enabled, requires encryption for the Amazon Chime Voice Connector.
@@ -526,6 +653,11 @@ extension Chime {
         public init(name: String, requireEncryption: Bool) {
             self.name = name
             self.requireEncryption = requireEncryption
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -538,11 +670,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnector", required: false, type: .structure)
         ]
+
         /// The Amazon Chime Voice Connector details.
         public let voiceConnector: VoiceConnector?
 
         public init(voiceConnector: VoiceConnector? = nil) {
             self.voiceConnector = voiceConnector
+        }
+
+        public func validate() throws {
+            try voiceConnector?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -555,6 +692,7 @@ extension Chime {
             AWSShapeMember(label: "Password", required: false, type: .string), 
             AWSShapeMember(label: "Username", required: false, type: .string)
         ]
+
         /// The RFC2617 compliant password associated with the SIP credentials, in US-ASCII format.
         public let password: String?
         /// The RFC2617 compliant user name associated with the SIP credentials, in US-ASCII format.
@@ -575,11 +713,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
 
         public init(accountId: String) {
             self.accountId = accountId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -588,6 +731,7 @@ extension Chime {
     }
 
     public struct DeleteAccountResponse: AWSShape {
+
 
         public init() {
         }
@@ -599,6 +743,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "BotId", location: .uri(locationName: "botId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The bot ID.
@@ -607,6 +752,11 @@ extension Chime {
         public init(accountId: String, botId: String) {
             self.accountId = accountId
             self.botId = botId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(botId, name:"botId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -619,6 +769,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberId", location: .uri(locationName: "phoneNumberId"), required: true, type: .string)
         ]
+
         /// The phone number ID.
         public let phoneNumberId: String
 
@@ -635,11 +786,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -651,11 +807,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -668,6 +829,7 @@ extension Chime {
             AWSShapeMember(label: "Usernames", required: false, type: .list), 
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The RFC2617 compliant username associated with the SIP credentials, in US-ASCII format.
         public let usernames: [String]?
         /// The Amazon Chime Voice Connector ID.
@@ -676,6 +838,10 @@ extension Chime {
         public init(usernames: [String]? = nil, voiceConnectorId: String) {
             self.usernames = usernames
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -688,11 +854,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -705,6 +876,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user ID.
@@ -723,6 +895,7 @@ extension Chime {
 
     public struct DisassociatePhoneNumberFromUserResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -733,6 +906,7 @@ extension Chime {
             AWSShapeMember(label: "E164PhoneNumbers", required: false, type: .list), 
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// List of phone numbers, in E.164 format.
         public let e164PhoneNumbers: [String]?
         /// The Amazon Chime Voice Connector ID.
@@ -741,6 +915,13 @@ extension Chime {
         public init(e164PhoneNumbers: [String]? = nil, voiceConnectorId: String) {
             self.e164PhoneNumbers = e164PhoneNumbers
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try e164PhoneNumbers?.forEach {
+                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
+            }
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -753,11 +934,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberErrors", required: false, type: .list)
         ]
+
         /// If the action fails for one or more of the phone numbers in the request, a list of the phone numbers is returned, along with error codes and error messages.
         public let phoneNumberErrors: [PhoneNumberError]?
 
         public init(phoneNumberErrors: [PhoneNumberError]? = nil) {
             self.phoneNumberErrors = phoneNumberErrors
+        }
+
+        public func validate() throws {
+            try phoneNumberErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -792,6 +980,7 @@ extension Chime {
             AWSShapeMember(label: "LambdaFunctionArn", required: false, type: .string), 
             AWSShapeMember(label: "OutboundEventsHTTPSEndpoint", required: false, type: .string)
         ]
+
         /// The bot ID.
         public let botId: String?
         /// Lambda function ARN that allows a bot to receive outgoing events.
@@ -816,11 +1005,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
 
         public init(accountId: String) {
             self.accountId = accountId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -832,6 +1026,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Account", required: false, type: .structure)
         ]
+
         /// The Amazon Chime account details.
         public let account: Account?
 
@@ -848,11 +1043,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
 
         public init(accountId: String) {
             self.accountId = accountId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -864,6 +1064,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountSettings", required: false, type: .structure)
         ]
+
         /// The Amazon Chime account settings.
         public let accountSettings: AccountSettings?
 
@@ -881,6 +1082,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "BotId", location: .uri(locationName: "botId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The bot ID.
@@ -889,6 +1091,11 @@ extension Chime {
         public init(accountId: String, botId: String) {
             self.accountId = accountId
             self.botId = botId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(botId, name:"botId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -901,6 +1108,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bot", required: false, type: .structure)
         ]
+
         /// The chat bot details.
         public let bot: Bot?
 
@@ -918,6 +1126,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "BotId", location: .uri(locationName: "botId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The bot ID.
@@ -926,6 +1135,11 @@ extension Chime {
         public init(accountId: String, botId: String) {
             self.accountId = accountId
             self.botId = botId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(botId, name:"botId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -938,6 +1152,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EventsConfiguration", required: false, type: .structure)
         ]
+
         /// The events configuration details.
         public let eventsConfiguration: EventsConfiguration?
 
@@ -955,6 +1170,7 @@ extension Chime {
             AWSShapeMember(label: "BusinessCalling", required: false, type: .structure), 
             AWSShapeMember(label: "VoiceConnector", required: false, type: .structure)
         ]
+
         /// The Amazon Chime Business Calling settings.
         public let businessCalling: BusinessCallingSettings?
         /// The Amazon Chime Voice Connector settings.
@@ -975,11 +1191,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberOrderId", location: .uri(locationName: "phoneNumberOrderId"), required: true, type: .string)
         ]
+
         /// The ID for the phone number order.
         public let phoneNumberOrderId: String
 
         public init(phoneNumberOrderId: String) {
             self.phoneNumberOrderId = phoneNumberOrderId
+        }
+
+        public func validate() throws {
+            try validate(phoneNumberOrderId, name:"phoneNumberOrderId", pattern: "[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -991,11 +1212,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberOrder", required: false, type: .structure)
         ]
+
         /// The phone number order details.
         public let phoneNumberOrder: PhoneNumberOrder?
 
         public init(phoneNumberOrder: PhoneNumberOrder? = nil) {
             self.phoneNumberOrder = phoneNumberOrder
+        }
+
+        public func validate() throws {
+            try phoneNumberOrder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1007,6 +1233,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberId", location: .uri(locationName: "phoneNumberId"), required: true, type: .string)
         ]
+
         /// The phone number ID.
         public let phoneNumberId: String
 
@@ -1023,11 +1250,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumber", required: false, type: .structure)
         ]
+
         /// The phone number details.
         public let phoneNumber: PhoneNumber?
 
         public init(phoneNumber: PhoneNumber? = nil) {
             self.phoneNumber = phoneNumber
+        }
+
+        public func validate() throws {
+            try phoneNumber?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1040,6 +1272,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user ID.
@@ -1048,6 +1281,11 @@ extension Chime {
         public init(accountId: String, userId: String) {
             self.accountId = accountId
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(userId, name:"userId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1060,11 +1298,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "User", required: false, type: .structure)
         ]
+
         /// The user details.
         public let user: User?
 
         public init(user: User? = nil) {
             self.user = user
+        }
+
+        public func validate() throws {
+            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1077,6 +1320,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user ID.
@@ -1097,6 +1341,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserSettings", required: false, type: .structure)
         ]
+
         /// The user settings.
         public let userSettings: UserSettings?
 
@@ -1113,11 +1358,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1129,11 +1379,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Origination", required: false, type: .structure)
         ]
+
         /// The origination setting details.
         public let origination: Origination?
 
         public init(origination: Origination? = nil) {
             self.origination = origination
+        }
+
+        public func validate() throws {
+            try origination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1145,11 +1400,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1161,11 +1421,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnector", required: false, type: .structure)
         ]
+
         /// The Amazon Chime Voice Connector details.
         public let voiceConnector: VoiceConnector?
 
         public init(voiceConnector: VoiceConnector? = nil) {
             self.voiceConnector = voiceConnector
+        }
+
+        public func validate() throws {
+            try voiceConnector?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1177,11 +1442,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1193,6 +1463,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TerminationHealth", required: false, type: .structure)
         ]
+
         /// The termination health details.
         public let terminationHealth: TerminationHealth?
 
@@ -1209,11 +1480,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1225,11 +1501,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Termination", required: false, type: .structure)
         ]
+
         /// The termination setting details.
         public let termination: Termination?
 
         public init(termination: Termination? = nil) {
             self.termination = termination
+        }
+
+        public func validate() throws {
+            try termination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1244,6 +1525,7 @@ extension Chime {
             AWSShapeMember(label: "InviteId", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The email address to which the invite is sent.
         public let emailAddress: String?
         /// The status of the invite email.
@@ -1258,6 +1540,10 @@ extension Chime {
             self.emailStatus = emailStatus
             self.inviteId = inviteId
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(emailAddress, name:"emailAddress", pattern: ".+@.+\\..+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1280,6 +1566,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserEmailList", required: true, type: .list)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user email addresses to which to send the invite.
@@ -1288,6 +1575,14 @@ extension Chime {
         public init(accountId: String, userEmailList: [String]) {
             self.accountId = accountId
             self.userEmailList = userEmailList
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try userEmailList.forEach {
+                try validate($0, name:"userEmailList[]", pattern: ".+@.+\\..+")
+            }
+            try validate(userEmailList, name:"userEmailList", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1300,11 +1595,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Invites", required: false, type: .list)
         ]
+
         /// The invite details.
         public let invites: [Invite]?
 
         public init(invites: [Invite]? = nil) {
             self.invites = invites
+        }
+
+        public func validate() throws {
+            try invites?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1327,6 +1629,7 @@ extension Chime {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "next-token"), required: false, type: .string), 
             AWSShapeMember(label: "UserEmail", location: .querystring(locationName: "user-email"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return in a single call. Defaults to 100.
         public let maxResults: Int32?
         /// Amazon Chime account name prefix with which to filter results.
@@ -1343,6 +1646,15 @@ extension Chime {
             self.userEmail = userEmail
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 200)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: ".*\\S.*")
+            try validate(userEmail, name:"userEmail", pattern: ".+@.+\\..+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "max-results"
             case name = "name"
@@ -1356,6 +1668,7 @@ extension Chime {
             AWSShapeMember(label: "Accounts", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// List of Amazon Chime accounts and account details.
         public let accounts: [Account]?
         /// The token to use to retrieve the next page of results.
@@ -1378,6 +1691,7 @@ extension Chime {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "max-results"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "next-token"), required: false, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The maximum number of results to return in a single call. Default is 10.
@@ -1389,6 +1703,12 @@ extension Chime {
             self.accountId = accountId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(maxResults, name:"maxResults", max: 99)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1403,6 +1723,7 @@ extension Chime {
             AWSShapeMember(label: "Bots", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// List of bots and bot details.
         public let bots: [Bot]?
         /// The token to use to retrieve the next page of results.
@@ -1424,6 +1745,7 @@ extension Chime {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "max-results"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "next-token"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return in a single call.
         public let maxResults: Int32?
         /// The token to use to retrieve the next page of results.
@@ -1432,6 +1754,11 @@ extension Chime {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 99)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1445,6 +1772,7 @@ extension Chime {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "PhoneNumberOrders", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
         /// The phone number order details.
@@ -1453,6 +1781,12 @@ extension Chime {
         public init(nextToken: String? = nil, phoneNumberOrders: [PhoneNumberOrder]? = nil) {
             self.nextToken = nextToken
             self.phoneNumberOrders = phoneNumberOrders
+        }
+
+        public func validate() throws {
+            try phoneNumberOrders?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1470,6 +1804,7 @@ extension Chime {
             AWSShapeMember(label: "ProductType", location: .querystring(locationName: "product-type"), required: false, type: .enum), 
             AWSShapeMember(label: "Status", location: .querystring(locationName: "status"), required: false, type: .enum)
         ]
+
         /// The filter to use to limit the number of results.
         public let filterName: PhoneNumberAssociationName?
         /// The value to use for the filter.
@@ -1492,6 +1827,11 @@ extension Chime {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 99)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filterName = "filter-name"
             case filterValue = "filter-value"
@@ -1507,6 +1847,7 @@ extension Chime {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "PhoneNumbers", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
         /// The phone number details.
@@ -1515,6 +1856,12 @@ extension Chime {
         public init(nextToken: String? = nil, phoneNumbers: [PhoneNumber]? = nil) {
             self.nextToken = nextToken
             self.phoneNumbers = phoneNumbers
+        }
+
+        public func validate() throws {
+            try phoneNumbers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1530,6 +1877,7 @@ extension Chime {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "next-token"), required: false, type: .string), 
             AWSShapeMember(label: "UserEmail", location: .querystring(locationName: "user-email"), required: false, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The maximum number of results to return in a single call. Defaults to 100.
@@ -1546,6 +1894,13 @@ extension Chime {
             self.userEmail = userEmail
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(maxResults, name:"maxResults", max: 200)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(userEmail, name:"userEmail", pattern: ".+@.+\\..+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case maxResults = "max-results"
@@ -1559,6 +1914,7 @@ extension Chime {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Users", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
         /// List of users and user details.
@@ -1567,6 +1923,12 @@ extension Chime {
         public init(nextToken: String? = nil, users: [User]? = nil) {
             self.nextToken = nextToken
             self.users = users
+        }
+
+        public func validate() throws {
+            try users?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1579,11 +1941,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector ID.
         public let voiceConnectorId: String
 
         public init(voiceConnectorId: String) {
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1595,6 +1962,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Usernames", required: false, type: .list)
         ]
+
         /// A list of user names.
         public let usernames: [String]?
 
@@ -1612,6 +1980,7 @@ extension Chime {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "max-results"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "next-token"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return in a single call.
         public let maxResults: Int32?
         /// The token to use to retrieve the next page of results.
@@ -1620,6 +1989,11 @@ extension Chime {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 99)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1633,6 +2007,7 @@ extension Chime {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "VoiceConnectors", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
         /// The details of the Amazon Chime Voice Connectors.
@@ -1641,6 +2016,12 @@ extension Chime {
         public init(nextToken: String? = nil, voiceConnectors: [VoiceConnector]? = nil) {
             self.nextToken = nextToken
             self.voiceConnectors = voiceConnectors
+        }
+
+        public func validate() throws {
+            try voiceConnectors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1654,6 +2035,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user ID.
@@ -1664,6 +2046,11 @@ extension Chime {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(userId, name:"userId", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case userId = "userId"
@@ -1671,6 +2058,7 @@ extension Chime {
     }
 
     public struct LogoutUserResponse: AWSShape {
+
 
         public init() {
         }
@@ -1682,6 +2070,7 @@ extension Chime {
             AWSShapeMember(label: "E164PhoneNumber", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The phone number, in E.164 format.
         public let e164PhoneNumber: String?
         /// The phone number status.
@@ -1690,6 +2079,10 @@ extension Chime {
         public init(e164PhoneNumber: String? = nil, status: OrderedPhoneNumberStatus? = nil) {
             self.e164PhoneNumber = e164PhoneNumber
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(e164PhoneNumber, name:"e164PhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1710,6 +2103,7 @@ extension Chime {
             AWSShapeMember(label: "Disabled", required: false, type: .boolean), 
             AWSShapeMember(label: "Routes", required: false, type: .list)
         ]
+
         /// When origination settings are disabled, inbound calls are not enabled for your Amazon Chime Voice Connector.
         public let disabled: Bool?
         /// The call distribution properties defined for your SIP hosts. Valid range: Minimum value of 1. Maximum value of 20.
@@ -1718,6 +2112,12 @@ extension Chime {
         public init(disabled: Bool? = nil, routes: [OriginationRoute]? = nil) {
             self.disabled = disabled
             self.routes = routes
+        }
+
+        public func validate() throws {
+            try routes?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1734,6 +2134,7 @@ extension Chime {
             AWSShapeMember(label: "Protocol", required: false, type: .enum), 
             AWSShapeMember(label: "Weight", required: false, type: .integer)
         ]
+
         /// The FODN or IP address to contact for origination traffic.
         public let host: String?
         /// The designated origination route port. Defaults to 5060.
@@ -1751,6 +2152,15 @@ extension Chime {
             self.priority = priority
             self.`protocol` = `protocol`
             self.weight = weight
+        }
+
+        public func validate() throws {
+            try validate(port, name:"port", max: 65535)
+            try validate(port, name:"port", min: 0)
+            try validate(priority, name:"priority", max: 100)
+            try validate(priority, name:"priority", min: 1)
+            try validate(weight, name:"weight", max: 100)
+            try validate(weight, name:"weight", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1781,6 +2191,7 @@ extension Chime {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "UpdatedTimestamp", required: false, type: .timestamp)
         ]
+
         /// The phone number associations.
         public let associations: [PhoneNumberAssociation]?
         /// The phone number capabilities.
@@ -1815,6 +2226,10 @@ extension Chime {
             self.updatedTimestamp = updatedTimestamp
         }
 
+        public func validate() throws {
+            try validate(e164PhoneNumber, name:"e164PhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associations = "Associations"
             case capabilities = "Capabilities"
@@ -1835,6 +2250,7 @@ extension Chime {
             AWSShapeMember(label: "Name", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The timestamp of the phone number association, in ISO 8601 format.
         public let associatedTimestamp: TimeStamp?
         /// Defines the association with an Amazon Chime account ID, user ID, or Amazon Chime Voice Connector ID.
@@ -1871,6 +2287,7 @@ extension Chime {
             AWSShapeMember(label: "OutboundMMS", required: false, type: .boolean), 
             AWSShapeMember(label: "OutboundSMS", required: false, type: .boolean)
         ]
+
         /// Allows or denies inbound calling for the specified phone number.
         public let inboundCall: Bool?
         /// Allows or denies inbound MMS messaging for the specified phone number.
@@ -1909,6 +2326,7 @@ extension Chime {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "PhoneNumberId", required: false, type: .string)
         ]
+
         /// The error code.
         public let errorCode: ErrorCode?
         /// The error message.
@@ -1920,6 +2338,10 @@ extension Chime {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.phoneNumberId = phoneNumberId
+        }
+
+        public func validate() throws {
+            try validate(phoneNumberId, name:"phoneNumberId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1938,6 +2360,7 @@ extension Chime {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "UpdatedTimestamp", required: false, type: .timestamp)
         ]
+
         /// The phone number order creation timestamp, in ISO 8601 format.
         public let createdTimestamp: TimeStamp?
         /// The ordered phone number details, such as the phone number in E.164 format and the phone number status.
@@ -1958,6 +2381,13 @@ extension Chime {
             self.productType = productType
             self.status = status
             self.updatedTimestamp = updatedTimestamp
+        }
+
+        public func validate() throws {
+            try orderedPhoneNumbers?.forEach {
+                try $0.validate()
+            }
+            try validate(phoneNumberOrderId, name:"phoneNumberOrderId", pattern: "[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2009,6 +2439,7 @@ extension Chime {
             AWSShapeMember(label: "LambdaFunctionArn", required: false, type: .string), 
             AWSShapeMember(label: "OutboundEventsHTTPSEndpoint", required: false, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The bot ID.
@@ -2025,6 +2456,11 @@ extension Chime {
             self.outboundEventsHTTPSEndpoint = outboundEventsHTTPSEndpoint
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case botId = "botId"
@@ -2037,6 +2473,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EventsConfiguration", required: false, type: .structure)
         ]
+
         public let eventsConfiguration: EventsConfiguration?
 
         public init(eventsConfiguration: EventsConfiguration? = nil) {
@@ -2053,6 +2490,7 @@ extension Chime {
             AWSShapeMember(label: "Origination", required: true, type: .structure), 
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The origination setting details to add.
         public let origination: Origination
         /// The Amazon Chime Voice Connector ID.
@@ -2061,6 +2499,11 @@ extension Chime {
         public init(origination: Origination, voiceConnectorId: String) {
             self.origination = origination
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try origination.validate()
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2073,11 +2516,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Origination", required: false, type: .structure)
         ]
+
         /// The updated origination setting details.
         public let origination: Origination?
 
         public init(origination: Origination? = nil) {
             self.origination = origination
+        }
+
+        public func validate() throws {
+            try origination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2090,6 +2538,7 @@ extension Chime {
             AWSShapeMember(label: "Credentials", required: false, type: .list), 
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The termination SIP credentials.
         public let credentials: [Credential]?
         /// The Amazon Chime Voice Connector ID.
@@ -2098,6 +2547,10 @@ extension Chime {
         public init(credentials: [Credential]? = nil, voiceConnectorId: String) {
             self.credentials = credentials
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2111,6 +2564,7 @@ extension Chime {
             AWSShapeMember(label: "Termination", required: true, type: .structure), 
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The termination setting details to add.
         public let termination: Termination
         /// The Amazon Chime Voice Connector ID.
@@ -2119,6 +2573,11 @@ extension Chime {
         public init(termination: Termination, voiceConnectorId: String) {
             self.termination = termination
             self.voiceConnectorId = voiceConnectorId
+        }
+
+        public func validate() throws {
+            try termination.validate()
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2131,11 +2590,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Termination", required: false, type: .structure)
         ]
+
         /// The updated termination setting details.
         public let termination: Termination?
 
         public init(termination: Termination? = nil) {
             self.termination = termination
+        }
+
+        public func validate() throws {
+            try termination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2148,6 +2612,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "BotId", location: .uri(locationName: "botId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The bot ID.
@@ -2156,6 +2621,11 @@ extension Chime {
         public init(accountId: String, botId: String) {
             self.accountId = accountId
             self.botId = botId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(botId, name:"botId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2168,6 +2638,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bot", required: false, type: .structure)
         ]
+
         public let bot: Bot?
 
         public init(bot: Bot? = nil) {
@@ -2191,6 +2662,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user ID.
@@ -2199,6 +2671,11 @@ extension Chime {
         public init(accountId: String, userId: String) {
             self.accountId = accountId
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(userId, name:"userId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2211,11 +2688,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "User", required: false, type: .structure)
         ]
+
         /// The user details and new personal meeting PIN.
         public let user: User?
 
         public init(user: User? = nil) {
             self.user = user
+        }
+
+        public func validate() throws {
+            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2227,11 +2709,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumberId", location: .uri(locationName: "phoneNumberId"), required: true, type: .string)
         ]
+
         /// The phone number.
         public let phoneNumberId: String
 
         public init(phoneNumberId: String) {
             self.phoneNumberId = phoneNumberId
+        }
+
+        public func validate() throws {
+            try validate(phoneNumberId, name:"phoneNumberId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2243,11 +2730,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumber", required: false, type: .structure)
         ]
+
         /// The phone number details.
         public let phoneNumber: PhoneNumber?
 
         public init(phoneNumber: PhoneNumber? = nil) {
             self.phoneNumber = phoneNumber
+        }
+
+        public func validate() throws {
+            try phoneNumber?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2265,6 +2757,7 @@ extension Chime {
             AWSShapeMember(label: "State", location: .querystring(locationName: "state"), required: false, type: .string), 
             AWSShapeMember(label: "TollFreePrefix", location: .querystring(locationName: "toll-free-prefix"), required: false, type: .string)
         ]
+
         /// The area code used to filter results.
         public let areaCode: String?
         /// The city used to filter results.
@@ -2290,6 +2783,14 @@ extension Chime {
             self.tollFreePrefix = tollFreePrefix
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(tollFreePrefix, name:"tollFreePrefix", max: 3)
+            try validate(tollFreePrefix, name:"tollFreePrefix", min: 3)
+            try validate(tollFreePrefix, name:"tollFreePrefix", pattern: "^8(00|33|44|55|66|77|88)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case areaCode = "area-code"
             case city = "city"
@@ -2305,11 +2806,18 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "E164PhoneNumbers", required: false, type: .list)
         ]
+
         /// List of phone numbers, in E.164 format.
         public let e164PhoneNumbers: [String]?
 
         public init(e164PhoneNumbers: [String]? = nil) {
             self.e164PhoneNumbers = e164PhoneNumbers
+        }
+
+        public func validate() throws {
+            try e164PhoneNumbers?.forEach {
+                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2323,6 +2831,7 @@ extension Chime {
             AWSShapeMember(label: "OutboundCalling", required: true, type: .boolean), 
             AWSShapeMember(label: "SMS", required: true, type: .boolean)
         ]
+
         /// Allows or denies inbound calling.
         public let inboundCalling: Bool
         /// Allows or denies outbound calling.
@@ -2351,6 +2860,7 @@ extension Chime {
             AWSShapeMember(label: "DefaultPhoneNumber", required: false, type: .string), 
             AWSShapeMember(label: "Disabled", required: false, type: .boolean)
         ]
+
         /// The countries to which calls are allowed.
         public let callingRegions: [String]?
         /// The IP addresses allowed to make calls, in CIDR format.
@@ -2370,6 +2880,11 @@ extension Chime {
             self.disabled = disabled
         }
 
+        public func validate() throws {
+            try validate(cpsLimit, name:"cpsLimit", min: 1)
+            try validate(defaultPhoneNumber, name:"defaultPhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case callingRegions = "CallingRegions"
             case cidrAllowedList = "CidrAllowedList"
@@ -2384,6 +2899,7 @@ extension Chime {
             AWSShapeMember(label: "Source", required: false, type: .string), 
             AWSShapeMember(label: "Timestamp", required: false, type: .timestamp)
         ]
+
         /// The source IP address.
         public let source: String?
         /// The timestamp, in ISO 8601 format.
@@ -2405,6 +2921,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The new name for the specified Amazon Chime account.
@@ -2413,6 +2930,13 @@ extension Chime {
         public init(accountId: String, name: String? = nil) {
             self.accountId = accountId
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2425,6 +2949,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Account", required: false, type: .structure)
         ]
+
         /// The updated Amazon Chime account details.
         public let account: Account?
 
@@ -2442,6 +2967,7 @@ extension Chime {
             AWSShapeMember(label: "AccountId", location: .uri(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "AccountSettings", required: true, type: .structure)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The Amazon Chime account settings to update.
@@ -2452,6 +2978,10 @@ extension Chime {
             self.accountSettings = accountSettings
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case accountSettings = "AccountSettings"
@@ -2459,6 +2989,7 @@ extension Chime {
     }
 
     public struct UpdateAccountSettingsResponse: AWSShape {
+
 
         public init() {
         }
@@ -2471,6 +3002,7 @@ extension Chime {
             AWSShapeMember(label: "BotId", location: .uri(locationName: "botId"), required: true, type: .string), 
             AWSShapeMember(label: "Disabled", required: false, type: .boolean)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The bot ID.
@@ -2484,6 +3016,11 @@ extension Chime {
             self.disabled = disabled
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case botId = "botId"
@@ -2495,6 +3032,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bot", required: false, type: .structure)
         ]
+
         /// The updated bot details.
         public let bot: Bot?
 
@@ -2512,6 +3050,7 @@ extension Chime {
             AWSShapeMember(label: "BusinessCalling", required: true, type: .structure), 
             AWSShapeMember(label: "VoiceConnector", required: true, type: .structure)
         ]
+
         /// The Amazon Chime Business Calling settings.
         public let businessCalling: BusinessCallingSettings
         /// The Amazon Chime Voice Connector settings.
@@ -2533,6 +3072,7 @@ extension Chime {
             AWSShapeMember(label: "PhoneNumberId", location: .uri(locationName: "phoneNumberId"), required: true, type: .string), 
             AWSShapeMember(label: "ProductType", required: false, type: .enum)
         ]
+
         /// The phone number ID.
         public let phoneNumberId: String
         /// The product type.
@@ -2554,6 +3094,7 @@ extension Chime {
             AWSShapeMember(label: "PhoneNumberId", required: true, type: .string), 
             AWSShapeMember(label: "ProductType", required: false, type: .enum)
         ]
+
         /// The phone number ID to update.
         public let phoneNumberId: String
         /// The product type to update.
@@ -2562,6 +3103,10 @@ extension Chime {
         public init(phoneNumberId: String, productType: PhoneNumberProductType? = nil) {
             self.phoneNumberId = phoneNumberId
             self.productType = productType
+        }
+
+        public func validate() throws {
+            try validate(phoneNumberId, name:"phoneNumberId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2574,11 +3119,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PhoneNumber", required: false, type: .structure)
         ]
+
         /// The updated phone number details.
         public let phoneNumber: PhoneNumber?
 
         public init(phoneNumber: PhoneNumber? = nil) {
             self.phoneNumber = phoneNumber
+        }
+
+        public func validate() throws {
+            try phoneNumber?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2592,6 +3142,7 @@ extension Chime {
             AWSShapeMember(label: "LicenseType", required: false, type: .enum), 
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user license type to update. This must be a supported license type for the Amazon Chime account that the user belongs to.
@@ -2603,6 +3154,11 @@ extension Chime {
             self.accountId = accountId
             self.licenseType = licenseType
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+            try validate(userId, name:"userId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2617,6 +3173,7 @@ extension Chime {
             AWSShapeMember(label: "LicenseType", required: false, type: .enum), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The user license type.
         public let licenseType: License?
         /// The user ID.
@@ -2625,6 +3182,10 @@ extension Chime {
         public init(licenseType: License? = nil, userId: String) {
             self.licenseType = licenseType
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(userId, name:"userId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2637,11 +3198,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "User", required: false, type: .structure)
         ]
+
         /// The updated user details.
         public let user: User?
 
         public init(user: User? = nil) {
             self.user = user
+        }
+
+        public func validate() throws {
+            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2655,6 +3221,7 @@ extension Chime {
             AWSShapeMember(label: "UserId", location: .uri(locationName: "userId"), required: true, type: .string), 
             AWSShapeMember(label: "UserSettings", required: true, type: .structure)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The user ID.
@@ -2681,6 +3248,7 @@ extension Chime {
             AWSShapeMember(label: "RequireEncryption", required: true, type: .boolean), 
             AWSShapeMember(label: "VoiceConnectorId", location: .uri(locationName: "voiceConnectorId"), required: true, type: .string)
         ]
+
         /// The name of the Amazon Chime Voice Connector.
         public let name: String
         /// When enabled, requires encryption for the Amazon Chime Voice Connector.
@@ -2694,6 +3262,12 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case requireEncryption = "RequireEncryption"
@@ -2705,11 +3279,16 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VoiceConnector", required: false, type: .structure)
         ]
+
         /// The Amazon Chime Voice Connector details.
         public let voiceConnector: VoiceConnector?
 
         public init(voiceConnector: VoiceConnector? = nil) {
             self.voiceConnector = voiceConnector
+        }
+
+        public func validate() throws {
+            try voiceConnector?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2731,6 +3310,7 @@ extension Chime {
             AWSShapeMember(label: "UserInvitationStatus", required: false, type: .enum), 
             AWSShapeMember(label: "UserRegistrationStatus", required: false, type: .enum)
         ]
+
         /// The Amazon Chime account ID.
         public let accountId: String?
         /// The display name of the user.
@@ -2768,6 +3348,10 @@ extension Chime {
             self.userRegistrationStatus = userRegistrationStatus
         }
 
+        public func validate() throws {
+            try validate(primaryEmail, name:"primaryEmail", pattern: ".+@.+\\..+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case displayName = "DisplayName"
@@ -2789,6 +3373,7 @@ extension Chime {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "UserId", required: false, type: .string)
         ]
+
         /// The error code.
         public let errorCode: ErrorCode?
         /// The error message.
@@ -2802,6 +3387,10 @@ extension Chime {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(userId, name:"userId", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case errorCode = "ErrorCode"
             case errorMessage = "ErrorMessage"
@@ -2813,6 +3402,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Telephony", required: true, type: .structure)
         ]
+
         /// The telephony settings associated with the user.
         public let telephony: TelephonySettings
 
@@ -2834,6 +3424,7 @@ extension Chime {
             AWSShapeMember(label: "UpdatedTimestamp", required: false, type: .timestamp), 
             AWSShapeMember(label: "VoiceConnectorId", required: false, type: .string)
         ]
+
         /// The Amazon Chime Voice Connector creation timestamp, in ISO 8601 format.
         public let createdTimestamp: TimeStamp?
         /// The name of the Amazon Chime Voice Connector.
@@ -2856,6 +3447,12 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdTimestamp = "CreatedTimestamp"
             case name = "Name"
@@ -2870,6 +3467,7 @@ extension Chime {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CdrBucket", required: false, type: .string)
         ]
+
         /// The Amazon S3 bucket designated for call detail record storage.
         public let cdrBucket: String?
 

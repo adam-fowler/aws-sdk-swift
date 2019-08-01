@@ -108,7 +108,7 @@ extension Shape {
             return name.toSwiftClassCase()
         case .boolean:
             return "Bool"
-        case .list(let shape):
+        case .list(let shape,_,_):
             return "[\(shape.swiftTypeName)]"
         case .map(key: let keyShape, value: let valueShape):
             return "[\(keyShape.swiftTypeName): \(valueShape.swiftTypeName)]"
@@ -197,11 +197,28 @@ extension AWSService {
         let location : String?
         let parameter : String
         let required : Bool
+        let `default` : String?
         let type : String
         let typeEnum : String
         let encoding : String?
         let comment : [String.SubSequence]
         var duplicate : Bool
+    }
+
+    class ValidationContext {
+        let name : String
+        let shape : Bool
+        let required : Bool
+        let reqs : [String : Any]
+        let member : ValidationContext?
+
+        init(name: String, shape: Bool = false, required: Bool = true, reqs: [String: Any] = [:], member: ValidationContext? = nil) {
+            self.name = name
+            self.shape = shape
+            self.required = required
+            self.reqs = reqs
+            self.member = member
+        }
     }
 
     struct StructureContext {
@@ -210,6 +227,7 @@ extension AWSService {
         let payload : String?
         let namespace : String?
         let members : [MemberContext]
+        let validation : [ValidationContext]
     }
 
     /// Generate the context information for outputting the error enums
@@ -308,6 +326,14 @@ extension AWSService {
 
     /// Generate the context information for outputting a member variable
     func generateMemberContext(_ member: Member, shape: Shape) -> MemberContext {
+        let defaultValue : String?
+        if member.options.contains(.idempotencyToken) {
+            defaultValue = "\(shape.swiftTypeName).idempotencyToken()"
+        } else if !member.required {
+            defaultValue = "nil"
+        } else {
+            defaultValue = nil
+        }
         return MemberContext(
             name: member.name,
             variable: member.name.toSwiftVariableCase(),
@@ -315,12 +341,56 @@ extension AWSService {
             location: member.location?.enumStyleDescription(),
             parameter: member.name.toSwiftLabelCase(),
             required: member.required,
+            default: defaultValue,
             type: member.shape.swiftTypeName + (member.required ? "" : "?"),
             typeEnum: "\(member.shape.type.description)",
             encoding: member.shapeEncoding?.enumStyleDescription(),
             comment: shapeDoc[shape.name]?[member.name]?.split(separator: "\n") ?? [],
             duplicate: false
         )
+    }
+
+    /// Generate validation context
+    func generateValidationContext(name: String, shape: Shape, required: Bool) -> ValidationContext? {
+        var requirements : [String: Any] = [:]
+        switch shape.type {
+        case .integer(let max, let min),
+             .long(let max, let min),
+             .float(let max, let min),
+             .double(let max, let min):
+            requirements["max"] = max
+            requirements["min"] = min
+
+        case .blob(let max, let min):
+            requirements["max"] = max
+            requirements["min"] = min
+
+        case .list(let shape, let max, let min):
+            requirements["max"] = max
+            requirements["min"] = min
+            if let memberValidationContext = generateValidationContext(name: name+"[]", shape: shape, required: true) {
+                return ValidationContext(name: name.toSwiftVariableCase(), required: required, reqs: requirements, member: memberValidationContext)
+            }
+
+        case .string(let max, let min, let pattern):
+            requirements["max"] = max
+            requirements["min"] = min
+            if let pattern = pattern {
+                requirements["pattern"] = "\"\(pattern.addingBackslashEncoding())\""
+            }
+        case .structure(let shape):
+            for member2 in shape.members {
+                if generateValidationContext(name:member2.name, shape:member2.shape, required: member2.required) != nil {
+                    return ValidationContext(name: name.toSwiftVariableCase(), shape: true, required: required)
+                }
+            }
+        default:
+            break
+        }
+        if requirements.count > 0 {
+            return ValidationContext(name: name.toSwiftVariableCase(), reqs: requirements)
+        }
+        return nil
     }
 
     /// Generate the context for outputting a single AWSShape
@@ -331,6 +401,7 @@ extension AWSService {
         })
 
         var memberContexts : [MemberContext] = []
+        var validationContexts : [ValidationContext] = []
         var usedLocationPath : [String] = []
         for member in type.members {
             var memberContext = generateMemberContext(member, shape: shape)
@@ -344,6 +415,10 @@ extension AWSService {
             }
 
             memberContexts.append(memberContext)
+
+            if let validationContext = generateValidationContext(name:member.name, shape: member.shape, required: member.required) {
+                validationContexts.append(validationContext)
+            }
         }
 
         return StructureContext(
@@ -351,7 +426,8 @@ extension AWSService {
             name: shape.swiftTypeName,
             payload: type.payload,
             namespace: type.xmlNamespace,
-            members: memberContexts)
+            members: memberContexts,
+            validation: validationContexts)
     }
 
     /// Generate the context for outputting all the AWSShape (enums and structures)
@@ -361,6 +437,7 @@ extension AWSService {
 
         var shapeContexts : [[String : Any]] = []
         for shape in shapes {
+            // don't output error shapes
             if errorShapeNames.contains(shape.name) { continue }
 
             switch shape.type {

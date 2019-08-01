@@ -12,6 +12,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "ResourceQuery", required: true, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The description of the resource group. Descriptions can have a maximum of 511 characters, including letters, numbers, hyphens, underscores, punctuation, and spaces.
         public let description: String?
         /// The name of the group, which is the identifier of the group in other operations. A resource group name cannot be updated after it is created. A resource group name can have a maximum of 128 characters, including letters, numbers, hyphens, dots, and underscores. The name cannot start with AWS or aws; these are reserved. A resource group name must be unique within your account.
@@ -28,6 +29,15 @@ extension ResourceGroups {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 512)
+            try validate(description, name:"description", pattern: "[\\sa-zA-Z0-9_\\.-]*")
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\.-]+")
+            try resourceQuery.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case name = "Name"
@@ -42,6 +52,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "ResourceQuery", required: false, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// A full description of the resource group after it is created.
         public let group: Group?
         /// The resource query associated with the group.
@@ -55,6 +66,11 @@ extension ResourceGroups {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try group?.validate()
+            try resourceQuery?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case group = "Group"
             case resourceQuery = "ResourceQuery"
@@ -66,11 +82,18 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupName", location: .uri(locationName: "GroupName"), required: true, type: .string)
         ]
+
         /// The name of the resource group to delete.
         public let groupName: String
 
         public init(groupName: String) {
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -82,11 +105,16 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Group", required: false, type: .structure)
         ]
+
         /// A full description of the deleted resource group.
         public let group: Group?
 
         public init(group: Group? = nil) {
             self.group = group
+        }
+
+        public func validate() throws {
+            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -98,11 +126,18 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupName", location: .uri(locationName: "GroupName"), required: true, type: .string)
         ]
+
         /// The name of the resource group.
         public let groupName: String
 
         public init(groupName: String) {
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -114,11 +149,16 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Group", required: false, type: .structure)
         ]
+
         /// A full description of the resource group.
         public let group: Group?
 
         public init(group: Group? = nil) {
             self.group = group
+        }
+
+        public func validate() throws {
+            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -130,11 +170,18 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupName", location: .uri(locationName: "GroupName"), required: true, type: .string)
         ]
+
         /// The name of the resource group.
         public let groupName: String
 
         public init(groupName: String) {
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -146,11 +193,16 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupQuery", required: false, type: .structure)
         ]
+
         /// The resource query associated with the specified group.
         public let groupQuery: GroupQuery?
 
         public init(groupQuery: GroupQuery? = nil) {
             self.groupQuery = groupQuery
+        }
+
+        public func validate() throws {
+            try groupQuery?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -162,11 +214,18 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", location: .uri(locationName: "Arn"), required: true, type: .string)
         ]
+
         /// The ARN of the resource group for which you want a list of tags. The resource must exist within the account you are using.
         public let arn: String
 
         public init(arn: String) {
             self.arn = arn
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 12)
+            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -179,6 +238,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Arn", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The ARN of the tagged resource group.
         public let arn: String?
         /// The tags associated with the specified resource group.
@@ -187,6 +247,12 @@ extension ResourceGroups {
         public init(arn: String? = nil, tags: [String: String]? = nil) {
             self.arn = arn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 12)
+            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -201,6 +267,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "GroupArn", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The description of the resource group.
         public let description: String?
         /// The ARN of a resource group.
@@ -212,6 +279,17 @@ extension ResourceGroups {
             self.description = description
             self.groupArn = groupArn
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 512)
+            try validate(description, name:"description", pattern: "[\\sa-zA-Z0-9_\\.-]*")
+            try validate(groupArn, name:"groupArn", max: 1600)
+            try validate(groupArn, name:"groupArn", min: 12)
+            try validate(groupArn, name:"groupArn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -226,6 +304,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Name", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The name of the filter. Filter names are case-sensitive.
         public let name: GroupFilterName
         /// One or more filter values. Allowed filter values vary by group filter name, and are case-sensitive.
@@ -234,6 +313,16 @@ extension ResourceGroups {
         public init(name: GroupFilterName, values: [String]) {
             self.name = name
             self.values = values
+        }
+
+        public func validate() throws {
+            try values.forEach {
+                try validate($0, name:"values[]", max: 128)
+                try validate($0, name:"values[]", min: 1)
+                try validate($0, name:"values[]", pattern: "AWS::(AllSupported|[a-zA-Z0-9]+::[a-zA-Z0-9]+)")
+            }
+            try validate(values, name:"values", max: 5)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -252,6 +341,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "GroupArn", required: false, type: .string), 
             AWSShapeMember(label: "GroupName", required: false, type: .string)
         ]
+
         /// The ARN of a resource group.
         public let groupArn: String?
         /// The name of a resource group.
@@ -260,6 +350,15 @@ extension ResourceGroups {
         public init(groupArn: String? = nil, groupName: String? = nil) {
             self.groupArn = groupArn
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(groupArn, name:"groupArn", max: 1600)
+            try validate(groupArn, name:"groupArn", min: 12)
+            try validate(groupArn, name:"groupArn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -273,6 +372,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "GroupName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceQuery", required: true, type: .structure)
         ]
+
         /// The name of a resource group that is associated with a specific resource query.
         public let groupName: String
         /// The resource query which determines which AWS resources are members of the associated resource group.
@@ -281,6 +381,13 @@ extension ResourceGroups {
         public init(groupName: String, resourceQuery: ResourceQuery) {
             self.groupName = groupName
             self.resourceQuery = resourceQuery
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
+            try resourceQuery.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -296,6 +403,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// Filters, formatted as ResourceFilter objects, that you want to apply to a ListGroupResources operation.    resource-type - Filter resources by their type. Specify up to five resource types in the format AWS::ServiceCode::ResourceType. For example, AWS::EC2::Instance, or AWS::S3::Bucket.  
         public let filters: [ResourceFilter]?
         /// The name of the resource group.
@@ -312,6 +420,20 @@ extension ResourceGroups {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 8192)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case groupName = "GroupName"
@@ -326,6 +448,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "QueryErrors", required: false, type: .list), 
             AWSShapeMember(label: "ResourceIdentifiers", required: false, type: .list)
         ]
+
         /// The NextToken value to include in a subsequent ListGroupResources request, to get more results.
         public let nextToken: String?
         /// A list of QueryError objects. Each error is an object that contains ErrorCode and Message structures. Possible values for ErrorCode are CLOUDFORMATION_STACK_INACTIVE and CLOUDFORMATION_STACK_NOT_EXISTING.
@@ -337,6 +460,15 @@ extension ResourceGroups {
             self.nextToken = nextToken
             self.queryErrors = queryErrors
             self.resourceIdentifiers = resourceIdentifiers
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 8192)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
+            try resourceIdentifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -352,6 +484,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// Filters, formatted as GroupFilter objects, that you want to apply to a ListGroups operation.    resource-type - Filter groups by resource type. Specify up to five resource types in the format AWS::ServiceCode::ResourceType. For example, AWS::EC2::Instance, or AWS::S3::Bucket.  
         public let filters: [GroupFilter]?
         /// The maximum number of resource group results that are returned by ListGroups in paginated output. By default, this number is 50.
@@ -363,6 +496,17 @@ extension ResourceGroups {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 8192)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -377,6 +521,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "GroupIdentifiers", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of GroupIdentifier objects. Each identifier is an object that contains both the GroupName and the GroupArn.
         public let groupIdentifiers: [GroupIdentifier]?
         /// The NextToken value to include in a subsequent ListGroups request, to get more results.
@@ -385,6 +530,15 @@ extension ResourceGroups {
         public init(groupIdentifiers: [GroupIdentifier]? = nil, nextToken: String? = nil) {
             self.groupIdentifiers = groupIdentifiers
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try groupIdentifiers?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 8192)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -398,6 +552,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "ErrorCode", required: false, type: .enum), 
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// Possible values are CLOUDFORMATION_STACK_INACTIVE and CLOUDFORMATION_STACK_NOT_EXISTING.
         public let errorCode: QueryErrorCode?
         /// A message that explains the ErrorCode value. Messages might state that the specified CloudFormation stack does not exist (or no longer exists). For CLOUDFORMATION_STACK_INACTIVE, the message typically states that the CloudFormation stack has a status that is not (or no longer) active, such as CREATE_FAILED.
@@ -431,6 +586,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Name", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The name of the filter. Filter names are case-sensitive.
         public let name: ResourceFilterName
         /// One or more filter values. Allowed filter values vary by resource filter name, and are case-sensitive.
@@ -439,6 +595,16 @@ extension ResourceGroups {
         public init(name: ResourceFilterName, values: [String]) {
             self.name = name
             self.values = values
+        }
+
+        public func validate() throws {
+            try values.forEach {
+                try validate($0, name:"values[]", max: 128)
+                try validate($0, name:"values[]", min: 1)
+                try validate($0, name:"values[]", pattern: "AWS::[a-zA-Z0-9]+::[a-zA-Z0-9]+")
+            }
+            try validate(values, name:"values", max: 5)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -457,6 +623,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "ResourceArn", required: false, type: .string), 
             AWSShapeMember(label: "ResourceType", required: false, type: .string)
         ]
+
         /// The ARN of a resource.
         public let resourceArn: String?
         /// The resource type of a resource, such as AWS::EC2::Instance.
@@ -465,6 +632,11 @@ extension ResourceGroups {
         public init(resourceArn: String? = nil, resourceType: String? = nil) {
             self.resourceArn = resourceArn
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[a-z]+)*:[a-z0-9\\-]*:([a-z]{2}-[a-z]+-\\d{1})?:([0-9]{12})?:.+")
+            try validate(resourceType, name:"resourceType", pattern: "AWS::[a-zA-Z0-9]+::\\w+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -478,6 +650,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Query", required: true, type: .string), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         /// The query that defines a group or a search.
         public let query: String
         /// The type of the query. The valid values in this release are TAG_FILTERS_1_0 and CLOUDFORMATION_STACK_1_0.   TAG_FILTERS_1_0:  A JSON syntax that lets you specify a collection of simple tag filters for resource types and tags, as supported by the AWS Tagging API GetResources operation. If you specify more than one tag key, only resources that match all tag keys, and at least one value of each specified tag key, are returned in your query. If you specify more than one value for a tag key, a resource matches the filter if it has a tag key value that matches any of the specified values. For example, consider the following sample query for resources that have two tags, Stage and Version, with two values each. ([{"Key":"Stage","Values":["Test","Deploy"]},{"Key":"Version","Values":["1","2"]}]) The results of this query might include the following.   An EC2 instance that has the following two tags: {"Key":"Stage","Value":"Deploy"}, and {"Key":"Version","Value":"2"}    An S3 bucket that has the following two tags: {"Key":"Stage","Value":"Test"}, and {"Key":"Version","Value":"1"}   The query would not return the following results, however. The following EC2 instance does not have all tag keys specified in the filter, so it is rejected. The RDS database has all of the tag keys, but no values that match at least one of the specified tag key values in the filter.   An EC2 instance that has only the following tag: {"Key":"Stage","Value":"Deploy"}.   An RDS database that has the following two tags: {"Key":"Stage","Value":"Archived"}, and {"Key":"Version","Value":"4"}      CLOUDFORMATION_STACK_1_0:  A JSON syntax that lets you specify a CloudFormation stack ARN.
@@ -486,6 +659,11 @@ extension ResourceGroups {
         public init(query: String, type: QueryType) {
             self.query = query
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(query, name:"query", max: 4096)
+            try validate(query, name:"query", pattern: "[\\s\\S]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -500,6 +678,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceQuery", required: true, type: .structure)
         ]
+
         /// The maximum number of group member ARNs returned by SearchResources in paginated output. By default, this number is 50.
         public let maxResults: Int32?
         /// The NextToken value that is returned in a paginated SearchResources request. To get the next page of results, run the call again, add the NextToken parameter, and specify the NextToken value.
@@ -511,6 +690,15 @@ extension ResourceGroups {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceQuery = resourceQuery
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 8192)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
+            try resourceQuery.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -526,6 +714,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "QueryErrors", required: false, type: .list), 
             AWSShapeMember(label: "ResourceIdentifiers", required: false, type: .list)
         ]
+
         /// The NextToken value to include in a subsequent SearchResources request, to get more results.
         public let nextToken: String?
         /// A list of QueryError objects. Each error is an object that contains ErrorCode and Message structures. Possible values for ErrorCode are CLOUDFORMATION_STACK_INACTIVE and CLOUDFORMATION_STACK_NOT_EXISTING.
@@ -537,6 +726,15 @@ extension ResourceGroups {
             self.nextToken = nextToken
             self.queryErrors = queryErrors
             self.resourceIdentifiers = resourceIdentifiers
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 8192)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
+            try resourceIdentifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -551,6 +749,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Arn", location: .uri(locationName: "Arn"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .map)
         ]
+
         /// The ARN of the resource to which to add tags.
         public let arn: String
         /// The tags to add to the specified resource. A tag is a string-to-string map of key-value pairs. Tag keys can have a maximum character length of 128 characters, and tag values can have a maximum length of 256 characters.
@@ -559,6 +758,12 @@ extension ResourceGroups {
         public init(arn: String, tags: [String: String]) {
             self.arn = arn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 12)
+            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -572,6 +777,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Arn", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The ARN of the tagged resource.
         public let arn: String?
         /// The tags that have been added to the specified resource.
@@ -580,6 +786,12 @@ extension ResourceGroups {
         public init(arn: String? = nil, tags: [String: String]? = nil) {
             self.arn = arn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 12)
+            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -593,6 +805,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Arn", location: .uri(locationName: "Arn"), required: true, type: .string), 
             AWSShapeMember(label: "Keys", required: true, type: .list)
         ]
+
         /// The ARN of the resource from which to remove tags.
         public let arn: String
         /// The keys of the tags to be removed.
@@ -601,6 +814,17 @@ extension ResourceGroups {
         public init(arn: String, keys: [String]) {
             self.arn = arn
             self.keys = keys
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 12)
+            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+            try keys.forEach {
+                try validate($0, name:"keys[]", max: 128)
+                try validate($0, name:"keys[]", min: 1)
+                try validate($0, name:"keys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -614,6 +838,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Arn", required: false, type: .string), 
             AWSShapeMember(label: "Keys", required: false, type: .list)
         ]
+
         /// The ARN of the resource from which tags have been removed.
         public let arn: String?
         /// The keys of tags that have been removed.
@@ -622,6 +847,17 @@ extension ResourceGroups {
         public init(arn: String? = nil, keys: [String]? = nil) {
             self.arn = arn
             self.keys = keys
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 12)
+            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+            try keys?.forEach {
+                try validate($0, name:"keys[]", max: 128)
+                try validate($0, name:"keys[]", min: 1)
+                try validate($0, name:"keys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -635,6 +871,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "GroupName", location: .uri(locationName: "GroupName"), required: true, type: .string)
         ]
+
         /// The description of the resource group. Descriptions can have a maximum of 511 characters, including letters, numbers, hyphens, underscores, punctuation, and spaces.
         public let description: String?
         /// The name of the resource group for which you want to update its description.
@@ -643,6 +880,14 @@ extension ResourceGroups {
         public init(description: String? = nil, groupName: String) {
             self.description = description
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 512)
+            try validate(description, name:"description", pattern: "[\\sa-zA-Z0-9_\\.-]*")
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -655,11 +900,16 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Group", required: false, type: .structure)
         ]
+
         /// The full description of the resource group after it has been updated.
         public let group: Group?
 
         public init(group: Group? = nil) {
             self.group = group
+        }
+
+        public func validate() throws {
+            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -672,6 +922,7 @@ extension ResourceGroups {
             AWSShapeMember(label: "GroupName", location: .uri(locationName: "GroupName"), required: true, type: .string), 
             AWSShapeMember(label: "ResourceQuery", required: true, type: .structure)
         ]
+
         /// The name of the resource group for which you want to edit the query.
         public let groupName: String
         /// The resource query that determines which AWS resources are members of the resource group.
@@ -680,6 +931,13 @@ extension ResourceGroups {
         public init(groupName: String, resourceQuery: ResourceQuery) {
             self.groupName = groupName
             self.resourceQuery = resourceQuery
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
+            try resourceQuery.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -692,11 +950,16 @@ extension ResourceGroups {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupQuery", required: false, type: .structure)
         ]
+
         /// The resource query associated with the resource group after the update.
         public let groupQuery: GroupQuery?
 
         public init(groupQuery: GroupQuery? = nil) {
             self.groupQuery = groupQuery
+        }
+
+        public func validate() throws {
+            try groupQuery?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

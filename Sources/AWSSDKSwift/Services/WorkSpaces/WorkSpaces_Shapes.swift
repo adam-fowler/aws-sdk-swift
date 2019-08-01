@@ -14,6 +14,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ModificationState", required: false, type: .enum), 
             AWSShapeMember(label: "StartTime", required: false, type: .timestamp)
         ]
+
         /// The IP address range, specified as an IPv4 CIDR block, for the management network interface used for the account.
         public let dedicatedTenancyManagementCidrRange: String?
         /// The status of BYOL (whether BYOL is being enabled or disabled).
@@ -36,6 +37,10 @@ extension WorkSpaces {
             self.startTime = startTime
         }
 
+        public func validate() throws {
+            try validate(dedicatedTenancyManagementCidrRange, name:"dedicatedTenancyManagementCidrRange", pattern: "(^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.0\\.0)(\\/(16$))$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dedicatedTenancyManagementCidrRange = "DedicatedTenancyManagementCidrRange"
             case dedicatedTenancySupport = "DedicatedTenancySupport"
@@ -51,6 +56,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "DirectoryId", required: true, type: .string), 
             AWSShapeMember(label: "GroupIds", required: true, type: .list)
         ]
+
         /// The identifier of the directory.
         public let directoryId: String
         /// The identifiers of one or more IP access control groups.
@@ -61,6 +67,13 @@ extension WorkSpaces {
             self.groupIds = groupIds
         }
 
+        public func validate() throws {
+            try validate(directoryId, name:"directoryId", pattern: "^d-[0-9a-f]{8,63}$")
+            try groupIds.forEach {
+                try validate($0, name:"groupIds[]", pattern: "wsipg-[0-9a-z]{8,63}$")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case directoryId = "DirectoryId"
             case groupIds = "GroupIds"
@@ -68,6 +81,7 @@ extension WorkSpaces {
     }
 
     public struct AssociateIpGroupsResult: AWSShape {
+
 
         public init() {
         }
@@ -79,6 +93,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "GroupId", required: true, type: .string), 
             AWSShapeMember(label: "UserRules", required: true, type: .list)
         ]
+
         /// The identifier of the group.
         public let groupId: String
         /// The rules to add to the group.
@@ -89,6 +104,10 @@ extension WorkSpaces {
             self.userRules = userRules
         }
 
+        public func validate() throws {
+            try validate(groupId, name:"groupId", pattern: "wsipg-[0-9a-z]{8,63}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case userRules = "UserRules"
@@ -96,6 +115,7 @@ extension WorkSpaces {
     }
 
     public struct AuthorizeIpRulesResult: AWSShape {
+
 
         public init() {
         }
@@ -106,6 +126,7 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ReconnectEnabled", required: false, type: .enum)
         ]
+
         /// Specifies whether users can cache their credentials on the Amazon WorkSpaces client. When enabled, users can choose to reconnect to their WorkSpaces without re-entering their credentials. 
         public let reconnectEnabled: ReconnectEnum?
 
@@ -123,6 +144,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ClientProperties", required: false, type: .structure), 
             AWSShapeMember(label: "ResourceId", required: false, type: .string)
         ]
+
         /// Information about the Amazon WorkSpaces client.
         public let clientProperties: ClientProperties?
         /// The resource identifier, in the form of a directory ID.
@@ -131,6 +153,10 @@ extension WorkSpaces {
         public init(clientProperties: ClientProperties? = nil, resourceId: String? = nil) {
             self.clientProperties = clientProperties
             self.resourceId = resourceId
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -154,6 +180,7 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .enum)
         ]
+
         /// The compute type.
         public let name: Compute?
 
@@ -181,6 +208,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "SourceRegion", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// A description of the image.
         public let description: String?
         /// The name of the image.
@@ -200,6 +228,22 @@ extension WorkSpaces {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "^[a-zA-Z0-9_./() -]+$")
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_./()\\\\-]+$")
+            try validate(sourceImageId, name:"sourceImageId", pattern: "wsi-[0-9a-z]{9,63}$")
+            try validate(sourceRegion, name:"sourceRegion", max: 31)
+            try validate(sourceRegion, name:"sourceRegion", min: 1)
+            try validate(sourceRegion, name:"sourceRegion", pattern: "^[-0-9a-z]{1,31}$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case name = "Name"
@@ -213,11 +257,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImageId", required: false, type: .string)
         ]
+
         /// The identifier of the image.
         public let imageId: String?
 
         public init(imageId: String? = nil) {
             self.imageId = imageId
+        }
+
+        public func validate() throws {
+            try validate(imageId, name:"imageId", pattern: "wsi-[0-9a-z]{9,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -232,6 +281,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "UserRules", required: false, type: .list)
         ]
+
         /// The description of the group.
         public let groupDesc: String?
         /// The name of the group.
@@ -248,6 +298,12 @@ extension WorkSpaces {
             self.userRules = userRules
         }
 
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupDesc = "GroupDesc"
             case groupName = "GroupName"
@@ -260,11 +316,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupId", required: false, type: .string)
         ]
+
         /// The identifier of the group.
         public let groupId: String?
 
         public init(groupId: String? = nil) {
             self.groupId = groupId
+        }
+
+        public func validate() throws {
+            try validate(groupId, name:"groupId", pattern: "wsipg-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -277,6 +338,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ResourceId", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The identifier of the WorkSpaces resource. The supported resource types are WorkSpaces, registered directories, images, custom bundles, and IP access control groups.
         public let resourceId: String
         /// The tags. Each WorkSpaces resource can have a maximum of 50 tags.
@@ -287,6 +349,13 @@ extension WorkSpaces {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceId = "ResourceId"
             case tags = "Tags"
@@ -294,6 +363,7 @@ extension WorkSpaces {
     }
 
     public struct CreateTagsResult: AWSShape {
+
 
         public init() {
         }
@@ -304,11 +374,20 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Workspaces", required: true, type: .list)
         ]
+
         /// The WorkSpaces to create. You can specify up to 25 WorkSpaces.
         public let workspaces: [WorkspaceRequest]
 
         public init(workspaces: [WorkspaceRequest]) {
             self.workspaces = workspaces
+        }
+
+        public func validate() throws {
+            try workspaces.forEach {
+                try $0.validate()
+            }
+            try validate(workspaces, name:"workspaces", max: 25)
+            try validate(workspaces, name:"workspaces", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -321,6 +400,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "FailedRequests", required: false, type: .list), 
             AWSShapeMember(label: "PendingRequests", required: false, type: .list)
         ]
+
         /// Information about the WorkSpaces that could not be created.
         public let failedRequests: [FailedCreateWorkspaceRequest]?
         /// Information about the WorkSpaces that were created. Because this operation is asynchronous, the identifier returned is not immediately available for use with other operations. For example, if you call DescribeWorkspaces before the WorkSpace is created, the information returned can be incomplete.
@@ -329,6 +409,15 @@ extension WorkSpaces {
         public init(failedRequests: [FailedCreateWorkspaceRequest]? = nil, pendingRequests: [Workspace]? = nil) {
             self.failedRequests = failedRequests
             self.pendingRequests = pendingRequests
+        }
+
+        public func validate() throws {
+            try failedRequests?.forEach {
+                try $0.validate()
+            }
+            try pendingRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -363,6 +452,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "EnableWorkDocs", required: false, type: .boolean), 
             AWSShapeMember(label: "UserEnabledAsLocalAdministrator", required: false, type: .boolean)
         ]
+
         /// The identifier of any security groups to apply to WorkSpaces when they are created.
         public let customSecurityGroupId: String?
         /// The organizational unit (OU) in the directory for the WorkSpace machine accounts.
@@ -382,6 +472,10 @@ extension WorkSpaces {
             self.userEnabledAsLocalAdministrator = userEnabledAsLocalAdministrator
         }
 
+        public func validate() throws {
+            try validate(customSecurityGroupId, name:"customSecurityGroupId", pattern: "^(sg-[0-9a-f]{8})$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case customSecurityGroupId = "CustomSecurityGroupId"
             case defaultOu = "DefaultOu"
@@ -395,11 +489,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupId", required: true, type: .string)
         ]
+
         /// The identifier of the IP access control group.
         public let groupId: String
 
         public init(groupId: String) {
             self.groupId = groupId
+        }
+
+        public func validate() throws {
+            try validate(groupId, name:"groupId", pattern: "wsipg-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -408,6 +507,7 @@ extension WorkSpaces {
     }
 
     public struct DeleteIpGroupResult: AWSShape {
+
 
         public init() {
         }
@@ -419,6 +519,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ResourceId", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The identifier of the WorkSpaces resource. The supported resource types are WorkSpaces, registered directories, images, custom bundles, and IP access control groups.
         public let resourceId: String
         /// The tag keys.
@@ -429,6 +530,13 @@ extension WorkSpaces {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceId = "ResourceId"
             case tagKeys = "TagKeys"
@@ -436,6 +544,7 @@ extension WorkSpaces {
     }
 
     public struct DeleteTagsResult: AWSShape {
+
 
         public init() {
         }
@@ -446,11 +555,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImageId", required: true, type: .string)
         ]
+
         /// The identifier of the image.
         public let imageId: String
 
         public init(imageId: String) {
             self.imageId = imageId
+        }
+
+        public func validate() throws {
+            try validate(imageId, name:"imageId", pattern: "wsi-[0-9a-z]{9,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -459,6 +573,7 @@ extension WorkSpaces {
     }
 
     public struct DeleteWorkspaceImageResult: AWSShape {
+
 
         public init() {
         }
@@ -469,11 +584,17 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// If you received a NextToken from a previous call that was paginated, provide this token to receive the next set of results.
         public let nextToken: String?
 
         public init(nextToken: String? = nil) {
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -486,6 +607,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "AccountModifications", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of modifications to the configuration of BYOL.
         public let accountModifications: [AccountModification]?
         /// The token to use to retrieve the next set of results, or null if no more results are available.
@@ -496,6 +618,14 @@ extension WorkSpaces {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try accountModifications?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountModifications = "AccountModifications"
             case nextToken = "NextToken"
@@ -503,6 +633,7 @@ extension WorkSpaces {
     }
 
     public struct DescribeAccountRequest: AWSShape {
+
 
         public init() {
         }
@@ -514,6 +645,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "DedicatedTenancyManagementCidrRange", required: false, type: .string), 
             AWSShapeMember(label: "DedicatedTenancySupport", required: false, type: .enum)
         ]
+
         /// The IP address range, specified as an IPv4 CIDR block, used for the management network interface. The management network interface is connected to a secure Amazon WorkSpaces management network. It is used for interactive streaming of the WorkSpace desktop to Amazon WorkSpaces clients, and to allow Amazon WorkSpaces to manage the WorkSpace.
         public let dedicatedTenancyManagementCidrRange: String?
         /// The status of BYOL (whether BYOL is enabled or disabled).
@@ -522,6 +654,10 @@ extension WorkSpaces {
         public init(dedicatedTenancyManagementCidrRange: String? = nil, dedicatedTenancySupport: DedicatedTenancySupportResultEnum? = nil) {
             self.dedicatedTenancyManagementCidrRange = dedicatedTenancyManagementCidrRange
             self.dedicatedTenancySupport = dedicatedTenancySupport
+        }
+
+        public func validate() throws {
+            try validate(dedicatedTenancyManagementCidrRange, name:"dedicatedTenancyManagementCidrRange", pattern: "(^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.0\\.0)(\\/(16$))$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -534,11 +670,20 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceIds", required: true, type: .list)
         ]
+
         /// The resource identifier, in the form of directory IDs.
         public let resourceIds: [String]
 
         public init(resourceIds: [String]) {
             self.resourceIds = resourceIds
+        }
+
+        public func validate() throws {
+            try resourceIds.forEach {
+                try validate($0, name:"resourceIds[]", min: 1)
+            }
+            try validate(resourceIds, name:"resourceIds", max: 25)
+            try validate(resourceIds, name:"resourceIds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -550,11 +695,18 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClientPropertiesList", required: false, type: .list)
         ]
+
         /// Information about the specified Amazon WorkSpaces clients.
         public let clientPropertiesList: [ClientPropertiesResult]?
 
         public init(clientPropertiesList: [ClientPropertiesResult]? = nil) {
             self.clientPropertiesList = clientPropertiesList
+        }
+
+        public func validate() throws {
+            try clientPropertiesList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -568,6 +720,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The identifiers of one or more IP access control groups.
         public let groupIds: [String]?
         /// The maximum number of items to return.
@@ -579,6 +732,16 @@ extension WorkSpaces {
             self.groupIds = groupIds
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try groupIds?.forEach {
+                try validate($0, name:"groupIds[]", pattern: "wsipg-[0-9a-z]{8,63}$")
+            }
+            try validate(maxResults, name:"maxResults", max: 25)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -593,6 +756,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Result", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next set of results, or null if no more results are available.
         public let nextToken: String?
         /// Information about the IP access control groups.
@@ -601,6 +765,14 @@ extension WorkSpaces {
         public init(nextToken: String? = nil, result: [WorkspacesIpGroup]? = nil) {
             self.nextToken = nextToken
             self.result = result
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try result?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -613,11 +785,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The identifier of the WorkSpaces resource. The supported resource types are WorkSpaces, registered directories, images, custom bundles, and IP access control groups.
         public let resourceId: String
 
         public init(resourceId: String) {
             self.resourceId = resourceId
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -629,11 +806,18 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagList", required: false, type: .list)
         ]
+
         /// The tags.
         public let tagList: [Tag]?
 
         public init(tagList: [Tag]? = nil) {
             self.tagList = tagList
+        }
+
+        public func validate() throws {
+            try tagList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -647,6 +831,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Owner", required: false, type: .string)
         ]
+
         /// The identifiers of the bundles. You cannot combine this parameter with any other filter.
         public let bundleIds: [String]?
         /// The token for the next set of results. (You received this token from a previous call.)
@@ -658,6 +843,16 @@ extension WorkSpaces {
             self.bundleIds = bundleIds
             self.nextToken = nextToken
             self.owner = owner
+        }
+
+        public func validate() throws {
+            try bundleIds?.forEach {
+                try validate($0, name:"bundleIds[]", pattern: "^wsb-[0-9a-z]{8,63}$")
+            }
+            try validate(bundleIds, name:"bundleIds", max: 25)
+            try validate(bundleIds, name:"bundleIds", min: 1)
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -672,6 +867,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "Bundles", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the bundles.
         public let bundles: [WorkspaceBundle]?
         /// The token to use to retrieve the next set of results, or null if there are no more results available. This token is valid for one day and must be used within that time frame.
@@ -680,6 +876,14 @@ extension WorkSpaces {
         public init(bundles: [WorkspaceBundle]? = nil, nextToken: String? = nil) {
             self.bundles = bundles
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try bundles?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -693,6 +897,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "DirectoryIds", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The identifiers of the directories. If the value is null, all directories are retrieved.
         public let directoryIds: [String]?
         /// If you received a NextToken from a previous call that was paginated, provide this token to receive the next set of results.
@@ -701,6 +906,16 @@ extension WorkSpaces {
         public init(directoryIds: [String]? = nil, nextToken: String? = nil) {
             self.directoryIds = directoryIds
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try directoryIds?.forEach {
+                try validate($0, name:"directoryIds[]", pattern: "^d-[0-9a-f]{8,63}$")
+            }
+            try validate(directoryIds, name:"directoryIds", max: 25)
+            try validate(directoryIds, name:"directoryIds", min: 1)
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -714,6 +929,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "Directories", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the directories.
         public let directories: [WorkspaceDirectory]?
         /// The token to use to retrieve the next set of results, or null if no more results are available.
@@ -722,6 +938,14 @@ extension WorkSpaces {
         public init(directories: [WorkspaceDirectory]? = nil, nextToken: String? = nil) {
             self.directories = directories
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try directories?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -736,6 +960,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The identifier of the image.
         public let imageIds: [String]?
         /// The maximum number of items to return.
@@ -747,6 +972,18 @@ extension WorkSpaces {
             self.imageIds = imageIds
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try imageIds?.forEach {
+                try validate($0, name:"imageIds[]", pattern: "wsi-[0-9a-z]{9,63}$")
+            }
+            try validate(imageIds, name:"imageIds", max: 25)
+            try validate(imageIds, name:"imageIds", min: 1)
+            try validate(maxResults, name:"maxResults", max: 25)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -761,6 +998,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "Images", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the images.
         public let images: [WorkspaceImage]?
         /// The token to use to retrieve the next set of results, or null if no more results are available.
@@ -769,6 +1007,14 @@ extension WorkSpaces {
         public init(images: [WorkspaceImage]? = nil, nextToken: String? = nil) {
             self.images = images
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try images?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -782,6 +1028,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WorkspaceIds", required: false, type: .list)
         ]
+
         /// If you received a NextToken from a previous call that was paginated, provide this token to receive the next set of results.
         public let nextToken: String?
         /// The identifiers of the WorkSpaces. You can specify up to 25 WorkSpaces.
@@ -790,6 +1037,16 @@ extension WorkSpaces {
         public init(nextToken: String? = nil, workspaceIds: [String]? = nil) {
             self.nextToken = nextToken
             self.workspaceIds = workspaceIds
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try workspaceIds?.forEach {
+                try validate($0, name:"workspaceIds[]", pattern: "^ws-[0-9a-z]{8,63}$")
+            }
+            try validate(workspaceIds, name:"workspaceIds", max: 25)
+            try validate(workspaceIds, name:"workspaceIds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -803,6 +1060,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WorkspacesConnectionStatus", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next set of results, or null if no more results are available.
         public let nextToken: String?
         /// Information about the connection status of the WorkSpace.
@@ -811,6 +1069,14 @@ extension WorkSpaces {
         public init(nextToken: String? = nil, workspacesConnectionStatus: [WorkspaceConnectionStatus]? = nil) {
             self.nextToken = nextToken
             self.workspacesConnectionStatus = workspacesConnectionStatus
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try workspacesConnectionStatus?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -828,6 +1094,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "UserName", required: false, type: .string), 
             AWSShapeMember(label: "WorkspaceIds", required: false, type: .list)
         ]
+
         /// The identifier of the bundle. All WorkSpaces that are created from this bundle are retrieved. You cannot combine this parameter with any other filter.
         public let bundleId: String?
         /// The identifier of the directory. In addition, you can optionally specify a specific directory user (see UserName). You cannot combine this parameter with any other filter.
@@ -850,6 +1117,22 @@ extension WorkSpaces {
             self.workspaceIds = workspaceIds
         }
 
+        public func validate() throws {
+            try validate(bundleId, name:"bundleId", pattern: "^wsb-[0-9a-z]{8,63}$")
+            try validate(directoryId, name:"directoryId", pattern: "^d-[0-9a-f]{8,63}$")
+            try validate(limit, name:"limit", max: 25)
+            try validate(limit, name:"limit", min: 1)
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(userName, name:"userName", max: 63)
+            try validate(userName, name:"userName", min: 1)
+            try workspaceIds?.forEach {
+                try validate($0, name:"workspaceIds[]", pattern: "^ws-[0-9a-z]{8,63}$")
+            }
+            try validate(workspaceIds, name:"workspaceIds", max: 25)
+            try validate(workspaceIds, name:"workspaceIds", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bundleId = "BundleId"
             case directoryId = "DirectoryId"
@@ -865,6 +1148,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Workspaces", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next set of results, or null if no more results are available.
         public let nextToken: String?
         /// Information about the WorkSpaces. Because CreateWorkspaces is an asynchronous operation, some of the returned information could be incomplete.
@@ -873,6 +1157,14 @@ extension WorkSpaces {
         public init(nextToken: String? = nil, workspaces: [Workspace]? = nil) {
             self.nextToken = nextToken
             self.workspaces = workspaces
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try workspaces?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -886,6 +1178,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "DirectoryId", required: true, type: .string), 
             AWSShapeMember(label: "GroupIds", required: true, type: .list)
         ]
+
         /// The identifier of the directory.
         public let directoryId: String
         /// The identifiers of one or more IP access control groups.
@@ -896,6 +1189,13 @@ extension WorkSpaces {
             self.groupIds = groupIds
         }
 
+        public func validate() throws {
+            try validate(directoryId, name:"directoryId", pattern: "^d-[0-9a-f]{8,63}$")
+            try groupIds.forEach {
+                try validate($0, name:"groupIds[]", pattern: "wsipg-[0-9a-z]{8,63}$")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case directoryId = "DirectoryId"
             case groupIds = "GroupIds"
@@ -903,6 +1203,7 @@ extension WorkSpaces {
     }
 
     public struct DisassociateIpGroupsResult: AWSShape {
+
 
         public init() {
         }
@@ -915,6 +1216,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "WorkspaceRequest", required: false, type: .structure)
         ]
+
         /// The error code that is returned if the WorkSpace cannot be created.
         public let errorCode: String?
         /// The text of the error message that is returned if the WorkSpace cannot be created.
@@ -926,6 +1228,10 @@ extension WorkSpaces {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.workspaceRequest = workspaceRequest
+        }
+
+        public func validate() throws {
+            try workspaceRequest?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -941,6 +1247,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "WorkspaceId", required: false, type: .string)
         ]
+
         /// The error code that is returned if the WorkSpace cannot be rebooted.
         public let errorCode: String?
         /// The text of the error message that is returned if the WorkSpace cannot be rebooted.
@@ -952,6 +1259,10 @@ extension WorkSpaces {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.workspaceId = workspaceId
+        }
+
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -969,6 +1280,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "IngestionProcess", required: true, type: .enum), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The identifier of the EC2 image.
         public let ec2ImageId: String
         /// The description of the WorkSpace image.
@@ -988,6 +1300,19 @@ extension WorkSpaces {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(ec2ImageId, name:"ec2ImageId", pattern: "^ami\\-([a-f0-9]{8}|[a-f0-9]{17})$")
+            try validate(imageDescription, name:"imageDescription", max: 256)
+            try validate(imageDescription, name:"imageDescription", min: 1)
+            try validate(imageDescription, name:"imageDescription", pattern: "^[a-zA-Z0-9_./() -]+$")
+            try validate(imageName, name:"imageName", max: 64)
+            try validate(imageName, name:"imageName", min: 1)
+            try validate(imageName, name:"imageName", pattern: "^[a-zA-Z0-9_./()\\\\-]+$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case ec2ImageId = "Ec2ImageId"
             case imageDescription = "ImageDescription"
@@ -1001,11 +1326,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ImageId", required: false, type: .string)
         ]
+
         /// The identifier of the WorkSpace image.
         public let imageId: String?
 
         public init(imageId: String? = nil) {
             self.imageId = imageId
+        }
+
+        public func validate() throws {
+            try validate(imageId, name:"imageId", pattern: "wsi-[0-9a-z]{9,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1018,6 +1348,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ipRule", required: false, type: .string), 
             AWSShapeMember(label: "ruleDesc", required: false, type: .string)
         ]
+
         /// The IP address range, in CIDR notation.
         public let ipRule: String?
         /// The description.
@@ -1040,6 +1371,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The IP address range to search. Specify an IP address range that is compatible with your network and in CIDR notation (that is, specify the range as an IPv4 CIDR block).
         public let managementCidrRangeConstraint: String
         /// The maximum number of items to return.
@@ -1051,6 +1383,14 @@ extension WorkSpaces {
             self.managementCidrRangeConstraint = managementCidrRangeConstraint
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(managementCidrRangeConstraint, name:"managementCidrRangeConstraint", pattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/(3[0-2]|[1-2][0-9]|[0-9]))$")
+            try validate(maxResults, name:"maxResults", max: 5)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1065,6 +1405,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ManagementCidrRanges", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of available IP address ranges, specified as IPv4 CIDR blocks.
         public let managementCidrRanges: [String]?
         /// The token to use to retrieve the next set of results, or null if no more results are available.
@@ -1073,6 +1414,14 @@ extension WorkSpaces {
         public init(managementCidrRanges: [String]? = nil, nextToken: String? = nil) {
             self.managementCidrRanges = managementCidrRanges
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try managementCidrRanges?.forEach {
+                try validate($0, name:"managementCidrRanges[]", pattern: "(^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.0\\.0)(\\/(16$))$")
+            }
+            try validate(nextToken, name:"nextToken", max: 63)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1093,6 +1442,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "Resource", required: false, type: .enum), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The resource.
         public let resource: ModificationResourceEnum?
         /// The modification state.
@@ -1120,6 +1470,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "DedicatedTenancyManagementCidrRange", required: false, type: .string), 
             AWSShapeMember(label: "DedicatedTenancySupport", required: false, type: .enum)
         ]
+
         /// The IP address range, specified as an IPv4 CIDR block, for the management network interface. Specify an IP address range that is compatible with your network and in CIDR notation (that is, specify the range as an IPv4 CIDR block). The CIDR block size must be /16 (for example, 203.0.113.25/16). It must also be specified as available by the ListAvailableManagementCidrRanges operation.
         public let dedicatedTenancyManagementCidrRange: String?
         /// The status of BYOL.
@@ -1130,6 +1481,10 @@ extension WorkSpaces {
             self.dedicatedTenancySupport = dedicatedTenancySupport
         }
 
+        public func validate() throws {
+            try validate(dedicatedTenancyManagementCidrRange, name:"dedicatedTenancyManagementCidrRange", pattern: "(^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.0\\.0)(\\/(16$))$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dedicatedTenancyManagementCidrRange = "DedicatedTenancyManagementCidrRange"
             case dedicatedTenancySupport = "DedicatedTenancySupport"
@@ -1137,6 +1492,7 @@ extension WorkSpaces {
     }
 
     public struct ModifyAccountResult: AWSShape {
+
 
         public init() {
         }
@@ -1148,6 +1504,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "ClientProperties", required: true, type: .structure), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// Information about the Amazon WorkSpaces client.
         public let clientProperties: ClientProperties
         /// The resource identifiers, in the form of directory IDs.
@@ -1158,6 +1515,10 @@ extension WorkSpaces {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientProperties = "ClientProperties"
             case resourceId = "ResourceId"
@@ -1165,6 +1526,7 @@ extension WorkSpaces {
     }
 
     public struct ModifyClientPropertiesResult: AWSShape {
+
 
         public init() {
         }
@@ -1176,6 +1538,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "WorkspaceId", required: true, type: .string), 
             AWSShapeMember(label: "WorkspaceProperties", required: true, type: .structure)
         ]
+
         /// The identifier of the WorkSpace.
         public let workspaceId: String
         /// The properties of the WorkSpace.
@@ -1186,6 +1549,10 @@ extension WorkSpaces {
             self.workspaceProperties = workspaceProperties
         }
 
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case workspaceId = "WorkspaceId"
             case workspaceProperties = "WorkspaceProperties"
@@ -1193,6 +1560,7 @@ extension WorkSpaces {
     }
 
     public struct ModifyWorkspacePropertiesResult: AWSShape {
+
 
         public init() {
         }
@@ -1204,6 +1572,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "WorkspaceId", required: true, type: .string), 
             AWSShapeMember(label: "WorkspaceState", required: true, type: .enum)
         ]
+
         /// The identifier of the WorkSpace.
         public let workspaceId: String
         /// The WorkSpace state.
@@ -1214,6 +1583,10 @@ extension WorkSpaces {
             self.workspaceState = workspaceState
         }
 
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case workspaceId = "WorkspaceId"
             case workspaceState = "WorkspaceState"
@@ -1221,6 +1594,7 @@ extension WorkSpaces {
     }
 
     public struct ModifyWorkspaceStateResult: AWSShape {
+
 
         public init() {
         }
@@ -1231,6 +1605,7 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The operating system.
         public let `type`: OperatingSystemType?
 
@@ -1253,11 +1628,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WorkspaceId", required: true, type: .string)
         ]
+
         /// The identifier of the WorkSpace.
         public let workspaceId: String
 
         public init(workspaceId: String) {
             self.workspaceId = workspaceId
+        }
+
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1269,11 +1649,20 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RebootWorkspaceRequests", required: true, type: .list)
         ]
+
         /// The WorkSpaces to reboot. You can specify up to 25 WorkSpaces.
         public let rebootWorkspaceRequests: [RebootRequest]
 
         public init(rebootWorkspaceRequests: [RebootRequest]) {
             self.rebootWorkspaceRequests = rebootWorkspaceRequests
+        }
+
+        public func validate() throws {
+            try rebootWorkspaceRequests.forEach {
+                try $0.validate()
+            }
+            try validate(rebootWorkspaceRequests, name:"rebootWorkspaceRequests", max: 25)
+            try validate(rebootWorkspaceRequests, name:"rebootWorkspaceRequests", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1285,11 +1674,18 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedRequests", required: false, type: .list)
         ]
+
         /// Information about the WorkSpaces that could not be rebooted.
         public let failedRequests: [FailedWorkspaceChangeRequest]?
 
         public init(failedRequests: [FailedWorkspaceChangeRequest]? = nil) {
             self.failedRequests = failedRequests
+        }
+
+        public func validate() throws {
+            try failedRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1301,11 +1697,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WorkspaceId", required: true, type: .string)
         ]
+
         /// The identifier of the WorkSpace.
         public let workspaceId: String
 
         public init(workspaceId: String) {
             self.workspaceId = workspaceId
+        }
+
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1317,11 +1718,20 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RebuildWorkspaceRequests", required: true, type: .list)
         ]
+
         /// The WorkSpace to rebuild. You can specify a single WorkSpace.
         public let rebuildWorkspaceRequests: [RebuildRequest]
 
         public init(rebuildWorkspaceRequests: [RebuildRequest]) {
             self.rebuildWorkspaceRequests = rebuildWorkspaceRequests
+        }
+
+        public func validate() throws {
+            try rebuildWorkspaceRequests.forEach {
+                try $0.validate()
+            }
+            try validate(rebuildWorkspaceRequests, name:"rebuildWorkspaceRequests", max: 1)
+            try validate(rebuildWorkspaceRequests, name:"rebuildWorkspaceRequests", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1333,11 +1743,18 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedRequests", required: false, type: .list)
         ]
+
         /// Information about the WorkSpace that could not be rebuilt.
         public let failedRequests: [FailedWorkspaceChangeRequest]?
 
         public init(failedRequests: [FailedWorkspaceChangeRequest]? = nil) {
             self.failedRequests = failedRequests
+        }
+
+        public func validate() throws {
+            try failedRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1356,6 +1773,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "GroupId", required: true, type: .string), 
             AWSShapeMember(label: "UserRules", required: true, type: .list)
         ]
+
         /// The identifier of the group.
         public let groupId: String
         /// The rules to remove from the group.
@@ -1366,6 +1784,10 @@ extension WorkSpaces {
             self.userRules = userRules
         }
 
+        public func validate() throws {
+            try validate(groupId, name:"groupId", pattern: "wsipg-[0-9a-z]{8,63}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case userRules = "UserRules"
@@ -1373,6 +1795,7 @@ extension WorkSpaces {
     }
 
     public struct RevokeIpRulesResult: AWSShape {
+
 
         public init() {
         }
@@ -1383,11 +1806,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Capacity", required: false, type: .string)
         ]
+
         /// The size of the root volume.
         public let capacity: String?
 
         public init(capacity: String? = nil) {
             self.capacity = capacity
+        }
+
+        public func validate() throws {
+            try validate(capacity, name:"capacity", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1405,11 +1833,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WorkspaceId", required: false, type: .string)
         ]
+
         /// The identifier of the WorkSpace.
         public let workspaceId: String?
 
         public init(workspaceId: String? = nil) {
             self.workspaceId = workspaceId
+        }
+
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1421,11 +1854,20 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StartWorkspaceRequests", required: true, type: .list)
         ]
+
         /// The WorkSpaces to start. You can specify up to 25 WorkSpaces.
         public let startWorkspaceRequests: [StartRequest]
 
         public init(startWorkspaceRequests: [StartRequest]) {
             self.startWorkspaceRequests = startWorkspaceRequests
+        }
+
+        public func validate() throws {
+            try startWorkspaceRequests.forEach {
+                try $0.validate()
+            }
+            try validate(startWorkspaceRequests, name:"startWorkspaceRequests", max: 25)
+            try validate(startWorkspaceRequests, name:"startWorkspaceRequests", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1437,11 +1879,18 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedRequests", required: false, type: .list)
         ]
+
         /// Information about the WorkSpaces that could not be started.
         public let failedRequests: [FailedWorkspaceChangeRequest]?
 
         public init(failedRequests: [FailedWorkspaceChangeRequest]? = nil) {
             self.failedRequests = failedRequests
+        }
+
+        public func validate() throws {
+            try failedRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1453,11 +1902,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WorkspaceId", required: false, type: .string)
         ]
+
         /// The identifier of the WorkSpace.
         public let workspaceId: String?
 
         public init(workspaceId: String? = nil) {
             self.workspaceId = workspaceId
+        }
+
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1469,11 +1923,20 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StopWorkspaceRequests", required: true, type: .list)
         ]
+
         /// The WorkSpaces to stop. You can specify up to 25 WorkSpaces.
         public let stopWorkspaceRequests: [StopRequest]
 
         public init(stopWorkspaceRequests: [StopRequest]) {
             self.stopWorkspaceRequests = stopWorkspaceRequests
+        }
+
+        public func validate() throws {
+            try stopWorkspaceRequests.forEach {
+                try $0.validate()
+            }
+            try validate(stopWorkspaceRequests, name:"stopWorkspaceRequests", max: 25)
+            try validate(stopWorkspaceRequests, name:"stopWorkspaceRequests", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1485,11 +1948,18 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedRequests", required: false, type: .list)
         ]
+
         /// Information about the WorkSpaces that could not be stopped.
         public let failedRequests: [FailedWorkspaceChangeRequest]?
 
         public init(failedRequests: [FailedWorkspaceChangeRequest]? = nil) {
             self.failedRequests = failedRequests
+        }
+
+        public func validate() throws {
+            try failedRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1502,6 +1972,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The key of the tag.
         public let key: String
         /// The value of the tag.
@@ -1510,6 +1981,12 @@ extension WorkSpaces {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 127)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1528,11 +2005,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WorkspaceId", required: true, type: .string)
         ]
+
         /// The identifier of the WorkSpace.
         public let workspaceId: String
 
         public init(workspaceId: String) {
             self.workspaceId = workspaceId
+        }
+
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1544,11 +2026,20 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TerminateWorkspaceRequests", required: true, type: .list)
         ]
+
         /// The WorkSpaces to terminate. You can specify up to 25 WorkSpaces.
         public let terminateWorkspaceRequests: [TerminateRequest]
 
         public init(terminateWorkspaceRequests: [TerminateRequest]) {
             self.terminateWorkspaceRequests = terminateWorkspaceRequests
+        }
+
+        public func validate() throws {
+            try terminateWorkspaceRequests.forEach {
+                try $0.validate()
+            }
+            try validate(terminateWorkspaceRequests, name:"terminateWorkspaceRequests", max: 25)
+            try validate(terminateWorkspaceRequests, name:"terminateWorkspaceRequests", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1560,11 +2051,18 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedRequests", required: false, type: .list)
         ]
+
         /// Information about the WorkSpaces that could not be terminated.
         public let failedRequests: [FailedWorkspaceChangeRequest]?
 
         public init(failedRequests: [FailedWorkspaceChangeRequest]? = nil) {
             self.failedRequests = failedRequests
+        }
+
+        public func validate() throws {
+            try failedRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1577,6 +2075,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "GroupId", required: true, type: .string), 
             AWSShapeMember(label: "UserRules", required: true, type: .list)
         ]
+
         /// The identifier of the group.
         public let groupId: String
         /// One or more rules.
@@ -1587,6 +2086,10 @@ extension WorkSpaces {
             self.userRules = userRules
         }
 
+        public func validate() throws {
+            try validate(groupId, name:"groupId", pattern: "wsipg-[0-9a-z]{8,63}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case userRules = "UserRules"
@@ -1594,6 +2097,7 @@ extension WorkSpaces {
     }
 
     public struct UpdateRulesOfIpGroupResult: AWSShape {
+
 
         public init() {
         }
@@ -1604,11 +2108,16 @@ extension WorkSpaces {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Capacity", required: false, type: .string)
         ]
+
         /// The size of the user storage.
         public let capacity: String?
 
         public init(capacity: String? = nil) {
             self.capacity = capacity
+        }
+
+        public func validate() throws {
+            try validate(capacity, name:"capacity", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1634,6 +2143,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "WorkspaceId", required: false, type: .string), 
             AWSShapeMember(label: "WorkspaceProperties", required: false, type: .structure)
         ]
+
         /// The identifier of the bundle used to create the WorkSpace.
         public let bundleId: String?
         /// The name of the WorkSpace, as seen by the operating system.
@@ -1683,6 +2193,15 @@ extension WorkSpaces {
             self.workspaceProperties = workspaceProperties
         }
 
+        public func validate() throws {
+            try validate(bundleId, name:"bundleId", pattern: "^wsb-[0-9a-z]{8,63}$")
+            try validate(directoryId, name:"directoryId", pattern: "^d-[0-9a-f]{8,63}$")
+            try validate(subnetId, name:"subnetId", pattern: "^(subnet-[0-9a-f]{8})$")
+            try validate(userName, name:"userName", max: 63)
+            try validate(userName, name:"userName", min: 1)
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bundleId = "BundleId"
             case computerName = "ComputerName"
@@ -1712,6 +2231,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "RootStorage", required: false, type: .structure), 
             AWSShapeMember(label: "UserStorage", required: false, type: .structure)
         ]
+
         /// The bundle identifier.
         public let bundleId: String?
         /// The compute type. For more information, see Amazon WorkSpaces Bundles.
@@ -1737,6 +2257,13 @@ extension WorkSpaces {
             self.userStorage = userStorage
         }
 
+        public func validate() throws {
+            try validate(bundleId, name:"bundleId", pattern: "^wsb-[0-9a-z]{8,63}$")
+            try validate(name, name:"name", min: 1)
+            try rootStorage?.validate()
+            try userStorage?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bundleId = "BundleId"
             case computeType = "ComputeType"
@@ -1755,6 +2282,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "LastKnownUserConnectionTimestamp", required: false, type: .timestamp), 
             AWSShapeMember(label: "WorkspaceId", required: false, type: .string)
         ]
+
         /// The connection state of the WorkSpace. The connection state is unknown if the WorkSpace is stopped.
         public let connectionState: ConnectionState?
         /// The timestamp of the connection status check.
@@ -1769,6 +2297,10 @@ extension WorkSpaces {
             self.connectionStateCheckTimestamp = connectionStateCheckTimestamp
             self.lastKnownUserConnectionTimestamp = lastKnownUserConnectionTimestamp
             self.workspaceId = workspaceId
+        }
+
+        public func validate() throws {
+            try validate(workspaceId, name:"workspaceId", pattern: "^ws-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1795,6 +2327,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "WorkspaceCreationProperties", required: false, type: .structure), 
             AWSShapeMember(label: "WorkspaceSecurityGroupId", required: false, type: .string)
         ]
+
         /// The directory alias.
         public let alias: String?
         /// The user name for the service account.
@@ -1836,6 +2369,23 @@ extension WorkSpaces {
             self.subnetIds = subnetIds
             self.workspaceCreationProperties = workspaceCreationProperties
             self.workspaceSecurityGroupId = workspaceSecurityGroupId
+        }
+
+        public func validate() throws {
+            try validate(customerUserName, name:"customerUserName", max: 63)
+            try validate(customerUserName, name:"customerUserName", min: 1)
+            try validate(directoryId, name:"directoryId", pattern: "^d-[0-9a-f]{8,63}$")
+            try validate(iamRoleId, name:"iamRoleId", pattern: "^arn:aws:[A-Za-z0-9][A-za-z0-9_/.-]{0,62}:[A-za-z0-9_/.-]{0,63}:[A-za-z0-9_/.-]{0,63}:[A-Za-z0-9][A-za-z0-9_/.-]{0,127}$")
+            try ipGroupIds?.forEach {
+                try validate($0, name:"ipGroupIds[]", pattern: "wsipg-[0-9a-z]{8,63}$")
+            }
+            try validate(registrationCode, name:"registrationCode", max: 20)
+            try validate(registrationCode, name:"registrationCode", min: 1)
+            try subnetIds?.forEach {
+                try validate($0, name:"subnetIds[]", pattern: "^(subnet-[0-9a-f]{8})$")
+            }
+            try workspaceCreationProperties?.validate()
+            try validate(workspaceSecurityGroupId, name:"workspaceSecurityGroupId", pattern: "^(sg-[0-9a-f]{8})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1881,6 +2431,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "RequiredTenancy", required: false, type: .enum), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The description of the image.
         public let description: String?
         /// The error code that is returned for the image.
@@ -1907,6 +2458,16 @@ extension WorkSpaces {
             self.operatingSystem = operatingSystem
             self.requiredTenancy = requiredTenancy
             self.state = state
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "^[a-zA-Z0-9_./() -]+$")
+            try validate(imageId, name:"imageId", pattern: "wsi-[0-9a-z]{9,63}$")
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_./()\\\\-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1949,6 +2510,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "RunningModeAutoStopTimeoutInMinutes", required: false, type: .integer), 
             AWSShapeMember(label: "UserVolumeSizeGib", required: false, type: .integer)
         ]
+
         /// The compute type. For more information, see Amazon WorkSpaces Bundles.
         public let computeTypeName: Compute?
         /// The size of the root volume.
@@ -1988,6 +2550,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "VolumeEncryptionKey", required: false, type: .string), 
             AWSShapeMember(label: "WorkspaceProperties", required: false, type: .structure)
         ]
+
         /// The identifier of the bundle for the WorkSpace. You can use DescribeWorkspaceBundles to list the available bundles.
         public let bundleId: String
         /// The identifier of the AWS Directory Service directory for the WorkSpace. You can use DescribeWorkspaceDirectories to list the available directories.
@@ -2014,6 +2577,16 @@ extension WorkSpaces {
             self.userVolumeEncryptionEnabled = userVolumeEncryptionEnabled
             self.volumeEncryptionKey = volumeEncryptionKey
             self.workspaceProperties = workspaceProperties
+        }
+
+        public func validate() throws {
+            try validate(bundleId, name:"bundleId", pattern: "^wsb-[0-9a-z]{8,63}$")
+            try validate(directoryId, name:"directoryId", pattern: "^d-[0-9a-f]{8,63}$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(userName, name:"userName", max: 63)
+            try validate(userName, name:"userName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2055,6 +2628,7 @@ extension WorkSpaces {
             AWSShapeMember(label: "groupName", required: false, type: .string), 
             AWSShapeMember(label: "userRules", required: false, type: .list)
         ]
+
         /// The description of the group.
         public let groupDesc: String?
         /// The identifier of the group.
@@ -2069,6 +2643,10 @@ extension WorkSpaces {
             self.groupId = groupId
             self.groupName = groupName
             self.userRules = userRules
+        }
+
+        public func validate() throws {
+            try validate(groupId, name:"groupId", pattern: "wsipg-[0-9a-z]{8,63}$")
         }
 
         private enum CodingKeys: String, CodingKey {

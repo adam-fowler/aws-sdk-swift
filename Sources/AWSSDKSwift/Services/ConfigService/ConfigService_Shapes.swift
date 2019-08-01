@@ -11,6 +11,7 @@ extension ConfigService {
             AWSShapeMember(label: "AllAwsRegions", required: false, type: .boolean), 
             AWSShapeMember(label: "AwsRegions", required: false, type: .list)
         ]
+
         /// The 12-digit account ID of the account being aggregated. 
         public let accountIds: [String]
         /// If true, aggregate existing AWS Config regions and future regions.
@@ -22,6 +23,14 @@ extension ConfigService {
             self.accountIds = accountIds
             self.allAwsRegions = allAwsRegions
             self.awsRegions = awsRegions
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", pattern: "\\d{12}")
+            }
+            try validate(accountIds, name:"accountIds", min: 1)
+            try validate(awsRegions, name:"awsRegions", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -38,6 +47,7 @@ extension ConfigService {
             AWSShapeMember(label: "Compliance", required: false, type: .structure), 
             AWSShapeMember(label: "ConfigRuleName", required: false, type: .string)
         ]
+
         /// The 12-digit account ID of the source account.
         public let accountId: String?
         /// The source region from where the data is aggregated.
@@ -54,6 +64,14 @@ extension ConfigService {
             self.configRuleName = configRuleName
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case awsRegion = "AwsRegion"
@@ -67,6 +85,7 @@ extension ConfigService {
             AWSShapeMember(label: "ComplianceSummary", required: false, type: .structure), 
             AWSShapeMember(label: "GroupName", required: false, type: .string)
         ]
+
         /// The number of compliant and noncompliant AWS Config rules.
         public let complianceSummary: ComplianceSummary?
         /// The 12-digit account ID or region based on the GroupByKey value.
@@ -75,6 +94,11 @@ extension ConfigService {
         public init(complianceSummary: ComplianceSummary? = nil, groupName: String? = nil) {
             self.complianceSummary = complianceSummary
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 256)
+            try validate(groupName, name:"groupName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -93,6 +117,7 @@ extension ConfigService {
             AWSShapeMember(label: "EvaluationResultIdentifier", required: false, type: .structure), 
             AWSShapeMember(label: "ResultRecordedTime", required: false, type: .timestamp)
         ]
+
         /// The 12-digit account ID of the source account.
         public let accountId: String?
         /// Supplementary information about how the agrregate evaluation determined the compliance.
@@ -118,6 +143,15 @@ extension ConfigService {
             self.resultRecordedTime = resultRecordedTime
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(annotation, name:"annotation", max: 256)
+            try validate(annotation, name:"annotation", min: 1)
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
+            try evaluationResultIdentifier?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case annotation = "Annotation"
@@ -137,6 +171,7 @@ extension ConfigService {
             AWSShapeMember(label: "SourceAccountId", required: true, type: .string), 
             AWSShapeMember(label: "SourceRegion", required: true, type: .string)
         ]
+
         /// The ID of the AWS resource.
         public let resourceId: String
         /// The name of the AWS resource.
@@ -154,6 +189,14 @@ extension ConfigService {
             self.resourceType = resourceType
             self.sourceAccountId = sourceAccountId
             self.sourceRegion = sourceRegion
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(sourceAccountId, name:"sourceAccountId", pattern: "\\d{12}")
+            try validate(sourceRegion, name:"sourceRegion", max: 64)
+            try validate(sourceRegion, name:"sourceRegion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -175,6 +218,7 @@ extension ConfigService {
             AWSShapeMember(label: "SourceId", required: false, type: .string), 
             AWSShapeMember(label: "SourceType", required: false, type: .enum)
         ]
+
         /// The region authorized to collect aggregated data.
         public let awsRegion: String?
         /// The error code that AWS Config returned when the source account aggregation last failed.
@@ -198,6 +242,11 @@ extension ConfigService {
             self.lastUpdateTime = lastUpdateTime
             self.sourceId = sourceId
             self.sourceType = sourceType
+        }
+
+        public func validate() throws {
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -231,6 +280,7 @@ extension ConfigService {
             AWSShapeMember(label: "AuthorizedAwsRegion", required: false, type: .string), 
             AWSShapeMember(label: "CreationTime", required: false, type: .timestamp)
         ]
+
         /// The Amazon Resource Name (ARN) of the aggregation object.
         public let aggregationAuthorizationArn: String?
         /// The 12-digit account ID of the account authorized to aggregate data.
@@ -245,6 +295,12 @@ extension ConfigService {
             self.authorizedAccountId = authorizedAccountId
             self.authorizedAwsRegion = authorizedAwsRegion
             self.creationTime = creationTime
+        }
+
+        public func validate() throws {
+            try validate(authorizedAccountId, name:"authorizedAccountId", pattern: "\\d{12}")
+            try validate(authorizedAwsRegion, name:"authorizedAwsRegion", max: 64)
+            try validate(authorizedAwsRegion, name:"authorizedAwsRegion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -272,6 +328,7 @@ extension ConfigService {
             AWSShapeMember(label: "supplementaryConfiguration", required: false, type: .map), 
             AWSShapeMember(label: "version", required: false, type: .string)
         ]
+
         /// The 12-digit AWS account ID associated with the resource.
         public let accountId: String?
         /// The Amazon Resource Name (ARN) of the resource.
@@ -318,6 +375,14 @@ extension ConfigService {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case arn = "arn"
@@ -341,6 +406,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigurationAggregatorName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceIdentifiers", required: true, type: .list)
         ]
+
         /// The name of the configuration aggregator.
         public let configurationAggregatorName: String
         /// A list of aggregate ResourceIdentifiers objects. 
@@ -349,6 +415,17 @@ extension ConfigService {
         public init(configurationAggregatorName: String, resourceIdentifiers: [AggregateResourceIdentifier]) {
             self.configurationAggregatorName = configurationAggregatorName
             self.resourceIdentifiers = resourceIdentifiers
+        }
+
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try resourceIdentifiers.forEach {
+                try $0.validate()
+            }
+            try validate(resourceIdentifiers, name:"resourceIdentifiers", max: 100)
+            try validate(resourceIdentifiers, name:"resourceIdentifiers", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -362,6 +439,7 @@ extension ConfigService {
             AWSShapeMember(label: "BaseConfigurationItems", required: false, type: .list), 
             AWSShapeMember(label: "UnprocessedResourceIdentifiers", required: false, type: .list)
         ]
+
         /// A list that contains the current configuration of one or more resources.
         public let baseConfigurationItems: [BaseConfigurationItem]?
         /// A list of resource identifiers that were not processed with current scope. The list is empty if all the resources are processed.
@@ -370,6 +448,15 @@ extension ConfigService {
         public init(baseConfigurationItems: [BaseConfigurationItem]? = nil, unprocessedResourceIdentifiers: [AggregateResourceIdentifier]? = nil) {
             self.baseConfigurationItems = baseConfigurationItems
             self.unprocessedResourceIdentifiers = unprocessedResourceIdentifiers
+        }
+
+        public func validate() throws {
+            try baseConfigurationItems?.forEach {
+                try $0.validate()
+            }
+            try unprocessedResourceIdentifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -382,11 +469,20 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceKeys", required: true, type: .list)
         ]
+
         /// A list of resource keys to be processed with the current request. Each element in the list consists of the resource type and resource ID.
         public let resourceKeys: [ResourceKey]
 
         public init(resourceKeys: [ResourceKey]) {
             self.resourceKeys = resourceKeys
+        }
+
+        public func validate() throws {
+            try resourceKeys.forEach {
+                try $0.validate()
+            }
+            try validate(resourceKeys, name:"resourceKeys", max: 100)
+            try validate(resourceKeys, name:"resourceKeys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -399,6 +495,7 @@ extension ConfigService {
             AWSShapeMember(label: "baseConfigurationItems", required: false, type: .list), 
             AWSShapeMember(label: "unprocessedResourceKeys", required: false, type: .list)
         ]
+
         /// A list that contains the current configuration of one or more resources.
         public let baseConfigurationItems: [BaseConfigurationItem]?
         /// A list of resource keys that were not processed with the current response. The unprocessesResourceKeys value is in the same form as ResourceKeys, so the value can be directly provided to a subsequent BatchGetResourceConfig operation. If there are no unprocessed resource keys, the response contains an empty unprocessedResourceKeys list. 
@@ -407,6 +504,17 @@ extension ConfigService {
         public init(baseConfigurationItems: [BaseConfigurationItem]? = nil, unprocessedResourceKeys: [ResourceKey]? = nil) {
             self.baseConfigurationItems = baseConfigurationItems
             self.unprocessedResourceKeys = unprocessedResourceKeys
+        }
+
+        public func validate() throws {
+            try baseConfigurationItems?.forEach {
+                try $0.validate()
+            }
+            try unprocessedResourceKeys?.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedResourceKeys, name:"unprocessedResourceKeys", max: 100)
+            try validate(unprocessedResourceKeys, name:"unprocessedResourceKeys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -426,6 +534,7 @@ extension ConfigService {
             AWSShapeMember(label: "ComplianceContributorCount", required: false, type: .structure), 
             AWSShapeMember(label: "ComplianceType", required: false, type: .enum)
         ]
+
         /// The number of AWS resources or AWS Config rules that cause a result of NON_COMPLIANT, up to a maximum number.
         public let complianceContributorCount: ComplianceContributorCount?
         /// Indicates whether an AWS resource or AWS Config rule is compliant. A resource is compliant if it complies with all of the AWS Config rules that evaluate it. A resource is noncompliant if it does not comply with one or more of these rules. A rule is compliant if all of the resources that the rule evaluates comply with it. A rule is noncompliant if any of these resources do not comply. AWS Config returns the INSUFFICIENT_DATA value when no evaluation results are available for the AWS resource or AWS Config rule. For the Compliance data type, AWS Config supports only COMPLIANT, NON_COMPLIANT, and INSUFFICIENT_DATA values. AWS Config does not support the NOT_APPLICABLE value for the Compliance data type.
@@ -447,6 +556,7 @@ extension ConfigService {
             AWSShapeMember(label: "Compliance", required: false, type: .structure), 
             AWSShapeMember(label: "ConfigRuleName", required: false, type: .string)
         ]
+
         /// Indicates whether the AWS Config rule is compliant.
         public let compliance: Compliance?
         /// The name of the AWS Config rule.
@@ -455,6 +565,11 @@ extension ConfigService {
         public init(compliance: Compliance? = nil, configRuleName: String? = nil) {
             self.compliance = compliance
             self.configRuleName = configRuleName
+        }
+
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -469,6 +584,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceId", required: false, type: .string), 
             AWSShapeMember(label: "ResourceType", required: false, type: .string)
         ]
+
         /// Indicates whether the AWS resource complies with all of the AWS Config rules that evaluated it.
         public let compliance: Compliance?
         /// The ID of the AWS resource that was evaluated.
@@ -480,6 +596,13 @@ extension ConfigService {
             self.compliance = compliance
             self.resourceId = resourceId
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 256)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -494,6 +617,7 @@ extension ConfigService {
             AWSShapeMember(label: "CapExceeded", required: false, type: .boolean), 
             AWSShapeMember(label: "CappedCount", required: false, type: .integer)
         ]
+
         /// Indicates whether the maximum count is reached.
         public let capExceeded: Bool?
         /// The number of AWS resources or AWS Config rules responsible for the current compliance of the item.
@@ -516,6 +640,7 @@ extension ConfigService {
             AWSShapeMember(label: "CompliantResourceCount", required: false, type: .structure), 
             AWSShapeMember(label: "NonCompliantResourceCount", required: false, type: .structure)
         ]
+
         /// The time that AWS Config created the compliance summary.
         public let complianceSummaryTimestamp: TimeStamp?
         /// The number of AWS Config rules or AWS resources that are compliant, up to a maximum of 25 for rules and 100 for resources.
@@ -541,6 +666,7 @@ extension ConfigService {
             AWSShapeMember(label: "ComplianceSummary", required: false, type: .structure), 
             AWSShapeMember(label: "ResourceType", required: false, type: .string)
         ]
+
         /// The number of AWS resources that are compliant or noncompliant, up to a maximum of 100 for each.
         public let complianceSummary: ComplianceSummary?
         /// The type of AWS resource.
@@ -549,6 +675,11 @@ extension ConfigService {
         public init(complianceSummary: ComplianceSummary? = nil, resourceType: String? = nil) {
             self.complianceSummary = complianceSummary
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(resourceType, name:"resourceType", max: 256)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -574,6 +705,7 @@ extension ConfigService {
             AWSShapeMember(label: "lastSuccessfulTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "nextDeliveryTime", required: false, type: .timestamp)
         ]
+
         /// The time of the last attempted delivery.
         public let lastAttemptTime: TimeStamp?
         /// The error code from the last attempted delivery.
@@ -619,6 +751,7 @@ extension ConfigService {
             AWSShapeMember(label: "Scope", required: false, type: .structure), 
             AWSShapeMember(label: "Source", required: true, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS Config rule.
         public let configRuleArn: String?
         /// The ID of the AWS Config rule.
@@ -653,6 +786,19 @@ extension ConfigService {
             self.source = source
         }
 
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+            try validate(createdBy, name:"createdBy", max: 256)
+            try validate(createdBy, name:"createdBy", min: 1)
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 0)
+            try validate(inputParameters, name:"inputParameters", max: 1024)
+            try validate(inputParameters, name:"inputParameters", min: 1)
+            try scope?.validate()
+            try source.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configRuleArn = "ConfigRuleArn"
             case configRuleId = "ConfigRuleId"
@@ -674,6 +820,7 @@ extension ConfigService {
             AWSShapeMember(label: "ComplianceType", required: false, type: .enum), 
             AWSShapeMember(label: "ConfigRuleName", required: false, type: .string)
         ]
+
         /// The 12-digit account ID of the source account. 
         public let accountId: String?
         /// The source region where the data is aggregated. 
@@ -690,6 +837,14 @@ extension ConfigService {
             self.configRuleName = configRuleName
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case awsRegion = "AwsRegion"
@@ -703,6 +858,7 @@ extension ConfigService {
             AWSShapeMember(label: "AccountId", required: false, type: .string), 
             AWSShapeMember(label: "AwsRegion", required: false, type: .string)
         ]
+
         /// The 12-digit account ID of the source account.
         public let accountId: String?
         /// The source region where the data is aggregated.
@@ -711,6 +867,12 @@ extension ConfigService {
         public init(accountId: String? = nil, awsRegion: String? = nil) {
             self.accountId = accountId
             self.awsRegion = awsRegion
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -739,6 +901,7 @@ extension ConfigService {
             AWSShapeMember(label: "LastSuccessfulEvaluationTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "LastSuccessfulInvocationTime", required: false, type: .timestamp)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS Config rule.
         public let configRuleArn: String?
         /// The ID of the AWS Config rule.
@@ -776,6 +939,11 @@ extension ConfigService {
             self.lastSuccessfulInvocationTime = lastSuccessfulInvocationTime
         }
 
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configRuleArn = "ConfigRuleArn"
             case configRuleId = "ConfigRuleId"
@@ -803,6 +971,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "deliveryFrequency", required: false, type: .enum)
         ]
+
         /// The frequency with which AWS Config delivers configuration snapshots.
         public let deliveryFrequency: MaximumExecutionFrequency?
 
@@ -822,6 +991,7 @@ extension ConfigService {
             AWSShapeMember(label: "lastStatus", required: false, type: .enum), 
             AWSShapeMember(label: "lastStatusChangeTime", required: false, type: .timestamp)
         ]
+
         /// The error code from the last attempted delivery.
         public let lastErrorCode: String?
         /// The error message from the last attempted delivery.
@@ -855,6 +1025,7 @@ extension ConfigService {
             AWSShapeMember(label: "LastUpdatedTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "OrganizationAggregationSource", required: false, type: .structure)
         ]
+
         /// Provides a list of source accounts and regions to be aggregated.
         public let accountAggregationSources: [AccountAggregationSource]?
         /// The Amazon Resource Name (ARN) of the aggregator.
@@ -875,6 +1046,19 @@ extension ConfigService {
             self.creationTime = creationTime
             self.lastUpdatedTime = lastUpdatedTime
             self.organizationAggregationSource = organizationAggregationSource
+        }
+
+        public func validate() throws {
+            try accountAggregationSources?.forEach {
+                try $0.validate()
+            }
+            try validate(accountAggregationSources, name:"accountAggregationSources", max: 1)
+            try validate(accountAggregationSources, name:"accountAggregationSources", min: 0)
+            try validate(configurationAggregatorArn, name:"configurationAggregatorArn", pattern: "arn:aws[a-z\\-]*:config:[a-z\\-\\d]+:\\d+:config-aggregator/config-aggregator-[a-z\\d]+")
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try organizationAggregationSource?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -908,6 +1092,7 @@ extension ConfigService {
             AWSShapeMember(label: "tags", required: false, type: .map), 
             AWSShapeMember(label: "version", required: false, type: .string)
         ]
+
         /// The 12-digit AWS account ID associated with the resource.
         public let accountId: String?
         /// accoun
@@ -966,6 +1151,17 @@ extension ConfigService {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
+            try relationships?.forEach {
+                try $0.validate()
+            }
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case arn = "arn"
@@ -1003,6 +1199,7 @@ extension ConfigService {
             AWSShapeMember(label: "recordingGroup", required: false, type: .structure), 
             AWSShapeMember(label: "roleARN", required: false, type: .string)
         ]
+
         /// The name of the recorder. By default, AWS Config automatically assigns the name "default" when creating the configuration recorder. You cannot change the assigned name.
         public let name: String?
         /// Specifies the types of AWS resources for which AWS Config records configuration changes.
@@ -1014,6 +1211,11 @@ extension ConfigService {
             self.name = name
             self.recordingGroup = recordingGroup
             self.roleARN = roleARN
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1034,6 +1236,7 @@ extension ConfigService {
             AWSShapeMember(label: "name", required: false, type: .string), 
             AWSShapeMember(label: "recording", required: false, type: .boolean)
         ]
+
         /// The error code indicating that the recording failed.
         public let lastErrorCode: String?
         /// The message indicating that the recording failed due to an error.
@@ -1079,6 +1282,7 @@ extension ConfigService {
             AWSShapeMember(label: "AuthorizedAccountId", required: true, type: .string), 
             AWSShapeMember(label: "AuthorizedAwsRegion", required: true, type: .string)
         ]
+
         /// The 12-digit account ID of the account authorized to aggregate data.
         public let authorizedAccountId: String
         /// The region authorized to collect aggregated data.
@@ -1087,6 +1291,12 @@ extension ConfigService {
         public init(authorizedAccountId: String, authorizedAwsRegion: String) {
             self.authorizedAccountId = authorizedAccountId
             self.authorizedAwsRegion = authorizedAwsRegion
+        }
+
+        public func validate() throws {
+            try validate(authorizedAccountId, name:"authorizedAccountId", pattern: "\\d{12}")
+            try validate(authorizedAwsRegion, name:"authorizedAwsRegion", max: 64)
+            try validate(authorizedAwsRegion, name:"authorizedAwsRegion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1099,11 +1309,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigRuleName", required: true, type: .string)
         ]
+
         /// The name of the AWS Config rule that you want to delete.
         public let configRuleName: String
 
         public init(configRuleName: String) {
             self.configRuleName = configRuleName
+        }
+
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1115,11 +1331,18 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationAggregatorName", required: true, type: .string)
         ]
+
         /// The name of the configuration aggregator.
         public let configurationAggregatorName: String
 
         public init(configurationAggregatorName: String) {
             self.configurationAggregatorName = configurationAggregatorName
+        }
+
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1131,11 +1354,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecorderName", required: true, type: .string)
         ]
+
         /// The name of the configuration recorder to be deleted. You can retrieve the name of your configuration recorder by using the DescribeConfigurationRecorders action.
         public let configurationRecorderName: String
 
         public init(configurationRecorderName: String) {
             self.configurationRecorderName = configurationRecorderName
+        }
+
+        public func validate() throws {
+            try validate(configurationRecorderName, name:"configurationRecorderName", max: 256)
+            try validate(configurationRecorderName, name:"configurationRecorderName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1147,11 +1376,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeliveryChannelName", required: true, type: .string)
         ]
+
         /// The name of the delivery channel to delete.
         public let deliveryChannelName: String
 
         public init(deliveryChannelName: String) {
             self.deliveryChannelName = deliveryChannelName
+        }
+
+        public func validate() throws {
+            try validate(deliveryChannelName, name:"deliveryChannelName", max: 256)
+            try validate(deliveryChannelName, name:"deliveryChannelName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1163,11 +1398,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigRuleName", required: true, type: .string)
         ]
+
         /// The name of the AWS Config rule for which you want to delete the evaluation results.
         public let configRuleName: String
 
         public init(configRuleName: String) {
             self.configRuleName = configRuleName
+        }
+
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1176,6 +1417,7 @@ extension ConfigService {
     }
 
     public struct DeleteEvaluationResultsResponse: AWSShape {
+
 
         public init() {
         }
@@ -1186,10 +1428,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OrganizationConfigRuleName", required: true, type: .string)
         ]
+
         public let organizationConfigRuleName: String
 
         public init(organizationConfigRuleName: String) {
             self.organizationConfigRuleName = organizationConfigRuleName
+        }
+
+        public func validate() throws {
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", max: 64)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1202,6 +1450,7 @@ extension ConfigService {
             AWSShapeMember(label: "RequesterAccountId", required: true, type: .string), 
             AWSShapeMember(label: "RequesterAwsRegion", required: true, type: .string)
         ]
+
         /// The 12-digit account ID of the account requesting to aggregate data.
         public let requesterAccountId: String
         /// The region requesting to aggregate data.
@@ -1210,6 +1459,12 @@ extension ConfigService {
         public init(requesterAccountId: String, requesterAwsRegion: String) {
             self.requesterAccountId = requesterAccountId
             self.requesterAwsRegion = requesterAwsRegion
+        }
+
+        public func validate() throws {
+            try validate(requesterAccountId, name:"requesterAccountId", pattern: "\\d{12}")
+            try validate(requesterAwsRegion, name:"requesterAwsRegion", max: 64)
+            try validate(requesterAwsRegion, name:"requesterAwsRegion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1223,6 +1478,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigRuleName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceType", required: false, type: .string)
         ]
+
         /// The name of the AWS Config rule for which you want to delete remediation configuration.
         public let configRuleName: String
         /// The type of a resource.
@@ -1233,6 +1489,11 @@ extension ConfigService {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configRuleName = "ConfigRuleName"
             case resourceType = "ResourceType"
@@ -1240,6 +1501,7 @@ extension ConfigService {
     }
 
     public struct DeleteRemediationConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -1250,11 +1512,18 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RetentionConfigurationName", required: true, type: .string)
         ]
+
         /// The name of the retention configuration to delete.
         public let retentionConfigurationName: String
 
         public init(retentionConfigurationName: String) {
             self.retentionConfigurationName = retentionConfigurationName
+        }
+
+        public func validate() throws {
+            try validate(retentionConfigurationName, name:"retentionConfigurationName", max: 256)
+            try validate(retentionConfigurationName, name:"retentionConfigurationName", min: 1)
+            try validate(retentionConfigurationName, name:"retentionConfigurationName", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1266,11 +1535,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "deliveryChannelName", required: true, type: .string)
         ]
+
         /// The name of the delivery channel through which the snapshot is delivered.
         public let deliveryChannelName: String
 
         public init(deliveryChannelName: String) {
             self.deliveryChannelName = deliveryChannelName
+        }
+
+        public func validate() throws {
+            try validate(deliveryChannelName, name:"deliveryChannelName", max: 256)
+            try validate(deliveryChannelName, name:"deliveryChannelName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1282,6 +1557,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "configSnapshotId", required: false, type: .string)
         ]
+
         /// The ID of the snapshot that is being created.
         public let configSnapshotId: String?
 
@@ -1302,6 +1578,7 @@ extension ConfigService {
             AWSShapeMember(label: "s3KeyPrefix", required: false, type: .string), 
             AWSShapeMember(label: "snsTopicARN", required: false, type: .string)
         ]
+
         /// The options for how often AWS Config delivers configuration snapshots to the Amazon S3 bucket.
         public let configSnapshotDeliveryProperties: ConfigSnapshotDeliveryProperties?
         /// The name of the delivery channel. By default, AWS Config assigns the name "default" when creating the delivery channel. To change the delivery channel name, you must use the DeleteDeliveryChannel action to delete your current delivery channel, and then you must use the PutDeliveryChannel command to create a delivery channel that has the desired name.
@@ -1321,6 +1598,11 @@ extension ConfigService {
             self.snsTopicARN = snsTopicARN
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configSnapshotDeliveryProperties = "configSnapshotDeliveryProperties"
             case name = "name"
@@ -1337,6 +1619,7 @@ extension ConfigService {
             AWSShapeMember(label: "configStreamDeliveryInfo", required: false, type: .structure), 
             AWSShapeMember(label: "name", required: false, type: .string)
         ]
+
         /// A list that contains the status of the delivery of the configuration history to the specified Amazon S3 bucket.
         public let configHistoryDeliveryInfo: ConfigExportDeliveryInfo?
         /// A list containing the status of the delivery of the snapshot to the specified Amazon S3 bucket.
@@ -1375,6 +1658,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the configuration aggregator.
         public let configurationAggregatorName: String
         /// Filters the results by ConfigRuleComplianceFilters object. 
@@ -1391,6 +1675,15 @@ extension ConfigService {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try filters?.validate()
+            try validate(limit, name:"limit", max: 1000)
+            try validate(limit, name:"limit", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configurationAggregatorName = "ConfigurationAggregatorName"
             case filters = "Filters"
@@ -1404,6 +1697,7 @@ extension ConfigService {
             AWSShapeMember(label: "AggregateComplianceByConfigRules", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Returns a list of AggregateComplianceByConfigRule object.
         public let aggregateComplianceByConfigRules: [AggregateComplianceByConfigRule]?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -1412,6 +1706,12 @@ extension ConfigService {
         public init(aggregateComplianceByConfigRules: [AggregateComplianceByConfigRule]? = nil, nextToken: String? = nil) {
             self.aggregateComplianceByConfigRules = aggregateComplianceByConfigRules
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try aggregateComplianceByConfigRules?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1425,6 +1725,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of AggregationAuthorizations returned on each page. The default is maximum. If you specify 0, AWS Config uses the default.
         public let limit: Int32?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -1433,6 +1734,11 @@ extension ConfigService {
         public init(limit: Int32? = nil, nextToken: String? = nil) {
             self.limit = limit
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1446,6 +1752,7 @@ extension ConfigService {
             AWSShapeMember(label: "AggregationAuthorizations", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Returns a list of authorizations granted to various aggregator accounts and regions.
         public let aggregationAuthorizations: [AggregationAuthorization]?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -1454,6 +1761,12 @@ extension ConfigService {
         public init(aggregationAuthorizations: [AggregationAuthorization]? = nil, nextToken: String? = nil) {
             self.aggregationAuthorizations = aggregationAuthorizations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try aggregationAuthorizations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1468,6 +1781,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigRuleNames", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the results by compliance. The allowed values are COMPLIANT and NON_COMPLIANT.
         public let complianceTypes: [ComplianceType]?
         /// Specify one or more AWS Config rule names to filter the results by rule.
@@ -1479,6 +1793,17 @@ extension ConfigService {
             self.complianceTypes = complianceTypes
             self.configRuleNames = configRuleNames
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(complianceTypes, name:"complianceTypes", max: 3)
+            try validate(complianceTypes, name:"complianceTypes", min: 0)
+            try configRuleNames?.forEach {
+                try validate($0, name:"configRuleNames[]", max: 64)
+                try validate($0, name:"configRuleNames[]", min: 1)
+            }
+            try validate(configRuleNames, name:"configRuleNames", max: 25)
+            try validate(configRuleNames, name:"configRuleNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1493,6 +1818,7 @@ extension ConfigService {
             AWSShapeMember(label: "ComplianceByConfigRules", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Indicates whether each of the specified AWS Config rules is compliant.
         public let complianceByConfigRules: [ComplianceByConfigRule]?
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
@@ -1501,6 +1827,12 @@ extension ConfigService {
         public init(complianceByConfigRules: [ComplianceByConfigRule]? = nil, nextToken: String? = nil) {
             self.complianceByConfigRules = complianceByConfigRules
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try complianceByConfigRules?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1517,6 +1849,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceId", required: false, type: .string), 
             AWSShapeMember(label: "ResourceType", required: false, type: .string)
         ]
+
         /// Filters the results by compliance. The allowed values are COMPLIANT, NON_COMPLIANT, and INSUFFICIENT_DATA.
         public let complianceTypes: [ComplianceType]?
         /// The maximum number of evaluation results returned on each page. The default is 10. You cannot specify a number greater than 100. If you specify 0, AWS Config uses the default.
@@ -1536,6 +1869,17 @@ extension ConfigService {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(complianceTypes, name:"complianceTypes", max: 3)
+            try validate(complianceTypes, name:"complianceTypes", min: 0)
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 256)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceTypes = "ComplianceTypes"
             case limit = "Limit"
@@ -1550,6 +1894,7 @@ extension ConfigService {
             AWSShapeMember(label: "ComplianceByResources", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Indicates whether the specified AWS resource complies with all of the AWS Config rules that evaluate it.
         public let complianceByResources: [ComplianceByResource]?
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
@@ -1558,6 +1903,12 @@ extension ConfigService {
         public init(complianceByResources: [ComplianceByResource]? = nil, nextToken: String? = nil) {
             self.complianceByResources = complianceByResources
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try complianceByResources?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1572,6 +1923,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the AWS managed Config rules for which you want status information. If you do not specify any names, AWS Config returns status information for all AWS managed Config rules that you use.
         public let configRuleNames: [String]?
         /// The number of rule evaluation results that you want returned. This parameter is required if the rule limit for your account is more than the default of 150 rules. For information about requesting a rule limit increase, see AWS Config Limits in the AWS General Reference Guide.
@@ -1583,6 +1935,17 @@ extension ConfigService {
             self.configRuleNames = configRuleNames
             self.limit = limit
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try configRuleNames?.forEach {
+                try validate($0, name:"configRuleNames[]", max: 64)
+                try validate($0, name:"configRuleNames[]", min: 1)
+            }
+            try validate(configRuleNames, name:"configRuleNames", max: 25)
+            try validate(configRuleNames, name:"configRuleNames", min: 0)
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1597,6 +1960,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigRulesEvaluationStatus", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Status information about your AWS managed Config rules.
         public let configRulesEvaluationStatus: [ConfigRuleEvaluationStatus]?
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
@@ -1605,6 +1969,12 @@ extension ConfigService {
         public init(configRulesEvaluationStatus: [ConfigRuleEvaluationStatus]? = nil, nextToken: String? = nil) {
             self.configRulesEvaluationStatus = configRulesEvaluationStatus
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try configRulesEvaluationStatus?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1618,6 +1988,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigRuleNames", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of the AWS Config rules for which you want details. If you do not specify any names, AWS Config returns details for all your rules.
         public let configRuleNames: [String]?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -1626,6 +1997,15 @@ extension ConfigService {
         public init(configRuleNames: [String]? = nil, nextToken: String? = nil) {
             self.configRuleNames = configRuleNames
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try configRuleNames?.forEach {
+                try validate($0, name:"configRuleNames[]", max: 64)
+                try validate($0, name:"configRuleNames[]", min: 1)
+            }
+            try validate(configRuleNames, name:"configRuleNames", max: 25)
+            try validate(configRuleNames, name:"configRuleNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1639,6 +2019,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigRules", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The details about your AWS Config rules.
         public let configRules: [ConfigRule]?
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
@@ -1647,6 +2028,12 @@ extension ConfigService {
         public init(configRules: [ConfigRule]? = nil, nextToken: String? = nil) {
             self.configRules = configRules
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try configRules?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1662,6 +2049,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "UpdateStatus", required: false, type: .list)
         ]
+
         /// The name of the configuration aggregator.
         public let configurationAggregatorName: String
         /// The maximum number of AggregatorSourceStatus returned on each page. The default is maximum. If you specify 0, AWS Config uses the default.
@@ -1678,6 +2066,15 @@ extension ConfigService {
             self.updateStatus = updateStatus
         }
 
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try validate(updateStatus, name:"updateStatus", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configurationAggregatorName = "ConfigurationAggregatorName"
             case limit = "Limit"
@@ -1691,6 +2088,7 @@ extension ConfigService {
             AWSShapeMember(label: "AggregatedSourceStatusList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Returns an AggregatedSourceStatus object. 
         public let aggregatedSourceStatusList: [AggregatedSourceStatus]?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -1699,6 +2097,12 @@ extension ConfigService {
         public init(aggregatedSourceStatusList: [AggregatedSourceStatus]? = nil, nextToken: String? = nil) {
             self.aggregatedSourceStatusList = aggregatedSourceStatusList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try aggregatedSourceStatusList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1713,6 +2117,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the configuration aggregators.
         public let configurationAggregatorNames: [String]?
         /// The maximum number of configuration aggregators returned on each page. The default is maximum. If you specify 0, AWS Config uses the default.
@@ -1724,6 +2129,18 @@ extension ConfigService {
             self.configurationAggregatorNames = configurationAggregatorNames
             self.limit = limit
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try configurationAggregatorNames?.forEach {
+                try validate($0, name:"configurationAggregatorNames[]", max: 256)
+                try validate($0, name:"configurationAggregatorNames[]", min: 1)
+                try validate($0, name:"configurationAggregatorNames[]", pattern: "[\\w\\-]+")
+            }
+            try validate(configurationAggregatorNames, name:"configurationAggregatorNames", max: 10)
+            try validate(configurationAggregatorNames, name:"configurationAggregatorNames", min: 0)
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1738,6 +2155,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigurationAggregators", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Returns a ConfigurationAggregators object.
         public let configurationAggregators: [ConfigurationAggregator]?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -1746,6 +2164,12 @@ extension ConfigService {
         public init(configurationAggregators: [ConfigurationAggregator]? = nil, nextToken: String? = nil) {
             self.configurationAggregators = configurationAggregators
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try configurationAggregators?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1758,11 +2182,19 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecorderNames", required: false, type: .list)
         ]
+
         /// The name(s) of the configuration recorder. If the name is not specified, the action returns the current status of all the configuration recorders associated with the account.
         public let configurationRecorderNames: [String]?
 
         public init(configurationRecorderNames: [String]? = nil) {
             self.configurationRecorderNames = configurationRecorderNames
+        }
+
+        public func validate() throws {
+            try configurationRecorderNames?.forEach {
+                try validate($0, name:"configurationRecorderNames[]", max: 256)
+                try validate($0, name:"configurationRecorderNames[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1774,6 +2206,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecordersStatus", required: false, type: .list)
         ]
+
         /// A list that contains status of the specified recorders.
         public let configurationRecordersStatus: [ConfigurationRecorderStatus]?
 
@@ -1790,11 +2223,19 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecorderNames", required: false, type: .list)
         ]
+
         /// A list of configuration recorder names.
         public let configurationRecorderNames: [String]?
 
         public init(configurationRecorderNames: [String]? = nil) {
             self.configurationRecorderNames = configurationRecorderNames
+        }
+
+        public func validate() throws {
+            try configurationRecorderNames?.forEach {
+                try validate($0, name:"configurationRecorderNames[]", max: 256)
+                try validate($0, name:"configurationRecorderNames[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1806,11 +2247,18 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecorders", required: false, type: .list)
         ]
+
         /// A list that contains the descriptions of the specified configuration recorders.
         public let configurationRecorders: [ConfigurationRecorder]?
 
         public init(configurationRecorders: [ConfigurationRecorder]? = nil) {
             self.configurationRecorders = configurationRecorders
+        }
+
+        public func validate() throws {
+            try configurationRecorders?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1822,11 +2270,19 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeliveryChannelNames", required: false, type: .list)
         ]
+
         /// A list of delivery channel names.
         public let deliveryChannelNames: [String]?
 
         public init(deliveryChannelNames: [String]? = nil) {
             self.deliveryChannelNames = deliveryChannelNames
+        }
+
+        public func validate() throws {
+            try deliveryChannelNames?.forEach {
+                try validate($0, name:"deliveryChannelNames[]", max: 256)
+                try validate($0, name:"deliveryChannelNames[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1838,6 +2294,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeliveryChannelsStatus", required: false, type: .list)
         ]
+
         /// A list that contains the status of a specified delivery channel.
         public let deliveryChannelsStatus: [DeliveryChannelStatus]?
 
@@ -1854,11 +2311,19 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeliveryChannelNames", required: false, type: .list)
         ]
+
         /// A list of delivery channel names.
         public let deliveryChannelNames: [String]?
 
         public init(deliveryChannelNames: [String]? = nil) {
             self.deliveryChannelNames = deliveryChannelNames
+        }
+
+        public func validate() throws {
+            try deliveryChannelNames?.forEach {
+                try validate($0, name:"deliveryChannelNames[]", max: 256)
+                try validate($0, name:"deliveryChannelNames[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1870,11 +2335,18 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeliveryChannels", required: false, type: .list)
         ]
+
         /// A list that contains the descriptions of the specified delivery channel.
         public let deliveryChannels: [DeliveryChannel]?
 
         public init(deliveryChannels: [DeliveryChannel]? = nil) {
             self.deliveryChannels = deliveryChannels
+        }
+
+        public func validate() throws {
+            try deliveryChannels?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1888,6 +2360,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationConfigRuleNames", required: false, type: .list)
         ]
+
         public let limit: Int32?
         public let nextToken: String?
         public let organizationConfigRuleNames: [String]?
@@ -1896,6 +2369,17 @@ extension ConfigService {
             self.limit = limit
             self.nextToken = nextToken
             self.organizationConfigRuleNames = organizationConfigRuleNames
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try organizationConfigRuleNames?.forEach {
+                try validate($0, name:"organizationConfigRuleNames[]", max: 64)
+                try validate($0, name:"organizationConfigRuleNames[]", min: 1)
+            }
+            try validate(organizationConfigRuleNames, name:"organizationConfigRuleNames", max: 25)
+            try validate(organizationConfigRuleNames, name:"organizationConfigRuleNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1910,12 +2394,19 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationConfigRuleStatuses", required: false, type: .list)
         ]
+
         public let nextToken: String?
         public let organizationConfigRuleStatuses: [OrganizationConfigRuleStatus]?
 
         public init(nextToken: String? = nil, organizationConfigRuleStatuses: [OrganizationConfigRuleStatus]? = nil) {
             self.nextToken = nextToken
             self.organizationConfigRuleStatuses = organizationConfigRuleStatuses
+        }
+
+        public func validate() throws {
+            try organizationConfigRuleStatuses?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1930,6 +2421,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationConfigRuleNames", required: false, type: .list)
         ]
+
         public let limit: Int32?
         public let nextToken: String?
         public let organizationConfigRuleNames: [String]?
@@ -1938,6 +2430,17 @@ extension ConfigService {
             self.limit = limit
             self.nextToken = nextToken
             self.organizationConfigRuleNames = organizationConfigRuleNames
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try organizationConfigRuleNames?.forEach {
+                try validate($0, name:"organizationConfigRuleNames[]", max: 64)
+                try validate($0, name:"organizationConfigRuleNames[]", min: 1)
+            }
+            try validate(organizationConfigRuleNames, name:"organizationConfigRuleNames", max: 25)
+            try validate(organizationConfigRuleNames, name:"organizationConfigRuleNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1952,12 +2455,19 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationConfigRules", required: false, type: .list)
         ]
+
         public let nextToken: String?
         public let organizationConfigRules: [OrganizationConfigRule]?
 
         public init(nextToken: String? = nil, organizationConfigRules: [OrganizationConfigRule]? = nil) {
             self.nextToken = nextToken
             self.organizationConfigRules = organizationConfigRules
+        }
+
+        public func validate() throws {
+            try organizationConfigRules?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1971,6 +2481,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of evaluation results returned on each page. The default is maximum. If you specify 0, AWS Config uses the default.
         public let limit: Int32?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -1979,6 +2490,11 @@ extension ConfigService {
         public init(limit: Int32? = nil, nextToken: String? = nil) {
             self.limit = limit
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 20)
+            try validate(limit, name:"limit", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1992,6 +2508,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "PendingAggregationRequests", required: false, type: .list)
         ]
+
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
         public let nextToken: String?
         /// Returns a PendingAggregationRequests object.
@@ -2000,6 +2517,12 @@ extension ConfigService {
         public init(nextToken: String? = nil, pendingAggregationRequests: [PendingAggregationRequest]? = nil) {
             self.nextToken = nextToken
             self.pendingAggregationRequests = pendingAggregationRequests
+        }
+
+        public func validate() throws {
+            try pendingAggregationRequests?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2012,11 +2535,21 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigRuleNames", required: true, type: .list)
         ]
+
         /// A list of AWS Config rule names of remediation configurations for which you want details. 
         public let configRuleNames: [String]
 
         public init(configRuleNames: [String]) {
             self.configRuleNames = configRuleNames
+        }
+
+        public func validate() throws {
+            try configRuleNames.forEach {
+                try validate($0, name:"configRuleNames[]", max: 64)
+                try validate($0, name:"configRuleNames[]", min: 1)
+            }
+            try validate(configRuleNames, name:"configRuleNames", max: 25)
+            try validate(configRuleNames, name:"configRuleNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2028,11 +2561,20 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RemediationConfigurations", required: false, type: .list)
         ]
+
         /// Returns a remediation configuration object.
         public let remediationConfigurations: [RemediationConfiguration]?
 
         public init(remediationConfigurations: [RemediationConfiguration]? = nil) {
             self.remediationConfigurations = remediationConfigurations
+        }
+
+        public func validate() throws {
+            try remediationConfigurations?.forEach {
+                try $0.validate()
+            }
+            try validate(remediationConfigurations, name:"remediationConfigurations", max: 25)
+            try validate(remediationConfigurations, name:"remediationConfigurations", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2047,6 +2589,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceKeys", required: false, type: .list)
         ]
+
         /// A list of AWS Config rule names.
         public let configRuleName: String
         /// The maximum number of RemediationExecutionStatuses returned on each page. The default is maximum. If you specify 0, AWS Config uses the default. 
@@ -2063,6 +2606,20 @@ extension ConfigService {
             self.resourceKeys = resourceKeys
         }
 
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try validate(nextToken, name:"nextToken", max: 256)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try resourceKeys?.forEach {
+                try $0.validate()
+            }
+            try validate(resourceKeys, name:"resourceKeys", max: 100)
+            try validate(resourceKeys, name:"resourceKeys", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configRuleName = "ConfigRuleName"
             case limit = "Limit"
@@ -2076,6 +2633,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "RemediationExecutionStatuses", required: false, type: .list)
         ]
+
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
         public let nextToken: String?
         /// Returns a list of remediation execution statuses objects.
@@ -2084,6 +2642,14 @@ extension ConfigService {
         public init(nextToken: String? = nil, remediationExecutionStatuses: [RemediationExecutionStatus]? = nil) {
             self.nextToken = nextToken
             self.remediationExecutionStatuses = remediationExecutionStatuses
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 256)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try remediationExecutionStatuses?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2097,6 +2663,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "RetentionConfigurationNames", required: false, type: .list)
         ]
+
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response. 
         public let nextToken: String?
         /// A list of names of retention configurations for which you want details. If you do not specify a name, AWS Config returns details for all the retention configurations for that account.  Currently, AWS Config supports only one retention configuration per region in your account. 
@@ -2105,6 +2672,16 @@ extension ConfigService {
         public init(nextToken: String? = nil, retentionConfigurationNames: [String]? = nil) {
             self.nextToken = nextToken
             self.retentionConfigurationNames = retentionConfigurationNames
+        }
+
+        public func validate() throws {
+            try retentionConfigurationNames?.forEach {
+                try validate($0, name:"retentionConfigurationNames[]", max: 256)
+                try validate($0, name:"retentionConfigurationNames[]", min: 1)
+                try validate($0, name:"retentionConfigurationNames[]", pattern: "[\\w\\-]+")
+            }
+            try validate(retentionConfigurationNames, name:"retentionConfigurationNames", max: 1)
+            try validate(retentionConfigurationNames, name:"retentionConfigurationNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2118,6 +2695,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "RetentionConfigurations", required: false, type: .list)
         ]
+
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response. 
         public let nextToken: String?
         /// Returns a retention configuration object.
@@ -2126,6 +2704,12 @@ extension ConfigService {
         public init(nextToken: String? = nil, retentionConfigurations: [RetentionConfiguration]? = nil) {
             self.nextToken = nextToken
             self.retentionConfigurations = retentionConfigurations
+        }
+
+        public func validate() throws {
+            try retentionConfigurations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2142,6 +2726,7 @@ extension ConfigService {
             AWSShapeMember(label: "ComplianceType", required: true, type: .enum), 
             AWSShapeMember(label: "OrderingTimestamp", required: true, type: .timestamp)
         ]
+
         /// Supplementary information about how the evaluation determined the compliance.
         public let annotation: String?
         /// The ID of the AWS resource that was evaluated.
@@ -2159,6 +2744,15 @@ extension ConfigService {
             self.complianceResourceType = complianceResourceType
             self.complianceType = complianceType
             self.orderingTimestamp = orderingTimestamp
+        }
+
+        public func validate() throws {
+            try validate(annotation, name:"annotation", max: 256)
+            try validate(annotation, name:"annotation", min: 1)
+            try validate(complianceResourceId, name:"complianceResourceId", max: 768)
+            try validate(complianceResourceId, name:"complianceResourceId", min: 1)
+            try validate(complianceResourceType, name:"complianceResourceType", max: 256)
+            try validate(complianceResourceType, name:"complianceResourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2179,6 +2773,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResultRecordedTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "ResultToken", required: false, type: .string)
         ]
+
         /// Supplementary information about how the evaluation determined the compliance.
         public let annotation: String?
         /// Indicates whether the AWS resource complies with the AWS Config rule that evaluated it. For the EvaluationResult data type, AWS Config supports only the COMPLIANT, NON_COMPLIANT, and NOT_APPLICABLE values. AWS Config does not support the INSUFFICIENT_DATA value for the EvaluationResult data type.
@@ -2201,6 +2796,12 @@ extension ConfigService {
             self.resultToken = resultToken
         }
 
+        public func validate() throws {
+            try validate(annotation, name:"annotation", max: 256)
+            try validate(annotation, name:"annotation", min: 1)
+            try evaluationResultIdentifier?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case annotation = "Annotation"
             case complianceType = "ComplianceType"
@@ -2216,6 +2817,7 @@ extension ConfigService {
             AWSShapeMember(label: "EvaluationResultQualifier", required: false, type: .structure), 
             AWSShapeMember(label: "OrderingTimestamp", required: false, type: .timestamp)
         ]
+
         /// Identifies an AWS Config rule used to evaluate an AWS resource, and provides the type and ID of the evaluated resource.
         public let evaluationResultQualifier: EvaluationResultQualifier?
         /// The time of the event that triggered the evaluation of your AWS resources. The time can indicate when AWS Config delivered a configuration item change notification, or it can indicate when AWS Config delivered the configuration snapshot, depending on which event triggered the evaluation.
@@ -2224,6 +2826,10 @@ extension ConfigService {
         public init(evaluationResultQualifier: EvaluationResultQualifier? = nil, orderingTimestamp: TimeStamp? = nil) {
             self.evaluationResultQualifier = evaluationResultQualifier
             self.orderingTimestamp = orderingTimestamp
+        }
+
+        public func validate() throws {
+            try evaluationResultQualifier?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2238,6 +2844,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceId", required: false, type: .string), 
             AWSShapeMember(label: "ResourceType", required: false, type: .string)
         ]
+
         /// The name of the AWS Config rule that was used in the evaluation.
         public let configRuleName: String?
         /// The ID of the evaluated AWS resource.
@@ -2249,6 +2856,15 @@ extension ConfigService {
             self.configRuleName = configRuleName
             self.resourceId = resourceId
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 256)
+            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2268,6 +2884,7 @@ extension ConfigService {
             AWSShapeMember(label: "FailedItems", required: false, type: .list), 
             AWSShapeMember(label: "FailureMessage", required: false, type: .string)
         ]
+
         /// Returns remediation configurations of the failed items.
         public let failedItems: [RemediationConfiguration]?
         /// Returns a failure message. For example, the resource is already compliant.
@@ -2276,6 +2893,14 @@ extension ConfigService {
         public init(failedItems: [RemediationConfiguration]? = nil, failureMessage: String? = nil) {
             self.failedItems = failedItems
             self.failureMessage = failureMessage
+        }
+
+        public func validate() throws {
+            try failedItems?.forEach {
+                try $0.validate()
+            }
+            try validate(failedItems, name:"failedItems", max: 25)
+            try validate(failedItems, name:"failedItems", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2288,6 +2913,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// Name of the field.
         public let name: String?
 
@@ -2310,6 +2936,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The 12-digit account ID of the source account.
         public let accountId: String
         /// The source region from where the data is aggregated.
@@ -2335,6 +2962,19 @@ extension ConfigService {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(awsRegion, name:"awsRegion", max: 64)
+            try validate(awsRegion, name:"awsRegion", min: 1)
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case awsRegion = "AwsRegion"
@@ -2351,6 +2991,7 @@ extension ConfigService {
             AWSShapeMember(label: "AggregateEvaluationResults", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Returns an AggregateEvaluationResults object.
         public let aggregateEvaluationResults: [AggregateEvaluationResult]?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -2359,6 +3000,12 @@ extension ConfigService {
         public init(aggregateEvaluationResults: [AggregateEvaluationResult]? = nil, nextToken: String? = nil) {
             self.aggregateEvaluationResults = aggregateEvaluationResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try aggregateEvaluationResults?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2375,6 +3022,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the configuration aggregator.
         public let configurationAggregatorName: String
         /// Filters the results based on the ConfigRuleComplianceSummaryFilters object.
@@ -2394,6 +3042,15 @@ extension ConfigService {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try filters?.validate()
+            try validate(limit, name:"limit", max: 1000)
+            try validate(limit, name:"limit", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configurationAggregatorName = "ConfigurationAggregatorName"
             case filters = "Filters"
@@ -2409,6 +3066,7 @@ extension ConfigService {
             AWSShapeMember(label: "GroupByKey", required: false, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Returns a list of AggregateComplianceCounts object.
         public let aggregateComplianceCounts: [AggregateComplianceCount]?
         /// Groups the result based on ACCOUNT_ID or AWS_REGION.
@@ -2420,6 +3078,14 @@ extension ConfigService {
             self.aggregateComplianceCounts = aggregateComplianceCounts
             self.groupByKey = groupByKey
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try aggregateComplianceCounts?.forEach {
+                try $0.validate()
+            }
+            try validate(groupByKey, name:"groupByKey", max: 256)
+            try validate(groupByKey, name:"groupByKey", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2437,6 +3103,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The name of the configuration aggregator.
         public let configurationAggregatorName: String
         /// Filters the results based on the ResourceCountFilters object.
@@ -2456,6 +3123,15 @@ extension ConfigService {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try filters?.validate()
+            try validate(limit, name:"limit", max: 1000)
+            try validate(limit, name:"limit", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configurationAggregatorName = "ConfigurationAggregatorName"
             case filters = "Filters"
@@ -2472,6 +3148,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TotalDiscoveredResources", required: true, type: .long)
         ]
+
         /// The key passed into the request object. If GroupByKey is not provided, the result will be empty.
         public let groupByKey: String?
         /// Returns a list of GroupedResourceCount objects.
@@ -2488,6 +3165,14 @@ extension ConfigService {
             self.totalDiscoveredResources = totalDiscoveredResources
         }
 
+        public func validate() throws {
+            try validate(groupByKey, name:"groupByKey", max: 256)
+            try validate(groupByKey, name:"groupByKey", min: 1)
+            try groupedResourceCounts?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupByKey = "GroupByKey"
             case groupedResourceCounts = "GroupedResourceCounts"
@@ -2501,6 +3186,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigurationAggregatorName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceIdentifier", required: true, type: .structure)
         ]
+
         /// The name of the configuration aggregator.
         public let configurationAggregatorName: String
         /// An object that identifies aggregate resource.
@@ -2509,6 +3195,13 @@ extension ConfigService {
         public init(configurationAggregatorName: String, resourceIdentifier: AggregateResourceIdentifier) {
             self.configurationAggregatorName = configurationAggregatorName
             self.resourceIdentifier = resourceIdentifier
+        }
+
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try resourceIdentifier.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2521,11 +3214,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationItem", required: false, type: .structure)
         ]
+
         /// Returns a ConfigurationItem object.
         public let configurationItem: ConfigurationItem?
 
         public init(configurationItem: ConfigurationItem? = nil) {
             self.configurationItem = configurationItem
+        }
+
+        public func validate() throws {
+            try configurationItem?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2540,6 +3238,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the results by compliance. The allowed values are COMPLIANT, NON_COMPLIANT, and NOT_APPLICABLE.
         public let complianceTypes: [ComplianceType]?
         /// The name of the AWS Config rule for which you want compliance information.
@@ -2556,6 +3255,15 @@ extension ConfigService {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(complianceTypes, name:"complianceTypes", max: 3)
+            try validate(complianceTypes, name:"complianceTypes", min: 0)
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceTypes = "ComplianceTypes"
             case configRuleName = "ConfigRuleName"
@@ -2569,6 +3277,7 @@ extension ConfigService {
             AWSShapeMember(label: "EvaluationResults", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Indicates whether the AWS resource complies with the specified AWS Config rule.
         public let evaluationResults: [EvaluationResult]?
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
@@ -2577,6 +3286,12 @@ extension ConfigService {
         public init(evaluationResults: [EvaluationResult]? = nil, nextToken: String? = nil) {
             self.evaluationResults = evaluationResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try evaluationResults?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2592,6 +3307,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceType", required: true, type: .string)
         ]
+
         /// Filters the results by compliance. The allowed values are COMPLIANT, NON_COMPLIANT, and NOT_APPLICABLE.
         public let complianceTypes: [ComplianceType]?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -2608,6 +3324,15 @@ extension ConfigService {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(complianceTypes, name:"complianceTypes", max: 3)
+            try validate(complianceTypes, name:"complianceTypes", min: 0)
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 256)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceTypes = "ComplianceTypes"
             case nextToken = "NextToken"
@@ -2621,6 +3346,7 @@ extension ConfigService {
             AWSShapeMember(label: "EvaluationResults", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Indicates whether the specified AWS resource complies each AWS Config rule.
         public let evaluationResults: [EvaluationResult]?
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
@@ -2629,6 +3355,12 @@ extension ConfigService {
         public init(evaluationResults: [EvaluationResult]? = nil, nextToken: String? = nil) {
             self.evaluationResults = evaluationResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try evaluationResults?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2641,6 +3373,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ComplianceSummary", required: false, type: .structure)
         ]
+
         /// The number of AWS Config rules that are compliant and the number that are noncompliant, up to a maximum of 25 for each.
         public let complianceSummary: ComplianceSummary?
 
@@ -2657,11 +3390,21 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceTypes", required: false, type: .list)
         ]
+
         /// Specify one or more resource types to get the number of resources that are compliant and the number that are noncompliant for each resource type. For this request, you can specify an AWS resource type such as AWS::EC2::Instance. You can specify that the resource type is an AWS account by specifying AWS::::Account.
         public let resourceTypes: [String]?
 
         public init(resourceTypes: [String]? = nil) {
             self.resourceTypes = resourceTypes
+        }
+
+        public func validate() throws {
+            try resourceTypes?.forEach {
+                try validate($0, name:"resourceTypes[]", max: 256)
+                try validate($0, name:"resourceTypes[]", min: 1)
+            }
+            try validate(resourceTypes, name:"resourceTypes", max: 20)
+            try validate(resourceTypes, name:"resourceTypes", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2673,11 +3416,18 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ComplianceSummariesByResourceType", required: false, type: .list)
         ]
+
         /// The number of resources that are compliant and the number that are noncompliant. If one or more resource types were provided with the request, the numbers are returned for each resource type. The maximum number returned is 100.
         public let complianceSummariesByResourceType: [ComplianceSummaryByResourceType]?
 
         public init(complianceSummariesByResourceType: [ComplianceSummaryByResourceType]? = nil) {
             self.complianceSummariesByResourceType = complianceSummariesByResourceType
+        }
+
+        public func validate() throws {
+            try complianceSummariesByResourceType?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2691,6 +3441,7 @@ extension ConfigService {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "resourceTypes", required: false, type: .list)
         ]
+
         /// The maximum number of ResourceCount objects returned on each page. The default is 100. You cannot specify a number greater than 100. If you specify 0, AWS Config uses the default.
         public let limit: Int32?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
@@ -2702,6 +3453,17 @@ extension ConfigService {
             self.limit = limit
             self.nextToken = nextToken
             self.resourceTypes = resourceTypes
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try resourceTypes?.forEach {
+                try validate($0, name:"resourceTypes[]", max: 256)
+                try validate($0, name:"resourceTypes[]", min: 1)
+            }
+            try validate(resourceTypes, name:"resourceTypes", max: 20)
+            try validate(resourceTypes, name:"resourceTypes", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2717,6 +3479,7 @@ extension ConfigService {
             AWSShapeMember(label: "resourceCounts", required: false, type: .list), 
             AWSShapeMember(label: "totalDiscoveredResources", required: false, type: .long)
         ]
+
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
         public let nextToken: String?
         /// The list of ResourceCount objects. Each object is listed in descending order by the number of resources.
@@ -2744,6 +3507,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationConfigRuleName", required: true, type: .string)
         ]
+
         public let filters: StatusDetailFilters?
         public let limit: Int32?
         public let nextToken: String?
@@ -2754,6 +3518,14 @@ extension ConfigService {
             self.limit = limit
             self.nextToken = nextToken
             self.organizationConfigRuleName = organizationConfigRuleName
+        }
+
+        public func validate() throws {
+            try filters?.validate()
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", max: 64)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2769,12 +3541,19 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationConfigRuleDetailedStatus", required: false, type: .list)
         ]
+
         public let nextToken: String?
         public let organizationConfigRuleDetailedStatus: [MemberAccountStatus]?
 
         public init(nextToken: String? = nil, organizationConfigRuleDetailedStatus: [MemberAccountStatus]? = nil) {
             self.nextToken = nextToken
             self.organizationConfigRuleDetailedStatus = organizationConfigRuleDetailedStatus
+        }
+
+        public func validate() throws {
+            try organizationConfigRuleDetailedStatus?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2793,6 +3572,7 @@ extension ConfigService {
             AWSShapeMember(label: "resourceId", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .enum)
         ]
+
         /// The chronological order for configuration items listed. By default, the results are listed in reverse chronological order.
         public let chronologicalOrder: ChronologicalOrder?
         /// The time stamp that indicates an earlier time. If not specified, the action returns paginated results that contain configuration items that start when the first configuration item was recorded.
@@ -2818,6 +3598,13 @@ extension ConfigService {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case chronologicalOrder = "chronologicalOrder"
             case earlierTime = "earlierTime"
@@ -2834,6 +3621,7 @@ extension ConfigService {
             AWSShapeMember(label: "configurationItems", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list that contains the configuration history of one or more resources.
         public let configurationItems: [ConfigurationItem]?
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
@@ -2842,6 +3630,12 @@ extension ConfigService {
         public init(configurationItems: [ConfigurationItem]? = nil, nextToken: String? = nil) {
             self.configurationItems = configurationItems
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try configurationItems?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2855,6 +3649,7 @@ extension ConfigService {
             AWSShapeMember(label: "GroupName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceCount", required: true, type: .long)
         ]
+
         /// The name of the group that can be region, account ID, or resource type. For example, region1, region2 if the region was chosen as GroupByKey.
         public let groupName: String
         /// The number of resources in the group.
@@ -2863,6 +3658,11 @@ extension ConfigService {
         public init(groupName: String, resourceCount: Int64) {
             self.groupName = groupName
             self.resourceCount = resourceCount
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 256)
+            try validate(groupName, name:"groupName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2879,6 +3679,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceType", required: true, type: .enum)
         ]
+
         /// The name of the configuration aggregator. 
         public let configurationAggregatorName: String
         /// Filters the results based on the ResourceFilters object.
@@ -2898,6 +3699,15 @@ extension ConfigService {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try filters?.validate()
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configurationAggregatorName = "ConfigurationAggregatorName"
             case filters = "Filters"
@@ -2912,6 +3722,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceIdentifiers", required: false, type: .list)
         ]
+
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response.
         public let nextToken: String?
         /// Returns a list of ResourceIdentifiers objects.
@@ -2920,6 +3731,12 @@ extension ConfigService {
         public init(nextToken: String? = nil, resourceIdentifiers: [AggregateResourceIdentifier]? = nil) {
             self.nextToken = nextToken
             self.resourceIdentifiers = resourceIdentifiers
+        }
+
+        public func validate() throws {
+            try resourceIdentifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2937,6 +3754,7 @@ extension ConfigService {
             AWSShapeMember(label: "resourceName", required: false, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .enum)
         ]
+
         /// Specifies whether AWS Config includes deleted resources in the results. By default, deleted resources are not included.
         public let includeDeletedResources: Bool?
         /// The maximum number of resource identifiers returned on each page. The default is 100. You cannot specify a number greater than 100. If you specify 0, AWS Config uses the default.
@@ -2959,6 +3777,15 @@ extension ConfigService {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try resourceIds?.forEach {
+                try validate($0, name:"resourceIds[]", max: 768)
+                try validate($0, name:"resourceIds[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case includeDeletedResources = "includeDeletedResources"
             case limit = "limit"
@@ -2974,6 +3801,7 @@ extension ConfigService {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "resourceIdentifiers", required: false, type: .list)
         ]
+
         /// The string that you use in a subsequent request to get the next page of results in a paginated response.
         public let nextToken: String?
         /// The details that identify a resource that is discovered by AWS Config, including the resource type, ID, and (if available) the custom resource name.
@@ -2982,6 +3810,12 @@ extension ConfigService {
         public init(nextToken: String? = nil, resourceIdentifiers: [ResourceIdentifier]? = nil) {
             self.nextToken = nextToken
             self.resourceIdentifiers = resourceIdentifiers
+        }
+
+        public func validate() throws {
+            try resourceIdentifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2996,6 +3830,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The maximum number of tags returned on each page. The limit maximum is 50. You cannot specify a number greater than 50. If you specify 0, AWS Config uses the default. 
         public let limit: Int32?
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response. 
@@ -3007,6 +3842,13 @@ extension ConfigService {
             self.limit = limit
             self.nextToken = nextToken
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3021,6 +3863,7 @@ extension ConfigService {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The nextToken string returned on a previous page that you use to get the next page of results in a paginated response. 
         public let nextToken: String?
         /// The tags for the resource.
@@ -3029,6 +3872,14 @@ extension ConfigService {
         public init(nextToken: String? = nil, tags: [Tag]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3065,6 +3916,7 @@ extension ConfigService {
             AWSShapeMember(label: "LastUpdateTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "MemberAccountRuleStatus", required: true, type: .enum)
         ]
+
         public let accountId: String
         public let configRuleName: String
         public let errorCode: String?
@@ -3079,6 +3931,12 @@ extension ConfigService {
             self.errorMessage = errorMessage
             self.lastUpdateTime = lastUpdateTime
             self.memberAccountRuleStatus = memberAccountRuleStatus
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3105,6 +3963,7 @@ extension ConfigService {
             AWSShapeMember(label: "AwsRegions", required: false, type: .list), 
             AWSShapeMember(label: "RoleArn", required: true, type: .string)
         ]
+
         /// If true, aggregate existing AWS Config regions and future regions.
         public let allAwsRegions: Bool?
         /// The source regions being aggregated.
@@ -3116,6 +3975,10 @@ extension ConfigService {
             self.allAwsRegions = allAwsRegions
             self.awsRegions = awsRegions
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(awsRegions, name:"awsRegions", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3134,6 +3997,7 @@ extension ConfigService {
             AWSShapeMember(label: "OrganizationCustomRuleMetadata", required: false, type: .structure), 
             AWSShapeMember(label: "OrganizationManagedRuleMetadata", required: false, type: .structure)
         ]
+
         public let excludedAccounts: [String]?
         public let lastUpdateTime: TimeStamp?
         public let organizationConfigRuleArn: String
@@ -3148,6 +4012,20 @@ extension ConfigService {
             self.organizationConfigRuleName = organizationConfigRuleName
             self.organizationCustomRuleMetadata = organizationCustomRuleMetadata
             self.organizationManagedRuleMetadata = organizationManagedRuleMetadata
+        }
+
+        public func validate() throws {
+            try excludedAccounts?.forEach {
+                try validate($0, name:"excludedAccounts[]", pattern: "\\d{12}")
+            }
+            try validate(excludedAccounts, name:"excludedAccounts", max: 1000)
+            try validate(excludedAccounts, name:"excludedAccounts", min: 0)
+            try validate(organizationConfigRuleArn, name:"organizationConfigRuleArn", max: 256)
+            try validate(organizationConfigRuleArn, name:"organizationConfigRuleArn", min: 1)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", max: 64)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", min: 1)
+            try organizationCustomRuleMetadata?.validate()
+            try organizationManagedRuleMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3168,6 +4046,7 @@ extension ConfigService {
             AWSShapeMember(label: "OrganizationConfigRuleName", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationRuleStatus", required: true, type: .enum)
         ]
+
         public let errorCode: String?
         public let errorMessage: String?
         public let lastUpdateTime: TimeStamp?
@@ -3180,6 +4059,11 @@ extension ConfigService {
             self.lastUpdateTime = lastUpdateTime
             self.organizationConfigRuleName = organizationConfigRuleName
             self.organizationRuleStatus = organizationRuleStatus
+        }
+
+        public func validate() throws {
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", max: 64)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3210,6 +4094,7 @@ extension ConfigService {
             AWSShapeMember(label: "TagKeyScope", required: false, type: .string), 
             AWSShapeMember(label: "TagValueScope", required: false, type: .string)
         ]
+
         public let description: String?
         public let inputParameters: String?
         public let lambdaFunctionArn: String
@@ -3230,6 +4115,27 @@ extension ConfigService {
             self.resourceTypesScope = resourceTypesScope
             self.tagKeyScope = tagKeyScope
             self.tagValueScope = tagValueScope
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 0)
+            try validate(inputParameters, name:"inputParameters", max: 2048)
+            try validate(inputParameters, name:"inputParameters", min: 1)
+            try validate(lambdaFunctionArn, name:"lambdaFunctionArn", max: 256)
+            try validate(lambdaFunctionArn, name:"lambdaFunctionArn", min: 1)
+            try validate(resourceIdScope, name:"resourceIdScope", max: 768)
+            try validate(resourceIdScope, name:"resourceIdScope", min: 1)
+            try resourceTypesScope?.forEach {
+                try validate($0, name:"resourceTypesScope[]", max: 256)
+                try validate($0, name:"resourceTypesScope[]", min: 1)
+            }
+            try validate(resourceTypesScope, name:"resourceTypesScope", max: 100)
+            try validate(resourceTypesScope, name:"resourceTypesScope", min: 0)
+            try validate(tagKeyScope, name:"tagKeyScope", max: 128)
+            try validate(tagKeyScope, name:"tagKeyScope", min: 1)
+            try validate(tagValueScope, name:"tagValueScope", max: 256)
+            try validate(tagValueScope, name:"tagValueScope", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3256,6 +4162,7 @@ extension ConfigService {
             AWSShapeMember(label: "TagKeyScope", required: false, type: .string), 
             AWSShapeMember(label: "TagValueScope", required: false, type: .string)
         ]
+
         public let description: String?
         public let inputParameters: String?
         public let maximumExecutionFrequency: MaximumExecutionFrequency?
@@ -3274,6 +4181,27 @@ extension ConfigService {
             self.ruleIdentifier = ruleIdentifier
             self.tagKeyScope = tagKeyScope
             self.tagValueScope = tagValueScope
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 0)
+            try validate(inputParameters, name:"inputParameters", max: 2048)
+            try validate(inputParameters, name:"inputParameters", min: 1)
+            try validate(resourceIdScope, name:"resourceIdScope", max: 768)
+            try validate(resourceIdScope, name:"resourceIdScope", min: 1)
+            try resourceTypesScope?.forEach {
+                try validate($0, name:"resourceTypesScope[]", max: 256)
+                try validate($0, name:"resourceTypesScope[]", min: 1)
+            }
+            try validate(resourceTypesScope, name:"resourceTypesScope", max: 100)
+            try validate(resourceTypesScope, name:"resourceTypesScope", min: 0)
+            try validate(ruleIdentifier, name:"ruleIdentifier", max: 256)
+            try validate(ruleIdentifier, name:"ruleIdentifier", min: 1)
+            try validate(tagKeyScope, name:"tagKeyScope", max: 128)
+            try validate(tagKeyScope, name:"tagKeyScope", min: 1)
+            try validate(tagValueScope, name:"tagValueScope", max: 256)
+            try validate(tagValueScope, name:"tagValueScope", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3309,6 +4237,7 @@ extension ConfigService {
             AWSShapeMember(label: "RequesterAccountId", required: false, type: .string), 
             AWSShapeMember(label: "RequesterAwsRegion", required: false, type: .string)
         ]
+
         /// The 12-digit account ID of the account requesting to aggregate data.
         public let requesterAccountId: String?
         /// The region requesting to aggregate data. 
@@ -3317,6 +4246,12 @@ extension ConfigService {
         public init(requesterAccountId: String? = nil, requesterAwsRegion: String? = nil) {
             self.requesterAccountId = requesterAccountId
             self.requesterAwsRegion = requesterAwsRegion
+        }
+
+        public func validate() throws {
+            try validate(requesterAccountId, name:"requesterAccountId", pattern: "\\d{12}")
+            try validate(requesterAwsRegion, name:"requesterAwsRegion", max: 64)
+            try validate(requesterAwsRegion, name:"requesterAwsRegion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3331,6 +4266,7 @@ extension ConfigService {
             AWSShapeMember(label: "AuthorizedAwsRegion", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The 12-digit account ID of the account authorized to aggregate data.
         public let authorizedAccountId: String
         /// The region authorized to collect aggregated data.
@@ -3341,6 +4277,17 @@ extension ConfigService {
             self.authorizedAccountId = authorizedAccountId
             self.authorizedAwsRegion = authorizedAwsRegion
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(authorizedAccountId, name:"authorizedAccountId", pattern: "\\d{12}")
+            try validate(authorizedAwsRegion, name:"authorizedAwsRegion", max: 64)
+            try validate(authorizedAwsRegion, name:"authorizedAwsRegion", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3354,11 +4301,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AggregationAuthorization", required: false, type: .structure)
         ]
+
         /// Returns an AggregationAuthorization object. 
         public let aggregationAuthorization: AggregationAuthorization?
 
         public init(aggregationAuthorization: AggregationAuthorization? = nil) {
             self.aggregationAuthorization = aggregationAuthorization
+        }
+
+        public func validate() throws {
+            try aggregationAuthorization?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3371,6 +4323,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigRule", required: true, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The rule that you want to add to your account.
         public let configRule: ConfigRule
         public let tags: [Tag]?
@@ -3378,6 +4331,15 @@ extension ConfigService {
         public init(configRule: ConfigRule, tags: [Tag]? = nil) {
             self.configRule = configRule
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try configRule.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3393,6 +4355,7 @@ extension ConfigService {
             AWSShapeMember(label: "OrganizationAggregationSource", required: false, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// A list of AccountAggregationSource object. 
         public let accountAggregationSources: [AccountAggregationSource]?
         /// The name of the configuration aggregator.
@@ -3408,6 +4371,23 @@ extension ConfigService {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try accountAggregationSources?.forEach {
+                try $0.validate()
+            }
+            try validate(accountAggregationSources, name:"accountAggregationSources", max: 1)
+            try validate(accountAggregationSources, name:"accountAggregationSources", min: 0)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", max: 256)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", min: 1)
+            try validate(configurationAggregatorName, name:"configurationAggregatorName", pattern: "[\\w\\-]+")
+            try organizationAggregationSource?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountAggregationSources = "AccountAggregationSources"
             case configurationAggregatorName = "ConfigurationAggregatorName"
@@ -3420,11 +4400,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationAggregator", required: false, type: .structure)
         ]
+
         /// Returns a ConfigurationAggregator object.
         public let configurationAggregator: ConfigurationAggregator?
 
         public init(configurationAggregator: ConfigurationAggregator? = nil) {
             self.configurationAggregator = configurationAggregator
+        }
+
+        public func validate() throws {
+            try configurationAggregator?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3436,11 +4421,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecorder", required: true, type: .structure)
         ]
+
         /// The configuration recorder object that records each configuration change made to the resources.
         public let configurationRecorder: ConfigurationRecorder
 
         public init(configurationRecorder: ConfigurationRecorder) {
             self.configurationRecorder = configurationRecorder
+        }
+
+        public func validate() throws {
+            try configurationRecorder.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3452,11 +4442,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeliveryChannel", required: true, type: .structure)
         ]
+
         /// The configuration delivery channel object that delivers the configuration information to an Amazon S3 bucket and to an Amazon SNS topic.
         public let deliveryChannel: DeliveryChannel
 
         public init(deliveryChannel: DeliveryChannel) {
             self.deliveryChannel = deliveryChannel
+        }
+
+        public func validate() throws {
+            try deliveryChannel.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3470,6 +4465,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResultToken", required: true, type: .string), 
             AWSShapeMember(label: "TestMode", required: false, type: .boolean)
         ]
+
         /// The assessments that the AWS Lambda function performs. Each evaluation identifies an AWS resource and indicates whether it complies with the AWS Config rule that invokes the AWS Lambda function.
         public let evaluations: [Evaluation]?
         /// An encrypted token that associates an evaluation with an AWS Config rule. Identifies the rule and the event that triggered the evaluation.
@@ -3483,6 +4479,14 @@ extension ConfigService {
             self.testMode = testMode
         }
 
+        public func validate() throws {
+            try evaluations?.forEach {
+                try $0.validate()
+            }
+            try validate(evaluations, name:"evaluations", max: 100)
+            try validate(evaluations, name:"evaluations", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case evaluations = "Evaluations"
             case resultToken = "ResultToken"
@@ -3494,11 +4498,20 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedEvaluations", required: false, type: .list)
         ]
+
         /// Requests that failed because of a client or server error.
         public let failedEvaluations: [Evaluation]?
 
         public init(failedEvaluations: [Evaluation]? = nil) {
             self.failedEvaluations = failedEvaluations
+        }
+
+        public func validate() throws {
+            try failedEvaluations?.forEach {
+                try $0.validate()
+            }
+            try validate(failedEvaluations, name:"failedEvaluations", max: 100)
+            try validate(failedEvaluations, name:"failedEvaluations", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3513,6 +4526,7 @@ extension ConfigService {
             AWSShapeMember(label: "OrganizationCustomRuleMetadata", required: false, type: .structure), 
             AWSShapeMember(label: "OrganizationManagedRuleMetadata", required: false, type: .structure)
         ]
+
         public let excludedAccounts: [String]?
         public let organizationConfigRuleName: String
         public let organizationCustomRuleMetadata: OrganizationCustomRuleMetadata?
@@ -3523,6 +4537,18 @@ extension ConfigService {
             self.organizationConfigRuleName = organizationConfigRuleName
             self.organizationCustomRuleMetadata = organizationCustomRuleMetadata
             self.organizationManagedRuleMetadata = organizationManagedRuleMetadata
+        }
+
+        public func validate() throws {
+            try excludedAccounts?.forEach {
+                try validate($0, name:"excludedAccounts[]", pattern: "\\d{12}")
+            }
+            try validate(excludedAccounts, name:"excludedAccounts", max: 1000)
+            try validate(excludedAccounts, name:"excludedAccounts", min: 0)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", max: 64)
+            try validate(organizationConfigRuleName, name:"organizationConfigRuleName", min: 1)
+            try organizationCustomRuleMetadata?.validate()
+            try organizationManagedRuleMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3537,10 +4563,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OrganizationConfigRuleArn", required: false, type: .string)
         ]
+
         public let organizationConfigRuleArn: String?
 
         public init(organizationConfigRuleArn: String? = nil) {
             self.organizationConfigRuleArn = organizationConfigRuleArn
+        }
+
+        public func validate() throws {
+            try validate(organizationConfigRuleArn, name:"organizationConfigRuleArn", max: 256)
+            try validate(organizationConfigRuleArn, name:"organizationConfigRuleArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3552,11 +4584,20 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RemediationConfigurations", required: true, type: .list)
         ]
+
         /// A list of remediation configuration objects.
         public let remediationConfigurations: [RemediationConfiguration]
 
         public init(remediationConfigurations: [RemediationConfiguration]) {
             self.remediationConfigurations = remediationConfigurations
+        }
+
+        public func validate() throws {
+            try remediationConfigurations.forEach {
+                try $0.validate()
+            }
+            try validate(remediationConfigurations, name:"remediationConfigurations", max: 25)
+            try validate(remediationConfigurations, name:"remediationConfigurations", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3568,11 +4609,18 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedBatches", required: false, type: .list)
         ]
+
         /// Returns a list of failed remediation batch objects.
         public let failedBatches: [FailedRemediationBatch]?
 
         public init(failedBatches: [FailedRemediationBatch]? = nil) {
             self.failedBatches = failedBatches
+        }
+
+        public func validate() throws {
+            try failedBatches?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3584,11 +4632,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RetentionPeriodInDays", required: true, type: .integer)
         ]
+
         /// Number of days AWS Config stores your historical information.  Currently, only applicable to the configuration item history. 
         public let retentionPeriodInDays: Int32
 
         public init(retentionPeriodInDays: Int32) {
             self.retentionPeriodInDays = retentionPeriodInDays
+        }
+
+        public func validate() throws {
+            try validate(retentionPeriodInDays, name:"retentionPeriodInDays", max: 2557)
+            try validate(retentionPeriodInDays, name:"retentionPeriodInDays", min: 30)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3600,11 +4654,16 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RetentionConfiguration", required: false, type: .structure)
         ]
+
         /// Returns a retention configuration object.
         public let retentionConfiguration: RetentionConfiguration?
 
         public init(retentionConfiguration: RetentionConfiguration? = nil) {
             self.retentionConfiguration = retentionConfiguration
+        }
+
+        public func validate() throws {
+            try retentionConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3616,6 +4675,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SelectFields", required: false, type: .list)
         ]
+
         /// Returns a FieldInfo object.
         public let selectFields: [FieldInfo]?
 
@@ -3641,6 +4701,7 @@ extension ConfigService {
             AWSShapeMember(label: "includeGlobalResourceTypes", required: false, type: .boolean), 
             AWSShapeMember(label: "resourceTypes", required: false, type: .list)
         ]
+
         /// Specifies whether AWS Config records configuration changes for every supported type of regional resource. If you set this option to true, when AWS Config adds support for a new type of regional resource, it starts recording resources of that type automatically. If you set this option to true, you cannot enumerate a list of resourceTypes.
         public let allSupported: Bool?
         /// Specifies whether AWS Config includes all supported types of global resources (for example, IAM resources) with the resources that it records. Before you can set this option to true, you must set the allSupported option to true. If you set this option to true, when AWS Config adds support for a new type of global resource, it starts recording resources of that type automatically. The configuration details for any global resource are the same in all regions. To prevent duplicate configuration items, you should consider customizing AWS Config in only one region to record global resources.
@@ -3668,6 +4729,7 @@ extension ConfigService {
             AWSShapeMember(label: "resourceName", required: false, type: .string), 
             AWSShapeMember(label: "resourceType", required: false, type: .enum)
         ]
+
         /// The type of relationship with the related resource.
         public let relationshipName: String?
         /// The ID of the related resource (for example, sg-xxxxxx).
@@ -3682,6 +4744,11 @@ extension ConfigService {
             self.resourceId = resourceId
             self.resourceName = resourceName
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3701,6 +4768,7 @@ extension ConfigService {
             AWSShapeMember(label: "TargetType", required: true, type: .enum), 
             AWSShapeMember(label: "TargetVersion", required: false, type: .string)
         ]
+
         /// The name of the AWS Config rule.
         public let configRuleName: String
         /// An object of the RemediationParameterValue.
@@ -3721,6 +4789,13 @@ extension ConfigService {
             self.targetId = targetId
             self.targetType = targetType
             self.targetVersion = targetVersion
+        }
+
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+            try validate(targetId, name:"targetId", max: 256)
+            try validate(targetId, name:"targetId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3749,6 +4824,7 @@ extension ConfigService {
             AWSShapeMember(label: "State", required: false, type: .enum), 
             AWSShapeMember(label: "StepDetails", required: false, type: .list)
         ]
+
         /// Start time when the remediation was executed.
         public let invocationTime: TimeStamp?
         /// The time when the remediation execution was last updated.
@@ -3765,6 +4841,10 @@ extension ConfigService {
             self.resourceKey = resourceKey
             self.state = state
             self.stepDetails = stepDetails
+        }
+
+        public func validate() throws {
+            try resourceKey?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3784,6 +4864,7 @@ extension ConfigService {
             AWSShapeMember(label: "State", required: false, type: .enum), 
             AWSShapeMember(label: "StopTime", required: false, type: .timestamp)
         ]
+
         /// An error message if the step was interrupted during execution.
         public let errorMessage: String?
         /// The details of the step.
@@ -3824,6 +4905,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceValue", required: false, type: .structure), 
             AWSShapeMember(label: "StaticValue", required: false, type: .structure)
         ]
+
         /// The value is dynamic and changes at run-time.
         public let resourceValue: ResourceValue?
         /// The value is static and does not change at run-time.
@@ -3832,6 +4914,10 @@ extension ConfigService {
         public init(resourceValue: ResourceValue? = nil, staticValue: StaticValue? = nil) {
             self.resourceValue = resourceValue
             self.staticValue = staticValue
+        }
+
+        public func validate() throws {
+            try staticValue?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3850,6 +4936,7 @@ extension ConfigService {
             AWSShapeMember(label: "count", required: false, type: .long), 
             AWSShapeMember(label: "resourceType", required: false, type: .enum)
         ]
+
         /// The number of resources.
         public let count: Int64?
         /// The resource type (for example, "AWS::EC2::Instance").
@@ -3872,6 +4959,7 @@ extension ConfigService {
             AWSShapeMember(label: "Region", required: false, type: .string), 
             AWSShapeMember(label: "ResourceType", required: false, type: .enum)
         ]
+
         /// The 12-digit ID of the account.
         public let accountId: String?
         /// The region where the account is located.
@@ -3883,6 +4971,12 @@ extension ConfigService {
             self.accountId = accountId
             self.region = region
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(region, name:"region", max: 64)
+            try validate(region, name:"region", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3906,6 +5000,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceId", required: false, type: .string), 
             AWSShapeMember(label: "ResourceName", required: false, type: .string)
         ]
+
         /// The 12-digit source account ID.
         public let accountId: String?
         /// The source region.
@@ -3920,6 +5015,14 @@ extension ConfigService {
             self.region = region
             self.resourceId = resourceId
             self.resourceName = resourceName
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(region, name:"region", max: 64)
+            try validate(region, name:"region", min: 1)
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3937,6 +5040,7 @@ extension ConfigService {
             AWSShapeMember(label: "resourceName", required: false, type: .string), 
             AWSShapeMember(label: "resourceType", required: false, type: .enum)
         ]
+
         /// The time that the resource was deleted.
         public let resourceDeletionTime: TimeStamp?
         /// The ID of the resource (for example, sg-xxxxxx).
@@ -3953,6 +5057,11 @@ extension ConfigService {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceDeletionTime = "resourceDeletionTime"
             case resourceId = "resourceId"
@@ -3966,6 +5075,7 @@ extension ConfigService {
             AWSShapeMember(label: "resourceId", required: true, type: .string), 
             AWSShapeMember(label: "resourceType", required: true, type: .enum)
         ]
+
         /// The ID of the resource (for example., sg-xxxxxx). 
         public let resourceId: String
         /// The resource type.
@@ -3974,6 +5084,11 @@ extension ConfigService {
         public init(resourceId: String, resourceType: ResourceType) {
             self.resourceId = resourceId
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", max: 768)
+            try validate(resourceId, name:"resourceId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4054,6 +5169,7 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Value", required: false, type: .enum)
         ]
+
         /// The value is a resource ID.
         public let value: ResourceValueType?
 
@@ -4076,6 +5192,7 @@ extension ConfigService {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "RetentionPeriodInDays", required: true, type: .integer)
         ]
+
         /// The name of the retention configuration object.
         public let name: String
         /// Number of days AWS Config stores your historical information.  Currently, only applicable to the configuration item history. 
@@ -4084,6 +5201,14 @@ extension ConfigService {
         public init(name: String, retentionPeriodInDays: Int32) {
             self.name = name
             self.retentionPeriodInDays = retentionPeriodInDays
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-]+")
+            try validate(retentionPeriodInDays, name:"retentionPeriodInDays", max: 2557)
+            try validate(retentionPeriodInDays, name:"retentionPeriodInDays", min: 30)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4099,6 +5224,7 @@ extension ConfigService {
             AWSShapeMember(label: "TagKey", required: false, type: .string), 
             AWSShapeMember(label: "TagValue", required: false, type: .string)
         ]
+
         /// The ID of the only AWS resource that you want to trigger an evaluation for the rule. If you specify a resource ID, you must specify one resource type for ComplianceResourceTypes.
         public let complianceResourceId: String?
         /// The resource types of only those AWS resources that you want to trigger an evaluation for the rule. You can only specify one type if you also specify a resource ID for ComplianceResourceId.
@@ -4115,6 +5241,21 @@ extension ConfigService {
             self.tagValue = tagValue
         }
 
+        public func validate() throws {
+            try validate(complianceResourceId, name:"complianceResourceId", max: 768)
+            try validate(complianceResourceId, name:"complianceResourceId", min: 1)
+            try complianceResourceTypes?.forEach {
+                try validate($0, name:"complianceResourceTypes[]", max: 256)
+                try validate($0, name:"complianceResourceTypes[]", min: 1)
+            }
+            try validate(complianceResourceTypes, name:"complianceResourceTypes", max: 100)
+            try validate(complianceResourceTypes, name:"complianceResourceTypes", min: 0)
+            try validate(tagKey, name:"tagKey", max: 128)
+            try validate(tagKey, name:"tagKey", min: 1)
+            try validate(tagValue, name:"tagValue", max: 256)
+            try validate(tagValue, name:"tagValue", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceResourceId = "ComplianceResourceId"
             case complianceResourceTypes = "ComplianceResourceTypes"
@@ -4129,6 +5270,7 @@ extension ConfigService {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The SQL query SELECT command.
         public let expression: String
         /// The maximum number of query results returned on each page. 
@@ -4140,6 +5282,13 @@ extension ConfigService {
             self.expression = expression
             self.limit = limit
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(expression, name:"expression", max: 4096)
+            try validate(expression, name:"expression", min: 1)
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4155,6 +5304,7 @@ extension ConfigService {
             AWSShapeMember(label: "QueryInfo", required: false, type: .structure), 
             AWSShapeMember(label: "Results", required: false, type: .list)
         ]
+
         /// The nextToken string returned in a previous request that you use to request the next page of results in a paginated response. 
         public let nextToken: String?
         /// Returns the QueryInfo object.
@@ -4181,6 +5331,7 @@ extension ConfigService {
             AWSShapeMember(label: "SourceDetails", required: false, type: .list), 
             AWSShapeMember(label: "SourceIdentifier", required: true, type: .string)
         ]
+
         /// Indicates whether AWS or the customer owns and manages the AWS Config rule.
         public let owner: Owner
         /// Provides the source and type of the event that causes AWS Config to evaluate your AWS resources.
@@ -4192,6 +5343,13 @@ extension ConfigService {
             self.owner = owner
             self.sourceDetails = sourceDetails
             self.sourceIdentifier = sourceIdentifier
+        }
+
+        public func validate() throws {
+            try validate(sourceDetails, name:"sourceDetails", max: 25)
+            try validate(sourceDetails, name:"sourceDetails", min: 0)
+            try validate(sourceIdentifier, name:"sourceIdentifier", max: 256)
+            try validate(sourceIdentifier, name:"sourceIdentifier", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4207,6 +5365,7 @@ extension ConfigService {
             AWSShapeMember(label: "MaximumExecutionFrequency", required: false, type: .enum), 
             AWSShapeMember(label: "MessageType", required: false, type: .enum)
         ]
+
         /// The source of the event, such as an AWS service, that triggers AWS Config to evaluate your AWS resources.
         public let eventSource: EventSource?
         /// The frequency at which you want AWS Config to run evaluations for a custom rule with a periodic trigger. If you specify a value for MaximumExecutionFrequency, then MessageType must use the ScheduledNotification value.  By default, rules with a periodic trigger are evaluated every 24 hours. To change the frequency, specify a valid value for the MaximumExecutionFrequency parameter. Based on the valid value you choose, AWS Config runs evaluations once for each valid value. For example, if you choose Three_Hours, AWS Config runs evaluations once every three hours. In this case, Three_Hours is the frequency of this rule.  
@@ -4231,11 +5390,21 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigRuleNames", required: false, type: .list)
         ]
+
         /// The list of names of AWS Config rules that you want to run evaluations for.
         public let configRuleNames: [String]?
 
         public init(configRuleNames: [String]? = nil) {
             self.configRuleNames = configRuleNames
+        }
+
+        public func validate() throws {
+            try configRuleNames?.forEach {
+                try validate($0, name:"configRuleNames[]", max: 64)
+                try validate($0, name:"configRuleNames[]", min: 1)
+            }
+            try validate(configRuleNames, name:"configRuleNames", max: 25)
+            try validate(configRuleNames, name:"configRuleNames", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4244,6 +5413,7 @@ extension ConfigService {
     }
 
     public struct StartConfigRulesEvaluationResponse: AWSShape {
+
 
         public init() {
         }
@@ -4254,11 +5424,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecorderName", required: true, type: .string)
         ]
+
         /// The name of the recorder object that records each configuration change made to the resources.
         public let configurationRecorderName: String
 
         public init(configurationRecorderName: String) {
             self.configurationRecorderName = configurationRecorderName
+        }
+
+        public func validate() throws {
+            try validate(configurationRecorderName, name:"configurationRecorderName", max: 256)
+            try validate(configurationRecorderName, name:"configurationRecorderName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4271,6 +5447,7 @@ extension ConfigService {
             AWSShapeMember(label: "ConfigRuleName", required: true, type: .string), 
             AWSShapeMember(label: "ResourceKeys", required: true, type: .list)
         ]
+
         /// The list of names of AWS Config rules that you want to run remediation execution for.
         public let configRuleName: String
         /// A list of resource keys to be processed with the current request. Each element in the list consists of the resource type and resource ID. 
@@ -4279,6 +5456,16 @@ extension ConfigService {
         public init(configRuleName: String, resourceKeys: [ResourceKey]) {
             self.configRuleName = configRuleName
             self.resourceKeys = resourceKeys
+        }
+
+        public func validate() throws {
+            try validate(configRuleName, name:"configRuleName", max: 64)
+            try validate(configRuleName, name:"configRuleName", min: 1)
+            try resourceKeys.forEach {
+                try $0.validate()
+            }
+            try validate(resourceKeys, name:"resourceKeys", max: 100)
+            try validate(resourceKeys, name:"resourceKeys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4292,6 +5479,7 @@ extension ConfigService {
             AWSShapeMember(label: "FailedItems", required: false, type: .list), 
             AWSShapeMember(label: "FailureMessage", required: false, type: .string)
         ]
+
         /// For resources that have failed to start execution, the API returns a resource key object.
         public let failedItems: [ResourceKey]?
         /// Returns a failure message. For example, the resource is already compliant.
@@ -4300,6 +5488,14 @@ extension ConfigService {
         public init(failedItems: [ResourceKey]? = nil, failureMessage: String? = nil) {
             self.failedItems = failedItems
             self.failureMessage = failureMessage
+        }
+
+        public func validate() throws {
+            try failedItems?.forEach {
+                try $0.validate()
+            }
+            try validate(failedItems, name:"failedItems", max: 100)
+            try validate(failedItems, name:"failedItems", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4312,11 +5508,21 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// A list of values. For example, the ARN of the assumed role. 
         public let values: [String]?
 
         public init(values: [String]? = nil) {
             self.values = values
+        }
+
+        public func validate() throws {
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 256)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 25)
+            try validate(values, name:"values", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4329,12 +5535,17 @@ extension ConfigService {
             AWSShapeMember(label: "AccountId", required: false, type: .string), 
             AWSShapeMember(label: "MemberAccountRuleStatus", required: false, type: .enum)
         ]
+
         public let accountId: String?
         public let memberAccountRuleStatus: MemberAccountRuleStatus?
 
         public init(accountId: String? = nil, memberAccountRuleStatus: MemberAccountRuleStatus? = nil) {
             self.accountId = accountId
             self.memberAccountRuleStatus = memberAccountRuleStatus
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4347,11 +5558,17 @@ extension ConfigService {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConfigurationRecorderName", required: true, type: .string)
         ]
+
         /// The name of the recorder object that records each configuration change made to the resources.
         public let configurationRecorderName: String
 
         public init(configurationRecorderName: String) {
             self.configurationRecorderName = configurationRecorderName
+        }
+
+        public func validate() throws {
+            try validate(configurationRecorderName, name:"configurationRecorderName", max: 256)
+            try validate(configurationRecorderName, name:"configurationRecorderName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4364,6 +5581,7 @@ extension ConfigService {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// One part of a key-value pair that make up a tag. A key is a general label that acts like a category for more specific tag values.
         public let key: String?
         /// The optional part of a key-value pair that make up a tag. A value acts as a descriptor within a tag category (key).
@@ -4372,6 +5590,13 @@ extension ConfigService {
         public init(key: String? = nil, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4385,6 +5610,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the resource for which to list the tags. Currently, the supported resources are ConfigRule, ConfigurationAggregator and AggregatorAuthorization.
         public let resourceArn: String
         /// An array of tag object.
@@ -4393,6 +5619,16 @@ extension ConfigService {
         public init(resourceArn: String, tags: [Tag]) {
             self.resourceArn = resourceArn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4406,6 +5642,7 @@ extension ConfigService {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the resource for which to list the tags. Currently, the supported resources are ConfigRule, ConfigurationAggregator and AggregatorAuthorization.
         public let resourceArn: String
         /// The keys of the tags to be removed.
@@ -4414,6 +5651,17 @@ extension ConfigService {
         public init(resourceArn: String, tagKeys: [String]) {
             self.resourceArn = resourceArn
             self.tagKeys = tagKeys
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

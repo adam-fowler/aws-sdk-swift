@@ -12,6 +12,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of an issued ACM certificate that is valid for the domain being associated.
         public let acmCertificateArn: String
         /// The name to display.
@@ -28,6 +29,16 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(acmCertificateArn, name:"acmCertificateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]+:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acmCertificateArn = "AcmCertificateArn"
             case displayName = "DisplayName"
@@ -37,6 +48,7 @@ extension WorkLink {
     }
 
     public struct AssociateDomainResponse: AWSShape {
+
 
         public init() {
         }
@@ -49,6 +61,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: false, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The authorization provider type.
         public let authorizationProviderType: AuthorizationProviderType
         /// The domain name of the authorization provider. This applies only to SAML-based authorization providers.
@@ -62,6 +75,14 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authorizationProviderType = "AuthorizationProviderType"
             case domainName = "DomainName"
@@ -73,11 +94,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AuthorizationProviderId", required: false, type: .string)
         ]
+
         /// A unique identifier for the authorization provider.
         public let authorizationProviderId: String?
 
         public init(authorizationProviderId: String? = nil) {
             self.authorizationProviderId = authorizationProviderId
+        }
+
+        public func validate() throws {
+            try validate(authorizationProviderId, name:"authorizationProviderId", max: 256)
+            try validate(authorizationProviderId, name:"authorizationProviderId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -91,6 +118,7 @@ extension WorkLink {
             AWSShapeMember(label: "DisplayName", required: false, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The root certificate of the CA.
         public let certificate: String
         /// The certificate name to display.
@@ -104,6 +132,15 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(certificate, name:"certificate", max: 8192)
+            try validate(certificate, name:"certificate", min: 1)
+            try validate(certificate, name:"certificate", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificate = "Certificate"
             case displayName = "DisplayName"
@@ -115,11 +152,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WebsiteCaId", required: false, type: .string)
         ]
+
         /// A unique identifier for the CA.
         public let websiteCaId: String?
 
         public init(websiteCaId: String? = nil) {
             self.websiteCaId = websiteCaId
+        }
+
+        public func validate() throws {
+            try validate(websiteCaId, name:"websiteCaId", max: 256)
+            try validate(websiteCaId, name:"websiteCaId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -138,6 +181,7 @@ extension WorkLink {
             AWSShapeMember(label: "FleetName", required: true, type: .string), 
             AWSShapeMember(label: "OptimizeForEndUserLocation", required: false, type: .boolean)
         ]
+
         /// The fleet name to display.
         public let displayName: String?
         /// A unique name for the fleet.
@@ -151,6 +195,13 @@ extension WorkLink {
             self.optimizeForEndUserLocation = optimizeForEndUserLocation
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(fleetName, name:"fleetName", max: 48)
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(fleetName, name:"fleetName", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,46}[a-z0-9])?$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case displayName = "DisplayName"
             case fleetName = "FleetName"
@@ -162,11 +213,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FleetArn", required: false, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String?
 
         public init(fleetArn: String? = nil) {
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -178,11 +235,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
 
         public init(fleetArn: String) {
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -191,6 +254,7 @@ extension WorkLink {
     }
 
     public struct DeleteFleetResponse: AWSShape {
+
 
         public init() {
         }
@@ -201,11 +265,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
 
         public init(fleetArn: String) {
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -217,6 +287,7 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AuditStreamArn", required: false, type: .string)
         ]
+
         /// The ARN of the Amazon Kinesis data stream that will receive the audit events.
         public let auditStreamArn: String?
 
@@ -233,11 +304,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
 
         public init(fleetArn: String) {
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -251,6 +328,7 @@ extension WorkLink {
             AWSShapeMember(label: "SubnetIds", required: false, type: .list), 
             AWSShapeMember(label: "VpcId", required: false, type: .string)
         ]
+
         /// The security groups associated with access to the provided subnets.
         public let securityGroupIds: [String]?
         /// The subnets used for X-ENI connections from Amazon WorkLink rendering containers.
@@ -264,6 +342,17 @@ extension WorkLink {
             self.vpcId = vpcId
         }
 
+        public func validate() throws {
+            try securityGroupIds?.forEach {
+                try validate($0, name:"securityGroupIds[]", pattern: "^sg-([0-9a-f]{8}|[0-9a-f]{17})$")
+            }
+            try validate(securityGroupIds, name:"securityGroupIds", max: 5)
+            try subnetIds?.forEach {
+                try validate($0, name:"subnetIds[]", pattern: "^subnet-([0-9a-f]{8}|[0-9a-f]{17})$")
+            }
+            try validate(vpcId, name:"vpcId", pattern: "^vpc-([0-9a-f]{8}|[0-9a-f]{17})$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case securityGroupIds = "SecurityGroupIds"
             case subnetIds = "SubnetIds"
@@ -275,11 +364,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
 
         public init(fleetArn: String) {
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -291,11 +386,18 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeviceCaCertificate", required: false, type: .string)
         ]
+
         /// The certificate chain, including intermediate certificates and the root certificate authority certificate used to issue device certificates.
         public let deviceCaCertificate: String?
 
         public init(deviceCaCertificate: String? = nil) {
             self.deviceCaCertificate = deviceCaCertificate
+        }
+
+        public func validate() throws {
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", max: 8192)
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", min: 1)
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -308,6 +410,7 @@ extension WorkLink {
             AWSShapeMember(label: "DeviceId", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// A unique identifier for a registered user's device.
         public let deviceId: String
         /// The ARN of the fleet.
@@ -316,6 +419,13 @@ extension WorkLink {
         public init(deviceId: String, fleetArn: String) {
             self.deviceId = deviceId
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(deviceId, name:"deviceId", max: 256)
+            try validate(deviceId, name:"deviceId", min: 1)
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -336,6 +446,7 @@ extension WorkLink {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "Username", required: false, type: .string)
         ]
+
         /// The date that the device first signed in to Amazon WorkLink.
         public let firstAccessedTime: TimeStamp?
         /// The date that the device last accessed Amazon WorkLink.
@@ -367,6 +478,21 @@ extension WorkLink {
             self.username = username
         }
 
+        public func validate() throws {
+            try validate(manufacturer, name:"manufacturer", max: 256)
+            try validate(manufacturer, name:"manufacturer", min: 1)
+            try validate(model, name:"model", max: 256)
+            try validate(model, name:"model", min: 1)
+            try validate(operatingSystem, name:"operatingSystem", max: 256)
+            try validate(operatingSystem, name:"operatingSystem", min: 1)
+            try validate(operatingSystemVersion, name:"operatingSystemVersion", max: 256)
+            try validate(operatingSystemVersion, name:"operatingSystemVersion", min: 1)
+            try validate(patchLevel, name:"patchLevel", max: 256)
+            try validate(patchLevel, name:"patchLevel", min: 1)
+            try validate(username, name:"username", max: 256)
+            try validate(username, name:"username", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case firstAccessedTime = "FirstAccessedTime"
             case lastAccessedTime = "LastAccessedTime"
@@ -385,6 +511,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The name of the domain.
         public let domainName: String
         /// The ARN of the fleet.
@@ -393,6 +520,14 @@ extension WorkLink {
         public init(domainName: String, fleetArn: String) {
             self.domainName = domainName
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -409,6 +544,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: false, type: .string), 
             AWSShapeMember(label: "DomainStatus", required: false, type: .enum)
         ]
+
         /// The ARN of an issued ACM certificate that is valid for the domain being associated.
         public let acmCertificateArn: String?
         /// The time that the domain was added.
@@ -428,6 +564,14 @@ extension WorkLink {
             self.domainStatus = domainStatus
         }
 
+        public func validate() throws {
+            try validate(acmCertificateArn, name:"acmCertificateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]+:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acmCertificateArn = "AcmCertificateArn"
             case createdTime = "CreatedTime"
@@ -441,11 +585,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
 
         public init(fleetArn: String) {
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -463,6 +613,7 @@ extension WorkLink {
             AWSShapeMember(label: "LastUpdatedTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "OptimizeForEndUserLocation", required: false, type: .boolean)
         ]
+
         /// The identifier used by users to sign in to the Amazon WorkLink app.
         public let companyCode: String?
         /// The time that the fleet was created.
@@ -488,6 +639,15 @@ extension WorkLink {
             self.optimizeForEndUserLocation = optimizeForEndUserLocation
         }
 
+        public func validate() throws {
+            try validate(companyCode, name:"companyCode", max: 32)
+            try validate(companyCode, name:"companyCode", min: 1)
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(fleetName, name:"fleetName", max: 48)
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(fleetName, name:"fleetName", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,46}[a-z0-9])?$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case companyCode = "CompanyCode"
             case createdTime = "CreatedTime"
@@ -503,11 +663,17 @@ extension WorkLink {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
 
         public init(fleetArn: String) {
             self.fleetArn = fleetArn
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -521,6 +687,7 @@ extension WorkLink {
             AWSShapeMember(label: "IdentityProviderType", required: false, type: .enum), 
             AWSShapeMember(label: "ServiceProviderSamlMetadata", required: false, type: .string)
         ]
+
         /// The SAML metadata document provided by the user’s identity provider.
         public let identityProviderSamlMetadata: String?
         /// The type of identity provider.
@@ -532,6 +699,13 @@ extension WorkLink {
             self.identityProviderSamlMetadata = identityProviderSamlMetadata
             self.identityProviderType = identityProviderType
             self.serviceProviderSamlMetadata = serviceProviderSamlMetadata
+        }
+
+        public func validate() throws {
+            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", max: 204800)
+            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", min: 1)
+            try validate(serviceProviderSamlMetadata, name:"serviceProviderSamlMetadata", max: 204800)
+            try validate(serviceProviderSamlMetadata, name:"serviceProviderSamlMetadata", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -546,6 +720,7 @@ extension WorkLink {
             AWSShapeMember(label: "FleetArn", required: true, type: .string), 
             AWSShapeMember(label: "WebsiteCaId", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// A unique identifier for the certificate authority.
@@ -554,6 +729,13 @@ extension WorkLink {
         public init(fleetArn: String, websiteCaId: String) {
             self.fleetArn = fleetArn
             self.websiteCaId = websiteCaId
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(websiteCaId, name:"websiteCaId", max: 256)
+            try validate(websiteCaId, name:"websiteCaId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -568,6 +750,7 @@ extension WorkLink {
             AWSShapeMember(label: "CreatedTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "DisplayName", required: false, type: .string)
         ]
+
         /// The root certificate of the certificate authority.
         public let certificate: String?
         /// The time that the certificate authority was added.
@@ -579,6 +762,13 @@ extension WorkLink {
             self.certificate = certificate
             self.createdTime = createdTime
             self.displayName = displayName
+        }
+
+        public func validate() throws {
+            try validate(certificate, name:"certificate", max: 8192)
+            try validate(certificate, name:"certificate", min: 1)
+            try validate(certificate, name:"certificate", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            try validate(displayName, name:"displayName", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -599,6 +789,7 @@ extension WorkLink {
             AWSShapeMember(label: "DeviceId", required: false, type: .string), 
             AWSShapeMember(label: "DeviceStatus", required: false, type: .enum)
         ]
+
         /// The ID of the device.
         public let deviceId: String?
         /// The status of the device.
@@ -607,6 +798,11 @@ extension WorkLink {
         public init(deviceId: String? = nil, deviceStatus: DeviceStatus? = nil) {
             self.deviceId = deviceId
             self.deviceStatus = deviceStatus
+        }
+
+        public func validate() throws {
+            try validate(deviceId, name:"deviceId", max: 256)
+            try validate(deviceId, name:"deviceId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -620,6 +816,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The name of the domain.
         public let domainName: String
         /// The ARN of the fleet.
@@ -630,6 +827,14 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "DomainName"
             case fleetArn = "FleetArn"
@@ -637,6 +842,7 @@ extension WorkLink {
     }
 
     public struct DisassociateDomainResponse: AWSShape {
+
 
         public init() {
         }
@@ -648,6 +854,7 @@ extension WorkLink {
             AWSShapeMember(label: "AuthorizationProviderId", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// A unique identifier for the authorization provider.
         public let authorizationProviderId: String
         /// The ARN of the fleet.
@@ -658,6 +865,13 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(authorizationProviderId, name:"authorizationProviderId", max: 256)
+            try validate(authorizationProviderId, name:"authorizationProviderId", min: 1)
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authorizationProviderId = "AuthorizationProviderId"
             case fleetArn = "FleetArn"
@@ -665,6 +879,7 @@ extension WorkLink {
     }
 
     public struct DisassociateWebsiteAuthorizationProviderResponse: AWSShape {
+
 
         public init() {
         }
@@ -676,6 +891,7 @@ extension WorkLink {
             AWSShapeMember(label: "FleetArn", required: true, type: .string), 
             AWSShapeMember(label: "WebsiteCaId", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// A unique identifier for the CA.
@@ -686,6 +902,13 @@ extension WorkLink {
             self.websiteCaId = websiteCaId
         }
 
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(websiteCaId, name:"websiteCaId", max: 256)
+            try validate(websiteCaId, name:"websiteCaId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case fleetArn = "FleetArn"
             case websiteCaId = "WebsiteCaId"
@@ -693,6 +916,7 @@ extension WorkLink {
     }
 
     public struct DisassociateWebsiteCertificateAuthorityResponse: AWSShape {
+
 
         public init() {
         }
@@ -718,6 +942,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "DomainStatus", required: true, type: .enum)
         ]
+
         /// The time that the domain was created.
         public let createdTime: TimeStamp
         /// The name to display.
@@ -732,6 +957,13 @@ extension WorkLink {
             self.displayName = displayName
             self.domainName = domainName
             self.domainStatus = domainStatus
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -762,6 +994,7 @@ extension WorkLink {
             AWSShapeMember(label: "FleetStatus", required: false, type: .enum), 
             AWSShapeMember(label: "LastUpdatedTime", required: false, type: .timestamp)
         ]
+
         /// The identifier used by users to sign into the Amazon WorkLink app.
         public let companyCode: String?
         /// The time when the fleet was created.
@@ -787,6 +1020,17 @@ extension WorkLink {
             self.lastUpdatedTime = lastUpdatedTime
         }
 
+        public func validate() throws {
+            try validate(companyCode, name:"companyCode", max: 32)
+            try validate(companyCode, name:"companyCode", min: 1)
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(fleetName, name:"fleetName", max: 48)
+            try validate(fleetName, name:"fleetName", min: 1)
+            try validate(fleetName, name:"fleetName", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,46}[a-z0-9])?$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case companyCode = "CompanyCode"
             case createdTime = "CreatedTime"
@@ -809,6 +1053,7 @@ extension WorkLink {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
@@ -820,6 +1065,15 @@ extension WorkLink {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -834,6 +1088,7 @@ extension WorkLink {
             AWSShapeMember(label: "Devices", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the devices.
         public let devices: [DeviceSummary]?
         /// The pagination token used to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -842,6 +1097,15 @@ extension WorkLink {
         public init(devices: [DeviceSummary]? = nil, nextToken: String? = nil) {
             self.devices = devices
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try devices?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -856,6 +1120,7 @@ extension WorkLink {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
@@ -867,6 +1132,15 @@ extension WorkLink {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -881,6 +1155,7 @@ extension WorkLink {
             AWSShapeMember(label: "Domains", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the domains.
         public let domains: [DomainSummary]?
         /// The pagination token used to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -889,6 +1164,15 @@ extension WorkLink {
         public init(domains: [DomainSummary]? = nil, nextToken: String? = nil) {
             self.domains = domains
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try domains?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -902,6 +1186,7 @@ extension WorkLink {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results to be included in the next page.
         public let maxResults: Int32?
         /// The pagination token used to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
@@ -910,6 +1195,13 @@ extension WorkLink {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -923,6 +1215,7 @@ extension WorkLink {
             AWSShapeMember(label: "FleetSummaryList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The summary list of the fleets.
         public let fleetSummaryList: [FleetSummary]?
         /// The pagination token used to retrieve the next page of results for this operation. If there are no more pages, this value is null.
@@ -931,6 +1224,15 @@ extension WorkLink {
         public init(fleetSummaryList: [FleetSummary]? = nil, nextToken: String? = nil) {
             self.fleetSummaryList = fleetSummaryList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try fleetSummaryList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -945,6 +1247,7 @@ extension WorkLink {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
@@ -956,6 +1259,15 @@ extension WorkLink {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -970,6 +1282,7 @@ extension WorkLink {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WebsiteAuthorizationProviders", required: false, type: .list)
         ]
+
         /// The pagination token to use to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
         public let nextToken: String?
         /// The website authorization providers.
@@ -978,6 +1291,15 @@ extension WorkLink {
         public init(nextToken: String? = nil, websiteAuthorizationProviders: [WebsiteAuthorizationProviderSummary]? = nil) {
             self.nextToken = nextToken
             self.websiteAuthorizationProviders = websiteAuthorizationProviders
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
+            try websiteAuthorizationProviders?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -992,6 +1314,7 @@ extension WorkLink {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
@@ -1003,6 +1326,15 @@ extension WorkLink {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1017,6 +1349,7 @@ extension WorkLink {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WebsiteCertificateAuthorities", required: false, type: .list)
         ]
+
         /// The pagination token used to retrieve the next page of results for this operation. If there are no more pages, this value is null.
         public let nextToken: String?
         /// Information about the certificates.
@@ -1025,6 +1358,15 @@ extension WorkLink {
         public init(nextToken: String? = nil, websiteCertificateAuthorities: [WebsiteCaSummary]? = nil) {
             self.nextToken = nextToken
             self.websiteCertificateAuthorities = websiteCertificateAuthorities
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
+            try websiteCertificateAuthorities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1038,6 +1380,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The name of the domain.
         public let domainName: String
         /// The ARN of the fleet.
@@ -1048,6 +1391,14 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "DomainName"
             case fleetArn = "FleetArn"
@@ -1055,6 +1406,7 @@ extension WorkLink {
     }
 
     public struct RestoreDomainAccessResponse: AWSShape {
+
 
         public init() {
         }
@@ -1066,6 +1418,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The name of the domain.
         public let domainName: String
         /// The ARN of the fleet.
@@ -1076,6 +1429,14 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "DomainName"
             case fleetArn = "FleetArn"
@@ -1083,6 +1444,7 @@ extension WorkLink {
     }
 
     public struct RevokeDomainAccessResponse: AWSShape {
+
 
         public init() {
         }
@@ -1094,6 +1456,7 @@ extension WorkLink {
             AWSShapeMember(label: "FleetArn", required: true, type: .string), 
             AWSShapeMember(label: "Username", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The name of the user.
@@ -1104,6 +1467,13 @@ extension WorkLink {
             self.username = username
         }
 
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(username, name:"username", max: 256)
+            try validate(username, name:"username", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case fleetArn = "FleetArn"
             case username = "Username"
@@ -1111,6 +1481,7 @@ extension WorkLink {
     }
 
     public struct SignOutUserResponse: AWSShape {
+
 
         public init() {
         }
@@ -1122,6 +1493,7 @@ extension WorkLink {
             AWSShapeMember(label: "AuditStreamArn", required: false, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The ARN of the Amazon Kinesis data stream that receives the audit events.
         public let auditStreamArn: String?
         /// The ARN of the fleet.
@@ -1132,6 +1504,11 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case auditStreamArn = "AuditStreamArn"
             case fleetArn = "FleetArn"
@@ -1139,6 +1516,7 @@ extension WorkLink {
     }
 
     public struct UpdateAuditStreamConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -1152,6 +1530,7 @@ extension WorkLink {
             AWSShapeMember(label: "SubnetIds", required: true, type: .list), 
             AWSShapeMember(label: "VpcId", required: true, type: .string)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The security groups associated with access to the provided subnets.
@@ -1168,6 +1547,19 @@ extension WorkLink {
             self.vpcId = vpcId
         }
 
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try securityGroupIds.forEach {
+                try validate($0, name:"securityGroupIds[]", pattern: "^sg-([0-9a-f]{8}|[0-9a-f]{17})$")
+            }
+            try validate(securityGroupIds, name:"securityGroupIds", max: 5)
+            try subnetIds.forEach {
+                try validate($0, name:"subnetIds[]", pattern: "^subnet-([0-9a-f]{8}|[0-9a-f]{17})$")
+            }
+            try validate(vpcId, name:"vpcId", pattern: "^vpc-([0-9a-f]{8}|[0-9a-f]{17})$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case fleetArn = "FleetArn"
             case securityGroupIds = "SecurityGroupIds"
@@ -1177,6 +1569,7 @@ extension WorkLink {
     }
 
     public struct UpdateCompanyNetworkConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -1188,6 +1581,7 @@ extension WorkLink {
             AWSShapeMember(label: "DeviceCaCertificate", required: false, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The certificate chain, including intermediate certificates and the root certificate authority certificate used to issue device certificates.
         public let deviceCaCertificate: String?
         /// The ARN of the fleet.
@@ -1198,6 +1592,14 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", max: 32768)
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", min: 1)
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", pattern: "(-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}\\u000D?\\u000A)*-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceCaCertificate = "DeviceCaCertificate"
             case fleetArn = "FleetArn"
@@ -1205,6 +1607,7 @@ extension WorkLink {
     }
 
     public struct UpdateDevicePolicyConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -1217,6 +1620,7 @@ extension WorkLink {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "FleetArn", required: true, type: .string)
         ]
+
         /// The name to display.
         public let displayName: String?
         /// The name of the domain.
@@ -1230,6 +1634,15 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case displayName = "DisplayName"
             case domainName = "DomainName"
@@ -1238,6 +1651,7 @@ extension WorkLink {
     }
 
     public struct UpdateDomainMetadataResponse: AWSShape {
+
 
         public init() {
         }
@@ -1250,6 +1664,7 @@ extension WorkLink {
             AWSShapeMember(label: "FleetArn", required: true, type: .string), 
             AWSShapeMember(label: "OptimizeForEndUserLocation", required: false, type: .boolean)
         ]
+
         /// The fleet name to display. The existing DisplayName is unset if null is passed.
         public let displayName: String?
         /// The ARN of the fleet.
@@ -1263,6 +1678,12 @@ extension WorkLink {
             self.optimizeForEndUserLocation = optimizeForEndUserLocation
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case displayName = "DisplayName"
             case fleetArn = "FleetArn"
@@ -1271,6 +1692,7 @@ extension WorkLink {
     }
 
     public struct UpdateFleetMetadataResponse: AWSShape {
+
 
         public init() {
         }
@@ -1283,6 +1705,7 @@ extension WorkLink {
             AWSShapeMember(label: "IdentityProviderSamlMetadata", required: false, type: .string), 
             AWSShapeMember(label: "IdentityProviderType", required: true, type: .enum)
         ]
+
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The SAML metadata document provided by the customer’s identity provider. The existing IdentityProviderSamlMetadata is unset if null is passed.
@@ -1296,6 +1719,13 @@ extension WorkLink {
             self.identityProviderType = identityProviderType
         }
 
+        public func validate() throws {
+            try validate(fleetArn, name:"fleetArn", max: 2048)
+            try validate(fleetArn, name:"fleetArn", min: 20)
+            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", max: 204800)
+            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case fleetArn = "FleetArn"
             case identityProviderSamlMetadata = "IdentityProviderSamlMetadata"
@@ -1304,6 +1734,7 @@ extension WorkLink {
     }
 
     public struct UpdateIdentityProviderConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -1317,6 +1748,7 @@ extension WorkLink {
             AWSShapeMember(label: "CreatedTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "DomainName", required: false, type: .string)
         ]
+
         /// A unique identifier for the authorization provider.
         public let authorizationProviderId: String?
         /// The authorization provider type.
@@ -1333,6 +1765,14 @@ extension WorkLink {
             self.domainName = domainName
         }
 
+        public func validate() throws {
+            try validate(authorizationProviderId, name:"authorizationProviderId", max: 256)
+            try validate(authorizationProviderId, name:"authorizationProviderId", min: 1)
+            try validate(domainName, name:"domainName", max: 253)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authorizationProviderId = "AuthorizationProviderId"
             case authorizationProviderType = "AuthorizationProviderType"
@@ -1347,6 +1787,7 @@ extension WorkLink {
             AWSShapeMember(label: "DisplayName", required: false, type: .string), 
             AWSShapeMember(label: "WebsiteCaId", required: false, type: .string)
         ]
+
         /// The time when the CA was added.
         public let createdTime: TimeStamp?
         /// The name to display.
@@ -1358,6 +1799,12 @@ extension WorkLink {
             self.createdTime = createdTime
             self.displayName = displayName
             self.websiteCaId = websiteCaId
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 100)
+            try validate(websiteCaId, name:"websiteCaId", max: 256)
+            try validate(websiteCaId, name:"websiteCaId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

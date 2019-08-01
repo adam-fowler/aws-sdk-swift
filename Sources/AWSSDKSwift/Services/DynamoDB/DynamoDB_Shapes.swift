@@ -17,6 +17,7 @@ extension DynamoDB {
             AWSShapeMember(label: "AttributeName", required: true, type: .string), 
             AWSShapeMember(label: "AttributeType", required: true, type: .enum)
         ]
+
         /// A name for the attribute.
         public let attributeName: String
         /// The data type for the attribute, where:    S - the attribute is of type String    N - the attribute is of type Number    B - the attribute is of type Binary  
@@ -25,6 +26,11 @@ extension DynamoDB {
         public init(attributeName: String, attributeType: ScalarAttributeType) {
             self.attributeName = attributeName
             self.attributeType = attributeType
+        }
+
+        public func validate() throws {
+            try validate(attributeName, name:"attributeName", max: 255)
+            try validate(attributeName, name:"attributeName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -46,6 +52,7 @@ extension DynamoDB {
             AWSShapeMember(label: "S", required: false, type: .string), 
             AWSShapeMember(label: "SS", required: false, type: .list)
         ]
+
         /// An attribute of type Binary. For example:  "B": "dGhpcyB0ZXh0IGlzIGJhc2U2NC1lbmNvZGVk" 
         public let b: Data?
         /// An attribute of type Boolean. For example:  "BOOL": true 
@@ -99,6 +106,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Action", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .structure)
         ]
+
         /// Specifies how to perform the update. Valid values are PUT (default), DELETE, and ADD. The behavior depends on whether the specified primary key already exists in the table.  If an item with the specified Key is found in the table:     PUT - Adds the specified attribute to the item. If the attribute already exists, it is replaced by the new value.     DELETE - If no value is specified, the attribute and its value are removed from the item. The data type of the specified value must match the existing value's data type. If a set of values is specified, then those values are subtracted from the old set. For example, if the attribute value was the set [a,b,c] and the DELETE action specified [a,c], then the final attribute value would be [b]. Specifying an empty set is an error.    ADD - If the attribute does not already exist, then the attribute and its values are added to the item. If the attribute does exist, then the behavior of ADD depends on the data type of the attribute:   If the existing attribute is a number, and if Value is also a number, then the Value is mathematically added to the existing attribute. If Value is a negative number, then it is subtracted from the existing attribute.   If you use ADD to increment or decrement a number value for an item that doesn't exist before the update, DynamoDB uses 0 as the initial value. In addition, if you use ADD to update an existing item, and intend to increment or decrement an attribute value which does not yet exist, DynamoDB uses 0 as the initial value. For example, suppose that the item you want to update does not yet have an attribute named itemcount, but you decide to ADD the number 3 to this attribute anyway, even though it currently does not exist. DynamoDB will create the itemcount attribute, set its initial value to 0, and finally add 3 to it. The result will be a new itemcount attribute in the item, with a value of 3.    If the existing data type is a set, and if the Value is also a set, then the Value is added to the existing set. (This is a set operation, not mathematical addition.) For example, if the attribute value was the set [1,2], and the ADD action specified [3], then the final attribute value would be [1,2,3]. An error occurs if an Add action is specified for a set attribute and the attribute type specified does not match the existing set type.  Both sets must have the same primitive data type. For example, if the existing data type is a set of strings, the Value must also be a set of strings. The same holds true for number sets and binary sets.   This action is only valid for an existing attribute whose data type is number or is a set. Do not use ADD for any other data types.    If no item with the specified Key is found:     PUT - DynamoDB creates a new item with the specified primary key, and then adds the attribute.     DELETE - Nothing happens; there is no attribute to delete.    ADD - DynamoDB creates an item with the supplied primary key and number (or set of numbers) for the attribute value. The only data types allowed are number and number set; no other data types can be specified.  
         public let action: AttributeAction?
         /// Represents the data for an attribute. Each attribute value is described as a name-value pair. The name is the data type, and the value is the data itself. For more information, see Data Types in the Amazon DynamoDB Developer Guide. 
@@ -120,6 +128,7 @@ extension DynamoDB {
             AWSShapeMember(label: "PolicyName", required: false, type: .string), 
             AWSShapeMember(label: "TargetTrackingScalingPolicyConfiguration", required: false, type: .structure)
         ]
+
         /// The name of the scaling policy.
         public let policyName: String?
         /// Represents a target tracking scaling policy configuration.
@@ -128,6 +137,12 @@ extension DynamoDB {
         public init(policyName: String? = nil, targetTrackingScalingPolicyConfiguration: AutoScalingTargetTrackingScalingPolicyConfigurationDescription? = nil) {
             self.policyName = policyName
             self.targetTrackingScalingPolicyConfiguration = targetTrackingScalingPolicyConfiguration
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 256)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "\\p{Print}+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -141,6 +156,7 @@ extension DynamoDB {
             AWSShapeMember(label: "PolicyName", required: false, type: .string), 
             AWSShapeMember(label: "TargetTrackingScalingPolicyConfiguration", required: true, type: .structure)
         ]
+
         /// The name of the scaling policy.
         public let policyName: String?
         /// Represents a target tracking scaling policy configuration.
@@ -149,6 +165,12 @@ extension DynamoDB {
         public init(policyName: String? = nil, targetTrackingScalingPolicyConfiguration: AutoScalingTargetTrackingScalingPolicyConfigurationUpdate) {
             self.policyName = policyName
             self.targetTrackingScalingPolicyConfiguration = targetTrackingScalingPolicyConfiguration
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 256)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "\\p{Print}+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -165,6 +187,7 @@ extension DynamoDB {
             AWSShapeMember(label: "MinimumUnits", required: false, type: .long), 
             AWSShapeMember(label: "ScalingPolicies", required: false, type: .list)
         ]
+
         /// Disabled autoscaling for this global table or global secondary index.
         public let autoScalingDisabled: Bool?
         /// Role ARN used for configuring autoScaling policy.
@@ -184,6 +207,14 @@ extension DynamoDB {
             self.scalingPolicies = scalingPolicies
         }
 
+        public func validate() throws {
+            try validate(maximumUnits, name:"maximumUnits", min: 1)
+            try validate(minimumUnits, name:"minimumUnits", min: 1)
+            try scalingPolicies?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case autoScalingDisabled = "AutoScalingDisabled"
             case autoScalingRoleArn = "AutoScalingRoleArn"
@@ -201,6 +232,7 @@ extension DynamoDB {
             AWSShapeMember(label: "MinimumUnits", required: false, type: .long), 
             AWSShapeMember(label: "ScalingPolicyUpdate", required: false, type: .structure)
         ]
+
         /// Disabled autoscaling for this global table or global secondary index.
         public let autoScalingDisabled: Bool?
         /// Role ARN used for configuring autoscaling policy.
@@ -220,6 +252,15 @@ extension DynamoDB {
             self.scalingPolicyUpdate = scalingPolicyUpdate
         }
 
+        public func validate() throws {
+            try validate(autoScalingRoleArn, name:"autoScalingRoleArn", max: 1600)
+            try validate(autoScalingRoleArn, name:"autoScalingRoleArn", min: 1)
+            try validate(autoScalingRoleArn, name:"autoScalingRoleArn", pattern: "[\\u0020-\\uD7FF\\uE000-\\uFFFD\\uD800\\uDC00-\\uDBFF\\uDFFF\\r\\n\\t]*")
+            try validate(maximumUnits, name:"maximumUnits", min: 1)
+            try validate(minimumUnits, name:"minimumUnits", min: 1)
+            try scalingPolicyUpdate?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case autoScalingDisabled = "AutoScalingDisabled"
             case autoScalingRoleArn = "AutoScalingRoleArn"
@@ -236,6 +277,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ScaleOutCooldown", required: false, type: .integer), 
             AWSShapeMember(label: "TargetValue", required: true, type: .double)
         ]
+
         /// Indicates whether scale in by the target tracking policy is disabled. If the value is true, scale in is disabled and the target tracking policy won't remove capacity from the scalable resource. Otherwise, scale in is enabled and the target tracking policy can remove capacity from the scalable resource. The default value is false.
         public let disableScaleIn: Bool?
         /// The amount of time, in seconds, after a scale in activity completes before another scale in activity can start. The cooldown period is used to block subsequent scale in requests until it has expired. You should scale in conservatively to protect your application's availability. However, if another alarm triggers a scale out policy during the cooldown period after a scale-in, application autoscaling scales out your scalable target immediately. 
@@ -267,6 +309,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ScaleOutCooldown", required: false, type: .integer), 
             AWSShapeMember(label: "TargetValue", required: true, type: .double)
         ]
+
         /// Indicates whether scale in by the target tracking policy is disabled. If the value is true, scale in is disabled and the target tracking policy won't remove capacity from the scalable resource. Otherwise, scale in is enabled and the target tracking policy can remove capacity from the scalable resource. The default value is false.
         public let disableScaleIn: Bool?
         /// The amount of time, in seconds, after a scale in activity completes before another scale in activity can start. The cooldown period is used to block subsequent scale in requests until it has expired. You should scale in conservatively to protect your application's availability. However, if another alarm triggers a scale out policy during the cooldown period after a scale-in, application autoscaling scales out your scalable target immediately. 
@@ -297,6 +340,7 @@ extension DynamoDB {
             AWSShapeMember(label: "SourceTableDetails", required: false, type: .structure), 
             AWSShapeMember(label: "SourceTableFeatureDetails", required: false, type: .structure)
         ]
+
         /// Contains the details of the backup created for the table. 
         public let backupDetails: BackupDetails?
         /// Contains the details of the table when the backup was created. 
@@ -308,6 +352,12 @@ extension DynamoDB {
             self.backupDetails = backupDetails
             self.sourceTableDetails = sourceTableDetails
             self.sourceTableFeatureDetails = sourceTableFeatureDetails
+        }
+
+        public func validate() throws {
+            try backupDetails?.validate()
+            try sourceTableDetails?.validate()
+            try sourceTableFeatureDetails?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -327,6 +377,7 @@ extension DynamoDB {
             AWSShapeMember(label: "BackupStatus", required: true, type: .enum), 
             AWSShapeMember(label: "BackupType", required: true, type: .enum)
         ]
+
         /// ARN associated with the backup.
         public let backupArn: String
         /// Time at which the backup was created. This is the request time of the backup. 
@@ -350,6 +401,15 @@ extension DynamoDB {
             self.backupSizeBytes = backupSizeBytes
             self.backupStatus = backupStatus
             self.backupType = backupType
+        }
+
+        public func validate() throws {
+            try validate(backupArn, name:"backupArn", max: 1024)
+            try validate(backupArn, name:"backupArn", min: 37)
+            try validate(backupName, name:"backupName", max: 255)
+            try validate(backupName, name:"backupName", min: 3)
+            try validate(backupName, name:"backupName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(backupSizeBytes, name:"backupSizeBytes", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -383,6 +443,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableId", required: false, type: .string), 
             AWSShapeMember(label: "TableName", required: false, type: .string)
         ]
+
         /// ARN associated with the backup.
         public let backupArn: String?
         /// Time at which the backup was created.
@@ -415,6 +476,19 @@ extension DynamoDB {
             self.tableArn = tableArn
             self.tableId = tableId
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(backupArn, name:"backupArn", max: 1024)
+            try validate(backupArn, name:"backupArn", min: 37)
+            try validate(backupName, name:"backupName", max: 255)
+            try validate(backupName, name:"backupName", min: 3)
+            try validate(backupName, name:"backupName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(backupSizeBytes, name:"backupSizeBytes", min: 0)
+            try validate(tableId, name:"tableId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -451,6 +525,7 @@ extension DynamoDB {
             AWSShapeMember(label: "RequestItems", required: true, type: .map), 
             AWSShapeMember(label: "ReturnConsumedCapacity", required: false, type: .enum)
         ]
+
         /// A map of one or more table names and, for each table, a map that describes one or more items to retrieve from that table. Each table name can be used only once per BatchGetItem request. Each element in the map of items to retrieve consists of the following:    ConsistentRead - If true, a strongly consistent read is used; if false (the default), an eventually consistent read is used.    ExpressionAttributeNames - One or more substitution tokens for attribute names in the ProjectionExpression parameter. The following are some use cases for using ExpressionAttributeNames:   To access an attribute whose name conflicts with a DynamoDB reserved word.   To create a placeholder for repeating occurrences of an attribute name in an expression.   To prevent special characters in an attribute name from being misinterpreted in an expression.   Use the # character in an expression to dereference an attribute name. For example, consider the following attribute name:    Percentile    The name of this attribute conflicts with a reserved word, so it cannot be used directly in an expression. (For the complete list of reserved words, see Reserved Words in the Amazon DynamoDB Developer Guide). To work around this, you could specify the following for ExpressionAttributeNames:    {"#P":"Percentile"}    You could then use this substitution in an expression, as in this example:    #P = :val     Tokens that begin with the : character are expression attribute values, which are placeholders for the actual value at runtime.  For more information about expression attribute names, see Accessing Item Attributes in the Amazon DynamoDB Developer Guide.    Keys - An array of primary key attribute values that define specific items in the table. For each primary key, you must provide all of the key attributes. For example, with a simple primary key, you only need to provide the partition key value. For a composite key, you must provide both the partition key value and the sort key value.    ProjectionExpression - A string that identifies one or more attributes to retrieve from the table. These attributes can include scalars, sets, or elements of a JSON document. The attributes in the expression must be separated by commas. If no attribute names are specified, then all attributes are returned. If any of the requested attributes are not found, they do not appear in the result. For more information, see Accessing Item Attributes in the Amazon DynamoDB Developer Guide.    AttributesToGet - This is a legacy parameter. Use ProjectionExpression instead. For more information, see AttributesToGet in the Amazon DynamoDB Developer Guide.   
         public let requestItems: [String: KeysAndAttributes]
         public let returnConsumedCapacity: ReturnConsumedCapacity?
@@ -472,6 +547,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Responses", required: false, type: .map), 
             AWSShapeMember(label: "UnprocessedKeys", required: false, type: .map)
         ]
+
         /// The read capacity units consumed by the entire BatchGetItem operation. Each element consists of:    TableName - The table that consumed the provisioned throughput.    CapacityUnits - The total number of capacity units consumed.  
         public let consumedCapacity: [ConsumedCapacity]?
         /// A map of table name to a list of items. Each object in Responses consists of a table name, along with a map of attribute data consisting of the data type and attribute value.
@@ -483,6 +559,12 @@ extension DynamoDB {
             self.consumedCapacity = consumedCapacity
             self.responses = responses
             self.unprocessedKeys = unprocessedKeys
+        }
+
+        public func validate() throws {
+            try consumedCapacity?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -498,6 +580,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnConsumedCapacity", required: false, type: .enum), 
             AWSShapeMember(label: "ReturnItemCollectionMetrics", required: false, type: .enum)
         ]
+
         /// A map of one or more table names and, for each table, a list of operations to be performed (DeleteRequest or PutRequest). Each element in the map consists of the following:    DeleteRequest - Perform a DeleteItem operation on the specified item. The item to be deleted is identified by a Key subelement:    Key - A map of primary key attribute values that uniquely identify the item. Each entry in this map consists of an attribute name and an attribute value. For each primary key, you must provide all of the key attributes. For example, with a simple primary key, you only need to provide a value for the partition key. For a composite primary key, you must provide values for both the partition key and the sort key.      PutRequest - Perform a PutItem operation on the specified item. The item to be put is identified by an Item subelement:    Item - A map of attributes and their values. Each entry in this map consists of an attribute name and an attribute value. Attribute values must not be null; string and binary type attributes must have lengths greater than zero; and set type attributes must not be empty. Requests that contain empty values are rejected with a ValidationException exception. If you specify any attributes that are part of an index key, then the data types for those attributes must match those of the schema in the table's attribute definition.    
         public let requestItems: [String: [WriteRequest]]
         public let returnConsumedCapacity: ReturnConsumedCapacity?
@@ -523,6 +606,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ItemCollectionMetrics", required: false, type: .map), 
             AWSShapeMember(label: "UnprocessedItems", required: false, type: .map)
         ]
+
         /// The capacity units consumed by the entire BatchWriteItem operation. Each element consists of:    TableName - The table that consumed the provisioned throughput.    CapacityUnits - The total number of capacity units consumed.  
         public let consumedCapacity: [ConsumedCapacity]?
         /// A list of tables that were processed by BatchWriteItem and, for each table, information about any item collections that were affected by individual DeleteItem or PutItem operations. Each entry consists of the following subelements:    ItemCollectionKey - The partition key value of the item collection. This is the same as the partition key value of the item.    SizeEstimateRangeGB - An estimate of item collection size, expressed in GB. This is a two-element array containing a lower bound and an upper bound for the estimate. The estimate includes the size of all the items in the table, plus the size of all attributes projected into all of the local secondary indexes on the table. Use this estimate to measure whether a local secondary index is approaching its size limit. The estimate is subject to change over time; therefore, do not rely on the precision or accuracy of the estimate.  
@@ -534,6 +618,12 @@ extension DynamoDB {
             self.consumedCapacity = consumedCapacity
             self.itemCollectionMetrics = itemCollectionMetrics
             self.unprocessedItems = unprocessedItems
+        }
+
+        public func validate() throws {
+            try consumedCapacity?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -554,6 +644,7 @@ extension DynamoDB {
             AWSShapeMember(label: "BillingMode", required: false, type: .enum), 
             AWSShapeMember(label: "LastUpdateToPayPerRequestDateTime", required: false, type: .timestamp)
         ]
+
         /// Controls how you are charged for read and write throughput and how you manage capacity. This setting can be changed later.    PROVISIONED - Sets the read/write capacity mode to PROVISIONED. We recommend using PROVISIONED for predictable workloads.    PAY_PER_REQUEST - Sets the read/write capacity mode to PAY_PER_REQUEST. We recommend using PAY_PER_REQUEST for unpredictable workloads.   
         public let billingMode: BillingMode?
         /// Represents the time when PAY_PER_REQUEST was last set as the read/write capacity mode.
@@ -576,6 +667,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Item", required: false, type: .map), 
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// Status code for the result of the cancelled transaction.
         public let code: String?
         /// Item in the request which caused the transaction to get cancelled.
@@ -602,6 +694,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReadCapacityUnits", required: false, type: .double), 
             AWSShapeMember(label: "WriteCapacityUnits", required: false, type: .double)
         ]
+
         /// The total number of capacity units consumed on a table or an index.
         public let capacityUnits: Double?
         /// The total number of read capacity units consumed on a table or an index.
@@ -644,6 +737,7 @@ extension DynamoDB {
             AWSShapeMember(label: "AttributeValueList", required: false, type: .list), 
             AWSShapeMember(label: "ComparisonOperator", required: true, type: .enum)
         ]
+
         /// One or more values to evaluate against the supplied attribute. The number of values in the list depends on the ComparisonOperator being used. For type Number, value comparisons are numeric. String value comparisons for greater than, equals, or less than are based on ASCII character code values. For example, a is greater than A, and a is greater than B. For a list of code values, see http://en.wikipedia.org/wiki/ASCII#ASCII_printable_characters. For Binary, DynamoDB treats each byte of the binary data as unsigned when it compares binary values.
         public let attributeValueList: [AttributeValue]?
         /// A comparator for evaluating attributes. For example, equals, greater than, less than, etc. The following comparison operators are available:  EQ | NE | LE | LT | GE | GT | NOT_NULL | NULL | CONTAINS | NOT_CONTAINS | BEGINS_WITH | IN | BETWEEN  The following are descriptions of each comparison operator.    EQ : Equal. EQ is supported for all data types, including lists and maps.  AttributeValueList can contain only one AttributeValue element of type String, Number, Binary, String Set, Number Set, or Binary Set. If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not equal {"NS":["6", "2", "1"]}.     NE : Not equal. NE is supported for all data types, including lists and maps.  AttributeValueList can contain only one AttributeValue of type String, Number, Binary, String Set, Number Set, or Binary Set. If an item contains an AttributeValue of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not equal {"NS":["6", "2", "1"]}.     LE : Less than or equal.   AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     LT : Less than.   AttributeValueList can contain only one AttributeValue of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     GE : Greater than or equal.   AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     GT : Greater than.   AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     NOT_NULL : The attribute exists. NOT_NULL is supported for all data types, including lists and maps.  This operator tests for the existence of an attribute, not its data type. If the data type of attribute "a" is null, and you evaluate it using NOT_NULL, the result is a Boolean true. This result is because the attribute "a" exists; its data type is not relevant to the NOT_NULL comparison operator.     NULL : The attribute does not exist. NULL is supported for all data types, including lists and maps.  This operator tests for the nonexistence of an attribute, not its data type. If the data type of attribute "a" is null, and you evaluate it using NULL, the result is a Boolean false. This is because the attribute "a" exists; its data type is not relevant to the NULL comparison operator.     CONTAINS : Checks for a subsequence, or value in a set.  AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If the target attribute of the comparison is of type String, then the operator checks for a substring match. If the target attribute of the comparison is of type Binary, then the operator looks for a subsequence of the target that matches the input. If the target attribute of the comparison is a set ("SS", "NS", or "BS"), then the operator evaluates to true if it finds an exact match with any member of the set. CONTAINS is supported for lists: When evaluating "a CONTAINS b", "a" can be a list; however, "b" cannot be a set, a map, or a list.    NOT_CONTAINS : Checks for absence of a subsequence, or absence of a value in a set.  AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If the target attribute of the comparison is a String, then the operator checks for the absence of a substring match. If the target attribute of the comparison is Binary, then the operator checks for the absence of a subsequence of the target that matches the input. If the target attribute of the comparison is a set ("SS", "NS", or "BS"), then the operator evaluates to true if it does not find an exact match with any member of the set. NOT_CONTAINS is supported for lists: When evaluating "a NOT CONTAINS b", "a" can be a list; however, "b" cannot be a set, a map, or a list.    BEGINS_WITH : Checks for a prefix.   AttributeValueList can contain only one AttributeValue of type String or Binary (not a Number or a set type). The target attribute of the comparison must be of type String or Binary (not a Number or a set type).     IN : Checks for matching elements in a list.  AttributeValueList can contain one or more AttributeValue elements of type String, Number, or Binary. These attributes are compared against an existing attribute of an item. If any elements of the input are equal to the item attribute, the expression evaluates to true.    BETWEEN : Greater than or equal to the first value, and less than or equal to the second value.   AttributeValueList must contain two AttributeValue elements of the same type, either String, Number, or Binary (not a set type). A target attribute matches if the target value is greater than, or equal to, the first element and less than, or equal to, the second element. If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not compare to {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}    For usage examples of AttributeValueList and ComparisonOperator, see Legacy Conditional Parameters in the Amazon DynamoDB Developer Guide.
@@ -669,6 +763,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnValuesOnConditionCheckFailure", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// A condition that must be satisfied in order for a conditional update to succeed.
         public let conditionExpression: String
         /// One or more substitution tokens for attribute names in an expression.
@@ -689,6 +784,12 @@ extension DynamoDB {
             self.key = key
             self.returnValuesOnConditionCheckFailure = returnValuesOnConditionCheckFailure
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -717,6 +818,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableName", required: false, type: .string), 
             AWSShapeMember(label: "WriteCapacityUnits", required: false, type: .double)
         ]
+
         /// The total number of capacity units consumed by the operation.
         public let capacityUnits: Double?
         /// The amount of throughput consumed on each global index affected by the operation.
@@ -742,6 +844,12 @@ extension DynamoDB {
             self.writeCapacityUnits = writeCapacityUnits
         }
 
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case capacityUnits = "CapacityUnits"
             case globalSecondaryIndexes = "GlobalSecondaryIndexes"
@@ -758,6 +866,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ContinuousBackupsStatus", required: true, type: .enum), 
             AWSShapeMember(label: "PointInTimeRecoveryDescription", required: false, type: .structure)
         ]
+
         ///  ContinuousBackupsStatus can be one of the following states: ENABLED, DISABLED
         public let continuousBackupsStatus: ContinuousBackupsStatus
         /// The description of the point in time recovery settings applied to the table.
@@ -785,6 +894,7 @@ extension DynamoDB {
             AWSShapeMember(label: "BackupName", required: true, type: .string), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// Specified name for the backup.
         public let backupName: String
         /// The name of the table.
@@ -793,6 +903,15 @@ extension DynamoDB {
         public init(backupName: String, tableName: String) {
             self.backupName = backupName
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(backupName, name:"backupName", max: 255)
+            try validate(backupName, name:"backupName", min: 3)
+            try validate(backupName, name:"backupName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -805,11 +924,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BackupDetails", required: false, type: .structure)
         ]
+
         /// Contains the details of the backup created for the table.
         public let backupDetails: BackupDetails?
 
         public init(backupDetails: BackupDetails? = nil) {
             self.backupDetails = backupDetails
+        }
+
+        public func validate() throws {
+            try backupDetails?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -824,6 +948,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Projection", required: true, type: .structure), 
             AWSShapeMember(label: "ProvisionedThroughput", required: false, type: .structure)
         ]
+
         /// The name of the global secondary index to be created.
         public let indexName: String
         /// The key schema for the global secondary index.
@@ -840,6 +965,19 @@ extension DynamoDB {
             self.provisionedThroughput = provisionedThroughput
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try keySchema.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try projection.validate()
+            try provisionedThroughput?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case indexName = "IndexName"
             case keySchema = "KeySchema"
@@ -853,6 +991,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTableName", required: true, type: .string), 
             AWSShapeMember(label: "ReplicationGroup", required: true, type: .list)
         ]
+
         /// The global table name.
         public let globalTableName: String
         /// The Regions where the global table needs to be created.
@@ -861,6 +1000,12 @@ extension DynamoDB {
         public init(globalTableName: String, replicationGroup: [Replica]) {
             self.globalTableName = globalTableName
             self.replicationGroup = replicationGroup
+        }
+
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -873,11 +1018,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GlobalTableDescription", required: false, type: .structure)
         ]
+
         /// Contains the details of the global table.
         public let globalTableDescription: GlobalTableDescription?
 
         public init(globalTableDescription: GlobalTableDescription? = nil) {
             self.globalTableDescription = globalTableDescription
+        }
+
+        public func validate() throws {
+            try globalTableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -889,6 +1039,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RegionName", required: true, type: .string)
         ]
+
         /// The region of the replica to be added.
         public let regionName: String
 
@@ -914,6 +1065,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// An array of attributes that describe the key schema for the table and indexes.
         public let attributeDefinitions: [AttributeDefinition]
         /// Controls how you are charged for read and write throughput and how you manage capacity. This setting can be changed later.    PROVISIONED - Sets the billing mode to PROVISIONED. We recommend using PROVISIONED for predictable workloads.    PAY_PER_REQUEST - Sets the billing mode to PAY_PER_REQUEST. We recommend using PAY_PER_REQUEST for unpredictable workloads.   
@@ -948,6 +1100,30 @@ extension DynamoDB {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try attributeDefinitions.forEach {
+                try $0.validate()
+            }
+            try globalSecondaryIndexes?.forEach {
+                try $0.validate()
+            }
+            try keySchema.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try localSecondaryIndexes?.forEach {
+                try $0.validate()
+            }
+            try provisionedThroughput?.validate()
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+            try tags?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributeDefinitions = "AttributeDefinitions"
             case billingMode = "BillingMode"
@@ -966,11 +1142,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableDescription", required: false, type: .structure)
         ]
+
         /// Represents the properties of the table.
         public let tableDescription: TableDescription?
 
         public init(tableDescription: TableDescription? = nil) {
             self.tableDescription = tableDescription
+        }
+
+        public func validate() throws {
+            try tableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -987,6 +1168,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnValuesOnConditionCheckFailure", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// A condition that must be satisfied in order for a conditional delete to succeed.
         public let conditionExpression: String?
         /// One or more substitution tokens for attribute names in an expression.
@@ -1009,6 +1191,12 @@ extension DynamoDB {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case conditionExpression = "ConditionExpression"
             case expressionAttributeNames = "ExpressionAttributeNames"
@@ -1023,11 +1211,17 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BackupArn", required: true, type: .string)
         ]
+
         /// The ARN associated with the backup.
         public let backupArn: String
 
         public init(backupArn: String) {
             self.backupArn = backupArn
+        }
+
+        public func validate() throws {
+            try validate(backupArn, name:"backupArn", max: 1024)
+            try validate(backupArn, name:"backupArn", min: 37)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1039,11 +1233,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BackupDescription", required: false, type: .structure)
         ]
+
         /// Contains the description of the backup created for the table.
         public let backupDescription: BackupDescription?
 
         public init(backupDescription: BackupDescription? = nil) {
             self.backupDescription = backupDescription
+        }
+
+        public func validate() throws {
+            try backupDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1055,11 +1254,18 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IndexName", required: true, type: .string)
         ]
+
         /// The name of the global secondary index to be deleted.
         public let indexName: String
 
         public init(indexName: String) {
             self.indexName = indexName
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1080,6 +1286,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnValues", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// This is a legacy parameter. Use ConditionExpression instead. For more information, see ConditionalOperator in the Amazon DynamoDB Developer Guide.
         public let conditionalOperator: ConditionalOperator?
         /// A condition that must be satisfied in order for a conditional DeleteItem to succeed. An expression can contain any of the following:   Functions: attribute_exists | attribute_not_exists | attribute_type | contains | begins_with | size  These function names are case-sensitive.   Comparison operators: = | &lt;&gt; | &lt; | &gt; | &lt;= | &gt;= | BETWEEN | IN      Logical operators: AND | OR | NOT    For more information about condition expressions, see Condition Expressions in the Amazon DynamoDB Developer Guide.
@@ -1113,6 +1320,12 @@ extension DynamoDB {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case conditionalOperator = "ConditionalOperator"
             case conditionExpression = "ConditionExpression"
@@ -1133,6 +1346,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ConsumedCapacity", required: false, type: .structure), 
             AWSShapeMember(label: "ItemCollectionMetrics", required: false, type: .structure)
         ]
+
         /// A map of attribute names to AttributeValue objects, representing the item as it appeared before the DeleteItem operation. This map appears in the response only if ReturnValues was specified as ALL_OLD in the request.
         public let attributes: [String: AttributeValue]?
         /// The capacity units consumed by the DeleteItem operation. The data returned includes the total provisioned throughput consumed, along with statistics for the table and any indexes involved in the operation. ConsumedCapacity is only returned if the ReturnConsumedCapacity parameter was specified. For more information, see Provisioned Mode in the Amazon DynamoDB Developer Guide.
@@ -1146,6 +1360,10 @@ extension DynamoDB {
             self.itemCollectionMetrics = itemCollectionMetrics
         }
 
+        public func validate() throws {
+            try consumedCapacity?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "Attributes"
             case consumedCapacity = "ConsumedCapacity"
@@ -1157,6 +1375,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RegionName", required: true, type: .string)
         ]
+
         /// The region of the replica to be removed.
         public let regionName: String
 
@@ -1173,6 +1392,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Key", required: true, type: .map)
         ]
+
         /// A map of attribute name to attribute values, representing the primary key of the item to delete. All of the table's primary key attributes must be specified, and their data types must match those of the table's key schema.
         public let key: [String: AttributeValue]
 
@@ -1189,11 +1409,18 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The name of the table to delete.
         public let tableName: String
 
         public init(tableName: String) {
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1205,11 +1432,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableDescription", required: false, type: .structure)
         ]
+
         /// Represents the properties of a table.
         public let tableDescription: TableDescription?
 
         public init(tableDescription: TableDescription? = nil) {
             self.tableDescription = tableDescription
+        }
+
+        public func validate() throws {
+            try tableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1221,11 +1453,17 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BackupArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) associated with the backup.
         public let backupArn: String
 
         public init(backupArn: String) {
             self.backupArn = backupArn
+        }
+
+        public func validate() throws {
+            try validate(backupArn, name:"backupArn", max: 1024)
+            try validate(backupArn, name:"backupArn", min: 37)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1237,11 +1475,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BackupDescription", required: false, type: .structure)
         ]
+
         /// Contains the description of the backup created for the table.
         public let backupDescription: BackupDescription?
 
         public init(backupDescription: BackupDescription? = nil) {
             self.backupDescription = backupDescription
+        }
+
+        public func validate() throws {
+            try backupDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1253,11 +1496,18 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// Name of the table for which the customer wants to check the continuous backups and point in time recovery settings.
         public let tableName: String
 
         public init(tableName: String) {
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1269,6 +1519,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContinuousBackupsDescription", required: false, type: .structure)
         ]
+
         /// Represents the continuous backups and point in time recovery settings on the table.
         public let continuousBackupsDescription: ContinuousBackupsDescription?
 
@@ -1283,6 +1534,7 @@ extension DynamoDB {
 
     public struct DescribeEndpointsRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -1292,6 +1544,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Endpoints", required: true, type: .list)
         ]
+
         /// List of endpoints.
         public let endpoints: [Endpoint]
 
@@ -1308,11 +1561,18 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GlobalTableName", required: true, type: .string)
         ]
+
         /// The name of the global table.
         public let globalTableName: String
 
         public init(globalTableName: String) {
             self.globalTableName = globalTableName
+        }
+
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1324,11 +1584,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GlobalTableDescription", required: false, type: .structure)
         ]
+
         /// Contains the details of the global table.
         public let globalTableDescription: GlobalTableDescription?
 
         public init(globalTableDescription: GlobalTableDescription? = nil) {
             self.globalTableDescription = globalTableDescription
+        }
+
+        public func validate() throws {
+            try globalTableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1340,11 +1605,18 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GlobalTableName", required: true, type: .string)
         ]
+
         /// The name of the global table to describe.
         public let globalTableName: String
 
         public init(globalTableName: String) {
             self.globalTableName = globalTableName
+        }
+
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1357,6 +1629,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTableName", required: false, type: .string), 
             AWSShapeMember(label: "ReplicaSettings", required: false, type: .list)
         ]
+
         /// The name of the global table.
         public let globalTableName: String?
         /// The Region-specific settings for the global table.
@@ -1367,6 +1640,15 @@ extension DynamoDB {
             self.replicaSettings = replicaSettings
         }
 
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
+            try replicaSettings?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case globalTableName = "GlobalTableName"
             case replicaSettings = "ReplicaSettings"
@@ -1374,6 +1656,7 @@ extension DynamoDB {
     }
 
     public struct DescribeLimitsInput: AWSShape {
+
 
         public init() {
         }
@@ -1387,6 +1670,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableMaxReadCapacityUnits", required: false, type: .long), 
             AWSShapeMember(label: "TableMaxWriteCapacityUnits", required: false, type: .long)
         ]
+
         /// The maximum total read capacity units that your account allows you to provision across all of your tables in this Region.
         public let accountMaxReadCapacityUnits: Int64?
         /// The maximum total write capacity units that your account allows you to provision across all of your tables in this Region.
@@ -1403,6 +1687,13 @@ extension DynamoDB {
             self.tableMaxWriteCapacityUnits = tableMaxWriteCapacityUnits
         }
 
+        public func validate() throws {
+            try validate(accountMaxReadCapacityUnits, name:"accountMaxReadCapacityUnits", min: 1)
+            try validate(accountMaxWriteCapacityUnits, name:"accountMaxWriteCapacityUnits", min: 1)
+            try validate(tableMaxReadCapacityUnits, name:"tableMaxReadCapacityUnits", min: 1)
+            try validate(tableMaxWriteCapacityUnits, name:"tableMaxWriteCapacityUnits", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountMaxReadCapacityUnits = "AccountMaxReadCapacityUnits"
             case accountMaxWriteCapacityUnits = "AccountMaxWriteCapacityUnits"
@@ -1415,11 +1706,18 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The name of the table to describe.
         public let tableName: String
 
         public init(tableName: String) {
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1431,11 +1729,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Table", required: false, type: .structure)
         ]
+
         /// The properties of the table.
         public let table: TableDescription?
 
         public init(table: TableDescription? = nil) {
             self.table = table
+        }
+
+        public func validate() throws {
+            try table?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1447,11 +1750,18 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// The name of the table to be described.
         public let tableName: String
 
         public init(tableName: String) {
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1463,10 +1773,15 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TimeToLiveDescription", required: false, type: .structure)
         ]
+
         public let timeToLiveDescription: TimeToLiveDescription?
 
         public init(timeToLiveDescription: TimeToLiveDescription? = nil) {
             self.timeToLiveDescription = timeToLiveDescription
+        }
+
+        public func validate() throws {
+            try timeToLiveDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1479,6 +1794,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Address", required: true, type: .string), 
             AWSShapeMember(label: "CachePeriodInMinutes", required: true, type: .long)
         ]
+
         /// IP address of the endpoint.
         public let address: String
         /// Endpoint cache time to live (TTL) value.
@@ -1502,6 +1818,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Exists", required: false, type: .boolean), 
             AWSShapeMember(label: "Value", required: false, type: .structure)
         ]
+
         /// One or more values to evaluate against the supplied attribute. The number of values in the list depends on the ComparisonOperator being used. For type Number, value comparisons are numeric. String value comparisons for greater than, equals, or less than are based on ASCII character code values. For example, a is greater than A, and a is greater than B. For a list of code values, see http://en.wikipedia.org/wiki/ASCII#ASCII_printable_characters. For Binary, DynamoDB treats each byte of the binary data as unsigned when it compares binary values. For information on specifying data types in JSON, see JSON Data Format in the Amazon DynamoDB Developer Guide.
         public let attributeValueList: [AttributeValue]?
         /// A comparator for evaluating attributes in the AttributeValueList. For example, equals, greater than, less than, etc. The following comparison operators are available:  EQ | NE | LE | LT | GE | GT | NOT_NULL | NULL | CONTAINS | NOT_CONTAINS | BEGINS_WITH | IN | BETWEEN  The following are descriptions of each comparison operator.    EQ : Equal. EQ is supported for all data types, including lists and maps.  AttributeValueList can contain only one AttributeValue element of type String, Number, Binary, String Set, Number Set, or Binary Set. If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not equal {"NS":["6", "2", "1"]}.     NE : Not equal. NE is supported for all data types, including lists and maps.  AttributeValueList can contain only one AttributeValue of type String, Number, Binary, String Set, Number Set, or Binary Set. If an item contains an AttributeValue of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not equal {"NS":["6", "2", "1"]}.     LE : Less than or equal.   AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     LT : Less than.   AttributeValueList can contain only one AttributeValue of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     GE : Greater than or equal.   AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     GT : Greater than.   AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not equal {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}.     NOT_NULL : The attribute exists. NOT_NULL is supported for all data types, including lists and maps.  This operator tests for the existence of an attribute, not its data type. If the data type of attribute "a" is null, and you evaluate it using NOT_NULL, the result is a Boolean true. This result is because the attribute "a" exists; its data type is not relevant to the NOT_NULL comparison operator.     NULL : The attribute does not exist. NULL is supported for all data types, including lists and maps.  This operator tests for the nonexistence of an attribute, not its data type. If the data type of attribute "a" is null, and you evaluate it using NULL, the result is a Boolean false. This is because the attribute "a" exists; its data type is not relevant to the NULL comparison operator.     CONTAINS : Checks for a subsequence, or value in a set.  AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If the target attribute of the comparison is of type String, then the operator checks for a substring match. If the target attribute of the comparison is of type Binary, then the operator looks for a subsequence of the target that matches the input. If the target attribute of the comparison is a set ("SS", "NS", or "BS"), then the operator evaluates to true if it finds an exact match with any member of the set. CONTAINS is supported for lists: When evaluating "a CONTAINS b", "a" can be a list; however, "b" cannot be a set, a map, or a list.    NOT_CONTAINS : Checks for absence of a subsequence, or absence of a value in a set.  AttributeValueList can contain only one AttributeValue element of type String, Number, or Binary (not a set type). If the target attribute of the comparison is a String, then the operator checks for the absence of a substring match. If the target attribute of the comparison is Binary, then the operator checks for the absence of a subsequence of the target that matches the input. If the target attribute of the comparison is a set ("SS", "NS", or "BS"), then the operator evaluates to true if it does not find an exact match with any member of the set. NOT_CONTAINS is supported for lists: When evaluating "a NOT CONTAINS b", "a" can be a list; however, "b" cannot be a set, a map, or a list.    BEGINS_WITH : Checks for a prefix.   AttributeValueList can contain only one AttributeValue of type String or Binary (not a Number or a set type). The target attribute of the comparison must be of type String or Binary (not a Number or a set type).     IN : Checks for matching elements in a list.  AttributeValueList can contain one or more AttributeValue elements of type String, Number, or Binary. These attributes are compared against an existing attribute of an item. If any elements of the input are equal to the item attribute, the expression evaluates to true.    BETWEEN : Greater than or equal to the first value, and less than or equal to the second value.   AttributeValueList must contain two AttributeValue elements of the same type, either String, Number, or Binary (not a set type). A target attribute matches if the target value is greater than, or equal to, the first element and less than, or equal to, the second element. If an item contains an AttributeValue element of a different type than the one provided in the request, the value does not match. For example, {"S":"6"} does not compare to {"N":"6"}. Also, {"N":"6"} does not compare to {"NS":["6", "2", "1"]}   
@@ -1533,6 +1850,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ProjectionExpression", required: false, type: .string), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// One or more substitution tokens for attribute names in the ProjectionExpression parameter.
         public let expressionAttributeNames: [String: String]?
         /// A map of attribute names to AttributeValue objects that specifies the primary key of the item to retrieve.
@@ -1547,6 +1865,12 @@ extension DynamoDB {
             self.key = key
             self.projectionExpression = projectionExpression
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1567,6 +1891,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnConsumedCapacity", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// This is a legacy parameter. Use ProjectionExpression instead. For more information, see AttributesToGet in the Amazon DynamoDB Developer Guide.
         public let attributesToGet: [String]?
         /// Determines the read consistency model: If set to true, then the operation uses strongly consistent reads; otherwise, the operation uses eventually consistent reads.
@@ -1591,6 +1916,16 @@ extension DynamoDB {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try attributesToGet?.forEach {
+                try validate($0, name:"attributesToGet[]", max: 65535)
+            }
+            try validate(attributesToGet, name:"attributesToGet", min: 1)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributesToGet = "AttributesToGet"
             case consistentRead = "ConsistentRead"
@@ -1607,6 +1942,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ConsumedCapacity", required: false, type: .structure), 
             AWSShapeMember(label: "Item", required: false, type: .map)
         ]
+
         /// The capacity units consumed by the GetItem operation. The data returned includes the total provisioned throughput consumed, along with statistics for the table and any indexes involved in the operation. ConsumedCapacity is only returned if the ReturnConsumedCapacity parameter was specified. For more information, see Read/Write Capacity Mode in the Amazon DynamoDB Developer Guide.
         public let consumedCapacity: ConsumedCapacity?
         /// A map of attribute names to AttributeValue objects, as specified by ProjectionExpression.
@@ -1615,6 +1951,10 @@ extension DynamoDB {
         public init(consumedCapacity: ConsumedCapacity? = nil, item: [String: AttributeValue]? = nil) {
             self.consumedCapacity = consumedCapacity
             self.item = item
+        }
+
+        public func validate() throws {
+            try consumedCapacity?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1630,6 +1970,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Projection", required: true, type: .structure), 
             AWSShapeMember(label: "ProvisionedThroughput", required: false, type: .structure)
         ]
+
         /// The name of the global secondary index. The name must be unique among all other indexes on this table.
         public let indexName: String
         /// The complete key schema for a global secondary index, which consists of one or more pairs of attribute names and key types:    HASH - partition key    RANGE - sort key    The partition key of an item is also known as its hash attribute. The term "hash attribute" derives from DynamoDB' usage of an internal hash function to evenly distribute data items across partitions, based on their partition key values. The sort key of an item is also known as its range attribute. The term "range attribute" derives from the way DynamoDB stores items with the same partition key physically close together, in sorted order by the sort key value. 
@@ -1644,6 +1985,19 @@ extension DynamoDB {
             self.keySchema = keySchema
             self.projection = projection
             self.provisionedThroughput = provisionedThroughput
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try keySchema.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try projection.validate()
+            try provisionedThroughput?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1666,6 +2020,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Projection", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisionedThroughput", required: false, type: .structure)
         ]
+
         /// Indicates whether the index is currently backfilling. Backfilling is the process of reading items from the table and determining whether they can be added to the index. (Not all items will qualify: For example, a partition key cannot have any duplicate values.) If an item can be added to the index, DynamoDB will do so. After all items have been processed, the backfilling operation is complete and Backfilling is false.  For indexes that were created during a CreateTable operation, the Backfilling attribute does not appear in the DescribeTable output. 
         public let backfilling: Bool?
         /// The Amazon Resource Name (ARN) that uniquely identifies the index.
@@ -1697,6 +2052,19 @@ extension DynamoDB {
             self.provisionedThroughput = provisionedThroughput
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try keySchema?.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try projection?.validate()
+            try provisionedThroughput?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case backfilling = "Backfilling"
             case indexArn = "IndexArn"
@@ -1717,6 +2085,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Projection", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisionedThroughput", required: false, type: .structure)
         ]
+
         /// The name of the global secondary index.
         public let indexName: String?
         /// The complete key schema for a global secondary index, which consists of one or more pairs of attribute names and key types:    HASH - partition key    RANGE - sort key    The partition key of an item is also known as its hash attribute. The term "hash attribute" derives from DynamoDB' usage of an internal hash function to evenly distribute data items across partitions, based on their partition key values. The sort key of an item is also known as its range attribute. The term "range attribute" derives from the way DynamoDB stores items with the same partition key physically close together, in sorted order by the sort key value. 
@@ -1733,6 +2102,19 @@ extension DynamoDB {
             self.provisionedThroughput = provisionedThroughput
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try keySchema?.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try projection?.validate()
+            try provisionedThroughput?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case indexName = "IndexName"
             case keySchema = "KeySchema"
@@ -1747,6 +2129,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Delete", required: false, type: .structure), 
             AWSShapeMember(label: "Update", required: false, type: .structure)
         ]
+
         /// The parameters required for creating a global secondary index on an existing table:    IndexName      KeySchema      AttributeDefinitions      Projection      ProvisionedThroughput    
         public let create: CreateGlobalSecondaryIndexAction?
         /// The name of an existing global secondary index to be removed.
@@ -1758,6 +2141,12 @@ extension DynamoDB {
             self.create = create
             self.delete = delete
             self.update = update
+        }
+
+        public func validate() throws {
+            try create?.validate()
+            try delete?.validate()
+            try update?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1772,6 +2161,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTableName", required: false, type: .string), 
             AWSShapeMember(label: "ReplicationGroup", required: false, type: .list)
         ]
+
         /// The global table name.
         public let globalTableName: String?
         /// The regions where the global table has replicas.
@@ -1780,6 +2170,12 @@ extension DynamoDB {
         public init(globalTableName: String? = nil, replicationGroup: [Replica]? = nil) {
             self.globalTableName = globalTableName
             self.replicationGroup = replicationGroup
+        }
+
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1796,6 +2192,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTableStatus", required: false, type: .enum), 
             AWSShapeMember(label: "ReplicationGroup", required: false, type: .list)
         ]
+
         /// The creation time of the global table.
         public let creationDateTime: TimeStamp?
         /// The unique identifier of the global table.
@@ -1815,6 +2212,12 @@ extension DynamoDB {
             self.replicationGroup = replicationGroup
         }
 
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDateTime = "CreationDateTime"
             case globalTableArn = "GlobalTableArn"
@@ -1830,6 +2233,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ProvisionedWriteCapacityAutoScalingSettingsUpdate", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisionedWriteCapacityUnits", required: false, type: .long)
         ]
+
         /// The name of the global secondary index. The name must be unique among all other indexes on this table.
         public let indexName: String
         /// AutoScaling settings for managing a global secondary index's write capacity units.
@@ -1841,6 +2245,14 @@ extension DynamoDB {
             self.indexName = indexName
             self.provisionedWriteCapacityAutoScalingSettingsUpdate = provisionedWriteCapacityAutoScalingSettingsUpdate
             self.provisionedWriteCapacityUnits = provisionedWriteCapacityUnits
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try provisionedWriteCapacityAutoScalingSettingsUpdate?.validate()
+            try validate(provisionedWriteCapacityUnits, name:"provisionedWriteCapacityUnits", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1871,6 +2283,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ItemCollectionKey", required: false, type: .map), 
             AWSShapeMember(label: "SizeEstimateRangeGB", required: false, type: .list)
         ]
+
         /// The partition key value of the item collection. This value is the same as the partition key value of the item.
         public let itemCollectionKey: [String: AttributeValue]?
         /// An estimate of item collection size, in gigabytes. This value is a two-element array containing a lower bound and an upper bound for the estimate. The estimate includes the size of all the items in the table, plus the size of all attributes projected into all of the local secondary indexes on that table. Use this estimate to measure whether a local secondary index is approaching its size limit. The estimate is subject to change over time; therefore, do not rely on the precision or accuracy of the estimate.
@@ -1891,6 +2304,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Item", required: false, type: .map)
         ]
+
         /// Map of attribute data consisting of the data type and attribute value.
         public let item: [String: AttributeValue]?
 
@@ -1908,6 +2322,7 @@ extension DynamoDB {
             AWSShapeMember(label: "AttributeName", required: true, type: .string), 
             AWSShapeMember(label: "KeyType", required: true, type: .enum)
         ]
+
         /// The name of a key attribute.
         public let attributeName: String
         /// The role that this key attribute will assume:    HASH - partition key    RANGE - sort key    The partition key of an item is also known as its hash attribute. The term "hash attribute" derives from DynamoDB' usage of an internal hash function to evenly distribute data items across partitions, based on their partition key values. The sort key of an item is also known as its range attribute. The term "range attribute" derives from the way DynamoDB stores items with the same partition key physically close together, in sorted order by the sort key value. 
@@ -1916,6 +2331,11 @@ extension DynamoDB {
         public init(attributeName: String, keyType: KeyType) {
             self.attributeName = attributeName
             self.keyType = keyType
+        }
+
+        public func validate() throws {
+            try validate(attributeName, name:"attributeName", max: 255)
+            try validate(attributeName, name:"attributeName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1938,6 +2358,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Keys", required: true, type: .list), 
             AWSShapeMember(label: "ProjectionExpression", required: false, type: .string)
         ]
+
         /// This is a legacy parameter. Use ProjectionExpression instead. For more information, see Legacy Conditional Parameters in the Amazon DynamoDB Developer Guide.
         public let attributesToGet: [String]?
         /// The consistency of a read operation. If set to true, then a strongly consistent read is used; otherwise, an eventually consistent read is used.
@@ -1955,6 +2376,15 @@ extension DynamoDB {
             self.expressionAttributeNames = expressionAttributeNames
             self.keys = keys
             self.projectionExpression = projectionExpression
+        }
+
+        public func validate() throws {
+            try attributesToGet?.forEach {
+                try validate($0, name:"attributesToGet[]", max: 65535)
+            }
+            try validate(attributesToGet, name:"attributesToGet", min: 1)
+            try validate(keys, name:"keys", max: 100)
+            try validate(keys, name:"keys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1975,6 +2405,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TimeRangeLowerBound", required: false, type: .timestamp), 
             AWSShapeMember(label: "TimeRangeUpperBound", required: false, type: .timestamp)
         ]
+
         /// The backups from the table specified by BackupType are listed. Where BackupType can be:    USER - On-demand backup created by you.    SYSTEM - On-demand backup automatically created by DynamoDB.    ALL - All types of on-demand backups (USER and SYSTEM).  
         public let backupType: BackupTypeFilter?
         ///  LastEvaluatedBackupArn is the Amazon Resource Name (ARN) of the backup last evaluated when the current page of results was returned, inclusive of the current page of results. This value may be specified as the ExclusiveStartBackupArn of a new ListBackups operation in order to fetch the next page of results. 
@@ -1997,6 +2428,16 @@ extension DynamoDB {
             self.timeRangeUpperBound = timeRangeUpperBound
         }
 
+        public func validate() throws {
+            try validate(exclusiveStartBackupArn, name:"exclusiveStartBackupArn", max: 1024)
+            try validate(exclusiveStartBackupArn, name:"exclusiveStartBackupArn", min: 37)
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 1)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case backupType = "BackupType"
             case exclusiveStartBackupArn = "ExclusiveStartBackupArn"
@@ -2012,6 +2453,7 @@ extension DynamoDB {
             AWSShapeMember(label: "BackupSummaries", required: false, type: .list), 
             AWSShapeMember(label: "LastEvaluatedBackupArn", required: false, type: .string)
         ]
+
         /// List of BackupSummary objects.
         public let backupSummaries: [BackupSummary]?
         ///  The ARN of the backup last evaluated when the current page of results was returned, inclusive of the current page of results. This value may be specified as the ExclusiveStartBackupArn of a new ListBackups operation in order to fetch the next page of results.   If LastEvaluatedBackupArn is empty, then the last page of results has been processed and there are no more results to be retrieved.   If LastEvaluatedBackupArn is not empty, this may or may not indicate that there is more data to be returned. All results are guaranteed to have been returned if and only if no value for LastEvaluatedBackupArn is returned. 
@@ -2020,6 +2462,14 @@ extension DynamoDB {
         public init(backupSummaries: [BackupSummary]? = nil, lastEvaluatedBackupArn: String? = nil) {
             self.backupSummaries = backupSummaries
             self.lastEvaluatedBackupArn = lastEvaluatedBackupArn
+        }
+
+        public func validate() throws {
+            try backupSummaries?.forEach {
+                try $0.validate()
+            }
+            try validate(lastEvaluatedBackupArn, name:"lastEvaluatedBackupArn", max: 1024)
+            try validate(lastEvaluatedBackupArn, name:"lastEvaluatedBackupArn", min: 37)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2034,6 +2484,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "RegionName", required: false, type: .string)
         ]
+
         /// The first global table name that this operation will evaluate.
         public let exclusiveStartGlobalTableName: String?
         /// The maximum number of table names to return.
@@ -2045,6 +2496,13 @@ extension DynamoDB {
             self.exclusiveStartGlobalTableName = exclusiveStartGlobalTableName
             self.limit = limit
             self.regionName = regionName
+        }
+
+        public func validate() throws {
+            try validate(exclusiveStartGlobalTableName, name:"exclusiveStartGlobalTableName", max: 255)
+            try validate(exclusiveStartGlobalTableName, name:"exclusiveStartGlobalTableName", min: 3)
+            try validate(exclusiveStartGlobalTableName, name:"exclusiveStartGlobalTableName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2059,6 +2517,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTables", required: false, type: .list), 
             AWSShapeMember(label: "LastEvaluatedGlobalTableName", required: false, type: .string)
         ]
+
         /// List of global table names.
         public let globalTables: [GlobalTable]?
         /// Last evaluated global table name.
@@ -2067,6 +2526,15 @@ extension DynamoDB {
         public init(globalTables: [GlobalTable]? = nil, lastEvaluatedGlobalTableName: String? = nil) {
             self.globalTables = globalTables
             self.lastEvaluatedGlobalTableName = lastEvaluatedGlobalTableName
+        }
+
+        public func validate() throws {
+            try globalTables?.forEach {
+                try $0.validate()
+            }
+            try validate(lastEvaluatedGlobalTableName, name:"lastEvaluatedGlobalTableName", max: 255)
+            try validate(lastEvaluatedGlobalTableName, name:"lastEvaluatedGlobalTableName", min: 3)
+            try validate(lastEvaluatedGlobalTableName, name:"lastEvaluatedGlobalTableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2080,6 +2548,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ExclusiveStartTableName", required: false, type: .string), 
             AWSShapeMember(label: "Limit", required: false, type: .integer)
         ]
+
         /// The first table name that this operation will evaluate. Use the value that was returned for LastEvaluatedTableName in a previous operation, so that you can obtain the next page of results.
         public let exclusiveStartTableName: String?
         /// A maximum number of table names to return. If this parameter is not specified, the limit is 100.
@@ -2088,6 +2557,14 @@ extension DynamoDB {
         public init(exclusiveStartTableName: String? = nil, limit: Int32? = nil) {
             self.exclusiveStartTableName = exclusiveStartTableName
             self.limit = limit
+        }
+
+        public func validate() throws {
+            try validate(exclusiveStartTableName, name:"exclusiveStartTableName", max: 255)
+            try validate(exclusiveStartTableName, name:"exclusiveStartTableName", min: 3)
+            try validate(exclusiveStartTableName, name:"exclusiveStartTableName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", max: 100)
+            try validate(limit, name:"limit", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2101,6 +2578,7 @@ extension DynamoDB {
             AWSShapeMember(label: "LastEvaluatedTableName", required: false, type: .string), 
             AWSShapeMember(label: "TableNames", required: false, type: .list)
         ]
+
         /// The name of the last table in the current page of results. Use this value as the ExclusiveStartTableName in a new request to obtain the next page of results, until all the table names are returned. If you do not receive a LastEvaluatedTableName value in the response, this means that there are no more table names to be retrieved.
         public let lastEvaluatedTableName: String?
         /// The names of the tables associated with the current account at the current endpoint. The maximum size of this array is 100. If LastEvaluatedTableName also appears in the output, you can use this value as the ExclusiveStartTableName parameter in a subsequent ListTables request and obtain the next page of results.
@@ -2109,6 +2587,17 @@ extension DynamoDB {
         public init(lastEvaluatedTableName: String? = nil, tableNames: [String]? = nil) {
             self.lastEvaluatedTableName = lastEvaluatedTableName
             self.tableNames = tableNames
+        }
+
+        public func validate() throws {
+            try validate(lastEvaluatedTableName, name:"lastEvaluatedTableName", max: 255)
+            try validate(lastEvaluatedTableName, name:"lastEvaluatedTableName", min: 3)
+            try validate(lastEvaluatedTableName, name:"lastEvaluatedTableName", pattern: "[a-zA-Z0-9_.-]+")
+            try tableNames?.forEach {
+                try validate($0, name:"tableNames[]", max: 255)
+                try validate($0, name:"tableNames[]", min: 3)
+                try validate($0, name:"tableNames[]", pattern: "[a-zA-Z0-9_.-]+")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2122,6 +2611,7 @@ extension DynamoDB {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// An optional string that, if supplied, must be copied from the output of a previous call to ListTagOfResource. When provided in this manner, this API fetches the next page of results.
         public let nextToken: String?
         /// The Amazon DynamoDB resource with tags to be listed. This value is an Amazon Resource Name (ARN).
@@ -2130,6 +2620,11 @@ extension DynamoDB {
         public init(nextToken: String? = nil, resourceArn: String) {
             self.nextToken = nextToken
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 1283)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2143,6 +2638,7 @@ extension DynamoDB {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// If this value is returned, there are additional results to be displayed. To retrieve them, call ListTagsOfResource again, with NextToken set to this value.
         public let nextToken: String?
         /// The tags currently associated with the Amazon DynamoDB resource.
@@ -2151,6 +2647,12 @@ extension DynamoDB {
         public init(nextToken: String? = nil, tags: [Tag]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2165,6 +2667,7 @@ extension DynamoDB {
             AWSShapeMember(label: "KeySchema", required: true, type: .list), 
             AWSShapeMember(label: "Projection", required: true, type: .structure)
         ]
+
         /// The name of the local secondary index. The name must be unique among all other indexes on this table.
         public let indexName: String
         /// The complete key schema for the local secondary index, consisting of one or more pairs of attribute names and key types:    HASH - partition key    RANGE - sort key    The partition key of an item is also known as its hash attribute. The term "hash attribute" derives from DynamoDB' usage of an internal hash function to evenly distribute data items across partitions, based on their partition key values. The sort key of an item is also known as its range attribute. The term "range attribute" derives from the way DynamoDB stores items with the same partition key physically close together, in sorted order by the sort key value. 
@@ -2176,6 +2679,18 @@ extension DynamoDB {
             self.indexName = indexName
             self.keySchema = keySchema
             self.projection = projection
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try keySchema.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try projection.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2194,6 +2709,7 @@ extension DynamoDB {
             AWSShapeMember(label: "KeySchema", required: false, type: .list), 
             AWSShapeMember(label: "Projection", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) that uniquely identifies the index.
         public let indexArn: String?
         /// Represents the name of the local secondary index.
@@ -2216,6 +2732,18 @@ extension DynamoDB {
             self.projection = projection
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try keySchema?.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try projection?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case indexArn = "IndexArn"
             case indexName = "IndexName"
@@ -2232,6 +2760,7 @@ extension DynamoDB {
             AWSShapeMember(label: "KeySchema", required: false, type: .list), 
             AWSShapeMember(label: "Projection", required: false, type: .structure)
         ]
+
         /// Represents the name of the local secondary index.
         public let indexName: String?
         /// The complete key schema for a local secondary index, which consists of one or more pairs of attribute names and key types:    HASH - partition key    RANGE - sort key    The partition key of an item is also known as its hash attribute. The term "hash attribute" derives from DynamoDB' usage of an internal hash function to evenly distribute data items across partitions, based on their partition key values. The sort key of an item is also known as its range attribute. The term "range attribute" derives from the way DynamoDB stores items with the same partition key physically close together, in sorted order by the sort key value. 
@@ -2243,6 +2772,18 @@ extension DynamoDB {
             self.indexName = indexName
             self.keySchema = keySchema
             self.projection = projection
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try keySchema?.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try projection?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2258,6 +2799,7 @@ extension DynamoDB {
             AWSShapeMember(label: "LatestRestorableDateTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "PointInTimeRecoveryStatus", required: false, type: .enum)
         ]
+
         /// Specifies the earliest point in time you can restore your table to. It You can restore your table to any point in time during the last 35 days. 
         public let earliestRestorableDateTime: TimeStamp?
         ///  LatestRestorableDateTime is typically 5 minutes before the current time. 
@@ -2282,6 +2824,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PointInTimeRecoveryEnabled", required: true, type: .boolean)
         ]
+
         /// Indicates whether point in time recovery is enabled (true) or disabled (false) on the table.
         public let pointInTimeRecoveryEnabled: Bool
 
@@ -2305,6 +2848,7 @@ extension DynamoDB {
             AWSShapeMember(label: "NonKeyAttributes", required: false, type: .list), 
             AWSShapeMember(label: "ProjectionType", required: false, type: .enum)
         ]
+
         /// Represents the non-key attribute names which will be projected into the index. For local secondary indexes, the total count of NonKeyAttributes summed across all of the local secondary indexes, must not exceed 20. If you project the same attribute into two different indexes, this counts as two distinct attributes when determining the total.
         public let nonKeyAttributes: [String]?
         /// The set of attributes that are projected into the index:    KEYS_ONLY - Only the index and primary keys are projected into the index.    INCLUDE - Only the specified table attributes are projected into the index. The list of projected attributes are in NonKeyAttributes.    ALL - All of the table attributes are projected into the index.  
@@ -2313,6 +2857,15 @@ extension DynamoDB {
         public init(nonKeyAttributes: [String]? = nil, projectionType: ProjectionType? = nil) {
             self.nonKeyAttributes = nonKeyAttributes
             self.projectionType = projectionType
+        }
+
+        public func validate() throws {
+            try nonKeyAttributes?.forEach {
+                try validate($0, name:"nonKeyAttributes[]", max: 255)
+                try validate($0, name:"nonKeyAttributes[]", min: 1)
+            }
+            try validate(nonKeyAttributes, name:"nonKeyAttributes", max: 20)
+            try validate(nonKeyAttributes, name:"nonKeyAttributes", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2333,6 +2886,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReadCapacityUnits", required: true, type: .long), 
             AWSShapeMember(label: "WriteCapacityUnits", required: true, type: .long)
         ]
+
         /// The maximum number of strongly consistent reads consumed per second before DynamoDB returns a ThrottlingException. For more information, see Specifying Read and Write Requirements in the Amazon DynamoDB Developer Guide. If read/write capacity mode is PAY_PER_REQUEST the value is set to 0.
         public let readCapacityUnits: Int64
         /// The maximum number of writes consumed per second before DynamoDB returns a ThrottlingException. For more information, see Specifying Read and Write Requirements in the Amazon DynamoDB Developer Guide. If read/write capacity mode is PAY_PER_REQUEST the value is set to 0.
@@ -2341,6 +2895,11 @@ extension DynamoDB {
         public init(readCapacityUnits: Int64, writeCapacityUnits: Int64) {
             self.readCapacityUnits = readCapacityUnits
             self.writeCapacityUnits = writeCapacityUnits
+        }
+
+        public func validate() throws {
+            try validate(readCapacityUnits, name:"readCapacityUnits", min: 1)
+            try validate(writeCapacityUnits, name:"writeCapacityUnits", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2357,6 +2916,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReadCapacityUnits", required: false, type: .long), 
             AWSShapeMember(label: "WriteCapacityUnits", required: false, type: .long)
         ]
+
         /// The date and time of the last provisioned throughput decrease for this table.
         public let lastDecreaseDateTime: TimeStamp?
         /// The date and time of the last provisioned throughput increase for this table.
@@ -2374,6 +2934,12 @@ extension DynamoDB {
             self.numberOfDecreasesToday = numberOfDecreasesToday
             self.readCapacityUnits = readCapacityUnits
             self.writeCapacityUnits = writeCapacityUnits
+        }
+
+        public func validate() throws {
+            try validate(numberOfDecreasesToday, name:"numberOfDecreasesToday", min: 1)
+            try validate(readCapacityUnits, name:"readCapacityUnits", min: 0)
+            try validate(writeCapacityUnits, name:"writeCapacityUnits", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2394,6 +2960,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnValuesOnConditionCheckFailure", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// A condition that must be satisfied in order for a conditional update to succeed.
         public let conditionExpression: String?
         /// One or more substitution tokens for attribute names in an expression.
@@ -2414,6 +2981,12 @@ extension DynamoDB {
             self.item = item
             self.returnValuesOnConditionCheckFailure = returnValuesOnConditionCheckFailure
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2439,6 +3012,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnValues", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// This is a legacy parameter. Use ConditionExpression instead. For more information, see ConditionalOperator in the Amazon DynamoDB Developer Guide.
         public let conditionalOperator: ConditionalOperator?
         /// A condition that must be satisfied in order for a conditional PutItem operation to succeed. An expression can contain any of the following:   Functions: attribute_exists | attribute_not_exists | attribute_type | contains | begins_with | size  These function names are case-sensitive.   Comparison operators: = | &lt;&gt; | &lt; | &gt; | &lt;= | &gt;= | BETWEEN | IN      Logical operators: AND | OR | NOT    For more information on condition expressions, see Condition Expressions in the Amazon DynamoDB Developer Guide.
@@ -2472,6 +3046,12 @@ extension DynamoDB {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case conditionalOperator = "ConditionalOperator"
             case conditionExpression = "ConditionExpression"
@@ -2492,6 +3072,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ConsumedCapacity", required: false, type: .structure), 
             AWSShapeMember(label: "ItemCollectionMetrics", required: false, type: .structure)
         ]
+
         /// The attribute values as they appeared before the PutItem operation, but only if ReturnValues is specified as ALL_OLD in the request. Each element consists of an attribute name and an attribute value.
         public let attributes: [String: AttributeValue]?
         /// The capacity units consumed by the PutItem operation. The data returned includes the total provisioned throughput consumed, along with statistics for the table and any indexes involved in the operation. ConsumedCapacity is only returned if the ReturnConsumedCapacity parameter was specified. For more information, see Read/Write Capacity Mode in the Amazon DynamoDB Developer Guide.
@@ -2505,6 +3086,10 @@ extension DynamoDB {
             self.itemCollectionMetrics = itemCollectionMetrics
         }
 
+        public func validate() throws {
+            try consumedCapacity?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "Attributes"
             case consumedCapacity = "ConsumedCapacity"
@@ -2516,6 +3101,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Item", required: true, type: .map)
         ]
+
         /// A map of attribute name to attribute values, representing the primary key of an item to be processed by PutItem. All of the table's primary key attributes must be specified, and their data types must match those of the table's key schema. If any attributes are present in the item which are part of an index key schema for the table, their types must match the index key schema.
         public let item: [String: AttributeValue]
 
@@ -2548,6 +3134,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Select", required: false, type: .enum), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// This is a legacy parameter. Use ProjectionExpression instead. For more information, see AttributesToGet in the Amazon DynamoDB Developer Guide.
         public let attributesToGet: [String]?
         /// This is a legacy parameter. Use FilterExpression instead. For more information, see ConditionalOperator in the Amazon DynamoDB Developer Guide.
@@ -2602,6 +3189,20 @@ extension DynamoDB {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try attributesToGet?.forEach {
+                try validate($0, name:"attributesToGet[]", max: 65535)
+            }
+            try validate(attributesToGet, name:"attributesToGet", min: 1)
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", min: 1)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributesToGet = "AttributesToGet"
             case conditionalOperator = "ConditionalOperator"
@@ -2631,6 +3232,7 @@ extension DynamoDB {
             AWSShapeMember(label: "LastEvaluatedKey", required: false, type: .map), 
             AWSShapeMember(label: "ScannedCount", required: false, type: .integer)
         ]
+
         /// The capacity units consumed by the Query operation. The data returned includes the total provisioned throughput consumed, along with statistics for the table and any indexes involved in the operation. ConsumedCapacity is only returned if the ReturnConsumedCapacity parameter was specified. For more information, see Provisioned Throughput in the Amazon DynamoDB Developer Guide.
         public let consumedCapacity: ConsumedCapacity?
         /// The number of items in the response. If you used a QueryFilter in the request, then Count is the number of items returned after the filter was applied, and ScannedCount is the number of matching items before the filter was applied. If you did not use a filter in the request, then Count and ScannedCount are the same.
@@ -2650,6 +3252,10 @@ extension DynamoDB {
             self.scannedCount = scannedCount
         }
 
+        public func validate() throws {
+            try consumedCapacity?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case consumedCapacity = "ConsumedCapacity"
             case count = "Count"
@@ -2663,6 +3269,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RegionName", required: false, type: .string)
         ]
+
         /// The region where the replica needs to be created.
         public let regionName: String?
 
@@ -2679,6 +3286,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RegionName", required: false, type: .string)
         ]
+
         /// The name of the region.
         public let regionName: String?
 
@@ -2700,6 +3308,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ProvisionedWriteCapacityAutoScalingSettings", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisionedWriteCapacityUnits", required: false, type: .long)
         ]
+
         /// The name of the global secondary index. The name must be unique among all other indexes on this table.
         public let indexName: String
         ///  The current status of the global secondary index:    CREATING - The global secondary index is being created.    UPDATING - The global secondary index is being updated.    DELETING - The global secondary index is being deleted.    ACTIVE - The global secondary index is ready for use.  
@@ -2722,6 +3331,16 @@ extension DynamoDB {
             self.provisionedWriteCapacityUnits = provisionedWriteCapacityUnits
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try provisionedReadCapacityAutoScalingSettings?.validate()
+            try validate(provisionedReadCapacityUnits, name:"provisionedReadCapacityUnits", min: 1)
+            try provisionedWriteCapacityAutoScalingSettings?.validate()
+            try validate(provisionedWriteCapacityUnits, name:"provisionedWriteCapacityUnits", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case indexName = "IndexName"
             case indexStatus = "IndexStatus"
@@ -2738,6 +3357,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ProvisionedReadCapacityAutoScalingSettingsUpdate", required: false, type: .structure), 
             AWSShapeMember(label: "ProvisionedReadCapacityUnits", required: false, type: .long)
         ]
+
         /// The name of the global secondary index. The name must be unique among all other indexes on this table.
         public let indexName: String
         /// Autoscaling settings for managing a global secondary index replica's read capacity units.
@@ -2749,6 +3369,14 @@ extension DynamoDB {
             self.indexName = indexName
             self.provisionedReadCapacityAutoScalingSettingsUpdate = provisionedReadCapacityAutoScalingSettingsUpdate
             self.provisionedReadCapacityUnits = provisionedReadCapacityUnits
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try provisionedReadCapacityAutoScalingSettingsUpdate?.validate()
+            try validate(provisionedReadCapacityUnits, name:"provisionedReadCapacityUnits", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2769,6 +3397,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReplicaProvisionedWriteCapacityUnits", required: false, type: .long), 
             AWSShapeMember(label: "ReplicaStatus", required: false, type: .enum)
         ]
+
         /// The region name of the replica.
         public let regionName: String
         /// The read/write capacity mode of the replica.
@@ -2797,6 +3426,16 @@ extension DynamoDB {
             self.replicaStatus = replicaStatus
         }
 
+        public func validate() throws {
+            try replicaGlobalSecondaryIndexSettings?.forEach {
+                try $0.validate()
+            }
+            try replicaProvisionedReadCapacityAutoScalingSettings?.validate()
+            try validate(replicaProvisionedReadCapacityUnits, name:"replicaProvisionedReadCapacityUnits", min: 0)
+            try replicaProvisionedWriteCapacityAutoScalingSettings?.validate()
+            try validate(replicaProvisionedWriteCapacityUnits, name:"replicaProvisionedWriteCapacityUnits", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case regionName = "RegionName"
             case replicaBillingModeSummary = "ReplicaBillingModeSummary"
@@ -2816,6 +3455,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReplicaProvisionedReadCapacityAutoScalingSettingsUpdate", required: false, type: .structure), 
             AWSShapeMember(label: "ReplicaProvisionedReadCapacityUnits", required: false, type: .long)
         ]
+
         /// The region of the replica to be added.
         public let regionName: String
         /// Represents the settings of a global secondary index for a global table that will be modified.
@@ -2830,6 +3470,16 @@ extension DynamoDB {
             self.replicaGlobalSecondaryIndexSettingsUpdate = replicaGlobalSecondaryIndexSettingsUpdate
             self.replicaProvisionedReadCapacityAutoScalingSettingsUpdate = replicaProvisionedReadCapacityAutoScalingSettingsUpdate
             self.replicaProvisionedReadCapacityUnits = replicaProvisionedReadCapacityUnits
+        }
+
+        public func validate() throws {
+            try replicaGlobalSecondaryIndexSettingsUpdate?.forEach {
+                try $0.validate()
+            }
+            try validate(replicaGlobalSecondaryIndexSettingsUpdate, name:"replicaGlobalSecondaryIndexSettingsUpdate", max: 20)
+            try validate(replicaGlobalSecondaryIndexSettingsUpdate, name:"replicaGlobalSecondaryIndexSettingsUpdate", min: 1)
+            try replicaProvisionedReadCapacityAutoScalingSettingsUpdate?.validate()
+            try validate(replicaProvisionedReadCapacityUnits, name:"replicaProvisionedReadCapacityUnits", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2853,6 +3503,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Create", required: false, type: .structure), 
             AWSShapeMember(label: "Delete", required: false, type: .structure)
         ]
+
         /// The parameters required for creating a replica on an existing global table.
         public let create: CreateReplicaAction?
         /// The name of the existing replica to be removed.
@@ -2876,6 +3527,7 @@ extension DynamoDB {
             AWSShapeMember(label: "SourceBackupArn", required: false, type: .string), 
             AWSShapeMember(label: "SourceTableArn", required: false, type: .string)
         ]
+
         /// Point in time or source backup time.
         public let restoreDateTime: TimeStamp
         /// Indicates if a restore is in progress or not.
@@ -2892,6 +3544,11 @@ extension DynamoDB {
             self.sourceTableArn = sourceTableArn
         }
 
+        public func validate() throws {
+            try validate(sourceBackupArn, name:"sourceBackupArn", max: 1024)
+            try validate(sourceBackupArn, name:"sourceBackupArn", min: 37)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case restoreDateTime = "RestoreDateTime"
             case restoreInProgress = "RestoreInProgress"
@@ -2905,6 +3562,7 @@ extension DynamoDB {
             AWSShapeMember(label: "BackupArn", required: true, type: .string), 
             AWSShapeMember(label: "TargetTableName", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) associated with the backup.
         public let backupArn: String
         /// The name of the new table to which the backup must be restored.
@@ -2913,6 +3571,14 @@ extension DynamoDB {
         public init(backupArn: String, targetTableName: String) {
             self.backupArn = backupArn
             self.targetTableName = targetTableName
+        }
+
+        public func validate() throws {
+            try validate(backupArn, name:"backupArn", max: 1024)
+            try validate(backupArn, name:"backupArn", min: 37)
+            try validate(targetTableName, name:"targetTableName", max: 255)
+            try validate(targetTableName, name:"targetTableName", min: 3)
+            try validate(targetTableName, name:"targetTableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2925,11 +3591,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableDescription", required: false, type: .structure)
         ]
+
         /// The description of the table created from an existing backup.
         public let tableDescription: TableDescription?
 
         public init(tableDescription: TableDescription? = nil) {
             self.tableDescription = tableDescription
+        }
+
+        public func validate() throws {
+            try tableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2944,6 +3615,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TargetTableName", required: true, type: .string), 
             AWSShapeMember(label: "UseLatestRestorableTime", required: false, type: .boolean)
         ]
+
         /// Time in the past to restore the table to.
         public let restoreDateTime: TimeStamp?
         /// Name of the source table that is being restored.
@@ -2960,6 +3632,15 @@ extension DynamoDB {
             self.useLatestRestorableTime = useLatestRestorableTime
         }
 
+        public func validate() throws {
+            try validate(sourceTableName, name:"sourceTableName", max: 255)
+            try validate(sourceTableName, name:"sourceTableName", min: 3)
+            try validate(sourceTableName, name:"sourceTableName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(targetTableName, name:"targetTableName", max: 255)
+            try validate(targetTableName, name:"targetTableName", min: 3)
+            try validate(targetTableName, name:"targetTableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case restoreDateTime = "RestoreDateTime"
             case sourceTableName = "SourceTableName"
@@ -2972,11 +3653,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableDescription", required: false, type: .structure)
         ]
+
         /// Represents the properties of a table.
         public let tableDescription: TableDescription?
 
         public init(tableDescription: TableDescription? = nil) {
             self.tableDescription = tableDescription
+        }
+
+        public func validate() throws {
+            try tableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3018,6 +3704,7 @@ extension DynamoDB {
             AWSShapeMember(label: "SSEType", required: false, type: .enum), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The KMS customer master key (CMK) ARN used for the KMS encryption.
         public let kMSMasterKeyArn: String?
         /// Server-side encryption type. The only supported value is:    KMS - Server-side encryption which uses AWS Key Management Service. Key is stored in your account and is managed by AWS KMS (KMS charges apply).  
@@ -3044,6 +3731,7 @@ extension DynamoDB {
             AWSShapeMember(label: "KMSMasterKeyId", required: false, type: .string), 
             AWSShapeMember(label: "SSEType", required: false, type: .enum)
         ]
+
         /// Indicates whether server-side encryption is done using an AWS managed CMK or an AWS owned CMK. If enabled (true), server-side encryption type is set to KMS and an AWS managed CMK is used (AWS KMS charges apply). If disabled (false) or not specified, server-side encryption is set to AWS owned CMK.
         public let enabled: Bool?
         /// The KMS Customer Master Key (CMK) which should be used for the KMS encryption. To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name, or alias ARN. Note that you should only provide this parameter if the key is different from the default DynamoDB Customer Master Key alias/aws/dynamodb.
@@ -3105,6 +3793,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "TotalSegments", required: false, type: .integer)
         ]
+
         /// This is a legacy parameter. Use ProjectionExpression instead. For more information, see AttributesToGet in the Amazon DynamoDB Developer Guide.
         public let attributesToGet: [String]?
         /// This is a legacy parameter. Use FilterExpression instead. For more information, see ConditionalOperator in the Amazon DynamoDB Developer Guide.
@@ -3156,6 +3845,24 @@ extension DynamoDB {
             self.totalSegments = totalSegments
         }
 
+        public func validate() throws {
+            try attributesToGet?.forEach {
+                try validate($0, name:"attributesToGet[]", max: 65535)
+            }
+            try validate(attributesToGet, name:"attributesToGet", min: 1)
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", min: 1)
+            try validate(segment, name:"segment", max: 999999)
+            try validate(segment, name:"segment", min: 0)
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(totalSegments, name:"totalSegments", max: 1000000)
+            try validate(totalSegments, name:"totalSegments", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributesToGet = "AttributesToGet"
             case conditionalOperator = "ConditionalOperator"
@@ -3184,6 +3891,7 @@ extension DynamoDB {
             AWSShapeMember(label: "LastEvaluatedKey", required: false, type: .map), 
             AWSShapeMember(label: "ScannedCount", required: false, type: .integer)
         ]
+
         /// The capacity units consumed by the Scan operation. The data returned includes the total provisioned throughput consumed, along with statistics for the table and any indexes involved in the operation. ConsumedCapacity is only returned if the ReturnConsumedCapacity parameter was specified. For more information, see Provisioned Throughput in the Amazon DynamoDB Developer Guide.
         public let consumedCapacity: ConsumedCapacity?
         /// The number of items in the response. If you set ScanFilter in the request, then Count is the number of items returned after the filter was applied, and ScannedCount is the number of matching items before the filter was applied. If you did not use a filter in the request, then Count is the same as ScannedCount.
@@ -3201,6 +3909,10 @@ extension DynamoDB {
             self.items = items
             self.lastEvaluatedKey = lastEvaluatedKey
             self.scannedCount = scannedCount
+        }
+
+        public func validate() throws {
+            try consumedCapacity?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3232,6 +3944,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "TableSizeBytes", required: false, type: .long)
         ]
+
         /// Controls how you are charged for read and write throughput and how you manage capacity. This setting can be changed later.    PROVISIONED - Sets the read/write capacity mode to PROVISIONED. We recommend using PROVISIONED for predictable workloads.    PAY_PER_REQUEST - Sets the read/write capacity mode to PAY_PER_REQUEST. We recommend using PAY_PER_REQUEST for unpredictable workloads.   
         public let billingMode: BillingMode?
         /// Number of items in the table. Please note this is an approximate value. 
@@ -3263,6 +3976,20 @@ extension DynamoDB {
             self.tableSizeBytes = tableSizeBytes
         }
 
+        public func validate() throws {
+            try validate(itemCount, name:"itemCount", min: 0)
+            try keySchema.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try provisionedThroughput.validate()
+            try validate(tableId, name:"tableId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case billingMode = "BillingMode"
             case itemCount = "ItemCount"
@@ -3284,6 +4011,7 @@ extension DynamoDB {
             AWSShapeMember(label: "StreamDescription", required: false, type: .structure), 
             AWSShapeMember(label: "TimeToLiveDescription", required: false, type: .structure)
         ]
+
         /// Represents the GSI properties for the table when the backup was created. It includes the IndexName, KeySchema, Projection and ProvisionedThroughput for the GSIs on the table at the time of backup. 
         public let globalSecondaryIndexes: [GlobalSecondaryIndexInfo]?
         /// Represents the LSI properties for the table when the backup was created. It includes the IndexName, KeySchema and Projection for the LSIs on the table at the time of backup. 
@@ -3303,6 +4031,16 @@ extension DynamoDB {
             self.timeToLiveDescription = timeToLiveDescription
         }
 
+        public func validate() throws {
+            try globalSecondaryIndexes?.forEach {
+                try $0.validate()
+            }
+            try localSecondaryIndexes?.forEach {
+                try $0.validate()
+            }
+            try timeToLiveDescription?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case globalSecondaryIndexes = "GlobalSecondaryIndexes"
             case localSecondaryIndexes = "LocalSecondaryIndexes"
@@ -3317,6 +4055,7 @@ extension DynamoDB {
             AWSShapeMember(label: "StreamEnabled", required: false, type: .boolean), 
             AWSShapeMember(label: "StreamViewType", required: false, type: .enum)
         ]
+
         /// Indicates whether DynamoDB Streams is enabled (true) or disabled (false) on the table.
         public let streamEnabled: Bool?
         ///  When an item in the table is modified, StreamViewType determines what information is written to the stream for this table. Valid values for StreamViewType are:    KEYS_ONLY - Only the key attributes of the modified item are written to the stream.    NEW_IMAGE - The entire item, as it appears after it was modified, is written to the stream.    OLD_IMAGE - The entire item, as it appeared before it was modified, is written to the stream.    NEW_AND_OLD_IMAGES - Both the new and the old item images of the item are written to the stream.  
@@ -3362,6 +4101,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableSizeBytes", required: false, type: .long), 
             AWSShapeMember(label: "TableStatus", required: false, type: .enum)
         ]
+
         /// An array of AttributeDefinition objects. Each of these objects describes one attribute in the table and index key schema. Each AttributeDefinition object in this array is composed of:    AttributeName - The name of the attribute.    AttributeType - The data type for the attribute.  
         public let attributeDefinitions: [AttributeDefinition]?
         /// Contains the details for the read/write capacity mode.
@@ -3420,6 +4160,31 @@ extension DynamoDB {
             self.tableStatus = tableStatus
         }
 
+        public func validate() throws {
+            try attributeDefinitions?.forEach {
+                try $0.validate()
+            }
+            try globalSecondaryIndexes?.forEach {
+                try $0.validate()
+            }
+            try keySchema?.forEach {
+                try $0.validate()
+            }
+            try validate(keySchema, name:"keySchema", max: 2)
+            try validate(keySchema, name:"keySchema", min: 1)
+            try validate(latestStreamArn, name:"latestStreamArn", max: 1024)
+            try validate(latestStreamArn, name:"latestStreamArn", min: 37)
+            try localSecondaryIndexes?.forEach {
+                try $0.validate()
+            }
+            try provisionedThroughput?.validate()
+            try restoreSummary?.validate()
+            try validate(tableId, name:"tableId", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributeDefinitions = "AttributeDefinitions"
             case billingModeSummary = "BillingModeSummary"
@@ -3455,6 +4220,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The key of the tag. Tag keys are case sensitive. Each DynamoDB table can only have up to one tag with the same key. If you try to add an existing tag (same key), the existing tag value will be updated to the new value. 
         public let key: String
         /// The value of the tag. Tag values are case-sensitive and can be null.
@@ -3463,6 +4229,13 @@ extension DynamoDB {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3476,6 +4249,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// Identifies the Amazon DynamoDB resource to which tags should be added. This value is an Amazon Resource Name (ARN).
         public let resourceArn: String
         /// The tags to be assigned to the Amazon DynamoDB resource.
@@ -3484,6 +4258,14 @@ extension DynamoDB {
         public init(resourceArn: String, tags: [Tag]) {
             self.resourceArn = resourceArn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 1283)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3497,6 +4279,7 @@ extension DynamoDB {
             AWSShapeMember(label: "AttributeName", required: false, type: .string), 
             AWSShapeMember(label: "TimeToLiveStatus", required: false, type: .enum)
         ]
+
         ///  The name of the TTL attribute for items in the table.
         public let attributeName: String?
         ///  The TTL status for the table.
@@ -3505,6 +4288,11 @@ extension DynamoDB {
         public init(attributeName: String? = nil, timeToLiveStatus: TimeToLiveStatus? = nil) {
             self.attributeName = attributeName
             self.timeToLiveStatus = timeToLiveStatus
+        }
+
+        public func validate() throws {
+            try validate(attributeName, name:"attributeName", max: 255)
+            try validate(attributeName, name:"attributeName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3518,6 +4306,7 @@ extension DynamoDB {
             AWSShapeMember(label: "AttributeName", required: true, type: .string), 
             AWSShapeMember(label: "Enabled", required: true, type: .boolean)
         ]
+
         /// The name of the TTL attribute used to store the expiration time for items in the table.
         public let attributeName: String
         /// Indicates whether TTL is to be enabled (true) or disabled (false) on the table.
@@ -3526,6 +4315,11 @@ extension DynamoDB {
         public init(attributeName: String, enabled: Bool) {
             self.attributeName = attributeName
             self.enabled = enabled
+        }
+
+        public func validate() throws {
+            try validate(attributeName, name:"attributeName", max: 255)
+            try validate(attributeName, name:"attributeName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3546,11 +4340,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Get", required: true, type: .structure)
         ]
+
         /// Contains the primary key that identifies the item to get, together with the name of the table that contains the item, and optionally the specific attributes of the item to retrieve.
         public let get: Get
 
         public init(get: Get) {
             self.get = get
+        }
+
+        public func validate() throws {
+            try get.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3563,6 +4362,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnConsumedCapacity", required: false, type: .enum), 
             AWSShapeMember(label: "TransactItems", required: true, type: .list)
         ]
+
         /// A value of TOTAL causes consumed capacity information to be returned, and a value of NONE prevents that information from being returned. No other value is valid.
         public let returnConsumedCapacity: ReturnConsumedCapacity?
         /// An ordered array of up to 25 TransactGetItem objects, each of which contains a Get structure.
@@ -3571,6 +4371,14 @@ extension DynamoDB {
         public init(returnConsumedCapacity: ReturnConsumedCapacity? = nil, transactItems: [TransactGetItem]) {
             self.returnConsumedCapacity = returnConsumedCapacity
             self.transactItems = transactItems
+        }
+
+        public func validate() throws {
+            try transactItems.forEach {
+                try $0.validate()
+            }
+            try validate(transactItems, name:"transactItems", max: 10)
+            try validate(transactItems, name:"transactItems", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3584,6 +4392,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ConsumedCapacity", required: false, type: .list), 
             AWSShapeMember(label: "Responses", required: false, type: .list)
         ]
+
         /// If the ReturnConsumedCapacity value was TOTAL, this is an array of ConsumedCapacity objects, one for each table addressed by TransactGetItem objects in the TransactItems parameter. These ConsumedCapacity objects report the read-capacity units consumed by the TransactGetItems call in that table.
         public let consumedCapacity: [ConsumedCapacity]?
         /// An ordered array of up to 25 ItemResponse objects, each of which corresponds to the TransactGetItem object in the same position in the TransactItems array. Each ItemResponse object contains a Map of the name-value pairs that are the projected attributes of the requested item. If a requested item could not be retrieved, the corresponding ItemResponse object is Null, or if the requested item has no projected attributes, the corresponding ItemResponse object is an empty Map. 
@@ -3592,6 +4401,14 @@ extension DynamoDB {
         public init(consumedCapacity: [ConsumedCapacity]? = nil, responses: [ItemResponse]? = nil) {
             self.consumedCapacity = consumedCapacity
             self.responses = responses
+        }
+
+        public func validate() throws {
+            try consumedCapacity?.forEach {
+                try $0.validate()
+            }
+            try validate(responses, name:"responses", max: 10)
+            try validate(responses, name:"responses", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3607,6 +4424,7 @@ extension DynamoDB {
             AWSShapeMember(label: "Put", required: false, type: .structure), 
             AWSShapeMember(label: "Update", required: false, type: .structure)
         ]
+
         /// A request to perform a check item operation.
         public let conditionCheck: ConditionCheck?
         /// A request to perform a DeleteItem operation.
@@ -3621,6 +4439,13 @@ extension DynamoDB {
             self.delete = delete
             self.put = put
             self.update = update
+        }
+
+        public func validate() throws {
+            try conditionCheck?.validate()
+            try delete?.validate()
+            try put?.validate()
+            try update?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3638,6 +4463,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ReturnItemCollectionMetrics", required: false, type: .enum), 
             AWSShapeMember(label: "TransactItems", required: true, type: .list)
         ]
+
         /// Providing a ClientRequestToken makes the call to TransactWriteItems idempotent, meaning that multiple identical calls have the same effect as one single call. Although multiple identical calls using the same client request token produce the same result on the server (no side effects), the responses to the calls might not be the same. If the ReturnConsumedCapacity&gt; parameter is set, then the initial TransactWriteItems call returns the amount of write capacity units consumed in making the changes. Subsequent TransactWriteItems calls with the same client token return the number of read capacity units consumed in reading the item. A client request token is valid for 10 minutes after the first request that uses it is completed. After 10 minutes, any request with the same client token is treated as a new request. Do not resubmit the same request with the same client token for more than 10 minutes, or the result might not be idempotent. If you submit a request with the same client token but a change in other parameters within the 10-minute idempotency window, DynamoDB returns an IdempotentParameterMismatch exception.
         public let clientRequestToken: String?
         public let returnConsumedCapacity: ReturnConsumedCapacity?
@@ -3646,11 +4472,21 @@ extension DynamoDB {
         /// An ordered array of up to 25 TransactWriteItem objects, each of which contains a ConditionCheck, Put, Update, or Delete object. These can operate on items in different tables, but the tables must reside in the same AWS account and Region, and no two of them can operate on the same item. 
         public let transactItems: [TransactWriteItem]
 
-        public init(clientRequestToken: String? = nil, returnConsumedCapacity: ReturnConsumedCapacity? = nil, returnItemCollectionMetrics: ReturnItemCollectionMetrics? = nil, transactItems: [TransactWriteItem]) {
+        public init(clientRequestToken: String? = TransactWriteItemsInput.idempotencyToken(), returnConsumedCapacity: ReturnConsumedCapacity? = nil, returnItemCollectionMetrics: ReturnItemCollectionMetrics? = nil, transactItems: [TransactWriteItem]) {
             self.clientRequestToken = clientRequestToken
             self.returnConsumedCapacity = returnConsumedCapacity
             self.returnItemCollectionMetrics = returnItemCollectionMetrics
             self.transactItems = transactItems
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 36)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try transactItems.forEach {
+                try $0.validate()
+            }
+            try validate(transactItems, name:"transactItems", max: 10)
+            try validate(transactItems, name:"transactItems", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3666,6 +4502,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ConsumedCapacity", required: false, type: .list), 
             AWSShapeMember(label: "ItemCollectionMetrics", required: false, type: .map)
         ]
+
         /// The capacity units consumed by the entire TransactWriteItems operation. The values of the list are ordered according to the ordering of the TransactItems request parameter. 
         public let consumedCapacity: [ConsumedCapacity]?
         /// A list of tables that were processed by TransactWriteItems and, for each table, information about any item collections that were affected by individual UpdateItem, PutItem, or DeleteItem operations. 
@@ -3674,6 +4511,12 @@ extension DynamoDB {
         public init(consumedCapacity: [ConsumedCapacity]? = nil, itemCollectionMetrics: [String: [ItemCollectionMetrics]]? = nil) {
             self.consumedCapacity = consumedCapacity
             self.itemCollectionMetrics = itemCollectionMetrics
+        }
+
+        public func validate() throws {
+            try consumedCapacity?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3687,6 +4530,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The DynamoDB resource that the tags will be removed from. This value is an Amazon Resource Name (ARN).
         public let resourceArn: String
         /// A list of tag keys. Existing tags of the resource whose keys are members of this list will be removed from the DynamoDB resource.
@@ -3695,6 +4539,15 @@ extension DynamoDB {
         public init(resourceArn: String, tagKeys: [String]) {
             self.resourceArn = resourceArn
             self.tagKeys = tagKeys
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 1283)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3713,6 +4566,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "UpdateExpression", required: true, type: .string)
         ]
+
         /// A condition that must be satisfied in order for a conditional update to succeed.
         public let conditionExpression: String?
         /// One or more substitution tokens for attribute names in an expression.
@@ -3738,6 +4592,12 @@ extension DynamoDB {
             self.updateExpression = updateExpression
         }
 
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case conditionExpression = "ConditionExpression"
             case expressionAttributeNames = "ExpressionAttributeNames"
@@ -3754,6 +4614,7 @@ extension DynamoDB {
             AWSShapeMember(label: "PointInTimeRecoverySpecification", required: true, type: .structure), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// Represents the settings used to enable point in time recovery.
         public let pointInTimeRecoverySpecification: PointInTimeRecoverySpecification
         /// The name of the table.
@@ -3762,6 +4623,12 @@ extension DynamoDB {
         public init(pointInTimeRecoverySpecification: PointInTimeRecoverySpecification, tableName: String) {
             self.pointInTimeRecoverySpecification = pointInTimeRecoverySpecification
             self.tableName = tableName
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3774,6 +4641,7 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ContinuousBackupsDescription", required: false, type: .structure)
         ]
+
         /// Represents the continuous backups and point in time recovery settings on the table.
         public let continuousBackupsDescription: ContinuousBackupsDescription?
 
@@ -3791,6 +4659,7 @@ extension DynamoDB {
             AWSShapeMember(label: "IndexName", required: true, type: .string), 
             AWSShapeMember(label: "ProvisionedThroughput", required: true, type: .structure)
         ]
+
         /// The name of the global secondary index to be updated.
         public let indexName: String
         /// Represents the provisioned throughput settings for the specified global secondary index. For current minimum and maximum provisioned throughput values, see Limits in the Amazon DynamoDB Developer Guide.
@@ -3799,6 +4668,13 @@ extension DynamoDB {
         public init(indexName: String, provisionedThroughput: ProvisionedThroughput) {
             self.indexName = indexName
             self.provisionedThroughput = provisionedThroughput
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 255)
+            try validate(indexName, name:"indexName", min: 3)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9_.-]+")
+            try provisionedThroughput.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3812,6 +4688,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTableName", required: true, type: .string), 
             AWSShapeMember(label: "ReplicaUpdates", required: true, type: .list)
         ]
+
         /// The global table name.
         public let globalTableName: String
         /// A list of Regions that should be added or removed from the global table.
@@ -3820,6 +4697,12 @@ extension DynamoDB {
         public init(globalTableName: String, replicaUpdates: [ReplicaUpdate]) {
             self.globalTableName = globalTableName
             self.replicaUpdates = replicaUpdates
+        }
+
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3832,11 +4715,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GlobalTableDescription", required: false, type: .structure)
         ]
+
         /// Contains the details of the global table.
         public let globalTableDescription: GlobalTableDescription?
 
         public init(globalTableDescription: GlobalTableDescription? = nil) {
             self.globalTableDescription = globalTableDescription
+        }
+
+        public func validate() throws {
+            try globalTableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3853,6 +4741,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTableProvisionedWriteCapacityUnits", required: false, type: .long), 
             AWSShapeMember(label: "ReplicaSettingsUpdate", required: false, type: .list)
         ]
+
         /// The billing mode of the global table. If GlobalTableBillingMode is not specified, the global table defaults to PROVISIONED capacity billing mode.
         public let globalTableBillingMode: BillingMode?
         /// Represents the settings of a global secondary index for a global table that will be modified.
@@ -3875,6 +4764,24 @@ extension DynamoDB {
             self.replicaSettingsUpdate = replicaSettingsUpdate
         }
 
+        public func validate() throws {
+            try globalTableGlobalSecondaryIndexSettingsUpdate?.forEach {
+                try $0.validate()
+            }
+            try validate(globalTableGlobalSecondaryIndexSettingsUpdate, name:"globalTableGlobalSecondaryIndexSettingsUpdate", max: 20)
+            try validate(globalTableGlobalSecondaryIndexSettingsUpdate, name:"globalTableGlobalSecondaryIndexSettingsUpdate", min: 1)
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
+            try globalTableProvisionedWriteCapacityAutoScalingSettingsUpdate?.validate()
+            try validate(globalTableProvisionedWriteCapacityUnits, name:"globalTableProvisionedWriteCapacityUnits", min: 1)
+            try replicaSettingsUpdate?.forEach {
+                try $0.validate()
+            }
+            try validate(replicaSettingsUpdate, name:"replicaSettingsUpdate", max: 50)
+            try validate(replicaSettingsUpdate, name:"replicaSettingsUpdate", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case globalTableBillingMode = "GlobalTableBillingMode"
             case globalTableGlobalSecondaryIndexSettingsUpdate = "GlobalTableGlobalSecondaryIndexSettingsUpdate"
@@ -3890,6 +4797,7 @@ extension DynamoDB {
             AWSShapeMember(label: "GlobalTableName", required: false, type: .string), 
             AWSShapeMember(label: "ReplicaSettings", required: false, type: .list)
         ]
+
         /// The name of the global table.
         public let globalTableName: String?
         /// The Region-specific settings for the global table.
@@ -3898,6 +4806,15 @@ extension DynamoDB {
         public init(globalTableName: String? = nil, replicaSettings: [ReplicaSettingsDescription]? = nil) {
             self.globalTableName = globalTableName
             self.replicaSettings = replicaSettings
+        }
+
+        public func validate() throws {
+            try validate(globalTableName, name:"globalTableName", max: 255)
+            try validate(globalTableName, name:"globalTableName", min: 3)
+            try validate(globalTableName, name:"globalTableName", pattern: "[a-zA-Z0-9_.-]+")
+            try replicaSettings?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3921,6 +4838,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "UpdateExpression", required: false, type: .string)
         ]
+
         /// This is a legacy parameter. Use UpdateExpression instead. For more information, see AttributeUpdates in the Amazon DynamoDB Developer Guide.
         public let attributeUpdates: [String: AttributeValueUpdate]?
         /// This is a legacy parameter. Use ConditionExpression instead. For more information, see ConditionalOperator in the Amazon DynamoDB Developer Guide.
@@ -3960,6 +4878,12 @@ extension DynamoDB {
             self.updateExpression = updateExpression
         }
 
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributeUpdates = "AttributeUpdates"
             case conditionalOperator = "ConditionalOperator"
@@ -3982,6 +4906,7 @@ extension DynamoDB {
             AWSShapeMember(label: "ConsumedCapacity", required: false, type: .structure), 
             AWSShapeMember(label: "ItemCollectionMetrics", required: false, type: .structure)
         ]
+
         /// A map of attribute values as they appear before or after the UpdateItem operation, as determined by the ReturnValues parameter. The Attributes map is only present if ReturnValues was specified as something other than NONE in the request. Each element represents one attribute.
         public let attributes: [String: AttributeValue]?
         /// The capacity units consumed by the UpdateItem operation. The data returned includes the total provisioned throughput consumed, along with statistics for the table and any indexes involved in the operation. ConsumedCapacity is only returned if the ReturnConsumedCapacity parameter was specified. For more information, see Provisioned Throughput in the Amazon DynamoDB Developer Guide.
@@ -3993,6 +4918,10 @@ extension DynamoDB {
             self.attributes = attributes
             self.consumedCapacity = consumedCapacity
             self.itemCollectionMetrics = itemCollectionMetrics
+        }
+
+        public func validate() throws {
+            try consumedCapacity?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4012,6 +4941,7 @@ extension DynamoDB {
             AWSShapeMember(label: "StreamSpecification", required: false, type: .structure), 
             AWSShapeMember(label: "TableName", required: true, type: .string)
         ]
+
         /// An array of attributes that describe the key schema for the table and indexes. If you are adding a new global secondary index to the table, AttributeDefinitions must include the key element(s) of the new index.
         public let attributeDefinitions: [AttributeDefinition]?
         /// Controls how you are charged for read and write throughput and how you manage capacity. When switching from pay-per-request to provisioned capacity, initial provisioned capacity values must be set. The initial provisioned capacity values are estimated based on the consumed read and write capacity of your table and global secondary indexes over the past 30 minutes.    PROVISIONED - Sets the billing mode to PROVISIONED. We recommend using PROVISIONED for predictable workloads.    PAY_PER_REQUEST - Sets the billing mode to PAY_PER_REQUEST. We recommend using PAY_PER_REQUEST for unpredictable workloads.   
@@ -4037,6 +4967,19 @@ extension DynamoDB {
             self.tableName = tableName
         }
 
+        public func validate() throws {
+            try attributeDefinitions?.forEach {
+                try $0.validate()
+            }
+            try globalSecondaryIndexUpdates?.forEach {
+                try $0.validate()
+            }
+            try provisionedThroughput?.validate()
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributeDefinitions = "AttributeDefinitions"
             case billingMode = "BillingMode"
@@ -4052,11 +4995,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TableDescription", required: false, type: .structure)
         ]
+
         /// Represents the properties of the table.
         public let tableDescription: TableDescription?
 
         public init(tableDescription: TableDescription? = nil) {
             self.tableDescription = tableDescription
+        }
+
+        public func validate() throws {
+            try tableDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4069,6 +5017,7 @@ extension DynamoDB {
             AWSShapeMember(label: "TableName", required: true, type: .string), 
             AWSShapeMember(label: "TimeToLiveSpecification", required: true, type: .structure)
         ]
+
         /// The name of the table to be configured.
         public let tableName: String
         /// Represents the settings used to enable or disable Time to Live for the specified table.
@@ -4077,6 +5026,13 @@ extension DynamoDB {
         public init(tableName: String, timeToLiveSpecification: TimeToLiveSpecification) {
             self.tableName = tableName
             self.timeToLiveSpecification = timeToLiveSpecification
+        }
+
+        public func validate() throws {
+            try validate(tableName, name:"tableName", max: 255)
+            try validate(tableName, name:"tableName", min: 3)
+            try validate(tableName, name:"tableName", pattern: "[a-zA-Z0-9_.-]+")
+            try timeToLiveSpecification.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4089,11 +5045,16 @@ extension DynamoDB {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TimeToLiveSpecification", required: false, type: .structure)
         ]
+
         /// Represents the output of an UpdateTimeToLive operation.
         public let timeToLiveSpecification: TimeToLiveSpecification?
 
         public init(timeToLiveSpecification: TimeToLiveSpecification? = nil) {
             self.timeToLiveSpecification = timeToLiveSpecification
+        }
+
+        public func validate() throws {
+            try timeToLiveSpecification?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4106,6 +5067,7 @@ extension DynamoDB {
             AWSShapeMember(label: "DeleteRequest", required: false, type: .structure), 
             AWSShapeMember(label: "PutRequest", required: false, type: .structure)
         ]
+
         /// A request to perform a DeleteItem operation.
         public let deleteRequest: DeleteRequest?
         /// A request to perform a PutItem operation.

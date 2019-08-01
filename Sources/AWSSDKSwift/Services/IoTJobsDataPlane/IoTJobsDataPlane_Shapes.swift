@@ -12,6 +12,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// Optional. A number that identifies a particular job execution on a particular device. If not specified, the latest job execution is returned.
         public let executionNumber: Int64?
         /// Optional. When set to true, the response contains the job document. The default is false.
@@ -28,6 +29,13 @@ extension IoTJobsDataPlane {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+|^\\$next")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionNumber = "executionNumber"
             case includeJobDocument = "includeJobDocument"
@@ -40,11 +48,16 @@ extension IoTJobsDataPlane {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "execution", required: false, type: .structure)
         ]
+
         /// Contains data about a job execution.
         public let execution: JobExecution?
 
         public init(execution: JobExecution? = nil) {
             self.execution = execution
+        }
+
+        public func validate() throws {
+            try execution?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -56,11 +69,18 @@ extension IoTJobsDataPlane {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The name of the thing that is executing the job.
         public let thingName: String
 
         public init(thingName: String) {
             self.thingName = thingName
+        }
+
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -73,6 +93,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "inProgressJobs", required: false, type: .list), 
             AWSShapeMember(label: "queuedJobs", required: false, type: .list)
         ]
+
         /// A list of JobExecutionSummary objects with status IN_PROGRESS.
         public let inProgressJobs: [JobExecutionSummary]?
         /// A list of JobExecutionSummary objects with status QUEUED.
@@ -81,6 +102,15 @@ extension IoTJobsDataPlane {
         public init(inProgressJobs: [JobExecutionSummary]? = nil, queuedJobs: [JobExecutionSummary]? = nil) {
             self.inProgressJobs = inProgressJobs
             self.queuedJobs = queuedJobs
+        }
+
+        public func validate() throws {
+            try inProgressJobs?.forEach {
+                try $0.validate()
+            }
+            try queuedJobs?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -103,6 +133,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "thingName", required: false, type: .string), 
             AWSShapeMember(label: "versionNumber", required: false, type: .long)
         ]
+
         /// The estimated number of seconds that remain before the job execution status will be changed to TIMED_OUT.
         public let approximateSecondsBeforeTimedOut: Int64?
         /// A number that identifies a particular job execution on a particular device. It can be used later in commands that return or update job execution information.
@@ -140,6 +171,16 @@ extension IoTJobsDataPlane {
             self.versionNumber = versionNumber
         }
 
+        public func validate() throws {
+            try validate(jobDocument, name:"jobDocument", max: 32768)
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case approximateSecondsBeforeTimedOut = "approximateSecondsBeforeTimedOut"
             case executionNumber = "executionNumber"
@@ -161,6 +202,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "statusDetails", required: false, type: .map), 
             AWSShapeMember(label: "versionNumber", required: false, type: .long)
         ]
+
         /// The status of the job execution. Can be one of: "QUEUED", "IN_PROGRESS", "FAILED", "SUCCESS", "CANCELED", "REJECTED", or "REMOVED".
         public let status: JobExecutionStatus?
         /// A collection of name/value pairs that describe the status of the job execution.
@@ -202,6 +244,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "startedAt", required: false, type: .long), 
             AWSShapeMember(label: "versionNumber", required: false, type: .long)
         ]
+
         /// A number that identifies a particular job execution on a particular device.
         public let executionNumber: Int64?
         /// The unique identifier you assigned to this job when it was created.
@@ -224,6 +267,12 @@ extension IoTJobsDataPlane {
             self.versionNumber = versionNumber
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionNumber = "executionNumber"
             case jobId = "jobId"
@@ -240,6 +289,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "stepTimeoutInMinutes", required: false, type: .long), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// A collection of name/value pairs that describe the status of the job execution. If not specified, the statusDetails are unchanged.
         public let statusDetails: [String: String]?
         /// Specifies the amount of time this device has to finish execution of this job. If the job execution status is not set to a terminal state before this timer expires, or before the timer is reset (by calling UpdateJobExecution, setting the status to IN_PROGRESS and specifying a new timeout value in field stepTimeoutInMinutes) the job execution status will be automatically set to TIMED_OUT. Note that setting this timeout has no effect on that job execution timeout which may have been specified when the job was created (CreateJob using field timeoutConfig).
@@ -253,6 +303,12 @@ extension IoTJobsDataPlane {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case statusDetails = "statusDetails"
             case stepTimeoutInMinutes = "stepTimeoutInMinutes"
@@ -264,11 +320,16 @@ extension IoTJobsDataPlane {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "execution", required: false, type: .structure)
         ]
+
         /// A JobExecution object.
         public let execution: JobExecution?
 
         public init(execution: JobExecution? = nil) {
             self.execution = execution
+        }
+
+        public func validate() throws {
+            try execution?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -288,6 +349,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "stepTimeoutInMinutes", required: false, type: .long), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// Optional. A number that identifies a particular job execution on a particular device.
         public let executionNumber: Int64?
         /// Optional. The expected current version of the job execution. Each time you update the job execution, its version is incremented. If the version of the job execution stored in Jobs does not match, the update is rejected with a VersionMismatch error, and an ErrorResponse that contains the current job execution status data is returned. (This makes it unnecessary to perform a separate DescribeJobExecution request in order to obtain the job execution status data.)
@@ -319,6 +381,15 @@ extension IoTJobsDataPlane {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionNumber = "executionNumber"
             case expectedVersion = "expectedVersion"
@@ -337,6 +408,7 @@ extension IoTJobsDataPlane {
             AWSShapeMember(label: "executionState", required: false, type: .structure), 
             AWSShapeMember(label: "jobDocument", required: false, type: .string)
         ]
+
         /// A JobExecutionState object.
         public let executionState: JobExecutionState?
         /// The contents of the Job Documents.
@@ -345,6 +417,10 @@ extension IoTJobsDataPlane {
         public init(executionState: JobExecutionState? = nil, jobDocument: String? = nil) {
             self.executionState = executionState
             self.jobDocument = jobDocument
+        }
+
+        public func validate() throws {
+            try validate(jobDocument, name:"jobDocument", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {

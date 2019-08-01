@@ -22,6 +22,7 @@ extension Snowball {
             AWSShapeMember(label: "Street2", required: false, type: .string), 
             AWSShapeMember(label: "Street3", required: false, type: .string)
         ]
+
         /// The unique ID for an address.
         public let addressId: String?
         /// The city in an address that a Snowball is to be delivered to.
@@ -68,6 +69,24 @@ extension Snowball {
             self.street3 = street3
         }
 
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(city, name:"city", min: 1)
+            try validate(company, name:"company", min: 1)
+            try validate(country, name:"country", min: 1)
+            try validate(landmark, name:"landmark", min: 1)
+            try validate(name, name:"name", min: 1)
+            try validate(phoneNumber, name:"phoneNumber", min: 1)
+            try validate(postalCode, name:"postalCode", min: 1)
+            try validate(prefectureOrDistrict, name:"prefectureOrDistrict", min: 1)
+            try validate(stateOrProvince, name:"stateOrProvince", min: 1)
+            try validate(street1, name:"street1", min: 1)
+            try validate(street2, name:"street2", min: 1)
+            try validate(street3, name:"street3", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressId = "AddressId"
             case city = "City"
@@ -90,11 +109,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClusterId", required: true, type: .string)
         ]
+
         /// The 39-character ID for the cluster that you want to cancel, for example CID123e4567-e89b-12d3-a456-426655440000.
         public let clusterId: String
 
         public init(clusterId: String) {
             self.clusterId = clusterId
+        }
+
+        public func validate() throws {
+            try validate(clusterId, name:"clusterId", max: 39)
+            try validate(clusterId, name:"clusterId", min: 39)
+            try validate(clusterId, name:"clusterId", pattern: "CID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -103,6 +129,7 @@ extension Snowball {
     }
 
     public struct CancelClusterResult: AWSShape {
+
 
         public init() {
         }
@@ -113,11 +140,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The 39-character job ID for the job that you want to cancel, for example JID123e4567-e89b-12d3-a456-426655440000.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 39)
+            try validate(jobId, name:"jobId", min: 39)
+            try validate(jobId, name:"jobId", pattern: "(M|J)ID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -126,6 +160,7 @@ extension Snowball {
     }
 
     public struct CancelJobResult: AWSShape {
+
 
         public init() {
         }
@@ -139,6 +174,7 @@ extension Snowball {
             AWSShapeMember(label: "CreationDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "Description", required: false, type: .string)
         ]
+
         /// The 39-character ID for the cluster that you want to list, for example CID123e4567-e89b-12d3-a456-426655440000.
         public let clusterId: String?
         /// The current state of this cluster. For information about the state of a specific node, see JobListEntry$JobState.
@@ -153,6 +189,11 @@ extension Snowball {
             self.clusterState = clusterState
             self.creationDate = creationDate
             self.description = description
+        }
+
+        public func validate() throws {
+            try validate(clusterId, name:"clusterId", min: 1)
+            try validate(description, name:"description", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -179,6 +220,7 @@ extension Snowball {
             AWSShapeMember(label: "ShippingOption", required: false, type: .enum), 
             AWSShapeMember(label: "SnowballType", required: false, type: .enum)
         ]
+
         /// The automatically generated ID for a specific address.
         public let addressId: String?
         /// The automatically generated ID for a cluster.
@@ -222,6 +264,23 @@ extension Snowball {
             self.snowballType = snowballType
         }
 
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(clusterId, name:"clusterId", min: 1)
+            try validate(description, name:"description", min: 1)
+            try validate(forwardingAddressId, name:"forwardingAddressId", max: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", min: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(kmsKeyARN, name:"kmsKeyARN", max: 255)
+            try validate(kmsKeyARN, name:"kmsKeyARN", pattern: "arn:aws.*:kms:.*:[0-9]{12}:key/.*")
+            try notification?.validate()
+            try resources?.validate()
+            try validate(roleARN, name:"roleARN", max: 255)
+            try validate(roleARN, name:"roleARN", pattern: "arn:aws.*:iam::[0-9]{12}:role/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressId = "AddressId"
             case clusterId = "ClusterId"
@@ -253,6 +312,7 @@ extension Snowball {
             AWSShapeMember(label: "AmiId", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The unique identifier for an individual Snowball Edge AMI.
         public let amiId: String?
         /// The optional name of a compatible image.
@@ -261,6 +321,11 @@ extension Snowball {
         public init(amiId: String? = nil, name: String? = nil) {
             self.amiId = amiId
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(amiId, name:"amiId", min: 1)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -273,11 +338,16 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Address", required: true, type: .structure)
         ]
+
         /// The address that you want the Snowball shipped to.
         public let address: Address
 
         public init(address: Address) {
             self.address = address
+        }
+
+        public func validate() throws {
+            try address.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -289,11 +359,16 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AddressId", required: false, type: .string)
         ]
+
         /// The automatically generated ID for a specific address. You'll use this ID when you create a job to specify which address you want the Snowball for that job shipped to.
         public let addressId: String?
 
         public init(addressId: String? = nil) {
             self.addressId = addressId
+        }
+
+        public func validate() throws {
+            try validate(addressId, name:"addressId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -314,6 +389,7 @@ extension Snowball {
             AWSShapeMember(label: "ShippingOption", required: true, type: .enum), 
             AWSShapeMember(label: "SnowballType", required: false, type: .enum)
         ]
+
         /// The ID for the address that you want the cluster shipped to.
         public let addressId: String
         /// An optional description of this specific cluster, for example Environmental Data Cluster-01.
@@ -348,6 +424,22 @@ extension Snowball {
             self.snowballType = snowballType
         }
 
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(description, name:"description", min: 1)
+            try validate(forwardingAddressId, name:"forwardingAddressId", max: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", min: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(kmsKeyARN, name:"kmsKeyARN", max: 255)
+            try validate(kmsKeyARN, name:"kmsKeyARN", pattern: "arn:aws.*:kms:.*:[0-9]{12}:key/.*")
+            try notification?.validate()
+            try resources.validate()
+            try validate(roleARN, name:"roleARN", max: 255)
+            try validate(roleARN, name:"roleARN", pattern: "arn:aws.*:iam::[0-9]{12}:role/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressId = "AddressId"
             case description = "Description"
@@ -366,11 +458,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClusterId", required: false, type: .string)
         ]
+
         /// The automatically generated ID for a cluster.
         public let clusterId: String?
 
         public init(clusterId: String? = nil) {
             self.clusterId = clusterId
+        }
+
+        public func validate() throws {
+            try validate(clusterId, name:"clusterId", max: 39)
+            try validate(clusterId, name:"clusterId", min: 39)
+            try validate(clusterId, name:"clusterId", pattern: "CID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -393,6 +492,7 @@ extension Snowball {
             AWSShapeMember(label: "SnowballCapacityPreference", required: false, type: .enum), 
             AWSShapeMember(label: "SnowballType", required: false, type: .enum)
         ]
+
         /// The ID for the address that you want the Snowball shipped to.
         public let addressId: String?
         /// The ID of a cluster. If you're creating a job for a node in a cluster, you need to provide only this clusterId value. The other job attributes are inherited from the cluster.
@@ -433,6 +533,25 @@ extension Snowball {
             self.snowballType = snowballType
         }
 
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(clusterId, name:"clusterId", max: 39)
+            try validate(clusterId, name:"clusterId", min: 39)
+            try validate(clusterId, name:"clusterId", pattern: "CID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(description, name:"description", min: 1)
+            try validate(forwardingAddressId, name:"forwardingAddressId", max: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", min: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(kmsKeyARN, name:"kmsKeyARN", max: 255)
+            try validate(kmsKeyARN, name:"kmsKeyARN", pattern: "arn:aws.*:kms:.*:[0-9]{12}:key/.*")
+            try notification?.validate()
+            try resources?.validate()
+            try validate(roleARN, name:"roleARN", max: 255)
+            try validate(roleARN, name:"roleARN", pattern: "arn:aws.*:iam::[0-9]{12}:role/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressId = "AddressId"
             case clusterId = "ClusterId"
@@ -453,11 +572,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: false, type: .string)
         ]
+
         /// The automatically generated ID for a job, for example JID123e4567-e89b-12d3-a456-426655440000.
         public let jobId: String?
 
         public init(jobId: String? = nil) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 39)
+            try validate(jobId, name:"jobId", min: 39)
+            try validate(jobId, name:"jobId", pattern: "(M|J)ID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -472,6 +598,7 @@ extension Snowball {
             AWSShapeMember(label: "TotalBytes", required: false, type: .long), 
             AWSShapeMember(label: "TotalObjects", required: false, type: .long)
         ]
+
         /// The number of bytes transferred between a Snowball and Amazon S3.
         public let bytesTransferred: Int64?
         /// The number of objects transferred between a Snowball and Amazon S3.
@@ -500,11 +627,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AddressId", required: true, type: .string)
         ]
+
         /// The automatically generated ID for a specific address.
         public let addressId: String
 
         public init(addressId: String) {
             self.addressId = addressId
+        }
+
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -516,11 +650,16 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Address", required: false, type: .structure)
         ]
+
         /// The address that you want the Snowball or Snowballs associated with a specific job to be shipped to.
         public let address: Address?
 
         public init(address: Address? = nil) {
             self.address = address
+        }
+
+        public func validate() throws {
+            try address?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -533,6 +672,7 @@ extension Snowball {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The number of ADDRESS objects to return.
         public let maxResults: Int32?
         /// HTTP requests are stateless. To identify what object comes "next" in the list of ADDRESS objects, you have the option of specifying a value for NextToken as the starting point for your list of returned addresses.
@@ -541,6 +681,12 @@ extension Snowball {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -554,6 +700,7 @@ extension Snowball {
             AWSShapeMember(label: "Addresses", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The Snowball shipping addresses that were created for this account.
         public let addresses: [Address]?
         /// HTTP requests are stateless. If you use the automatically generated NextToken value in your next DescribeAddresses call, your list of returned addresses will start from this point in the array.
@@ -562,6 +709,13 @@ extension Snowball {
         public init(addresses: [Address]? = nil, nextToken: String? = nil) {
             self.addresses = addresses
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try addresses?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -574,11 +728,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClusterId", required: true, type: .string)
         ]
+
         /// The automatically generated ID for a cluster.
         public let clusterId: String
 
         public init(clusterId: String) {
             self.clusterId = clusterId
+        }
+
+        public func validate() throws {
+            try validate(clusterId, name:"clusterId", max: 39)
+            try validate(clusterId, name:"clusterId", min: 39)
+            try validate(clusterId, name:"clusterId", pattern: "CID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -590,11 +751,16 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClusterMetadata", required: false, type: .structure)
         ]
+
         /// Information about a specific cluster, including shipping information, cluster status, and other important metadata.
         public let clusterMetadata: ClusterMetadata?
 
         public init(clusterMetadata: ClusterMetadata? = nil) {
             self.clusterMetadata = clusterMetadata
+        }
+
+        public func validate() throws {
+            try clusterMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -606,11 +772,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The automatically generated ID for a job, for example JID123e4567-e89b-12d3-a456-426655440000.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 39)
+            try validate(jobId, name:"jobId", min: 39)
+            try validate(jobId, name:"jobId", pattern: "(M|J)ID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -623,6 +796,7 @@ extension Snowball {
             AWSShapeMember(label: "JobMetadata", required: false, type: .structure), 
             AWSShapeMember(label: "SubJobMetadata", required: false, type: .list)
         ]
+
         /// Information about a specific job, including shipping information, job status, and other important metadata.
         public let jobMetadata: JobMetadata?
         /// Information about a specific job part (in the case of an export job), including shipping information, job status, and other important metadata.
@@ -631,6 +805,13 @@ extension Snowball {
         public init(jobMetadata: JobMetadata? = nil, subJobMetadata: [JobMetadata]? = nil) {
             self.jobMetadata = jobMetadata
             self.subJobMetadata = subJobMetadata
+        }
+
+        public func validate() throws {
+            try jobMetadata?.validate()
+            try subJobMetadata?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -644,6 +825,7 @@ extension Snowball {
             AWSShapeMember(label: "AmiId", required: true, type: .string), 
             AWSShapeMember(label: "SnowballAmiId", required: false, type: .string)
         ]
+
         /// The ID of the AMI in Amazon EC2.
         public let amiId: String
         /// The ID of the AMI on the supported device.
@@ -652,6 +834,13 @@ extension Snowball {
         public init(amiId: String, snowballAmiId: String? = nil) {
             self.amiId = amiId
             self.snowballAmiId = snowballAmiId
+        }
+
+        public func validate() throws {
+            try validate(amiId, name:"amiId", max: 21)
+            try validate(amiId, name:"amiId", min: 12)
+            try validate(amiId, name:"amiId", pattern: "(ami-[0-9a-f]{8})|(ami-[0-9a-f]{17})")
+            try validate(snowballAmiId, name:"snowballAmiId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -664,11 +853,16 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EventResourceARN", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) for any local Amazon S3 resource that is an AWS Lambda function's event trigger associated with this job.
         public let eventResourceARN: String?
 
         public init(eventResourceARN: String? = nil) {
             self.eventResourceARN = eventResourceARN
+        }
+
+        public func validate() throws {
+            try validate(eventResourceARN, name:"eventResourceARN", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -680,11 +874,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The ID for a job that you want to get the manifest file for, for example JID123e4567-e89b-12d3-a456-426655440000.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 39)
+            try validate(jobId, name:"jobId", min: 39)
+            try validate(jobId, name:"jobId", pattern: "(M|J)ID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -696,11 +897,16 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ManifestURI", required: false, type: .string)
         ]
+
         /// The Amazon S3 presigned URL for the manifest file associated with the specified JobId value.
         public let manifestURI: String?
 
         public init(manifestURI: String? = nil) {
             self.manifestURI = manifestURI
+        }
+
+        public func validate() throws {
+            try validate(manifestURI, name:"manifestURI", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -712,11 +918,18 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The ID for the job that you want to get the UnlockCode value for, for example JID123e4567-e89b-12d3-a456-426655440000.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 39)
+            try validate(jobId, name:"jobId", min: 39)
+            try validate(jobId, name:"jobId", pattern: "(M|J)ID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -728,11 +941,16 @@ extension Snowball {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnlockCode", required: false, type: .string)
         ]
+
         /// The UnlockCode value for the specified job. The UnlockCode value can be accessed for up to 90 days after the job has been created.
         public let unlockCode: String?
 
         public init(unlockCode: String? = nil) {
             self.unlockCode = unlockCode
+        }
+
+        public func validate() throws {
+            try validate(unlockCode, name:"unlockCode", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -741,6 +959,7 @@ extension Snowball {
     }
 
     public struct GetSnowballUsageRequest: AWSShape {
+
 
         public init() {
         }
@@ -752,6 +971,7 @@ extension Snowball {
             AWSShapeMember(label: "SnowballLimit", required: false, type: .integer), 
             AWSShapeMember(label: "SnowballsInUse", required: false, type: .integer)
         ]
+
         /// The service limit for number of Snowballs this account can have at once. The default service limit is 1 (one).
         public let snowballLimit: Int32?
         /// The number of Snowballs that this account is currently using.
@@ -778,6 +998,7 @@ extension Snowball {
             AWSShapeMember(label: "JobType", required: false, type: .enum), 
             AWSShapeMember(label: "SnowballType", required: false, type: .enum)
         ]
+
         /// The creation date for this job.
         public let creationDate: TimeStamp?
         /// The optional description of this specific job, for example Important Photos 2016-08-11.
@@ -803,6 +1024,11 @@ extension Snowball {
             self.snowballType = snowballType
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", min: 1)
+            try validate(jobId, name:"jobId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "CreationDate"
             case description = "Description"
@@ -820,6 +1046,7 @@ extension Snowball {
             AWSShapeMember(label: "JobFailureLogURI", required: false, type: .string), 
             AWSShapeMember(label: "JobSuccessLogURI", required: false, type: .string)
         ]
+
         /// A link to an Amazon S3 presigned URL where the job completion report is located.
         public let jobCompletionReportURI: String?
         /// A link to an Amazon S3 presigned URL where the job failure log is located.
@@ -831,6 +1058,12 @@ extension Snowball {
             self.jobCompletionReportURI = jobCompletionReportURI
             self.jobFailureLogURI = jobFailureLogURI
             self.jobSuccessLogURI = jobSuccessLogURI
+        }
+
+        public func validate() throws {
+            try validate(jobCompletionReportURI, name:"jobCompletionReportURI", min: 1)
+            try validate(jobFailureLogURI, name:"jobFailureLogURI", min: 1)
+            try validate(jobSuccessLogURI, name:"jobSuccessLogURI", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -860,6 +1093,7 @@ extension Snowball {
             AWSShapeMember(label: "SnowballCapacityPreference", required: false, type: .enum), 
             AWSShapeMember(label: "SnowballType", required: false, type: .enum)
         ]
+
         /// The ID for the address that you want the Snowball shipped to.
         public let addressId: String?
         /// The 39-character ID for the cluster, for example CID123e4567-e89b-12d3-a456-426655440000.
@@ -915,6 +1149,26 @@ extension Snowball {
             self.snowballType = snowballType
         }
 
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(clusterId, name:"clusterId", min: 1)
+            try validate(description, name:"description", min: 1)
+            try validate(forwardingAddressId, name:"forwardingAddressId", max: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", min: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(jobId, name:"jobId", min: 1)
+            try jobLogInfo?.validate()
+            try validate(kmsKeyARN, name:"kmsKeyARN", max: 255)
+            try validate(kmsKeyARN, name:"kmsKeyARN", pattern: "arn:aws.*:kms:.*:[0-9]{12}:key/.*")
+            try notification?.validate()
+            try resources?.validate()
+            try validate(roleARN, name:"roleARN", max: 255)
+            try validate(roleARN, name:"roleARN", pattern: "arn:aws.*:iam::[0-9]{12}:role/.*")
+            try shippingDetails?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressId = "AddressId"
             case clusterId = "ClusterId"
@@ -942,6 +1196,7 @@ extension Snowball {
             AWSShapeMember(label: "LambdaResources", required: false, type: .list), 
             AWSShapeMember(label: "S3Resources", required: false, type: .list)
         ]
+
         /// The Amazon Machine Images (AMIs) associated with this job.
         public let ec2AmiResources: [Ec2AmiResource]?
         /// The Python-language Lambda functions for this job.
@@ -953,6 +1208,18 @@ extension Snowball {
             self.ec2AmiResources = ec2AmiResources
             self.lambdaResources = lambdaResources
             self.s3Resources = s3Resources
+        }
+
+        public func validate() throws {
+            try ec2AmiResources?.forEach {
+                try $0.validate()
+            }
+            try lambdaResources?.forEach {
+                try $0.validate()
+            }
+            try s3Resources?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -991,6 +1258,7 @@ extension Snowball {
             AWSShapeMember(label: "BeginMarker", required: false, type: .string), 
             AWSShapeMember(label: "EndMarker", required: false, type: .string)
         ]
+
         /// The key that starts an optional key range for an export job. Ranges are inclusive and UTF-8 binary sorted.
         public let beginMarker: String?
         /// The key that ends an optional key range for an export job. Ranges are inclusive and UTF-8 binary sorted.
@@ -999,6 +1267,11 @@ extension Snowball {
         public init(beginMarker: String? = nil, endMarker: String? = nil) {
             self.beginMarker = beginMarker
             self.endMarker = endMarker
+        }
+
+        public func validate() throws {
+            try validate(beginMarker, name:"beginMarker", min: 1)
+            try validate(endMarker, name:"endMarker", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1012,6 +1285,7 @@ extension Snowball {
             AWSShapeMember(label: "EventTriggers", required: false, type: .list), 
             AWSShapeMember(label: "LambdaArn", required: false, type: .string)
         ]
+
         /// The array of ARNs for S3Resource objects to trigger the LambdaResource objects associated with this job.
         public let eventTriggers: [EventTriggerDefinition]?
         /// An Amazon Resource Name (ARN) that represents an AWS Lambda function to be triggered by PUT object actions on the associated local Amazon S3 resource.
@@ -1020,6 +1294,13 @@ extension Snowball {
         public init(eventTriggers: [EventTriggerDefinition]? = nil, lambdaArn: String? = nil) {
             self.eventTriggers = eventTriggers
             self.lambdaArn = lambdaArn
+        }
+
+        public func validate() throws {
+            try eventTriggers?.forEach {
+                try $0.validate()
+            }
+            try validate(lambdaArn, name:"lambdaArn", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1034,6 +1315,7 @@ extension Snowball {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The 39-character ID for the cluster that you want to list, for example CID123e4567-e89b-12d3-a456-426655440000.
         public let clusterId: String
         /// The number of JobListEntry objects to return.
@@ -1045,6 +1327,15 @@ extension Snowball {
             self.clusterId = clusterId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(clusterId, name:"clusterId", max: 39)
+            try validate(clusterId, name:"clusterId", min: 39)
+            try validate(clusterId, name:"clusterId", pattern: "CID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1059,6 +1350,7 @@ extension Snowball {
             AWSShapeMember(label: "JobListEntries", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Each JobListEntry object contains a job's state, a job's ID, and a value that indicates whether the job is a job part, in the case of export jobs. 
         public let jobListEntries: [JobListEntry]?
         /// HTTP requests are stateless. If you use the automatically generated NextToken value in your next ListClusterJobsResult call, your list of returned jobs will start from this point in the array.
@@ -1067,6 +1359,13 @@ extension Snowball {
         public init(jobListEntries: [JobListEntry]? = nil, nextToken: String? = nil) {
             self.jobListEntries = jobListEntries
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobListEntries?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1080,6 +1379,7 @@ extension Snowball {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The number of ClusterListEntry objects to return.
         public let maxResults: Int32?
         /// HTTP requests are stateless. To identify what object comes "next" in the list of ClusterListEntry objects, you have the option of specifying NextToken as the starting point for your returned list.
@@ -1088,6 +1388,12 @@ extension Snowball {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1101,6 +1407,7 @@ extension Snowball {
             AWSShapeMember(label: "ClusterListEntries", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Each ClusterListEntry object contains a cluster's state, a cluster's ID, and other important status information.
         public let clusterListEntries: [ClusterListEntry]?
         /// HTTP requests are stateless. If you use the automatically generated NextToken value in your next ClusterListEntry call, your list of returned clusters will start from this point in the array.
@@ -1109,6 +1416,13 @@ extension Snowball {
         public init(clusterListEntries: [ClusterListEntry]? = nil, nextToken: String? = nil) {
             self.clusterListEntries = clusterListEntries
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try clusterListEntries?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1122,6 +1436,7 @@ extension Snowball {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results for the list of compatible images. Currently, each supported device can store 10 AMIs.
         public let maxResults: Int32?
         /// HTTP requests are stateless. To identify what object comes "next" in the list of compatible images, you can specify a value for NextToken as the starting point for your list of returned images.
@@ -1130,6 +1445,12 @@ extension Snowball {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1143,6 +1464,7 @@ extension Snowball {
             AWSShapeMember(label: "CompatibleImages", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A JSON-formatted object that describes a compatible AMI.
         public let compatibleImages: [CompatibleImage]?
         /// Because HTTP requests are stateless, this is the starting point for your next list of returned images.
@@ -1151,6 +1473,13 @@ extension Snowball {
         public init(compatibleImages: [CompatibleImage]? = nil, nextToken: String? = nil) {
             self.compatibleImages = compatibleImages
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try compatibleImages?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1164,6 +1493,7 @@ extension Snowball {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The number of JobListEntry objects to return.
         public let maxResults: Int32?
         /// HTTP requests are stateless. To identify what object comes "next" in the list of JobListEntry objects, you have the option of specifying NextToken as the starting point for your returned list.
@@ -1172,6 +1502,12 @@ extension Snowball {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 0)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1185,6 +1521,7 @@ extension Snowball {
             AWSShapeMember(label: "JobListEntries", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Each JobListEntry object contains a job's state, a job's ID, and a value that indicates whether the job is a job part, in the case of export jobs. 
         public let jobListEntries: [JobListEntry]?
         /// HTTP requests are stateless. If you use this automatically generated NextToken value in your next ListJobs call, your returned JobListEntry objects will start from this point in the array.
@@ -1193,6 +1530,13 @@ extension Snowball {
         public init(jobListEntries: [JobListEntry]? = nil, nextToken: String? = nil) {
             self.jobListEntries = jobListEntries
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobListEntries?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1207,6 +1551,7 @@ extension Snowball {
             AWSShapeMember(label: "NotifyAll", required: false, type: .boolean), 
             AWSShapeMember(label: "SnsTopicARN", required: false, type: .string)
         ]
+
         /// The list of job states that will trigger a notification for this job.
         public let jobStatesToNotify: [JobState]?
         /// Any change in job state will trigger a notification for this job.
@@ -1218,6 +1563,11 @@ extension Snowball {
             self.jobStatesToNotify = jobStatesToNotify
             self.notifyAll = notifyAll
             self.snsTopicARN = snsTopicARN
+        }
+
+        public func validate() throws {
+            try validate(snsTopicARN, name:"snsTopicARN", max: 255)
+            try validate(snsTopicARN, name:"snsTopicARN", pattern: "arn:aws.*:sns:.*:[0-9]{12}:.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1232,6 +1582,7 @@ extension Snowball {
             AWSShapeMember(label: "BucketArn", required: false, type: .string), 
             AWSShapeMember(label: "KeyRange", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) of an Amazon S3 bucket.
         public let bucketArn: String?
         /// For export jobs, you can provide an optional KeyRange within a specific Amazon S3 bucket. The length of the range is defined at job creation, and has either an inclusive BeginMarker, an inclusive EndMarker, or both. Ranges are UTF-8 binary sorted.
@@ -1240,6 +1591,11 @@ extension Snowball {
         public init(bucketArn: String? = nil, keyRange: KeyRange? = nil) {
             self.bucketArn = bucketArn
             self.keyRange = keyRange
+        }
+
+        public func validate() throws {
+            try validate(bucketArn, name:"bucketArn", max: 255)
+            try keyRange?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1253,6 +1609,7 @@ extension Snowball {
             AWSShapeMember(label: "Status", required: false, type: .string), 
             AWSShapeMember(label: "TrackingNumber", required: false, type: .string)
         ]
+
         /// Status information for a shipment.
         public let status: String?
         /// The tracking number for this job. Using this tracking number with your region's carrier's website, you can track a Snowball as the carrier transports it. For India, the carrier is Amazon Logistics. For all other regions, UPS is the carrier.
@@ -1261,6 +1618,11 @@ extension Snowball {
         public init(status: String? = nil, trackingNumber: String? = nil) {
             self.status = status
             self.trackingNumber = trackingNumber
+        }
+
+        public func validate() throws {
+            try validate(status, name:"status", min: 1)
+            try validate(trackingNumber, name:"trackingNumber", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1275,6 +1637,7 @@ extension Snowball {
             AWSShapeMember(label: "OutboundShipment", required: false, type: .structure), 
             AWSShapeMember(label: "ShippingOption", required: false, type: .enum)
         ]
+
         /// The Status and TrackingNumber values for a Snowball being returned to AWS for a particular job.
         public let inboundShipment: Shipment?
         /// The Status and TrackingNumber values for a Snowball being delivered to the address that you specified for a particular job.
@@ -1286,6 +1649,11 @@ extension Snowball {
             self.inboundShipment = inboundShipment
             self.outboundShipment = outboundShipment
             self.shippingOption = shippingOption
+        }
+
+        public func validate() throws {
+            try inboundShipment?.validate()
+            try outboundShipment?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1331,6 +1699,7 @@ extension Snowball {
             AWSShapeMember(label: "RoleARN", required: false, type: .string), 
             AWSShapeMember(label: "ShippingOption", required: false, type: .enum)
         ]
+
         /// The ID of the updated Address object.
         public let addressId: String?
         /// The cluster ID of the cluster that you want to update, for example CID123e4567-e89b-12d3-a456-426655440000.
@@ -1359,6 +1728,23 @@ extension Snowball {
             self.shippingOption = shippingOption
         }
 
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(clusterId, name:"clusterId", max: 39)
+            try validate(clusterId, name:"clusterId", min: 39)
+            try validate(clusterId, name:"clusterId", pattern: "CID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(description, name:"description", min: 1)
+            try validate(forwardingAddressId, name:"forwardingAddressId", max: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", min: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try notification?.validate()
+            try resources?.validate()
+            try validate(roleARN, name:"roleARN", max: 255)
+            try validate(roleARN, name:"roleARN", pattern: "arn:aws.*:iam::[0-9]{12}:role/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressId = "AddressId"
             case clusterId = "ClusterId"
@@ -1372,6 +1758,7 @@ extension Snowball {
     }
 
     public struct UpdateClusterResult: AWSShape {
+
 
         public init() {
         }
@@ -1390,6 +1777,7 @@ extension Snowball {
             AWSShapeMember(label: "ShippingOption", required: false, type: .enum), 
             AWSShapeMember(label: "SnowballCapacityPreference", required: false, type: .enum)
         ]
+
         /// The ID of the updated Address object.
         public let addressId: String?
         /// The updated description of this job's JobMetadata object.
@@ -1421,6 +1809,23 @@ extension Snowball {
             self.snowballCapacityPreference = snowballCapacityPreference
         }
 
+        public func validate() throws {
+            try validate(addressId, name:"addressId", max: 40)
+            try validate(addressId, name:"addressId", min: 40)
+            try validate(addressId, name:"addressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(description, name:"description", min: 1)
+            try validate(forwardingAddressId, name:"forwardingAddressId", max: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", min: 40)
+            try validate(forwardingAddressId, name:"forwardingAddressId", pattern: "ADID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try validate(jobId, name:"jobId", max: 39)
+            try validate(jobId, name:"jobId", min: 39)
+            try validate(jobId, name:"jobId", pattern: "(M|J)ID[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+            try notification?.validate()
+            try resources?.validate()
+            try validate(roleARN, name:"roleARN", max: 255)
+            try validate(roleARN, name:"roleARN", pattern: "arn:aws.*:iam::[0-9]{12}:role/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case addressId = "AddressId"
             case description = "Description"
@@ -1435,6 +1840,7 @@ extension Snowball {
     }
 
     public struct UpdateJobResult: AWSShape {
+
 
         public init() {
         }

@@ -9,6 +9,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DaysAfterInitiation", required: false, type: .integer)
         ]
+
         /// Specifies the number of days after which Amazon S3 aborts an incomplete multipart upload.
         public let daysAfterInitiation: Int32?
 
@@ -25,6 +26,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         public let requestCharged: RequestCharged?
 
         public init(requestCharged: RequestCharged? = nil) {
@@ -43,6 +45,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "UploadId", location: .querystring(locationName: "uploadId"), required: true, type: .string)
         ]
+
         /// Name of the bucket to which the multipart upload was initiated.
         public let bucket: String
         /// Key of the object for which the multipart upload was initiated.
@@ -58,6 +61,10 @@ extension S3 {
             self.uploadId = uploadId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case key = "Key"
@@ -70,6 +77,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Specifies the transfer acceleration status of the bucket.
         public let status: BucketAccelerateStatus?
 
@@ -87,6 +95,7 @@ extension S3 {
             AWSShapeMember(label: "Grants", location: .body(locationName: "AccessControlList"), required: false, type: .list, encoding: .list(member:"Grant")), 
             AWSShapeMember(label: "Owner", required: false, type: .structure)
         ]
+
         /// A list of grants.
         public let grants: [Grant]?
         /// Container for the bucket owner's display name and ID.
@@ -107,6 +116,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Owner", required: true, type: .enum)
         ]
+
         /// Specifies the replica ownership. For default and valid values, see PUT bucket replication in the Amazon Simple Storage Service API Reference.
         public let owner: OwnerOverride
 
@@ -124,6 +134,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "Tag"), required: false, type: .list, encoding: .flatList)
         ]
+
         /// The prefix to use when evaluating an AND predicate: The prefix that an object must have to be included in the metrics results.
         public let prefix: String?
         /// The list of tags to use when evaluating an AND predicate.
@@ -132,6 +143,12 @@ extension S3 {
         public init(prefix: String? = nil, tags: [Tag]? = nil) {
             self.prefix = prefix
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -146,6 +163,7 @@ extension S3 {
             AWSShapeMember(label: "Id", required: true, type: .string), 
             AWSShapeMember(label: "StorageClassAnalysis", required: true, type: .structure)
         ]
+
         /// The filter used to describe a set of objects for analyses. A filter must have exactly one prefix, one tag, or one conjunction (AnalyticsAndOperator). If no filter is provided, all objects will be considered in any analysis.
         public let filter: AnalyticsFilter?
         /// The ID that identifies the analytics configuration.
@@ -159,6 +177,10 @@ extension S3 {
             self.storageClassAnalysis = storageClassAnalysis
         }
 
+        public func validate() throws {
+            try filter?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filter = "Filter"
             case id = "Id"
@@ -170,6 +192,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3BucketDestination", required: true, type: .structure)
         ]
+
         /// A destination signifying output to an S3 bucket.
         public let s3BucketDestination: AnalyticsS3BucketDestination
 
@@ -188,6 +211,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tag", required: false, type: .structure)
         ]
+
         /// A conjunction (logical AND) of predicates, which is used in evaluating an analytics filter. The operator must have at least two predicates.
         public let and: AnalyticsAndOperator?
         /// The prefix to use when evaluating an analytics filter.
@@ -199,6 +223,11 @@ extension S3 {
             self.and = and
             self.prefix = prefix
             self.tag = tag
+        }
+
+        public func validate() throws {
+            try and?.validate()
+            try tag?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -215,6 +244,7 @@ extension S3 {
             AWSShapeMember(label: "Format", required: true, type: .enum), 
             AWSShapeMember(label: "Prefix", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the bucket to which data is exported.
         public let bucket: String
         /// The account ID that owns the destination bucket. If no account ID is provided, the owner will not be validated prior to exporting data.
@@ -249,6 +279,7 @@ extension S3 {
             AWSShapeMember(label: "CreationDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// Date the bucket was created.
         public let creationDate: TimeStamp?
         /// The name of the bucket.
@@ -283,11 +314,18 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Rules", location: .body(locationName: "Rule"), required: true, type: .list, encoding: .flatList)
         ]
+
         /// A lifecycle rule for individual objects in an Amazon S3 bucket.
         public let rules: [LifecycleRule]
 
         public init(rules: [LifecycleRule]) {
             self.rules = rules
+        }
+
+        public func validate() throws {
+            try rules.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -314,6 +352,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LoggingEnabled", required: false, type: .structure)
         ]
+
         public let loggingEnabled: LoggingEnabled?
 
         public init(loggingEnabled: LoggingEnabled? = nil) {
@@ -342,6 +381,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CORSRules", location: .body(locationName: "CORSRule"), required: true, type: .list, encoding: .flatList)
         ]
+
         /// A set of allowed origins and methods.
         public let cORSRules: [CORSRule]
 
@@ -362,6 +402,7 @@ extension S3 {
             AWSShapeMember(label: "ExposeHeaders", location: .body(locationName: "ExposeHeader"), required: false, type: .list, encoding: .flatList), 
             AWSShapeMember(label: "MaxAgeSeconds", required: false, type: .integer)
         ]
+
         /// Headers that are specified in the Access-Control-Request-Headers header. These headers are allowed in a preflight OPTIONS request. In response to any preflight OPTIONS request, Amazon S3 returns any requested headers that are allowed.
         public let allowedHeaders: [String]?
         /// An HTTP method that you allow the origin to execute. Valid values are GET, PUT, HEAD, POST, and DELETE.
@@ -400,6 +441,7 @@ extension S3 {
             AWSShapeMember(label: "QuoteEscapeCharacter", required: false, type: .string), 
             AWSShapeMember(label: "RecordDelimiter", required: false, type: .string)
         ]
+
         /// Specifies that CSV field values may contain quoted record delimiters and such records should be allowed. Default value is FALSE. Setting this value to TRUE may lower performance.
         public let allowQuotedRecordDelimiter: Bool?
         /// The single character used to indicate a row should be ignored when present at the start of a row.
@@ -444,6 +486,7 @@ extension S3 {
             AWSShapeMember(label: "QuoteFields", required: false, type: .enum), 
             AWSShapeMember(label: "RecordDelimiter", required: false, type: .string)
         ]
+
         /// The value used to separate individual fields in a record.
         public let fieldDelimiter: String?
         /// The value used for escaping where the field delimiter is part of the value.
@@ -479,6 +522,7 @@ extension S3 {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "InvocationRole", required: false, type: .string)
         ]
+
         public let cloudFunction: String?
         public let events: [Event]?
         public let id: String?
@@ -503,6 +547,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Prefix", required: false, type: .string)
         ]
+
         public let prefix: String?
 
         public init(prefix: String? = nil) {
@@ -526,6 +571,7 @@ extension S3 {
             AWSShapeMember(label: "SSEKMSKeyId", location: .header(locationName: "x-amz-server-side-encryption-aws-kms-key-id"), required: false, type: .string), 
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string)
         ]
+
         public let bucket: String?
         /// Entity tag of the object.
         public let eTag: String?
@@ -553,6 +599,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case eTag = "ETag"
@@ -577,6 +627,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "UploadId", location: .querystring(locationName: "uploadId"), required: true, type: .string)
         ]
+
         public let bucket: String
         public let key: String
         public let multipartUpload: CompletedMultipartUpload?
@@ -589,6 +640,10 @@ extension S3 {
             self.multipartUpload = multipartUpload
             self.requestPayer = requestPayer
             self.uploadId = uploadId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -604,6 +659,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Parts", location: .body(locationName: "Part"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let parts: [CompletedPart]?
 
         public init(parts: [CompletedPart]? = nil) {
@@ -620,6 +676,7 @@ extension S3 {
             AWSShapeMember(label: "ETag", required: false, type: .string), 
             AWSShapeMember(label: "PartNumber", required: false, type: .integer)
         ]
+
         /// Entity tag returned when the part was uploaded.
         public let eTag: String?
         /// Part number that identifies the part. This is a positive integer between 1 and 10,000.
@@ -648,6 +705,7 @@ extension S3 {
             AWSShapeMember(label: "HttpErrorCodeReturnedEquals", required: false, type: .string), 
             AWSShapeMember(label: "KeyPrefixEquals", required: false, type: .string)
         ]
+
         /// The HTTP error code when the redirect is applied. In the event of an error, if the error code equals this value, then the specified redirect is applied. Required when parent element Condition is specified and sibling KeyPrefixEquals is not specified. If both are specified, then both must be true for the redirect to be applied.
         public let httpErrorCodeReturnedEquals: String?
         /// The object key name prefix when the redirect is applied. For example, to redirect requests for ExamplePage.html, the key prefix will be ExamplePage.html. To redirect request for all pages with the prefix docs/, the key prefix will be /docs, which identifies all objects in the docs/ folder. Required when the parent element Condition is specified and sibling HttpErrorCodeReturnedEquals is not specified. If both conditions are specified, both must be true for the redirect to be applied.
@@ -665,6 +723,7 @@ extension S3 {
     }
 
     public struct ContinuationEvent: AWSShape {
+
 
         public init() {
         }
@@ -686,6 +745,7 @@ extension S3 {
             AWSShapeMember(label: "SSEKMSKeyId", location: .header(locationName: "x-amz-server-side-encryption-aws-kms-key-id"), required: false, type: .string), 
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string)
         ]
+
         public let copyObjectResult: CopyObjectResult?
         public let copySourceVersionId: String?
         /// If the object expiration is configured, the response includes this header.
@@ -771,6 +831,7 @@ extension S3 {
             AWSShapeMember(label: "TaggingDirective", location: .header(locationName: "x-amz-tagging-directive"), required: false, type: .enum), 
             AWSShapeMember(label: "WebsiteRedirectLocation", location: .header(locationName: "x-amz-website-redirect-location"), required: false, type: .string)
         ]
+
         /// The canned ACL to apply to the object.
         public let acl: ObjectCannedACL?
         public let bucket: String
@@ -883,6 +944,11 @@ extension S3 {
             self.websiteRedirectLocation = websiteRedirectLocation
         }
 
+        public func validate() throws {
+            try validate(copySource, name:"copySource", pattern: "\\/.+\\/.+")
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acl = "x-amz-acl"
             case bucket = "Bucket"
@@ -929,6 +995,7 @@ extension S3 {
             AWSShapeMember(label: "ETag", required: false, type: .string), 
             AWSShapeMember(label: "LastModified", required: false, type: .timestamp)
         ]
+
         public let eTag: String?
         public let lastModified: TimeStamp?
 
@@ -948,6 +1015,7 @@ extension S3 {
             AWSShapeMember(label: "ETag", required: false, type: .string), 
             AWSShapeMember(label: "LastModified", required: false, type: .timestamp)
         ]
+
         /// Entity tag of the object.
         public let eTag: String?
         /// Date and time at which the object was uploaded.
@@ -968,6 +1036,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationConstraint", required: false, type: .enum)
         ]
+
         /// Specifies the region where the bucket will be created. If you don't specify a region, the bucket is created in US East (N. Virginia) Region (us-east-1).
         public let locationConstraint: BucketLocationConstraint?
 
@@ -984,6 +1053,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Location", location: .header(locationName: "Location"), required: false, type: .string)
         ]
+
         public let location: String?
 
         public init(location: String? = nil) {
@@ -1010,6 +1080,7 @@ extension S3 {
             AWSShapeMember(label: "GrantWriteACP", location: .header(locationName: "x-amz-grant-write-acp"), required: false, type: .string), 
             AWSShapeMember(label: "ObjectLockEnabledForBucket", location: .header(locationName: "x-amz-bucket-object-lock-enabled"), required: false, type: .boolean)
         ]
+
         /// The canned ACL to apply to the bucket.
         public let acl: BucketCannedACL?
         public let bucket: String
@@ -1066,6 +1137,7 @@ extension S3 {
             AWSShapeMember(label: "SSEKMSKeyId", location: .header(locationName: "x-amz-server-side-encryption-aws-kms-key-id"), required: false, type: .string), 
             AWSShapeMember(label: "UploadId", required: false, type: .string)
         ]
+
         /// Date when multipart upload will become eligible for abort operation by lifecycle.
         public let abortDate: TimeStamp?
         /// Id of the lifecycle rule that makes a multipart upload eligible for abort operation.
@@ -1100,6 +1172,10 @@ extension S3 {
             self.sSEKMSEncryptionContext = sSEKMSEncryptionContext
             self.sSEKMSKeyId = sSEKMSKeyId
             self.uploadId = uploadId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1147,6 +1223,7 @@ extension S3 {
             AWSShapeMember(label: "Tagging", location: .header(locationName: "x-amz-tagging"), required: false, type: .string), 
             AWSShapeMember(label: "WebsiteRedirectLocation", location: .header(locationName: "x-amz-website-redirect-location"), required: false, type: .string)
         ]
+
         /// The canned ACL to apply to the object.
         public let acl: ObjectCannedACL?
         public let bucket: String
@@ -1229,6 +1306,10 @@ extension S3 {
             self.websiteRedirectLocation = websiteRedirectLocation
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acl = "x-amz-acl"
             case bucket = "Bucket"
@@ -1266,6 +1347,7 @@ extension S3 {
             AWSShapeMember(label: "Mode", required: false, type: .enum), 
             AWSShapeMember(label: "Years", required: false, type: .integer)
         ]
+
         /// The number of days that you want to specify for the default retention period.
         public let days: Int32?
         /// The default object lock retention mode you want to apply to new objects placed in the specified bucket.
@@ -1291,6 +1373,7 @@ extension S3 {
             AWSShapeMember(label: "Objects", location: .body(locationName: "Object"), required: true, type: .list, encoding: .flatList), 
             AWSShapeMember(label: "Quiet", required: false, type: .boolean)
         ]
+
         public let objects: [ObjectIdentifier]
         /// Element to enable quiet mode for the request. When you add this element, you must set its value to true.
         public let quiet: Bool?
@@ -1298,6 +1381,12 @@ extension S3 {
         public init(objects: [ObjectIdentifier], quiet: Bool? = nil) {
             self.objects = objects
             self.quiet = quiet
+        }
+
+        public func validate() throws {
+            try objects.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1311,6 +1400,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string)
         ]
+
         /// The name of the bucket from which an analytics configuration is deleted.
         public let bucket: String
         /// The ID that identifies the analytics configuration.
@@ -1331,6 +1421,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -1346,6 +1437,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// The name of the bucket containing the server-side encryption configuration to delete.
         public let bucket: String
 
@@ -1363,6 +1455,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string)
         ]
+
         /// The name of the bucket containing the inventory configuration to delete.
         public let bucket: String
         /// The ID used to identify the inventory configuration.
@@ -1383,6 +1476,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -1399,6 +1493,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string)
         ]
+
         /// The name of the bucket containing the metrics configuration to delete.
         public let bucket: String
         /// The ID used to identify the metrics configuration.
@@ -1419,6 +1514,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -1434,6 +1530,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         ///  The bucket name.   It can take a while to propagate the deletion of a replication configuration to all Amazon S3 systems. 
         public let bucket: String
 
@@ -1450,6 +1547,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -1465,6 +1563,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -1480,6 +1579,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -1499,6 +1599,7 @@ extension S3 {
             AWSShapeMember(label: "Owner", required: false, type: .structure), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         /// Specifies whether the object is (true) or is not (false) the latest version of an object.
         public let isLatest: Bool?
         /// The object key.
@@ -1517,6 +1618,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case isLatest = "IsLatest"
             case key = "Key"
@@ -1530,6 +1635,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The status of the delete marker replication.   In the current implementation, Amazon S3 doesn't replicate the delete markers. The status must be Disabled.  
         public let status: DeleteMarkerReplicationStatus?
 
@@ -1554,6 +1660,7 @@ extension S3 {
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string)
         ]
+
         /// Specifies whether the versioned object that was permanently deleted was (true) or was not (false) a delete marker.
         public let deleteMarker: Bool?
         public let requestCharged: RequestCharged?
@@ -1582,6 +1689,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         /// Indicates whether Amazon S3 object lock should bypass governance-mode restrictions to process this operation.
         public let bypassGovernanceRetention: Bool?
@@ -1601,6 +1709,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case bypassGovernanceRetention = "x-amz-bypass-governance-retention"
@@ -1615,6 +1727,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string)
         ]
+
         /// The versionId of the object the tag-set was removed from.
         public let versionId: String?
 
@@ -1633,6 +1746,7 @@ extension S3 {
             AWSShapeMember(label: "Key", location: .uri(locationName: "Key"), required: true, type: .string), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         public let key: String
         /// The versionId of the object that the tag-set will be removed from.
@@ -1642,6 +1756,10 @@ extension S3 {
             self.bucket = bucket
             self.key = key
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1657,6 +1775,7 @@ extension S3 {
             AWSShapeMember(label: "Errors", location: .body(locationName: "Error"), required: false, type: .list, encoding: .flatList), 
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         public let deleted: [DeletedObject]?
         public let errors: [Error]?
         public let requestCharged: RequestCharged?
@@ -1665,6 +1784,15 @@ extension S3 {
             self.deleted = deleted
             self.errors = errors
             self.requestCharged = requestCharged
+        }
+
+        public func validate() throws {
+            try deleted?.forEach {
+                try $0.validate()
+            }
+            try errors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1685,6 +1813,7 @@ extension S3 {
             AWSShapeMember(label: "MFA", location: .header(locationName: "x-amz-mfa"), required: false, type: .string), 
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum)
         ]
+
         public let bucket: String
         /// Specifies whether you want to delete this object even if it has a Governance-type object lock in place. You must have sufficient permissions to perform this operation.
         public let bypassGovernanceRetention: Bool?
@@ -1701,6 +1830,10 @@ extension S3 {
             self.requestPayer = requestPayer
         }
 
+        public func validate() throws {
+            try delete.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case bypassGovernanceRetention = "x-amz-bypass-governance-retention"
@@ -1714,6 +1847,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// The Amazon S3 bucket whose PublicAccessBlock configuration you want to delete. 
         public let bucket: String
 
@@ -1733,6 +1867,7 @@ extension S3 {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         public let deleteMarker: Bool?
         public let deleteMarkerVersionId: String?
         public let key: String?
@@ -1743,6 +1878,10 @@ extension S3 {
             self.deleteMarkerVersionId = deleteMarkerVersionId
             self.key = key
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1761,6 +1900,7 @@ extension S3 {
             AWSShapeMember(label: "EncryptionConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "StorageClass", required: false, type: .enum)
         ]
+
         /// Specify this only in a cross-account scenario (where source and destination bucket owners are not the same), and you want to change replica ownership to the AWS account that owns the destination bucket. If this is not specified in the replication configuration, the replicas are owned by same AWS account that owns the source object.
         public let accessControlTranslation: AccessControlTranslation?
         /// Destination bucket owner account ID. In a cross-account scenario, if you direct Amazon S3 to change replica ownership to the AWS account that owns the destination bucket by specifying the AccessControlTranslation property, this is the account ID of the destination bucket owner. For more information, see Cross-Region Replication Additional Configuration: Change Replica Owner in the Amazon Simple Storage Service Developer Guide.
@@ -1800,6 +1940,7 @@ extension S3 {
             AWSShapeMember(label: "KMSContext", required: false, type: .string), 
             AWSShapeMember(label: "KMSKeyId", required: false, type: .string)
         ]
+
         /// The server-side encryption algorithm used when storing job results in Amazon S3 (e.g., AES256, aws:kms).
         public let encryptionType: ServerSideEncryption
         /// If the encryption type is aws:kms, this optional value can be used to specify the encryption context for the restore results.
@@ -1824,6 +1965,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ReplicaKmsKeyID", required: false, type: .string)
         ]
+
         /// Specifies the AWS KMS Key ID (Key ARN or Alias ARN) for the destination bucket. Amazon S3 uses this key to encrypt replica objects.
         public let replicaKmsKeyID: String?
 
@@ -1838,6 +1980,7 @@ extension S3 {
 
     public struct EndEvent: AWSShape {
 
+
         public init() {
         }
 
@@ -1850,6 +1993,7 @@ extension S3 {
             AWSShapeMember(label: "Message", required: false, type: .string), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         public let code: String?
         public let key: String?
         public let message: String?
@@ -1860,6 +2004,10 @@ extension S3 {
             self.key = key
             self.message = message
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1874,11 +2022,16 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Key", required: true, type: .string)
         ]
+
         /// The object key name to use when a 4XX class error occurs.
         public let key: String
 
         public init(key: String) {
             self.key = key
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1924,6 +2077,7 @@ extension S3 {
             AWSShapeMember(label: "Name", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The object key name prefix or suffix identifying one or more objects to which the filtering rule applies. The maximum length is 1,024 characters. Overlapping prefixes and suffixes are not supported. For more information, see Configuring Event Notifications in the Amazon Simple Storage Service Developer Guide.
         public let name: FilterRuleName?
         /// The value that the filter searches for in object key names.
@@ -1950,6 +2104,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The accelerate configuration of the bucket.
         public let status: BucketAccelerateStatus?
 
@@ -1966,6 +2121,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// Name of the bucket for which the accelerate configuration is retrieved.
         public let bucket: String
 
@@ -1983,6 +2139,7 @@ extension S3 {
             AWSShapeMember(label: "Grants", location: .body(locationName: "AccessControlList"), required: false, type: .list, encoding: .list(member:"Grant")), 
             AWSShapeMember(label: "Owner", required: false, type: .structure)
         ]
+
         /// A list of grants.
         public let grants: [Grant]?
         public let owner: Owner?
@@ -2002,6 +2159,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2019,11 +2177,16 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AnalyticsConfiguration", required: false, type: .structure)
         ]
+
         /// The configuration and any analyses for the analytics filter.
         public let analyticsConfiguration: AnalyticsConfiguration?
 
         public init(analyticsConfiguration: AnalyticsConfiguration? = nil) {
             self.analyticsConfiguration = analyticsConfiguration
+        }
+
+        public func validate() throws {
+            try analyticsConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2036,6 +2199,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string)
         ]
+
         /// The name of the bucket from which an analytics configuration is retrieved.
         public let bucket: String
         /// The ID that identifies the analytics configuration.
@@ -2056,6 +2220,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CORSRules", location: .body(locationName: "CORSRule"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let cORSRules: [CORSRule]?
 
         public init(cORSRules: [CORSRule]? = nil) {
@@ -2071,6 +2236,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2088,6 +2254,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerSideEncryptionConfiguration", required: false, type: .structure)
         ]
+
         public let serverSideEncryptionConfiguration: ServerSideEncryptionConfiguration?
 
         public init(serverSideEncryptionConfiguration: ServerSideEncryptionConfiguration? = nil) {
@@ -2103,6 +2270,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// The name of the bucket from which the server-side encryption configuration is retrieved.
         public let bucket: String
 
@@ -2121,6 +2289,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "InventoryConfiguration", required: false, type: .structure)
         ]
+
         /// Specifies the inventory configuration.
         public let inventoryConfiguration: InventoryConfiguration?
 
@@ -2138,6 +2307,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string)
         ]
+
         /// The name of the bucket containing the inventory configuration to retrieve.
         public let bucket: String
         /// The ID used to identify the inventory configuration.
@@ -2158,10 +2328,17 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Rules", location: .body(locationName: "Rule"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let rules: [LifecycleRule]?
 
         public init(rules: [LifecycleRule]? = nil) {
             self.rules = rules
+        }
+
+        public func validate() throws {
+            try rules?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2173,6 +2350,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2188,6 +2366,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Rules", location: .body(locationName: "Rule"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let rules: [Rule]?
 
         public init(rules: [Rule]? = nil) {
@@ -2203,6 +2382,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2218,6 +2398,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LocationConstraint", required: false, type: .enum)
         ]
+
         public let locationConstraint: BucketLocationConstraint?
 
         public init(locationConstraint: BucketLocationConstraint? = nil) {
@@ -2233,6 +2414,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2248,6 +2430,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LoggingEnabled", required: false, type: .structure)
         ]
+
         public let loggingEnabled: LoggingEnabled?
 
         public init(loggingEnabled: LoggingEnabled? = nil) {
@@ -2263,6 +2446,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2280,11 +2464,16 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "MetricsConfiguration", required: false, type: .structure)
         ]
+
         /// Specifies the metrics configuration.
         public let metricsConfiguration: MetricsConfiguration?
 
         public init(metricsConfiguration: MetricsConfiguration? = nil) {
             self.metricsConfiguration = metricsConfiguration
+        }
+
+        public func validate() throws {
+            try metricsConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2297,6 +2486,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string)
         ]
+
         /// The name of the bucket containing the metrics configuration to retrieve.
         public let bucket: String
         /// The ID used to identify the metrics configuration.
@@ -2317,6 +2507,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// Name of the bucket to get the notification configuration for.
         public let bucket: String
 
@@ -2335,6 +2526,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Policy", required: false, type: .string)
         ]
+
         /// The bucket policy as a JSON document.
         public let policy: String?
 
@@ -2351,6 +2543,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2368,6 +2561,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyStatus", required: false, type: .structure)
         ]
+
         /// The policy status for the specified bucket.
         public let policyStatus: PolicyStatus?
 
@@ -2384,6 +2578,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// The name of the Amazon S3 bucket whose policy status you want to retrieve.
         public let bucket: String
 
@@ -2402,10 +2597,15 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ReplicationConfiguration", required: false, type: .structure)
         ]
+
         public let replicationConfiguration: ReplicationConfiguration?
 
         public init(replicationConfiguration: ReplicationConfiguration? = nil) {
             self.replicationConfiguration = replicationConfiguration
+        }
+
+        public func validate() throws {
+            try replicationConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2417,6 +2617,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2432,6 +2633,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Payer", required: false, type: .enum)
         ]
+
         /// Specifies who pays for the download and request fees.
         public let payer: Payer?
 
@@ -2448,6 +2650,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2463,10 +2666,17 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagSet", required: true, type: .list, encoding: .list(member:"Tag"))
         ]
+
         public let tagSet: [Tag]
 
         public init(tagSet: [Tag]) {
             self.tagSet = tagSet
+        }
+
+        public func validate() throws {
+            try tagSet.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2478,6 +2688,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2494,6 +2705,7 @@ extension S3 {
             AWSShapeMember(label: "MFADelete", location: .body(locationName: "MfaDelete"), required: false, type: .enum), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.
         public let mFADelete: MFADeleteStatus?
         /// The versioning state of the bucket.
@@ -2514,6 +2726,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2532,6 +2745,7 @@ extension S3 {
             AWSShapeMember(label: "RedirectAllRequestsTo", required: false, type: .structure), 
             AWSShapeMember(label: "RoutingRules", required: false, type: .list, encoding: .list(member:"RoutingRule"))
         ]
+
         public let errorDocument: ErrorDocument?
         public let indexDocument: IndexDocument?
         public let redirectAllRequestsTo: RedirectAllRequestsTo?
@@ -2542,6 +2756,10 @@ extension S3 {
             self.indexDocument = indexDocument
             self.redirectAllRequestsTo = redirectAllRequestsTo
             self.routingRules = routingRules
+        }
+
+        public func validate() throws {
+            try errorDocument?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2556,6 +2774,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -2573,6 +2792,7 @@ extension S3 {
             AWSShapeMember(label: "Owner", required: false, type: .structure), 
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         /// A list of grants.
         public let grants: [Grant]?
         public let owner: Owner?
@@ -2598,6 +2818,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         public let key: String
         public let requestPayer: RequestPayer?
@@ -2609,6 +2830,10 @@ extension S3 {
             self.key = key
             self.requestPayer = requestPayer
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2625,6 +2850,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "LegalHold", required: false, type: .structure)
         ]
+
         /// The current Legal Hold status for the specified object.
         public let legalHold: ObjectLockLegalHold?
 
@@ -2644,6 +2870,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         /// The bucket containing the object whose Legal Hold status you want to retrieve.
         public let bucket: String
         /// The key name for the object whose Legal Hold status you want to retrieve.
@@ -2657,6 +2884,10 @@ extension S3 {
             self.key = key
             self.requestPayer = requestPayer
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2673,6 +2904,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ObjectLockConfiguration", required: false, type: .structure)
         ]
+
         /// The specified bucket's object lock configuration.
         public let objectLockConfiguration: ObjectLockConfiguration?
 
@@ -2689,6 +2921,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// The bucket whose object lock configuration you want to retrieve.
         public let bucket: String
 
@@ -2737,6 +2970,7 @@ extension S3 {
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string), 
             AWSShapeMember(label: "WebsiteRedirectLocation", location: .header(locationName: "x-amz-website-redirect-location"), required: false, type: .string)
         ]
+
         public let acceptRanges: String?
         /// Object data.
         public let body: Data?
@@ -2887,6 +3121,7 @@ extension S3 {
             AWSShapeMember(label: "SSECustomerKeyMD5", location: .header(locationName: "x-amz-server-side-encryption-customer-key-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         /// Return the object only if its entity tag (ETag) is the same as the one specified, otherwise return a 412 (precondition failed).
         public let ifMatch: String?
@@ -2945,6 +3180,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case ifMatch = "If-Match"
@@ -2974,6 +3213,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Retention", required: false, type: .structure)
         ]
+
         /// The container element for an object's retention settings.
         public let retention: ObjectLockRetention?
 
@@ -2993,6 +3233,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         /// The bucket containing the object whose retention settings you want to retrieve.
         public let bucket: String
         /// The key name for the object whose retention settings you want to retrieve.
@@ -3008,6 +3249,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case key = "Key"
@@ -3021,12 +3266,19 @@ extension S3 {
             AWSShapeMember(label: "TagSet", required: true, type: .list, encoding: .list(member:"Tag")), 
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string)
         ]
+
         public let tagSet: [Tag]
         public let versionId: String?
 
         public init(tagSet: [Tag], versionId: String? = nil) {
             self.tagSet = tagSet
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try tagSet.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3041,6 +3293,7 @@ extension S3 {
             AWSShapeMember(label: "Key", location: .uri(locationName: "Key"), required: true, type: .string), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         public let key: String
         public let versionId: String?
@@ -3049,6 +3302,10 @@ extension S3 {
             self.bucket = bucket
             self.key = key
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3065,6 +3322,7 @@ extension S3 {
             AWSShapeMember(label: "Body", required: false, type: .blob), 
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         public let body: Data?
         public let requestCharged: RequestCharged?
 
@@ -3085,6 +3343,7 @@ extension S3 {
             AWSShapeMember(label: "Key", location: .uri(locationName: "Key"), required: true, type: .string), 
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum)
         ]
+
         public let bucket: String
         public let key: String
         public let requestPayer: RequestPayer?
@@ -3093,6 +3352,10 @@ extension S3 {
             self.bucket = bucket
             self.key = key
             self.requestPayer = requestPayer
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3108,6 +3371,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PublicAccessBlockConfiguration", required: false, type: .structure)
         ]
+
         /// The PublicAccessBlock configuration currently in effect for this Amazon S3 bucket.
         public let publicAccessBlockConfiguration: PublicAccessBlockConfiguration?
 
@@ -3124,6 +3388,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// The name of the Amazon S3 bucket whose PublicAccessBlock configuration you want to retrieve. 
         public let bucket: String
 
@@ -3140,6 +3405,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tier", required: true, type: .enum)
         ]
+
         /// Glacier retrieval tier at which the restore will be processed.
         public let tier: Tier
 
@@ -3157,6 +3423,7 @@ extension S3 {
             AWSShapeMember(label: "Grantee", required: false, type: .structure), 
             AWSShapeMember(label: "Permission", required: false, type: .enum)
         ]
+
         public let grantee: Grantee?
         /// Specifies the permission given to the grantee.
         public let permission: Permission?
@@ -3180,6 +3447,7 @@ extension S3 {
             AWSShapeMember(label: "Type", location: .body(locationName: "xsi:type"), required: true, type: .enum), 
             AWSShapeMember(label: "URI", required: false, type: .string)
         ]
+
         /// Screen name of the grantee.
         public let displayName: String?
         /// Email address of the grantee.
@@ -3212,6 +3480,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         public let bucket: String
 
         public init(bucket: String) {
@@ -3254,6 +3523,7 @@ extension S3 {
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string), 
             AWSShapeMember(label: "WebsiteRedirectLocation", location: .header(locationName: "x-amz-website-redirect-location"), required: false, type: .string)
         ]
+
         public let acceptRanges: String?
         /// Specifies caching behavior along the request/reply chain.
         public let cacheControl: String?
@@ -3386,6 +3656,7 @@ extension S3 {
             AWSShapeMember(label: "SSECustomerKeyMD5", location: .header(locationName: "x-amz-server-side-encryption-customer-key-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         /// Return the object only if its entity tag (ETag) is the same as the one specified, otherwise return a 412 (precondition failed).
         public let ifMatch: String?
@@ -3426,6 +3697,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case ifMatch = "If-Match"
@@ -3447,6 +3722,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Suffix", required: true, type: .string)
         ]
+
         /// A suffix that is appended to a request that is for a directory on the website endpoint (e.g. if the suffix is index.html and you make a request to samplebucket/images/ the data that is returned will be for the object with the key name images/index.html) The suffix must not be empty and must not include a slash character.
         public let suffix: String
 
@@ -3464,6 +3740,7 @@ extension S3 {
             AWSShapeMember(label: "DisplayName", required: false, type: .string), 
             AWSShapeMember(label: "ID", required: false, type: .string)
         ]
+
         /// Name of the Principal.
         public let displayName: String?
         /// If the principal is an AWS account, it provides the Canonical User ID. If the principal is an IAM User, it provides a user ARN value.
@@ -3487,6 +3764,7 @@ extension S3 {
             AWSShapeMember(label: "JSON", required: false, type: .structure), 
             AWSShapeMember(label: "Parquet", required: false, type: .structure)
         ]
+
         /// Specifies object's compression format. Valid values: NONE, GZIP, BZIP2. Default Value: NONE.
         public let compressionType: CompressionType?
         /// Describes the serialization of a CSV-encoded object.
@@ -3521,6 +3799,7 @@ extension S3 {
             AWSShapeMember(label: "OptionalFields", required: false, type: .list, encoding: .list(member:"Field")), 
             AWSShapeMember(label: "Schedule", required: true, type: .structure)
         ]
+
         /// Contains information about where to publish the inventory results.
         public let destination: InventoryDestination
         /// Specifies an inventory filter. The inventory only includes objects that meet the filter's criteria.
@@ -3561,6 +3840,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3BucketDestination", required: true, type: .structure)
         ]
+
         /// Contains the bucket name, file format, bucket owner (optional), and prefix (optional) where inventory results are published.
         public let s3BucketDestination: InventoryS3BucketDestination
 
@@ -3578,6 +3858,7 @@ extension S3 {
             AWSShapeMember(label: "SSEKMS", location: .body(locationName: "SSE-KMS"), required: false, type: .structure), 
             AWSShapeMember(label: "SSES3", location: .body(locationName: "SSE-S3"), required: false, type: .structure)
         ]
+
         /// Specifies the use of SSE-KMS to encrypt delivered Inventory reports.
         public let ssekms: SSEKMS?
         /// Specifies the use of SSE-S3 to encrypt delivered Inventory reports.
@@ -3598,6 +3879,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Prefix", required: true, type: .string)
         ]
+
         /// The prefix that an object must have to be included in the inventory results.
         public let prefix: String
 
@@ -3651,6 +3933,7 @@ extension S3 {
             AWSShapeMember(label: "Format", required: true, type: .enum), 
             AWSShapeMember(label: "Prefix", required: false, type: .string)
         ]
+
         /// The ID of the account that owns the destination bucket.
         public let accountId: String?
         /// The Amazon resource name (ARN) of the bucket where inventory results will be published.
@@ -3683,6 +3966,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Frequency", required: true, type: .enum)
         ]
+
         /// Specifies how frequently inventory results are produced.
         public let frequency: InventoryFrequency
 
@@ -3699,6 +3983,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The type of JSON. Valid values: Document, Lines.
         public let `type`: JSONType?
 
@@ -3715,6 +4000,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RecordDelimiter", required: false, type: .string)
         ]
+
         /// The value used to separate individual records in the output.
         public let recordDelimiter: String?
 
@@ -3740,6 +4026,7 @@ extension S3 {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "LambdaFunctionArn", location: .body(locationName: "CloudFunction"), required: true, type: .string)
         ]
+
         /// The Amazon S3 bucket event for which to invoke the AWS Lambda function. For more information, see Supported Event Types in the Amazon Simple Storage Service Developer Guide.
         public let events: [Event]
         public let filter: NotificationConfigurationFilter?
@@ -3766,6 +4053,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Rules", location: .body(locationName: "Rule"), required: true, type: .list, encoding: .flatList)
         ]
+
         public let rules: [Rule]
 
         public init(rules: [Rule]) {
@@ -3783,6 +4071,7 @@ extension S3 {
             AWSShapeMember(label: "Days", required: false, type: .integer), 
             AWSShapeMember(label: "ExpiredObjectDeleteMarker", required: false, type: .boolean)
         ]
+
         /// Indicates at what date the object is to be moved or deleted. Should be in GMT ISO 8601 Format.
         public let date: TimeStamp?
         /// Indicates the lifetime, in days, of the objects that are subject to the rule. The value must be a non-zero positive integer.
@@ -3814,6 +4103,7 @@ extension S3 {
             AWSShapeMember(label: "Status", required: true, type: .enum), 
             AWSShapeMember(label: "Transitions", location: .body(locationName: "Transition"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let abortIncompleteMultipartUpload: AbortIncompleteMultipartUpload?
         public let expiration: LifecycleExpiration?
         public let filter: LifecycleRuleFilter?
@@ -3836,6 +4126,10 @@ extension S3 {
             self.transitions = transitions
         }
 
+        public func validate() throws {
+            try filter?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case abortIncompleteMultipartUpload = "AbortIncompleteMultipartUpload"
             case expiration = "Expiration"
@@ -3853,6 +4147,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "Tag"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let prefix: String?
         /// All of these tags must exist in the object's tag set in order for the rule to apply.
         public let tags: [Tag]?
@@ -3860,6 +4155,12 @@ extension S3 {
         public init(prefix: String? = nil, tags: [Tag]? = nil) {
             self.prefix = prefix
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3874,6 +4175,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tag", required: false, type: .structure)
         ]
+
         public let and: LifecycleRuleAndOperator?
         /// Prefix identifying one or more objects to which the rule applies.
         public let prefix: String?
@@ -3884,6 +4186,11 @@ extension S3 {
             self.and = and
             self.prefix = prefix
             self.tag = tag
+        }
+
+        public func validate() throws {
+            try and?.validate()
+            try tag?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3900,6 +4207,7 @@ extension S3 {
             AWSShapeMember(label: "IsTruncated", required: false, type: .boolean), 
             AWSShapeMember(label: "NextContinuationToken", required: false, type: .string)
         ]
+
         /// The list of analytics configurations for a bucket.
         public let analyticsConfigurationList: [AnalyticsConfiguration]?
         /// The ContinuationToken that represents where this request began.
@@ -3916,6 +4224,12 @@ extension S3 {
             self.nextContinuationToken = nextContinuationToken
         }
 
+        public func validate() throws {
+            try analyticsConfigurationList?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case analyticsConfigurationList = "AnalyticsConfiguration"
             case continuationToken = "ContinuationToken"
@@ -3929,6 +4243,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "ContinuationToken", location: .querystring(locationName: "continuation-token"), required: false, type: .string)
         ]
+
         /// The name of the bucket from which analytics configurations are retrieved.
         public let bucket: String
         /// The ContinuationToken that represents a placeholder from where this request should begin.
@@ -3952,6 +4267,7 @@ extension S3 {
             AWSShapeMember(label: "IsTruncated", required: false, type: .boolean), 
             AWSShapeMember(label: "NextContinuationToken", required: false, type: .string)
         ]
+
         /// If sent in the request, the marker that is used as a starting point for this inventory configuration list response.
         public let continuationToken: String?
         /// The list of inventory configurations for a bucket.
@@ -3981,6 +4297,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "ContinuationToken", location: .querystring(locationName: "continuation-token"), required: false, type: .string)
         ]
+
         /// The name of the bucket containing the inventory configurations to retrieve.
         public let bucket: String
         /// The marker used to continue an inventory configuration listing that has been truncated. Use the NextContinuationToken from a previously truncated list response to continue the listing. The continuation token is an opaque value that Amazon S3 understands.
@@ -4004,6 +4321,7 @@ extension S3 {
             AWSShapeMember(label: "MetricsConfigurationList", location: .body(locationName: "MetricsConfiguration"), required: false, type: .list, encoding: .flatList), 
             AWSShapeMember(label: "NextContinuationToken", required: false, type: .string)
         ]
+
         /// The marker that is used as a starting point for this metrics configuration list response. This value is present if it was sent in the request.
         public let continuationToken: String?
         /// Indicates whether the returned list of metrics configurations is complete. A value of true indicates that the list is not complete and the NextContinuationToken will be provided for a subsequent request.
@@ -4020,6 +4338,12 @@ extension S3 {
             self.nextContinuationToken = nextContinuationToken
         }
 
+        public func validate() throws {
+            try metricsConfigurationList?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case continuationToken = "ContinuationToken"
             case isTruncated = "IsTruncated"
@@ -4033,6 +4357,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "ContinuationToken", location: .querystring(locationName: "continuation-token"), required: false, type: .string)
         ]
+
         /// The name of the bucket containing the metrics configurations to retrieve.
         public let bucket: String
         /// The marker that is used to continue a metrics configuration listing that has been truncated. Use the NextContinuationToken from a previously truncated list response to continue the listing. The continuation token is an opaque value that Amazon S3 understands.
@@ -4054,6 +4379,7 @@ extension S3 {
             AWSShapeMember(label: "Buckets", required: false, type: .list, encoding: .list(member:"Bucket")), 
             AWSShapeMember(label: "Owner", required: false, type: .structure)
         ]
+
         public let buckets: [Bucket]?
         public let owner: Owner?
 
@@ -4083,6 +4409,7 @@ extension S3 {
             AWSShapeMember(label: "UploadIdMarker", required: false, type: .string), 
             AWSShapeMember(label: "Uploads", location: .body(locationName: "Upload"), required: false, type: .list, encoding: .flatList)
         ]
+
         /// Name of the bucket to which the multipart upload was initiated.
         public let bucket: String?
         public let commonPrefixes: [CommonPrefix]?
@@ -4120,6 +4447,12 @@ extension S3 {
             self.uploads = uploads
         }
 
+        public func validate() throws {
+            try uploads?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case commonPrefixes = "CommonPrefixes"
@@ -4146,6 +4479,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", location: .querystring(locationName: "prefix"), required: false, type: .string), 
             AWSShapeMember(label: "UploadIdMarker", location: .querystring(locationName: "upload-id-marker"), required: false, type: .string)
         ]
+
         public let bucket: String
         /// Character you use to group keys.
         public let delimiter: String?
@@ -4196,6 +4530,7 @@ extension S3 {
             AWSShapeMember(label: "VersionIdMarker", required: false, type: .string), 
             AWSShapeMember(label: "Versions", location: .body(locationName: "Version"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let commonPrefixes: [CommonPrefix]?
         public let deleteMarkers: [DeleteMarkerEntry]?
         public let delimiter: String?
@@ -4231,6 +4566,15 @@ extension S3 {
             self.versions = versions
         }
 
+        public func validate() throws {
+            try deleteMarkers?.forEach {
+                try $0.validate()
+            }
+            try versions?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case commonPrefixes = "CommonPrefixes"
             case deleteMarkers = "DeleteMarker"
@@ -4258,6 +4602,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", location: .querystring(locationName: "prefix"), required: false, type: .string), 
             AWSShapeMember(label: "VersionIdMarker", location: .querystring(locationName: "version-id-marker"), required: false, type: .string)
         ]
+
         public let bucket: String
         /// A delimiter is a character you use to group keys.
         public let delimiter: String?
@@ -4305,6 +4650,7 @@ extension S3 {
             AWSShapeMember(label: "NextMarker", required: false, type: .string), 
             AWSShapeMember(label: "Prefix", required: false, type: .string)
         ]
+
         public let commonPrefixes: [CommonPrefix]?
         public let contents: [Object]?
         public let delimiter: String?
@@ -4332,6 +4678,12 @@ extension S3 {
             self.prefix = prefix
         }
 
+        public func validate() throws {
+            try contents?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case commonPrefixes = "CommonPrefixes"
             case contents = "Contents"
@@ -4356,6 +4708,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", location: .querystring(locationName: "prefix"), required: false, type: .string), 
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum)
         ]
+
         public let bucket: String
         /// A delimiter is a character you use to group keys.
         public let delimiter: String?
@@ -4405,6 +4758,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "StartAfter", required: false, type: .string)
         ]
+
         /// CommonPrefixes contains all (if there are any) keys between Prefix and the next occurrence of the string specified by delimiter
         public let commonPrefixes: [CommonPrefix]?
         /// Metadata about each object returned.
@@ -4445,6 +4799,12 @@ extension S3 {
             self.startAfter = startAfter
         }
 
+        public func validate() throws {
+            try contents?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case commonPrefixes = "CommonPrefixes"
             case contents = "Contents"
@@ -4473,6 +4833,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "StartAfter", location: .querystring(locationName: "start-after"), required: false, type: .string)
         ]
+
         /// Name of the bucket to list.
         public let bucket: String
         /// ContinuationToken indicates Amazon S3 that the list is being continued on this bucket with a token. ContinuationToken is obfuscated and is not a real key
@@ -4534,6 +4895,7 @@ extension S3 {
             AWSShapeMember(label: "StorageClass", required: false, type: .enum), 
             AWSShapeMember(label: "UploadId", required: false, type: .string)
         ]
+
         /// Date when multipart upload will become eligible for abort operation by lifecycle.
         public let abortDate: TimeStamp?
         /// Id of the lifecycle rule that makes a multipart upload eligible for abort operation.
@@ -4577,6 +4939,10 @@ extension S3 {
             self.uploadId = uploadId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case abortDate = "x-amz-abort-date"
             case abortRuleId = "x-amz-abort-rule-id"
@@ -4604,6 +4970,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "UploadId", location: .querystring(locationName: "uploadId"), required: true, type: .string)
         ]
+
         public let bucket: String
         public let key: String
         /// Sets the maximum number of parts to return.
@@ -4623,6 +4990,10 @@ extension S3 {
             self.uploadId = uploadId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case key = "Key"
@@ -4639,6 +5010,7 @@ extension S3 {
             AWSShapeMember(label: "TargetGrants", required: false, type: .list, encoding: .list(member:"Grant")), 
             AWSShapeMember(label: "TargetPrefix", required: true, type: .string)
         ]
+
         /// Specifies the bucket where you want Amazon S3 to store server access logs. You can have your logs delivered to any bucket that you own, including the same bucket that is being logged. You can also configure multiple buckets to deliver their logs to the same target bucket. In this case you should choose a different TargetPrefix for each source bucket so that the delivered log files can be distinguished by key.
         public let targetBucket: String
         public let targetGrants: [TargetGrant]?
@@ -4681,6 +5053,7 @@ extension S3 {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         public let name: String?
         public let value: String?
 
@@ -4700,6 +5073,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "Tag"), required: false, type: .list, encoding: .flatList)
         ]
+
         /// The prefix used when evaluating an AND predicate.
         public let prefix: String?
         /// The list of tags used when evaluating an AND predicate.
@@ -4708,6 +5082,12 @@ extension S3 {
         public init(prefix: String? = nil, tags: [Tag]? = nil) {
             self.prefix = prefix
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4721,6 +5101,7 @@ extension S3 {
             AWSShapeMember(label: "Filter", required: false, type: .structure), 
             AWSShapeMember(label: "Id", required: true, type: .string)
         ]
+
         /// Specifies a metrics configuration filter. The metrics configuration will only include objects that meet the filter's criteria. A filter must be a prefix, a tag, or a conjunction (MetricsAndOperator).
         public let filter: MetricsFilter?
         /// The ID used to identify the metrics configuration.
@@ -4729,6 +5110,10 @@ extension S3 {
         public init(filter: MetricsFilter? = nil, id: String) {
             self.filter = filter
             self.id = id
+        }
+
+        public func validate() throws {
+            try filter?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4743,6 +5128,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tag", required: false, type: .structure)
         ]
+
         /// A conjunction (logical AND) of predicates, which is used in evaluating a metrics filter. The operator must have at least two predicates, and an object must match all of the predicates in order for the filter to apply.
         public let and: MetricsAndOperator?
         /// The prefix used when evaluating a metrics filter.
@@ -4754,6 +5140,11 @@ extension S3 {
             self.and = and
             self.prefix = prefix
             self.tag = tag
+        }
+
+        public func validate() throws {
+            try and?.validate()
+            try tag?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4772,6 +5163,7 @@ extension S3 {
             AWSShapeMember(label: "StorageClass", required: false, type: .enum), 
             AWSShapeMember(label: "UploadId", required: false, type: .string)
         ]
+
         /// Date and time at which the multipart upload was initiated.
         public let initiated: TimeStamp?
         /// Identifies who initiated the multipart upload.
@@ -4793,6 +5185,10 @@ extension S3 {
             self.uploadId = uploadId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case initiated = "Initiated"
             case initiator = "Initiator"
@@ -4807,6 +5203,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NoncurrentDays", required: false, type: .integer)
         ]
+
         /// Specifies the number of days an object is noncurrent before Amazon S3 can perform the associated action. For information about the noncurrent days calculations, see How Amazon S3 Calculates When an Object Became Noncurrent in the Amazon Simple Storage Service Developer Guide.
         public let noncurrentDays: Int32?
 
@@ -4824,6 +5221,7 @@ extension S3 {
             AWSShapeMember(label: "NoncurrentDays", required: false, type: .integer), 
             AWSShapeMember(label: "StorageClass", required: false, type: .enum)
         ]
+
         /// Specifies the number of days an object is noncurrent before Amazon S3 can perform the associated action. For information about the noncurrent days calculations, see How Amazon S3 Calculates When an Object Became Noncurrent in the Amazon Simple Storage Service Developer Guide.
         public let noncurrentDays: Int32?
         /// The class of storage used to store the object.
@@ -4846,6 +5244,7 @@ extension S3 {
             AWSShapeMember(label: "QueueConfigurations", location: .body(locationName: "QueueConfiguration"), required: false, type: .list, encoding: .flatList), 
             AWSShapeMember(label: "TopicConfigurations", location: .body(locationName: "TopicConfiguration"), required: false, type: .list, encoding: .flatList)
         ]
+
         /// Describes the AWS Lambda functions to invoke and the events for which to invoke them.
         public let lambdaFunctionConfigurations: [LambdaFunctionConfiguration]?
         /// The Amazon Simple Queue Service queues to publish messages to and the events for which to publish messages.
@@ -4872,6 +5271,7 @@ extension S3 {
             AWSShapeMember(label: "QueueConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "TopicConfiguration", required: false, type: .structure)
         ]
+
         public let cloudFunctionConfiguration: CloudFunctionConfiguration?
         public let queueConfiguration: QueueConfigurationDeprecated?
         public let topicConfiguration: TopicConfigurationDeprecated?
@@ -4893,6 +5293,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Key", location: .body(locationName: "S3Key"), required: false, type: .structure)
         ]
+
         public let key: S3KeyFilter?
 
         public init(key: S3KeyFilter? = nil) {
@@ -4913,6 +5314,7 @@ extension S3 {
             AWSShapeMember(label: "Size", required: false, type: .long), 
             AWSShapeMember(label: "StorageClass", required: false, type: .enum)
         ]
+
         public let eTag: String?
         public let key: String?
         public let lastModified: TimeStamp?
@@ -4928,6 +5330,10 @@ extension S3 {
             self.owner = owner
             self.size = size
             self.storageClass = storageClass
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4956,6 +5362,7 @@ extension S3 {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         /// Key name of the object to delete.
         public let key: String
         /// VersionId for the specific version of the object to delete.
@@ -4964,6 +5371,10 @@ extension S3 {
         public init(key: String, versionId: String? = nil) {
             self.key = key
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4977,6 +5388,7 @@ extension S3 {
             AWSShapeMember(label: "ObjectLockEnabled", required: false, type: .enum), 
             AWSShapeMember(label: "Rule", required: false, type: .structure)
         ]
+
         /// Indicates whether this bucket has an object lock configuration enabled.
         public let objectLockEnabled: ObjectLockEnabled?
         /// The object lock rule in place for the specified object.
@@ -5002,6 +5414,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Indicates whether the specified object has a Legal Hold in place.
         public let status: ObjectLockLegalHoldStatus?
 
@@ -5031,6 +5444,7 @@ extension S3 {
             AWSShapeMember(label: "Mode", required: false, type: .enum), 
             AWSShapeMember(label: "RetainUntilDate", required: false, type: .timestamp)
         ]
+
         /// Indicates the Retention mode for the specified object.
         public let mode: ObjectLockRetentionMode?
         /// The date on which this object lock retention expires.
@@ -5057,6 +5471,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DefaultRetention", required: false, type: .structure)
         ]
+
         /// The default retention period that you want to apply to new objects placed in the specified bucket.
         public let defaultRetention: DefaultRetention?
 
@@ -5091,6 +5506,7 @@ extension S3 {
             AWSShapeMember(label: "StorageClass", required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", required: false, type: .string)
         ]
+
         public let eTag: String?
         /// Specifies whether the object is (true) or is not (false) the latest version of an object.
         public let isLatest: Bool?
@@ -5117,6 +5533,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case eTag = "ETag"
             case isLatest = "IsLatest"
@@ -5138,11 +5558,16 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3", required: false, type: .structure)
         ]
+
         /// Describes an S3 location that will receive the results of the restore request.
         public let s3: S3Location?
 
         public init(s3: S3Location? = nil) {
             self.s3 = s3
+        }
+
+        public func validate() throws {
+            try s3?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5155,6 +5580,7 @@ extension S3 {
             AWSShapeMember(label: "CSV", required: false, type: .structure), 
             AWSShapeMember(label: "JSON", required: false, type: .structure)
         ]
+
         /// Describes the serialization of CSV-encoded Select results.
         public let csv: CSVOutput?
         /// Specifies JSON as request's output serialization format.
@@ -5176,6 +5602,7 @@ extension S3 {
             AWSShapeMember(label: "DisplayName", required: false, type: .string), 
             AWSShapeMember(label: "ID", required: false, type: .string)
         ]
+
         public let displayName: String?
         public let id: String?
 
@@ -5197,6 +5624,7 @@ extension S3 {
 
     public struct ParquetInput: AWSShape {
 
+
         public init() {
         }
 
@@ -5209,6 +5637,7 @@ extension S3 {
             AWSShapeMember(label: "PartNumber", required: false, type: .integer), 
             AWSShapeMember(label: "Size", required: false, type: .long)
         ]
+
         /// Entity tag returned when the part was uploaded.
         public let eTag: String?
         /// Date and time at which the part was uploaded.
@@ -5252,6 +5681,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IsPublic", location: .body(locationName: "IsPublic"), required: false, type: .boolean)
         ]
+
         /// The policy status for this bucket. TRUE indicates that this bucket is public. FALSE indicates that the bucket is not public.
         public let isPublic: Bool?
 
@@ -5270,6 +5700,7 @@ extension S3 {
             AWSShapeMember(label: "BytesReturned", required: false, type: .long), 
             AWSShapeMember(label: "BytesScanned", required: false, type: .long)
         ]
+
         /// The current number of uncompressed object bytes processed.
         public let bytesProcessed: Int64?
         /// The current number of bytes of records payload data returned.
@@ -5294,6 +5725,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Details", required: false, type: .structure)
         ]
+
         /// The Progress event details.
         public let details: Progress?
 
@@ -5319,6 +5751,7 @@ extension S3 {
             AWSShapeMember(label: "IgnorePublicAcls", location: .body(locationName: "IgnorePublicAcls"), required: false, type: .boolean), 
             AWSShapeMember(label: "RestrictPublicBuckets", location: .body(locationName: "RestrictPublicBuckets"), required: false, type: .boolean)
         ]
+
         /// Specifies whether Amazon S3 should block public access control lists (ACLs) for this bucket and objects in this bucket. Setting this element to TRUE causes the following behavior:   PUT Bucket acl and PUT Object acl calls fail if the specified ACL is public.   PUT Object calls fail if the request includes a public ACL.   Enabling this setting doesn't affect existing policies or ACLs.
         public let blockPublicAcls: Bool?
         /// Specifies whether Amazon S3 should block public bucket policies for this bucket. Setting this element to TRUE causes Amazon S3 to reject calls to PUT Bucket policy if the specified bucket policy allows public access.  Enabling this setting doesn't affect existing bucket policies.
@@ -5351,6 +5784,7 @@ extension S3 {
             AWSShapeMember(label: "AccelerateConfiguration", location: .body(locationName: "AccelerateConfiguration"), required: true, type: .structure), 
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string)
         ]
+
         /// Specifies the Accelerate Configuration you want to set for the bucket.
         public let accelerateConfiguration: AccelerateConfiguration
         /// Name of the bucket for which the accelerate configuration is set.
@@ -5382,6 +5816,7 @@ extension S3 {
             AWSShapeMember(label: "GrantWrite", location: .header(locationName: "x-amz-grant-write"), required: false, type: .string), 
             AWSShapeMember(label: "GrantWriteACP", location: .header(locationName: "x-amz-grant-write-acp"), required: false, type: .string)
         ]
+
         /// Contains the elements that set the ACL permissions for an object per grantee.
         public let accessControlPolicy: AccessControlPolicy?
         /// The canned ACL to apply to the bucket.
@@ -5433,6 +5868,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string)
         ]
+
         /// The configuration and any analyses for the analytics filter.
         public let analyticsConfiguration: AnalyticsConfiguration
         /// The name of the bucket to which an analytics configuration is stored.
@@ -5444,6 +5880,10 @@ extension S3 {
             self.analyticsConfiguration = analyticsConfiguration
             self.bucket = bucket
             self.id = id
+        }
+
+        public func validate() throws {
+            try analyticsConfiguration.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5462,6 +5902,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "CORSConfiguration", location: .body(locationName: "CORSConfiguration"), required: true, type: .structure)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         public let cORSConfiguration: CORSConfiguration
@@ -5488,6 +5929,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "ServerSideEncryptionConfiguration", location: .body(locationName: "ServerSideEncryptionConfiguration"), required: true, type: .structure)
         ]
+
         /// Specifies default encryption for a bucket using server-side encryption with Amazon S3-managed keys (SSE-S3) or AWS KMS-managed keys (SSE-KMS). For information about the Amazon S3 default encryption feature, see Amazon S3 Default Bucket Encryption in the Amazon Simple Storage Service Developer Guide.
         public let bucket: String
         /// The base64-encoded 128-bit MD5 digest of the server-side encryption configuration. This parameter is auto-populated when using the command from the CLI.
@@ -5516,6 +5958,7 @@ extension S3 {
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string), 
             AWSShapeMember(label: "InventoryConfiguration", location: .body(locationName: "InventoryConfiguration"), required: true, type: .structure)
         ]
+
         /// The name of the bucket where the inventory configuration will be stored.
         public let bucket: String
         /// The ID used to identify the inventory configuration.
@@ -5544,12 +5987,17 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "LifecycleConfiguration", location: .body(locationName: "LifecycleConfiguration"), required: false, type: .structure)
         ]
+
         public let bucket: String
         public let lifecycleConfiguration: BucketLifecycleConfiguration?
 
         public init(bucket: String, lifecycleConfiguration: BucketLifecycleConfiguration? = nil) {
             self.bucket = bucket
             self.lifecycleConfiguration = lifecycleConfiguration
+        }
+
+        public func validate() throws {
+            try lifecycleConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5567,6 +6015,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "LifecycleConfiguration", location: .body(locationName: "LifecycleConfiguration"), required: false, type: .structure)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         public let lifecycleConfiguration: LifecycleConfiguration?
@@ -5593,6 +6042,7 @@ extension S3 {
             AWSShapeMember(label: "BucketLoggingStatus", location: .body(locationName: "BucketLoggingStatus"), required: true, type: .structure), 
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string)
         ]
+
         public let bucket: String
         public let bucketLoggingStatus: BucketLoggingStatus
         public let contentMD5: String?
@@ -5619,6 +6069,7 @@ extension S3 {
             AWSShapeMember(label: "Id", location: .querystring(locationName: "id"), required: true, type: .string), 
             AWSShapeMember(label: "MetricsConfiguration", location: .body(locationName: "MetricsConfiguration"), required: true, type: .structure)
         ]
+
         /// The name of the bucket for which the metrics configuration is set.
         public let bucket: String
         /// The ID used to identify the metrics configuration.
@@ -5630,6 +6081,10 @@ extension S3 {
             self.bucket = bucket
             self.id = id
             self.metricsConfiguration = metricsConfiguration
+        }
+
+        public func validate() throws {
+            try metricsConfiguration.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5647,6 +6102,7 @@ extension S3 {
             AWSShapeMember(label: "Bucket", location: .uri(locationName: "Bucket"), required: true, type: .string), 
             AWSShapeMember(label: "NotificationConfiguration", location: .body(locationName: "NotificationConfiguration"), required: true, type: .structure)
         ]
+
         public let bucket: String
         public let notificationConfiguration: NotificationConfiguration
 
@@ -5670,6 +6126,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "NotificationConfiguration", location: .body(locationName: "NotificationConfiguration"), required: true, type: .structure)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         public let notificationConfiguration: NotificationConfigurationDeprecated
@@ -5696,6 +6153,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "Policy", required: true, type: .string)
         ]
+
         public let bucket: String
         /// Set this parameter to true to confirm that you want to remove your permissions to change this bucket policy in the future.
         public let confirmRemoveSelfBucketAccess: Bool?
@@ -5728,6 +6186,7 @@ extension S3 {
             AWSShapeMember(label: "ReplicationConfiguration", location: .body(locationName: "ReplicationConfiguration"), required: true, type: .structure), 
             AWSShapeMember(label: "Token", location: .header(locationName: "x-amz-bucket-object-lock-token"), required: false, type: .string)
         ]
+
         public let bucket: String
         /// The base64-encoded 128-bit MD5 digest of the data. You must use this header as a message integrity check to verify that the request body was not corrupted in transit.
         public let contentMD5: String?
@@ -5740,6 +6199,10 @@ extension S3 {
             self.contentMD5 = contentMD5
             self.replicationConfiguration = replicationConfiguration
             self.token = token
+        }
+
+        public func validate() throws {
+            try replicationConfiguration.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5759,6 +6222,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "RequestPaymentConfiguration", location: .body(locationName: "RequestPaymentConfiguration"), required: true, type: .structure)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         public let requestPaymentConfiguration: RequestPaymentConfiguration
@@ -5785,6 +6249,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "Tagging", location: .body(locationName: "Tagging"), required: true, type: .structure)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         public let tagging: Tagging
@@ -5793,6 +6258,10 @@ extension S3 {
             self.bucket = bucket
             self.contentMD5 = contentMD5
             self.tagging = tagging
+        }
+
+        public func validate() throws {
+            try tagging.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5812,6 +6281,7 @@ extension S3 {
             AWSShapeMember(label: "MFA", location: .header(locationName: "x-amz-mfa"), required: false, type: .string), 
             AWSShapeMember(label: "VersioningConfiguration", location: .body(locationName: "VersioningConfiguration"), required: true, type: .structure)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         /// The concatenation of the authentication device's serial number, a space, and the value that is displayed on your authentication device.
@@ -5842,6 +6312,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "WebsiteConfiguration", location: .body(locationName: "WebsiteConfiguration"), required: true, type: .structure)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         public let websiteConfiguration: WebsiteConfiguration
@@ -5850,6 +6321,10 @@ extension S3 {
             self.bucket = bucket
             self.contentMD5 = contentMD5
             self.websiteConfiguration = websiteConfiguration
+        }
+
+        public func validate() throws {
+            try websiteConfiguration.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5863,6 +6338,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         public let requestCharged: RequestCharged?
 
         public init(requestCharged: RequestCharged? = nil) {
@@ -5892,6 +6368,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         /// Contains the elements that set the ACL permissions for an object per grantee.
         public let accessControlPolicy: AccessControlPolicy?
         /// The canned ACL to apply to the object.
@@ -5928,6 +6405,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accessControlPolicy = "AccessControlPolicy"
             case acl = "x-amz-acl"
@@ -5948,6 +6429,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         public let requestCharged: RequestCharged?
 
         public init(requestCharged: RequestCharged? = nil) {
@@ -5971,6 +6453,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         /// The bucket containing the object that you want to place a Legal Hold on.
         public let bucket: String
         /// The MD5 hash for the request body.
@@ -5992,6 +6475,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case contentMD5 = "Content-MD5"
@@ -6006,6 +6493,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         public let requestCharged: RequestCharged?
 
         public init(requestCharged: RequestCharged? = nil) {
@@ -6028,6 +6516,7 @@ extension S3 {
             AWSShapeMember(label: "RequestPayer", location: .header(locationName: "x-amz-request-payer"), required: false, type: .enum), 
             AWSShapeMember(label: "Token", location: .header(locationName: "x-amz-bucket-object-lock-token"), required: false, type: .string)
         ]
+
         /// The bucket whose object lock configuration you want to create or replace.
         public let bucket: String
         /// The MD5 hash for the request body.
@@ -6067,6 +6556,7 @@ extension S3 {
             AWSShapeMember(label: "SSEKMSKeyId", location: .header(locationName: "x-amz-server-side-encryption-aws-kms-key-id"), required: false, type: .string), 
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string)
         ]
+
         /// Entity tag for the uploaded object.
         public let eTag: String?
         /// If the object expiration is configured, this will contain the expiration date (expiry-date) and rule ID (rule-id). The value of rule-id is URL encoded.
@@ -6145,6 +6635,7 @@ extension S3 {
             AWSShapeMember(label: "Tagging", location: .header(locationName: "x-amz-tagging"), required: false, type: .string), 
             AWSShapeMember(label: "WebsiteRedirectLocation", location: .header(locationName: "x-amz-website-redirect-location"), required: false, type: .string)
         ]
+
         /// The canned ACL to apply to the object.
         public let acl: ObjectCannedACL?
         /// Object data.
@@ -6238,6 +6729,10 @@ extension S3 {
             self.websiteRedirectLocation = websiteRedirectLocation
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acl = "x-amz-acl"
             case body = "Body"
@@ -6276,6 +6771,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum)
         ]
+
         public let requestCharged: RequestCharged?
 
         public init(requestCharged: RequestCharged? = nil) {
@@ -6300,6 +6796,7 @@ extension S3 {
             AWSShapeMember(label: "Retention", location: .body(locationName: "Retention"), required: false, type: .structure), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         /// The bucket that contains the object you want to apply this Object Retention configuration to.
         public let bucket: String
         /// Indicates whether this operation should bypass Governance-mode restrictions.j
@@ -6324,6 +6821,10 @@ extension S3 {
             self.versionId = versionId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case bypassGovernanceRetention = "x-amz-bypass-governance-retention"
@@ -6339,6 +6840,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VersionId", location: .header(locationName: "x-amz-version-id"), required: false, type: .string)
         ]
+
         public let versionId: String?
 
         public init(versionId: String? = nil) {
@@ -6361,6 +6863,7 @@ extension S3 {
             AWSShapeMember(label: "Tagging", location: .body(locationName: "Tagging"), required: true, type: .structure), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         public let contentMD5: String?
         public let key: String
@@ -6373,6 +6876,11 @@ extension S3 {
             self.key = key
             self.tagging = tagging
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+            try tagging.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6393,6 +6901,7 @@ extension S3 {
             AWSShapeMember(label: "ContentMD5", location: .header(locationName: "Content-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "PublicAccessBlockConfiguration", location: .body(locationName: "PublicAccessBlockConfiguration"), required: true, type: .structure)
         ]
+
         /// The name of the Amazon S3 bucket whose PublicAccessBlock configuration you want to set.
         public let bucket: String
         /// The MD5 hash of the PutPublicAccessBlock request body. 
@@ -6420,6 +6929,7 @@ extension S3 {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "QueueArn", location: .body(locationName: "Queue"), required: true, type: .string)
         ]
+
         public let events: [Event]
         public let filter: NotificationConfigurationFilter?
         public let id: String?
@@ -6447,6 +6957,7 @@ extension S3 {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "Queue", required: false, type: .string)
         ]
+
         public let events: [Event]?
         public let id: String?
         public let queue: String?
@@ -6474,6 +6985,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Payload", required: false, type: .blob)
         ]
+
         /// The byte array of partial, one or more result records.
         public let payload: Data?
 
@@ -6494,6 +7006,7 @@ extension S3 {
             AWSShapeMember(label: "ReplaceKeyPrefixWith", required: false, type: .string), 
             AWSShapeMember(label: "ReplaceKeyWith", required: false, type: .string)
         ]
+
         /// The host name to use in the redirect request.
         public let hostName: String?
         /// The HTTP redirect code to use on the response. Not required if one of the siblings is present.
@@ -6527,6 +7040,7 @@ extension S3 {
             AWSShapeMember(label: "HostName", required: true, type: .string), 
             AWSShapeMember(label: "Protocol", required: false, type: .enum)
         ]
+
         /// Name of the host where requests are redirected.
         public let hostName: String
         /// Protocol to use when redirecting requests. The default is the protocol that is used in the original request.
@@ -6548,6 +7062,7 @@ extension S3 {
             AWSShapeMember(label: "Role", required: true, type: .string), 
             AWSShapeMember(label: "Rules", location: .body(locationName: "Rule"), required: true, type: .list, encoding: .flatList)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that Amazon S3 assumes when replicating objects. For more information, see How to Set Up Cross-Region Replication in the Amazon Simple Storage Service Developer Guide.
         public let role: String
         /// A container for one or more replication rules. A replication configuration must have at least one rule and can contain a maximum of 1,000 rules. 
@@ -6556,6 +7071,12 @@ extension S3 {
         public init(role: String, rules: [ReplicationRule]) {
             self.role = role
             self.rules = rules
+        }
+
+        public func validate() throws {
+            try rules.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6574,6 +7095,7 @@ extension S3 {
             AWSShapeMember(label: "SourceSelectionCriteria", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: true, type: .enum)
         ]
+
         public let deleteMarkerReplication: DeleteMarkerReplication?
         /// A container for information about the replication destination.
         public let destination: Destination
@@ -6597,6 +7119,10 @@ extension S3 {
             self.status = status
         }
 
+        public func validate() throws {
+            try filter?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deleteMarkerReplication = "DeleteMarkerReplication"
             case destination = "Destination"
@@ -6613,12 +7139,19 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "Tag"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let prefix: String?
         public let tags: [Tag]?
 
         public init(prefix: String? = nil, tags: [Tag]? = nil) {
             self.prefix = prefix
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6633,6 +7166,7 @@ extension S3 {
             AWSShapeMember(label: "Prefix", required: false, type: .string), 
             AWSShapeMember(label: "Tag", required: false, type: .structure)
         ]
+
         /// A container for specifying rule filters. The filters determine the subset of objects to which the rule applies. This element is required only if you specify more than one filter. For example:    If you specify both a Prefix and a Tag filter, wrap these filters in an And tag.   If you specify a filter based on multiple tags, wrap the Tag elements in an And tag.  
         public let and: ReplicationRuleAndOperator?
         /// An object keyname prefix that identifies the subset of objects to which the rule applies.
@@ -6644,6 +7178,11 @@ extension S3 {
             self.and = and
             self.prefix = prefix
             self.tag = tag
+        }
+
+        public func validate() throws {
+            try and?.validate()
+            try tag?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6681,6 +7220,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Payer", required: true, type: .enum)
         ]
+
         /// Specifies who pays for the download and request fees.
         public let payer: Payer
 
@@ -6697,6 +7237,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Enabled", required: false, type: .boolean)
         ]
+
         /// Specifies whether periodic QueryProgress frames should be sent. Valid values: TRUE, FALSE. Default value: FALSE.
         public let enabled: Bool?
 
@@ -6714,6 +7255,7 @@ extension S3 {
             AWSShapeMember(label: "RequestCharged", location: .header(locationName: "x-amz-request-charged"), required: false, type: .enum), 
             AWSShapeMember(label: "RestoreOutputPath", location: .header(locationName: "x-amz-restore-output-path"), required: false, type: .string)
         ]
+
         public let requestCharged: RequestCharged?
         /// Indicates the path in the provided S3 output location where Select results will be restored to.
         public let restoreOutputPath: String?
@@ -6740,6 +7282,7 @@ extension S3 {
             AWSShapeMember(label: "RestoreRequest", location: .body(locationName: "RestoreRequest"), required: false, type: .structure), 
             AWSShapeMember(label: "VersionId", location: .querystring(locationName: "versionId"), required: false, type: .string)
         ]
+
         public let bucket: String
         public let key: String
         public let requestPayer: RequestPayer?
@@ -6752,6 +7295,11 @@ extension S3 {
             self.requestPayer = requestPayer
             self.restoreRequest = restoreRequest
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+            try restoreRequest?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6773,6 +7321,7 @@ extension S3 {
             AWSShapeMember(label: "Tier", required: false, type: .enum), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// Lifetime of the active copy in days. Do not use with restores that specify OutputLocation.
         public let days: Int32?
         /// The optional description for the job.
@@ -6798,6 +7347,10 @@ extension S3 {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try outputLocation?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case days = "Days"
             case description = "Description"
@@ -6819,6 +7372,7 @@ extension S3 {
             AWSShapeMember(label: "Condition", required: false, type: .structure), 
             AWSShapeMember(label: "Redirect", required: true, type: .structure)
         ]
+
         /// A container for describing a condition that must be met for the specified redirect to apply. For example, 1. If request is for pages in the /docs folder, redirect to the /documents folder. 2. If request results in HTTP error 4xx, redirect request to another host where you might process the error.
         public let condition: Condition?
         /// Container for redirect information. You can redirect requests to another host, to another page, or with another protocol. In the event of an error, you can specify a different error code to return.
@@ -6846,6 +7400,7 @@ extension S3 {
             AWSShapeMember(label: "Status", required: true, type: .enum), 
             AWSShapeMember(label: "Transition", required: false, type: .structure)
         ]
+
         public let abortIncompleteMultipartUpload: AbortIncompleteMultipartUpload?
         public let expiration: LifecycleExpiration?
         /// Unique identifier for the rule. The value can't be longer than 255 characters.
@@ -6885,6 +7440,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FilterRules", location: .body(locationName: "FilterRule"), required: false, type: .list, encoding: .flatList)
         ]
+
         public let filterRules: [FilterRule]?
 
         public init(filterRules: [FilterRule]? = nil) {
@@ -6907,6 +7463,7 @@ extension S3 {
             AWSShapeMember(label: "Tagging", required: false, type: .structure), 
             AWSShapeMember(label: "UserMetadata", required: false, type: .list, encoding: .list(member:"MetadataEntry"))
         ]
+
         /// A list of grants that control access to the staged results.
         public let accessControlList: [Grant]?
         /// The name of the bucket where the restore results will be placed.
@@ -6934,6 +7491,10 @@ extension S3 {
             self.userMetadata = userMetadata
         }
 
+        public func validate() throws {
+            try tagging?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accessControlList = "AccessControlList"
             case bucketName = "BucketName"
@@ -6950,6 +7511,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "KeyId", required: true, type: .string)
         ]
+
         /// Specifies the ID of the AWS Key Management Service (KMS) master encryption key to use for encrypting Inventory reports.
         public let keyId: String
 
@@ -6963,6 +7525,7 @@ extension S3 {
     }
 
     public struct SSES3: AWSShape {
+
 
         public init() {
         }
@@ -6982,6 +7545,7 @@ extension S3 {
             AWSShapeMember(label: "SSECustomerKey", location: .header(locationName: "x-amz-server-side-encryption-customer-key"), required: false, type: .string), 
             AWSShapeMember(label: "SSECustomerKeyMD5", location: .header(locationName: "x-amz-server-side-encryption-customer-key-MD5"), required: false, type: .string)
         ]
+
         /// The S3 bucket.
         public let bucket: String
         /// The expression that is used to query the object.
@@ -7016,6 +7580,10 @@ extension S3 {
             self.sSECustomerKeyMD5 = sSECustomerKeyMD5
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case expression = "Expression"
@@ -7037,6 +7605,7 @@ extension S3 {
             AWSShapeMember(label: "InputSerialization", required: true, type: .structure), 
             AWSShapeMember(label: "OutputSerialization", required: true, type: .structure)
         ]
+
         /// The expression that is used to query the object.
         public let expression: String
         /// The type of the provided expression (e.g., SQL).
@@ -7072,6 +7641,7 @@ extension S3 {
             AWSShapeMember(label: "KMSMasterKeyID", required: false, type: .string), 
             AWSShapeMember(label: "SSEAlgorithm", required: true, type: .enum)
         ]
+
         /// KMS master key ID to use for the default encryption. This parameter is allowed if and only if SSEAlgorithm is set to aws:kms.
         public let kMSMasterKeyID: String?
         /// Server-side encryption algorithm to use for the default encryption.
@@ -7092,6 +7662,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Rules", location: .body(locationName: "Rule"), required: true, type: .list, encoding: .flatList)
         ]
+
         /// Container for information about a particular server-side encryption configuration rule.
         public let rules: [ServerSideEncryptionRule]
 
@@ -7108,6 +7679,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ApplyServerSideEncryptionByDefault", required: false, type: .structure)
         ]
+
         /// Specifies the default server-side encryption to apply to new objects in the bucket. If a PUT Object request doesn't specify any server-side encryption, this default encryption will be applied.
         public let applyServerSideEncryptionByDefault: ServerSideEncryptionByDefault?
 
@@ -7124,6 +7696,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SseKmsEncryptedObjects", required: false, type: .structure)
         ]
+
         ///  A container for filter information for the selection of Amazon S3 objects encrypted with AWS KMS. If you include SourceSelectionCriteria in the replication configuration, this element is required. 
         public let sseKmsEncryptedObjects: SseKmsEncryptedObjects?
 
@@ -7140,6 +7713,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: true, type: .enum)
         ]
+
         /// Specifies whether Amazon S3 replicates objects created with server-side encryption using an AWS KMS-managed key.
         public let status: SseKmsEncryptedObjectsStatus
 
@@ -7164,6 +7738,7 @@ extension S3 {
             AWSShapeMember(label: "BytesReturned", required: false, type: .long), 
             AWSShapeMember(label: "BytesScanned", required: false, type: .long)
         ]
+
         /// The total number of uncompressed object bytes processed.
         public let bytesProcessed: Int64?
         /// The total number of bytes of records payload data returned.
@@ -7188,6 +7763,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Details", required: false, type: .structure)
         ]
+
         /// The Stats event details.
         public let details: Stats?
 
@@ -7215,6 +7791,7 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DataExport", required: false, type: .structure)
         ]
+
         /// Specifies how data related to the storage class analysis for an Amazon S3 bucket should be exported.
         public let dataExport: StorageClassAnalysisDataExport?
 
@@ -7232,6 +7809,7 @@ extension S3 {
             AWSShapeMember(label: "Destination", required: true, type: .structure), 
             AWSShapeMember(label: "OutputSchemaVersion", required: true, type: .enum)
         ]
+
         /// The place to store the data for an analysis.
         public let destination: AnalyticsExportDestination
         /// The version of the output schema to use when exporting data. Must be V_1.
@@ -7258,6 +7836,7 @@ extension S3 {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// Name of the tag.
         public let key: String
         /// Value of the tag.
@@ -7266,6 +7845,10 @@ extension S3 {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7278,10 +7861,17 @@ extension S3 {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagSet", required: true, type: .list, encoding: .list(member:"Tag"))
         ]
+
         public let tagSet: [Tag]
 
         public init(tagSet: [Tag]) {
             self.tagSet = tagSet
+        }
+
+        public func validate() throws {
+            try tagSet.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7300,6 +7890,7 @@ extension S3 {
             AWSShapeMember(label: "Grantee", required: false, type: .structure), 
             AWSShapeMember(label: "Permission", required: false, type: .enum)
         ]
+
         public let grantee: Grantee?
         /// Logging permissions assigned to the Grantee for the bucket.
         public let permission: BucketLogsPermission?
@@ -7329,6 +7920,7 @@ extension S3 {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "TopicArn", location: .body(locationName: "Topic"), required: true, type: .string)
         ]
+
         /// The Amazon S3 bucket event about which to send notifications. For more information, see Supported Event Types in the Amazon Simple Storage Service Developer Guide.
         public let events: [Event]
         public let filter: NotificationConfigurationFilter?
@@ -7357,6 +7949,7 @@ extension S3 {
             AWSShapeMember(label: "Id", required: false, type: .string), 
             AWSShapeMember(label: "Topic", required: false, type: .string)
         ]
+
         public let events: [Event]?
         public let id: String?
         /// Amazon SNS topic to which Amazon S3 will publish a message to report the specified events for the bucket.
@@ -7381,6 +7974,7 @@ extension S3 {
             AWSShapeMember(label: "Days", required: false, type: .integer), 
             AWSShapeMember(label: "StorageClass", required: false, type: .enum)
         ]
+
         /// Indicates when objects are transitioned to the specified storage class. The date value must be in ISO 8601 format. The time is always midnight UTC.
         public let date: TimeStamp?
         /// Indicates the number of days after creation when objects are transitioned to the specified storage class. The value must be a positive integer.
@@ -7429,6 +8023,7 @@ extension S3 {
             AWSShapeMember(label: "SSECustomerKeyMD5", location: .header(locationName: "x-amz-server-side-encryption-customer-key-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "SSEKMSKeyId", location: .header(locationName: "x-amz-server-side-encryption-aws-kms-key-id"), required: false, type: .string)
         ]
+
         public let copyPartResult: CopyPartResult?
         /// The version of the source object that was copied, if you have enabled versioning on the source bucket.
         public let copySourceVersionId: String?
@@ -7483,6 +8078,7 @@ extension S3 {
             AWSShapeMember(label: "SSECustomerKeyMD5", location: .header(locationName: "x-amz-server-side-encryption-customer-key-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "UploadId", location: .querystring(locationName: "uploadId"), required: true, type: .string)
         ]
+
         public let bucket: String
         /// The name of the source bucket and key name of the source object, separated by a slash (/). Must be URL-encoded.
         public let copySource: String
@@ -7535,6 +8131,11 @@ extension S3 {
             self.uploadId = uploadId
         }
 
+        public func validate() throws {
+            try validate(copySource, name:"copySource", pattern: "\\/.+\\/.+")
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case copySource = "x-amz-copy-source"
@@ -7565,6 +8166,7 @@ extension S3 {
             AWSShapeMember(label: "SSECustomerKeyMD5", location: .header(locationName: "x-amz-server-side-encryption-customer-key-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "SSEKMSKeyId", location: .header(locationName: "x-amz-server-side-encryption-aws-kms-key-id"), required: false, type: .string)
         ]
+
         /// Entity tag for the uploaded object.
         public let eTag: String?
         public let requestCharged: RequestCharged?
@@ -7612,6 +8214,7 @@ extension S3 {
             AWSShapeMember(label: "SSECustomerKeyMD5", location: .header(locationName: "x-amz-server-side-encryption-customer-key-MD5"), required: false, type: .string), 
             AWSShapeMember(label: "UploadId", location: .querystring(locationName: "uploadId"), required: true, type: .string)
         ]
+
         /// Object data.
         public let body: Data?
         /// Name of the bucket to which the multipart upload was initiated.
@@ -7648,6 +8251,10 @@ extension S3 {
             self.uploadId = uploadId
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case body = "Body"
             case bucket = "Bucket"
@@ -7668,6 +8275,7 @@ extension S3 {
             AWSShapeMember(label: "MFADelete", location: .body(locationName: "MfaDelete"), required: false, type: .enum), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Specifies whether MFA delete is enabled in the bucket versioning configuration. This element is only returned if the bucket has been configured with MFA delete. If the bucket has never been so configured, this element is not returned.
         public let mFADelete: MFADelete?
         /// The versioning state of the bucket.
@@ -7691,6 +8299,7 @@ extension S3 {
             AWSShapeMember(label: "RedirectAllRequestsTo", required: false, type: .structure), 
             AWSShapeMember(label: "RoutingRules", required: false, type: .list, encoding: .list(member:"RoutingRule"))
         ]
+
         /// The name of the error document for the website.
         public let errorDocument: ErrorDocument?
         /// The name of the index document for the website.
@@ -7705,6 +8314,10 @@ extension S3 {
             self.indexDocument = indexDocument
             self.redirectAllRequestsTo = redirectAllRequestsTo
             self.routingRules = routingRules
+        }
+
+        public func validate() throws {
+            try errorDocument?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

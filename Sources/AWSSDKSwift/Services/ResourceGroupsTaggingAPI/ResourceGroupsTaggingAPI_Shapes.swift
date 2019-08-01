@@ -17,6 +17,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "StatusCode", required: false, type: .integer)
         ]
+
         /// The code of the common error. Valid values include InternalServiceException, InvalidParameterException, and any valid error code returned by the AWS service that hosts the resource that you want to tag.
         public let errorCode: ErrorCode?
         /// The message of the common error.
@@ -45,6 +46,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "TagFilters", required: false, type: .list), 
             AWSShapeMember(label: "TagsPerPage", required: false, type: .integer)
         ]
+
         /// A string that indicates that additional data is available. Leave this value empty for your initial request. If the response includes a PaginationToken, use that string for this value to request an additional page of data.
         public let paginationToken: String?
         /// A limit that restricts the number of resources returned by GetResources in paginated output. You can set ResourcesPerPage to a minimum of 1 item and the maximum of 100 items. 
@@ -64,6 +66,20 @@ extension ResourceGroupsTaggingAPI {
             self.tagsPerPage = tagsPerPage
         }
 
+        public func validate() throws {
+            try validate(paginationToken, name:"paginationToken", max: 2048)
+            try validate(paginationToken, name:"paginationToken", min: 0)
+            try resourceTypeFilters?.forEach {
+                try validate($0, name:"resourceTypeFilters[]", max: 256)
+                try validate($0, name:"resourceTypeFilters[]", min: 0)
+            }
+            try tagFilters?.forEach {
+                try $0.validate()
+            }
+            try validate(tagFilters, name:"tagFilters", max: 50)
+            try validate(tagFilters, name:"tagFilters", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case paginationToken = "PaginationToken"
             case resourcesPerPage = "ResourcesPerPage"
@@ -78,6 +94,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "PaginationToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceTagMappingList", required: false, type: .list)
         ]
+
         /// A string that indicates that the response contains more data than can be returned in a single response. To receive additional data, specify this string for the PaginationToken value in a subsequent request.
         public let paginationToken: String?
         /// A list of resource ARNs and the tags (keys and values) associated with each.
@@ -86,6 +103,14 @@ extension ResourceGroupsTaggingAPI {
         public init(paginationToken: String? = nil, resourceTagMappingList: [ResourceTagMapping]? = nil) {
             self.paginationToken = paginationToken
             self.resourceTagMappingList = resourceTagMappingList
+        }
+
+        public func validate() throws {
+            try validate(paginationToken, name:"paginationToken", max: 2048)
+            try validate(paginationToken, name:"paginationToken", min: 0)
+            try resourceTagMappingList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -98,11 +123,17 @@ extension ResourceGroupsTaggingAPI {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PaginationToken", required: false, type: .string)
         ]
+
         /// A string that indicates that additional data is available. Leave this value empty for your initial request. If the response includes a PaginationToken, use that string for this value to request an additional page of data.
         public let paginationToken: String?
 
         public init(paginationToken: String? = nil) {
             self.paginationToken = paginationToken
+        }
+
+        public func validate() throws {
+            try validate(paginationToken, name:"paginationToken", max: 2048)
+            try validate(paginationToken, name:"paginationToken", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -115,6 +146,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "PaginationToken", required: false, type: .string), 
             AWSShapeMember(label: "TagKeys", required: false, type: .list)
         ]
+
         /// A string that indicates that the response contains more data than can be returned in a single response. To receive additional data, specify this string for the PaginationToken value in a subsequent request.
         public let paginationToken: String?
         /// A list of all tag keys in the AWS account.
@@ -123,6 +155,15 @@ extension ResourceGroupsTaggingAPI {
         public init(paginationToken: String? = nil, tagKeys: [String]? = nil) {
             self.paginationToken = paginationToken
             self.tagKeys = tagKeys
+        }
+
+        public func validate() throws {
+            try validate(paginationToken, name:"paginationToken", max: 2048)
+            try validate(paginationToken, name:"paginationToken", min: 0)
+            try tagKeys?.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -136,6 +177,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "PaginationToken", required: false, type: .string)
         ]
+
         /// The key for which you want to list all existing values in the specified region for the AWS account.
         public let key: String
         /// A string that indicates that additional data is available. Leave this value empty for your initial request. If the response includes a PaginationToken, use that string for this value to request an additional page of data.
@@ -144,6 +186,13 @@ extension ResourceGroupsTaggingAPI {
         public init(key: String, paginationToken: String? = nil) {
             self.key = key
             self.paginationToken = paginationToken
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(paginationToken, name:"paginationToken", max: 2048)
+            try validate(paginationToken, name:"paginationToken", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -157,6 +206,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "PaginationToken", required: false, type: .string), 
             AWSShapeMember(label: "TagValues", required: false, type: .list)
         ]
+
         /// A string that indicates that the response contains more data than can be returned in a single response. To receive additional data, specify this string for the PaginationToken value in a subsequent request.
         public let paginationToken: String?
         /// A list of all tag values for the specified key in the AWS account.
@@ -165,6 +215,15 @@ extension ResourceGroupsTaggingAPI {
         public init(paginationToken: String? = nil, tagValues: [String]? = nil) {
             self.paginationToken = paginationToken
             self.tagValues = tagValues
+        }
+
+        public func validate() throws {
+            try validate(paginationToken, name:"paginationToken", max: 2048)
+            try validate(paginationToken, name:"paginationToken", min: 0)
+            try tagValues?.forEach {
+                try validate($0, name:"tagValues[]", max: 256)
+                try validate($0, name:"tagValues[]", min: 0)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -178,6 +237,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "ResourceARN", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The ARN of the resource.
         public let resourceARN: String?
         /// The tags that have been applied to one or more AWS resources.
@@ -186,6 +246,14 @@ extension ResourceGroupsTaggingAPI {
         public init(resourceARN: String? = nil, tags: [Tag]? = nil) {
             self.resourceARN = resourceARN
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(resourceARN, name:"resourceARN", max: 1600)
+            try validate(resourceARN, name:"resourceARN", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -199,6 +267,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// One part of a key-value pair that make up a tag. A key is a general label that acts like a category for more specific tag values.
         public let key: String
         /// The optional part of a key-value pair that make up a tag. A value acts as a descriptor within a tag category (key).
@@ -207,6 +276,13 @@ extension ResourceGroupsTaggingAPI {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -220,6 +296,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// One part of a key-value pair that make up a tag. A key is a general label that acts like a category for more specific tag values.
         public let key: String?
         /// The optional part of a key-value pair that make up a tag. A value acts as a descriptor within a tag category (key).
@@ -228,6 +305,17 @@ extension ResourceGroupsTaggingAPI {
         public init(key: String? = nil, values: [String]? = nil) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 256)
+                try validate($0, name:"values[]", min: 0)
+            }
+            try validate(values, name:"values", max: 20)
+            try validate(values, name:"values", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -241,6 +329,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "ResourceARNList", required: true, type: .list), 
             AWSShapeMember(label: "Tags", required: true, type: .map)
         ]
+
         /// A list of ARNs. An ARN (Amazon Resource Name) uniquely identifies a resource. You can specify a minimum of 1 and a maximum of 20 ARNs (resources) to tag. An ARN can be set to a maximum of 1600 characters. For more information, see Amazon Resource Names (ARNs) and AWS Service Namespaces in the AWS General Reference.
         public let resourceARNList: [String]
         /// The tags that you want to add to the specified resources. A tag consists of a key and a value that you define.
@@ -249,6 +338,15 @@ extension ResourceGroupsTaggingAPI {
         public init(resourceARNList: [String], tags: [String: String]) {
             self.resourceARNList = resourceARNList
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try resourceARNList.forEach {
+                try validate($0, name:"resourceARNList[]", max: 1600)
+                try validate($0, name:"resourceARNList[]", min: 1)
+            }
+            try validate(resourceARNList, name:"resourceARNList", max: 20)
+            try validate(resourceARNList, name:"resourceARNList", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -261,6 +359,7 @@ extension ResourceGroupsTaggingAPI {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedResourcesMap", required: false, type: .map)
         ]
+
         /// Details of resources that could not be tagged. An error code, status code, and error message are returned for each failed item.
         public let failedResourcesMap: [String: FailureInfo]?
 
@@ -278,6 +377,7 @@ extension ResourceGroupsTaggingAPI {
             AWSShapeMember(label: "ResourceARNList", required: true, type: .list), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// A list of ARNs. An ARN (Amazon Resource Name) uniquely identifies a resource. You can specify a minimum of 1 and a maximum of 20 ARNs (resources) to untag. An ARN can be set to a maximum of 1600 characters. For more information, see Amazon Resource Names (ARNs) and AWS Service Namespaces in the AWS General Reference.
         public let resourceARNList: [String]
         /// A list of the tag keys that you want to remove from the specified resources.
@@ -286,6 +386,21 @@ extension ResourceGroupsTaggingAPI {
         public init(resourceARNList: [String], tagKeys: [String]) {
             self.resourceARNList = resourceARNList
             self.tagKeys = tagKeys
+        }
+
+        public func validate() throws {
+            try resourceARNList.forEach {
+                try validate($0, name:"resourceARNList[]", max: 1600)
+                try validate($0, name:"resourceARNList[]", min: 1)
+            }
+            try validate(resourceARNList, name:"resourceARNList", max: 20)
+            try validate(resourceARNList, name:"resourceARNList", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -298,6 +413,7 @@ extension ResourceGroupsTaggingAPI {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FailedResourcesMap", required: false, type: .map)
         ]
+
         /// Details of resources that could not be untagged. An error code, status code, and error message are returned for each failed item.
         public let failedResourcesMap: [String: FailureInfo]?
 

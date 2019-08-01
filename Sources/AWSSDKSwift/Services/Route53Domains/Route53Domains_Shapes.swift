@@ -13,6 +13,7 @@ extension Route53Domains {
             AWSShapeMember(label: "Operation", required: false, type: .enum), 
             AWSShapeMember(label: "Price", required: false, type: .double)
         ]
+
         /// The date that the operation was billed, in Unix format.
         public let billDate: TimeStamp?
         /// The name of the domain that the billing record applies to. If the domain name contains characters other than a-z, 0-9, and - (hyphen), such as an internationalized domain name, then this value is in Punycode. For more information, see DNS Domain Name Format in the Amazon Route 53 Developer Guidezzz.
@@ -32,6 +33,10 @@ extension Route53Domains {
             self.price = price
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case billDate = "BillDate"
             case domainName = "DomainName"
@@ -46,6 +51,7 @@ extension Route53Domains {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "IdnLangCode", required: false, type: .string)
         ]
+
         /// The name of the domain that you want to get availability for. Constraints: The domain name can contain only the letters a through z, the numbers 0 through 9, and hyphen (-). Internationalized Domain Names are not supported.
         public let domainName: String
         /// Reserved for future use.
@@ -54,6 +60,11 @@ extension Route53Domains {
         public init(domainName: String, idnLangCode: String? = nil) {
             self.domainName = domainName
             self.idnLangCode = idnLangCode
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+            try validate(idnLangCode, name:"idnLangCode", max: 3)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -66,6 +77,7 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Availability", required: true, type: .enum)
         ]
+
         /// Whether the domain name is available for registering.  You can register only domains designated as AVAILABLE.  Valid values:  AVAILABLE  The domain name is available.  AVAILABLE_RESERVED  The domain name is reserved under specific conditions.  AVAILABLE_PREORDER  The domain name is available and can be preordered.  DONT_KNOW  The TLD registry didn't reply with a definitive answer about whether the domain name is available. Amazon Route 53 can return this response for a variety of reasons, for example, the registry is performing maintenance. Try again later.  PENDING  The TLD registry didn't return a response in the expected amount of time. When the response is delayed, it usually takes just a few extra seconds. You can resubmit the request immediately.  RESERVED  The domain name has been reserved for another person or organization.  UNAVAILABLE  The domain name is not available.  UNAVAILABLE_PREMIUM  The domain name is not available.  UNAVAILABLE_RESTRICTED  The domain name is forbidden.  
         public let availability: DomainAvailability
 
@@ -83,6 +95,7 @@ extension Route53Domains {
             AWSShapeMember(label: "AuthCode", required: false, type: .string), 
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// If the registrar for the top-level domain (TLD) requires an authorization code to transfer the domain, the code that you got from the current registrar for the domain.
         public let authCode: String?
         /// The name of the domain that you want to transfer to Amazon Route 53. Constraints: The domain name can contain only the letters a through z, the numbers 0 through 9, and hyphen (-). Internationalized Domain Names are not supported.
@@ -91,6 +104,11 @@ extension Route53Domains {
         public init(authCode: String? = nil, domainName: String) {
             self.authCode = authCode
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(authCode, name:"authCode", max: 1024)
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -103,6 +121,7 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Transferability", required: true, type: .structure)
         ]
+
         /// A complex type that contains information about whether the specified domain can be transferred to Amazon Route 53.
         public let transferability: DomainTransferability
 
@@ -132,6 +151,7 @@ extension Route53Domains {
             AWSShapeMember(label: "State", required: false, type: .string), 
             AWSShapeMember(label: "ZipCode", required: false, type: .string)
         ]
+
         /// First line of the contact's address.
         public let addressLine1: String?
         /// Second line of contact's address, if any.
@@ -176,6 +196,23 @@ extension Route53Domains {
             self.phoneNumber = phoneNumber
             self.state = state
             self.zipCode = zipCode
+        }
+
+        public func validate() throws {
+            try validate(addressLine1, name:"addressLine1", max: 255)
+            try validate(addressLine2, name:"addressLine2", max: 255)
+            try validate(city, name:"city", max: 255)
+            try validate(email, name:"email", max: 254)
+            try extraParams?.forEach {
+                try $0.validate()
+            }
+            try validate(fax, name:"fax", max: 30)
+            try validate(firstName, name:"firstName", max: 255)
+            try validate(lastName, name:"lastName", max: 255)
+            try validate(organizationName, name:"organizationName", max: 255)
+            try validate(phoneNumber, name:"phoneNumber", max: 30)
+            try validate(state, name:"state", max: 255)
+            try validate(zipCode, name:"zipCode", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -443,6 +480,7 @@ extension Route53Domains {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "TagsToDelete", required: true, type: .list)
         ]
+
         /// The domain for which you want to delete one or more tags.
         public let domainName: String
         /// A list of tag keys to delete.
@@ -453,6 +491,10 @@ extension Route53Domains {
             self.tagsToDelete = tagsToDelete
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "DomainName"
             case tagsToDelete = "TagsToDelete"
@@ -460,6 +502,7 @@ extension Route53Domains {
     }
 
     public struct DeleteTagsForDomainResponse: AWSShape {
+
 
         public init() {
         }
@@ -470,11 +513,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// The name of the domain that you want to disable automatic renewal for.
         public let domainName: String
 
         public init(domainName: String) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -483,6 +531,7 @@ extension Route53Domains {
     }
 
     public struct DisableDomainAutoRenewResponse: AWSShape {
+
 
         public init() {
         }
@@ -493,11 +542,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// The name of the domain that you want to remove the transfer lock for.
         public let domainName: String
 
         public init(domainName: String) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -509,11 +563,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// Identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -538,6 +597,7 @@ extension Route53Domains {
             AWSShapeMember(label: "Availability", required: false, type: .string), 
             AWSShapeMember(label: "DomainName", required: false, type: .string)
         ]
+
         /// Whether the domain name is available for registering.  You can register only the domains that are designated as AVAILABLE.  Valid values:  AVAILABLE  The domain name is available.  AVAILABLE_RESERVED  The domain name is reserved under specific conditions.  AVAILABLE_PREORDER  The domain name is available and can be preordered.  DONT_KNOW  The TLD registry didn't reply with a definitive answer about whether the domain name is available. Amazon Route 53 can return this response for a variety of reasons, for example, the registry is performing maintenance. Try again later.  PENDING  The TLD registry didn't return a response in the expected amount of time. When the response is delayed, it usually takes just a few extra seconds. You can resubmit the request immediately.  RESERVED  The domain name has been reserved for another person or organization.  UNAVAILABLE  The domain name is not available.  UNAVAILABLE_PREMIUM  The domain name is not available.  UNAVAILABLE_RESTRICTED  The domain name is forbidden.  
         public let availability: String?
         /// A suggested domain name.
@@ -546,6 +606,10 @@ extension Route53Domains {
         public init(availability: String? = nil, domainName: String? = nil) {
             self.availability = availability
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -561,6 +625,7 @@ extension Route53Domains {
             AWSShapeMember(label: "Expiry", required: false, type: .timestamp), 
             AWSShapeMember(label: "TransferLock", required: false, type: .boolean)
         ]
+
         /// Indicates whether the domain is automatically renewed upon expiration.
         public let autoRenew: Bool?
         /// The name of the domain that the summary information applies to.
@@ -577,6 +642,10 @@ extension Route53Domains {
             self.transferLock = transferLock
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case autoRenew = "AutoRenew"
             case domainName = "DomainName"
@@ -589,6 +658,7 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Transferable", required: false, type: .enum)
         ]
+
         public let transferable: Transferable?
 
         public init(transferable: Transferable? = nil) {
@@ -604,11 +674,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// The name of the domain that you want to enable automatic renewal for.
         public let domainName: String
 
         public init(domainName: String) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -617,6 +692,7 @@ extension Route53Domains {
     }
 
     public struct EnableDomainAutoRenewResponse: AWSShape {
+
 
         public init() {
         }
@@ -627,11 +703,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// The name of the domain that you want to set the transfer lock for.
         public let domainName: String
 
         public init(domainName: String) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -643,11 +724,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// Identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -660,6 +746,7 @@ extension Route53Domains {
             AWSShapeMember(label: "Name", required: true, type: .enum), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// Name of the additional parameter required by the top-level domain. Here are the top-level domains that require additional parameters and which parameters they require:    .com.au and .net.au: AU_ID_NUMBER and AU_ID_TYPE     .ca: BRAND_NUMBER, CA_LEGAL_TYPE, and CA_BUSINESS_ENTITY_TYPE     .es: ES_IDENTIFICATION, ES_IDENTIFICATION_TYPE, and ES_LEGAL_FORM     .fi: BIRTH_DATE_IN_YYYY_MM_DD, FI_BUSINESS_NUMBER, FI_ID_NUMBER, FI_NATIONALITY, and FI_ORGANIZATION_TYPE     .fr: BRAND_NUMBER, BIRTH_DEPARTMENT, BIRTH_DATE_IN_YYYY_MM_DD, BIRTH_COUNTRY, and BIRTH_CITY     .it: BIRTH_COUNTRY, IT_PIN, and IT_REGISTRANT_ENTITY_TYPE     .ru: BIRTH_DATE_IN_YYYY_MM_DD and RU_PASSPORT_DATA     .se: BIRTH_COUNTRY and SE_ID_NUMBER     .sg: SG_ID_NUMBER     .co.uk, .me.uk, and .org.uk: UK_CONTACT_TYPE and UK_COMPANY_NUMBER    In addition, many TLDs require VAT_NUMBER.
         public let name: ExtraParamName
         /// Values corresponding to the additional parameter names required by some top-level domains.
@@ -668,6 +755,10 @@ extension Route53Domains {
         public init(name: ExtraParamName, value: String) {
             self.name = name
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -710,11 +801,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "domainName", required: false, type: .string)
         ]
+
         /// The name of the domain for which you want to know whether the registrant contact has confirmed that the email address is valid.
         public let domainName: String?
 
         public init(domainName: String? = nil) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -727,6 +823,7 @@ extension Route53Domains {
             AWSShapeMember(label: "domainName", required: false, type: .string), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The domain name for which you requested the reachability status.
         public let domainName: String?
         /// Whether the registrant contact has responded. Values include the following:  PENDING  We sent the confirmation email and haven't received a response yet.  DONE  We sent the email and got confirmation from the registrant contact.  EXPIRED  The time limit expired before the registrant contact responded.  
@@ -735,6 +832,10 @@ extension Route53Domains {
         public init(domainName: String? = nil, status: ReachabilityStatus? = nil) {
             self.domainName = domainName
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -747,11 +848,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// The name of the domain that you want to get detailed information about.
         public let domainName: String
 
         public init(domainName: String) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -783,6 +889,7 @@ extension Route53Domains {
             AWSShapeMember(label: "UpdatedDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "WhoIsServer", required: false, type: .string)
         ]
+
         /// Email address to contact to report incorrect contact information for a domain, to report that the domain is being used to send spam, to report that someone is cybersquatting on a domain name, or report some other type of abuse.
         public let abuseContactEmail: String?
         /// Phone number for reporting abuse.
@@ -850,6 +957,18 @@ extension Route53Domains {
             self.whoIsServer = whoIsServer
         }
 
+        public func validate() throws {
+            try validate(abuseContactEmail, name:"abuseContactEmail", max: 254)
+            try validate(abuseContactPhone, name:"abuseContactPhone", max: 30)
+            try adminContact.validate()
+            try validate(domainName, name:"domainName", max: 255)
+            try nameservers.forEach {
+                try $0.validate()
+            }
+            try registrantContact.validate()
+            try techContact.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case abuseContactEmail = "AbuseContactEmail"
             case abuseContactPhone = "AbuseContactPhone"
@@ -881,6 +1000,7 @@ extension Route53Domains {
             AWSShapeMember(label: "OnlyAvailable", required: true, type: .boolean), 
             AWSShapeMember(label: "SuggestionCount", required: true, type: .integer)
         ]
+
         /// A domain name that you want to use as the basis for a list of possible domain names. The domain name must contain a top-level domain (TLD), such as .com, that Amazon Route 53 supports. For a list of TLDs, see Domains that You Can Register with Amazon Route 53 in the Amazon Route 53 Developer Guide.
         public let domainName: String
         /// If OnlyAvailable is true, Amazon Route 53 returns only domain names that are available. If OnlyAvailable is false, Amazon Route 53 returns domain names without checking whether they're available to be registered. To determine whether the domain is available, you can call checkDomainAvailability for each suggestion.
@@ -894,6 +1014,10 @@ extension Route53Domains {
             self.suggestionCount = suggestionCount
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "DomainName"
             case onlyAvailable = "OnlyAvailable"
@@ -905,11 +1029,18 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SuggestionsList", required: false, type: .list)
         ]
+
         /// A list of possible domain names. If you specified true for OnlyAvailable in the request, the list contains only domains that are available for registration.
         public let suggestionsList: [DomainSuggestion]?
 
         public init(suggestionsList: [DomainSuggestion]? = nil) {
             self.suggestionsList = suggestionsList
+        }
+
+        public func validate() throws {
+            try suggestionsList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -921,11 +1052,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// The identifier for the operation for which you want to get the status. Amazon Route 53 returned the identifier in the response to the original request.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -942,6 +1078,7 @@ extension Route53Domains {
             AWSShapeMember(label: "SubmittedDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The name of a domain.
         public let domainName: String?
         /// Detailed information on the status including possible errors.
@@ -964,6 +1101,11 @@ extension Route53Domains {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+            try validate(operationId, name:"operationId", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "DomainName"
             case message = "Message"
@@ -979,6 +1121,7 @@ extension Route53Domains {
             AWSShapeMember(label: "Marker", required: false, type: .string), 
             AWSShapeMember(label: "MaxItems", required: false, type: .integer)
         ]
+
         /// For an initial request for a list of domains, omit this element. If the number of domains that are associated with the current AWS account is greater than the value that you specified for MaxItems, you can use Marker to return additional domains. Get the value of NextPageMarker from the previous response, and submit another request that includes the value of NextPageMarker in the Marker element. Constraints: The marker must match the value specified in the previous request.
         public let marker: String?
         /// Number of domains to be returned. Default: 20
@@ -987,6 +1130,11 @@ extension Route53Domains {
         public init(marker: String? = nil, maxItems: Int32? = nil) {
             self.marker = marker
             self.maxItems = maxItems
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", max: 4096)
+            try validate(maxItems, name:"maxItems", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1000,6 +1148,7 @@ extension Route53Domains {
             AWSShapeMember(label: "Domains", required: true, type: .list), 
             AWSShapeMember(label: "NextPageMarker", required: false, type: .string)
         ]
+
         /// A summary of domains.
         public let domains: [DomainSummary]
         /// If there are more domains than you specified for MaxItems in the request, submit another request and include the value of NextPageMarker in the value of Marker.
@@ -1008,6 +1157,13 @@ extension Route53Domains {
         public init(domains: [DomainSummary], nextPageMarker: String? = nil) {
             self.domains = domains
             self.nextPageMarker = nextPageMarker
+        }
+
+        public func validate() throws {
+            try domains.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageMarker, name:"nextPageMarker", max: 4096)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1022,6 +1178,7 @@ extension Route53Domains {
             AWSShapeMember(label: "MaxItems", required: false, type: .integer), 
             AWSShapeMember(label: "SubmittedSince", required: false, type: .timestamp)
         ]
+
         /// For an initial request for a list of operations, omit this element. If the number of operations that are not yet complete is greater than the value that you specified for MaxItems, you can use Marker to return additional operations. Get the value of NextPageMarker from the previous response, and submit another request that includes the value of NextPageMarker in the Marker element.
         public let marker: String?
         /// Number of domains to be returned. Default: 20
@@ -1033,6 +1190,11 @@ extension Route53Domains {
             self.marker = marker
             self.maxItems = maxItems
             self.submittedSince = submittedSince
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", max: 4096)
+            try validate(maxItems, name:"maxItems", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1047,6 +1209,7 @@ extension Route53Domains {
             AWSShapeMember(label: "NextPageMarker", required: false, type: .string), 
             AWSShapeMember(label: "Operations", required: true, type: .list)
         ]
+
         /// If there are more operations than you specified for MaxItems in the request, submit another request and include the value of NextPageMarker in the value of Marker.
         public let nextPageMarker: String?
         /// Lists summaries of the operations.
@@ -1055,6 +1218,13 @@ extension Route53Domains {
         public init(nextPageMarker: String? = nil, operations: [OperationSummary]) {
             self.nextPageMarker = nextPageMarker
             self.operations = operations
+        }
+
+        public func validate() throws {
+            try validate(nextPageMarker, name:"nextPageMarker", max: 4096)
+            try operations.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1067,11 +1237,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// The domain for which you want to get a list of tags.
         public let domainName: String
 
         public init(domainName: String) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1083,6 +1258,7 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagList", required: true, type: .list)
         ]
+
         /// A list of the tags that are associated with the specified domain.
         public let tagList: [Tag]
 
@@ -1100,6 +1276,7 @@ extension Route53Domains {
             AWSShapeMember(label: "GlueIps", required: false, type: .list), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Glue IP address of a name server entry. Glue IP addresses are required only when the name of the name server is a subdomain of the domain. For example, if your domain is example.com and the name server for the domain is ns.example.com, you need to specify the IP address for ns.example.com. Constraints: The list can contain only one IPv4 and one IPv6 address.
         public let glueIps: [String]?
         /// The fully qualified host name of the name server. Constraint: Maximum 255 characters
@@ -1108,6 +1285,14 @@ extension Route53Domains {
         public init(glueIps: [String]? = nil, name: String) {
             self.glueIps = glueIps
             self.name = name
+        }
+
+        public func validate() throws {
+            try glueIps?.forEach {
+                try validate($0, name:"glueIps[]", max: 45)
+            }
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\-.]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1132,6 +1317,7 @@ extension Route53Domains {
             AWSShapeMember(label: "SubmittedDate", required: true, type: .timestamp), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         /// Identifier returned to track the requested action.
         public let operationId: String
         /// The current status of the requested operation in the system.
@@ -1146,6 +1332,10 @@ extension Route53Domains {
             self.status = status
             self.submittedDate = submittedDate
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1196,6 +1386,7 @@ extension Route53Domains {
             AWSShapeMember(label: "RegistrantContact", required: true, type: .structure), 
             AWSShapeMember(label: "TechContact", required: true, type: .structure)
         ]
+
         /// Provides detailed contact information.
         public let adminContact: ContactDetail
         /// Indicates whether the domain will be automatically renewed (true) or not (false). Autorenewal only takes effect after the account is charged. Default: true 
@@ -1230,6 +1421,16 @@ extension Route53Domains {
             self.techContact = techContact
         }
 
+        public func validate() throws {
+            try adminContact.validate()
+            try validate(domainName, name:"domainName", max: 255)
+            try validate(durationInYears, name:"durationInYears", max: 10)
+            try validate(durationInYears, name:"durationInYears", min: 1)
+            try validate(idnLangCode, name:"idnLangCode", max: 3)
+            try registrantContact.validate()
+            try techContact.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case adminContact = "AdminContact"
             case autoRenew = "AutoRenew"
@@ -1248,11 +1449,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// Identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1266,6 +1472,7 @@ extension Route53Domains {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "DurationInYears", required: false, type: .integer)
         ]
+
         /// The year when the registration for the domain is set to expire. This value must match the current expiration date for the domain.
         public let currentExpiryYear: Int32
         /// The name of the domain that you want to renew.
@@ -1279,6 +1486,12 @@ extension Route53Domains {
             self.durationInYears = durationInYears
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+            try validate(durationInYears, name:"durationInYears", max: 10)
+            try validate(durationInYears, name:"durationInYears", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case currentExpiryYear = "CurrentExpiryYear"
             case domainName = "DomainName"
@@ -1290,11 +1503,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// The identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1306,11 +1524,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "domainName", required: false, type: .string)
         ]
+
         /// The name of the domain for which you want Amazon Route 53 to resend a confirmation email to the registrant contact.
         public let domainName: String?
 
         public init(domainName: String? = nil) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1324,6 +1547,7 @@ extension Route53Domains {
             AWSShapeMember(label: "emailAddress", required: false, type: .string), 
             AWSShapeMember(label: "isAlreadyVerified", required: false, type: .boolean)
         ]
+
         /// The domain name for which you requested a confirmation email.
         public let domainName: String?
         /// The email address for the registrant contact at the time that we sent the verification email.
@@ -1337,6 +1561,11 @@ extension Route53Domains {
             self.isAlreadyVerified = isAlreadyVerified
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+            try validate(emailAddress, name:"emailAddress", max: 254)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "domainName"
             case emailAddress = "emailAddress"
@@ -1348,11 +1577,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DomainName", required: true, type: .string)
         ]
+
         /// The name of the domain that you want to get an authorization code for.
         public let domainName: String
 
         public init(domainName: String) {
             self.domainName = domainName
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1364,11 +1598,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AuthCode", required: true, type: .string)
         ]
+
         /// The authorization code for the domain.
         public let authCode: String
 
         public init(authCode: String) {
             self.authCode = authCode
+        }
+
+        public func validate() throws {
+            try validate(authCode, name:"authCode", max: 1024)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1381,6 +1620,7 @@ extension Route53Domains {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The key (name) of a tag. Valid values: A-Z, a-z, 0-9, space, ".:/=+\-@" Constraints: Each key can be 1-128 characters long.
         public let key: String?
         /// The value of a tag. Valid values: A-Z, a-z, 0-9, space, ".:/=+\-@" Constraints: Each value can be 0-256 characters long.
@@ -1412,6 +1652,7 @@ extension Route53Domains {
             AWSShapeMember(label: "RegistrantContact", required: true, type: .structure), 
             AWSShapeMember(label: "TechContact", required: true, type: .structure)
         ]
+
         /// Provides detailed contact information.
         public let adminContact: ContactDetail
         /// The authorization code for the domain. You get this value from the current registrar.
@@ -1452,6 +1693,20 @@ extension Route53Domains {
             self.techContact = techContact
         }
 
+        public func validate() throws {
+            try adminContact.validate()
+            try validate(authCode, name:"authCode", max: 1024)
+            try validate(domainName, name:"domainName", max: 255)
+            try validate(durationInYears, name:"durationInYears", max: 10)
+            try validate(durationInYears, name:"durationInYears", min: 1)
+            try validate(idnLangCode, name:"idnLangCode", max: 3)
+            try nameservers?.forEach {
+                try $0.validate()
+            }
+            try registrantContact.validate()
+            try techContact.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case adminContact = "AdminContact"
             case authCode = "AuthCode"
@@ -1472,11 +1727,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// Identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1498,6 +1758,7 @@ extension Route53Domains {
             AWSShapeMember(label: "RegistrantPrivacy", required: false, type: .boolean), 
             AWSShapeMember(label: "TechPrivacy", required: false, type: .boolean)
         ]
+
         /// Whether you want to conceal contact information from WHOIS queries. If you specify true, WHOIS ("who is") queries return contact information either for Amazon Registrar (for .com, .net, and .org domains) or for our registrar associate, Gandi (for all other TLDs). If you specify false, WHOIS queries return the information that you entered for the admin contact.
         public let adminPrivacy: Bool?
         /// The name of the domain that you want to update the privacy setting for.
@@ -1514,6 +1775,10 @@ extension Route53Domains {
             self.techPrivacy = techPrivacy
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case adminPrivacy = "AdminPrivacy"
             case domainName = "DomainName"
@@ -1526,11 +1791,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// Identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1545,6 +1815,7 @@ extension Route53Domains {
             AWSShapeMember(label: "RegistrantContact", required: false, type: .structure), 
             AWSShapeMember(label: "TechContact", required: false, type: .structure)
         ]
+
         /// Provides detailed contact information.
         public let adminContact: ContactDetail?
         /// The name of the domain that you want to update contact information for.
@@ -1561,6 +1832,13 @@ extension Route53Domains {
             self.techContact = techContact
         }
 
+        public func validate() throws {
+            try adminContact?.validate()
+            try validate(domainName, name:"domainName", max: 255)
+            try registrantContact?.validate()
+            try techContact?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case adminContact = "AdminContact"
             case domainName = "DomainName"
@@ -1573,11 +1851,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// Identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1590,6 +1873,7 @@ extension Route53Domains {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "Nameservers", required: true, type: .list)
         ]
+
         /// The name of the domain that you want to change name servers for.
         public let domainName: String
         /// A list of new name servers for the domain.
@@ -1598,6 +1882,13 @@ extension Route53Domains {
         public init(domainName: String, nameservers: [Nameserver]) {
             self.domainName = domainName
             self.nameservers = nameservers
+        }
+
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+            try nameservers.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1610,11 +1901,16 @@ extension Route53Domains {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperationId", required: true, type: .string)
         ]
+
         /// Identifier for tracking the progress of the request. To use this ID to query the operation status, use GetOperationDetail.
         public let operationId: String
 
         public init(operationId: String) {
             self.operationId = operationId
+        }
+
+        public func validate() throws {
+            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1627,6 +1923,7 @@ extension Route53Domains {
             AWSShapeMember(label: "DomainName", required: true, type: .string), 
             AWSShapeMember(label: "TagsToUpdate", required: false, type: .list)
         ]
+
         /// The domain for which you want to add or update tags.
         public let domainName: String
         /// A list of the tag keys and values that you want to add or update. If you specify a key that already exists, the corresponding value will be replaced.
@@ -1637,6 +1934,10 @@ extension Route53Domains {
             self.tagsToUpdate = tagsToUpdate
         }
 
+        public func validate() throws {
+            try validate(domainName, name:"domainName", max: 255)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domainName = "DomainName"
             case tagsToUpdate = "TagsToUpdate"
@@ -1644,6 +1945,7 @@ extension Route53Domains {
     }
 
     public struct UpdateTagsForDomainResponse: AWSShape {
+
 
         public init() {
         }
@@ -1657,6 +1959,7 @@ extension Route53Domains {
             AWSShapeMember(label: "MaxItems", required: false, type: .integer), 
             AWSShapeMember(label: "Start", required: false, type: .timestamp)
         ]
+
         /// The end date and time for the time period for which you want a list of billing records. Specify the date and time in Coordinated Universal time (UTC).
         public let end: TimeStamp?
         /// For an initial request for a list of billing records, omit this element. If the number of billing records that are associated with the current AWS account during the specified period is greater than the value that you specified for MaxItems, you can use Marker to return additional billing records. Get the value of NextPageMarker from the previous response, and submit another request that includes the value of NextPageMarker in the Marker element.  Constraints: The marker must match the value of NextPageMarker that was returned in the previous response.
@@ -1673,6 +1976,11 @@ extension Route53Domains {
             self.start = start
         }
 
+        public func validate() throws {
+            try validate(marker, name:"marker", max: 4096)
+            try validate(maxItems, name:"maxItems", max: 100)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case end = "End"
             case marker = "Marker"
@@ -1686,6 +1994,7 @@ extension Route53Domains {
             AWSShapeMember(label: "BillingRecords", required: false, type: .list), 
             AWSShapeMember(label: "NextPageMarker", required: false, type: .string)
         ]
+
         /// A summary of billing records.
         public let billingRecords: [BillingRecord]?
         /// If there are more billing records than you specified for MaxItems in the request, submit another request and include the value of NextPageMarker in the value of Marker.
@@ -1694,6 +2003,13 @@ extension Route53Domains {
         public init(billingRecords: [BillingRecord]? = nil, nextPageMarker: String? = nil) {
             self.billingRecords = billingRecords
             self.nextPageMarker = nextPageMarker
+        }
+
+        public func validate() throws {
+            try billingRecords?.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageMarker, name:"nextPageMarker", max: 4096)
         }
 
         private enum CodingKeys: String, CodingKey {

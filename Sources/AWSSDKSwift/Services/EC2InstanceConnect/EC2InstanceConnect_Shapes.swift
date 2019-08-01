@@ -12,6 +12,7 @@ extension EC2InstanceConnect {
             AWSShapeMember(label: "InstanceOSUser", required: true, type: .string), 
             AWSShapeMember(label: "SSHPublicKey", required: true, type: .string)
         ]
+
         /// The availability zone the EC2 instance was launched in.
         public let availabilityZone: String
         /// The EC2 instance you wish to publish the SSH key to.
@@ -28,6 +29,20 @@ extension EC2InstanceConnect {
             self.sSHPublicKey = sSHPublicKey
         }
 
+        public func validate() throws {
+            try validate(availabilityZone, name:"availabilityZone", max: 32)
+            try validate(availabilityZone, name:"availabilityZone", min: 6)
+            try validate(availabilityZone, name:"availabilityZone", pattern: "^(\\w+-){2,3}\\d+\\w+$")
+            try validate(instanceId, name:"instanceId", max: 32)
+            try validate(instanceId, name:"instanceId", min: 10)
+            try validate(instanceId, name:"instanceId", pattern: "^i-[a-f0-9]+$")
+            try validate(instanceOSUser, name:"instanceOSUser", max: 32)
+            try validate(instanceOSUser, name:"instanceOSUser", min: 1)
+            try validate(instanceOSUser, name:"instanceOSUser", pattern: "^[A-Za-z_][A-Za-z0-9\\@\\._-]{0,30}[A-Za-z0-9\\$_-]?$")
+            try validate(sSHPublicKey, name:"sSHPublicKey", max: 4096)
+            try validate(sSHPublicKey, name:"sSHPublicKey", min: 256)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case availabilityZone = "AvailabilityZone"
             case instanceId = "InstanceId"
@@ -41,6 +56,7 @@ extension EC2InstanceConnect {
             AWSShapeMember(label: "RequestId", required: false, type: .string), 
             AWSShapeMember(label: "Success", required: false, type: .boolean)
         ]
+
         /// The request ID as logged by EC2 Connect. Please provide this when contacting AWS Support.
         public let requestId: String?
         /// Indicates request success.

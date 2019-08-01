@@ -12,6 +12,7 @@ extension DLM {
             AWSShapeMember(label: "PolicyDetails", required: true, type: .structure), 
             AWSShapeMember(label: "State", required: true, type: .enum)
         ]
+
         /// A description of the lifecycle policy. The characters ^[0-9A-Za-z _-]+$ are supported.
         public let description: String
         /// The Amazon Resource Name (ARN) of the IAM role used to run the operations specified by the lifecycle policy.
@@ -28,6 +29,12 @@ extension DLM {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 500)
+            try validate(description, name:"description", min: 0)
+            try policyDetails.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case executionRoleArn = "ExecutionRoleArn"
@@ -40,6 +47,7 @@ extension DLM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyId", required: false, type: .string)
         ]
+
         /// The identifier of the lifecycle policy.
         public let policyId: String?
 
@@ -58,6 +66,7 @@ extension DLM {
             AWSShapeMember(label: "IntervalUnit", required: true, type: .enum), 
             AWSShapeMember(label: "Times", required: false, type: .list)
         ]
+
         /// The interval between snapshots. The supported values are 2, 3, 4, 6, 8, 12, and 24.
         public let interval: Int32
         /// The interval unit.
@@ -71,6 +80,14 @@ extension DLM {
             self.times = times
         }
 
+        public func validate() throws {
+            try validate(interval, name:"interval", min: 1)
+            try times?.forEach {
+                try validate($0, name:"times[]", pattern: "^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$")
+            }
+            try validate(times, name:"times", max: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case interval = "Interval"
             case intervalUnit = "IntervalUnit"
@@ -82,6 +99,7 @@ extension DLM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyId", location: .uri(locationName: "policyId"), required: true, type: .string)
         ]
+
         /// The identifier of the lifecycle policy.
         public let policyId: String
 
@@ -96,6 +114,7 @@ extension DLM {
 
     public struct DeleteLifecyclePolicyResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -109,6 +128,7 @@ extension DLM {
             AWSShapeMember(label: "TagsToAdd", location: .querystring(locationName: "tagsToAdd"), required: false, type: .list), 
             AWSShapeMember(label: "TargetTags", location: .querystring(locationName: "targetTags"), required: false, type: .list)
         ]
+
         /// The identifiers of the data lifecycle policies.
         public let policyIds: [String]?
         /// The resource type.
@@ -128,6 +148,15 @@ extension DLM {
             self.targetTags = targetTags
         }
 
+        public func validate() throws {
+            try validate(resourceTypes, name:"resourceTypes", max: 1)
+            try validate(resourceTypes, name:"resourceTypes", min: 1)
+            try validate(tagsToAdd, name:"tagsToAdd", max: 50)
+            try validate(tagsToAdd, name:"tagsToAdd", min: 0)
+            try validate(targetTags, name:"targetTags", max: 50)
+            try validate(targetTags, name:"targetTags", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case policyIds = "policyIds"
             case resourceTypes = "resourceTypes"
@@ -141,11 +170,18 @@ extension DLM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Policies", required: false, type: .list)
         ]
+
         /// Summary information about the lifecycle policies.
         public let policies: [LifecyclePolicySummary]?
 
         public init(policies: [LifecyclePolicySummary]? = nil) {
             self.policies = policies
+        }
+
+        public func validate() throws {
+            try policies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -157,6 +193,7 @@ extension DLM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyId", location: .uri(locationName: "policyId"), required: true, type: .string)
         ]
+
         /// The identifier of the lifecycle policy.
         public let policyId: String
 
@@ -173,11 +210,16 @@ extension DLM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Policy", required: false, type: .structure)
         ]
+
         /// Detailed information about the lifecycle policy.
         public let policy: LifecyclePolicy?
 
         public init(policy: LifecyclePolicy? = nil) {
             self.policy = policy
+        }
+
+        public func validate() throws {
+            try policy?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -207,6 +249,7 @@ extension DLM {
             AWSShapeMember(label: "PolicyId", required: false, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The local date and time when the lifecycle policy was created.
         public let dateCreated: TimeStamp?
         /// The local date and time when the lifecycle policy was last modified.
@@ -232,6 +275,12 @@ extension DLM {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 500)
+            try validate(description, name:"description", min: 0)
+            try policyDetails?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dateCreated = "DateCreated"
             case dateModified = "DateModified"
@@ -249,6 +298,7 @@ extension DLM {
             AWSShapeMember(label: "PolicyId", required: false, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The description of the lifecycle policy.
         public let description: String?
         /// The identifier of the lifecycle policy.
@@ -262,6 +312,11 @@ extension DLM {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 500)
+            try validate(description, name:"description", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case policyId = "PolicyId"
@@ -273,6 +328,7 @@ extension DLM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ExcludeBootVolume", required: false, type: .boolean)
         ]
+
         /// When executing an EBS Snapshot Management – Instance policy, execute all CreateSnapshots calls with the excludeBootVolume set to the supplied field. Defaults to false. Only valid for EBS Snapshot Management – Instance policies.
         public let excludeBootVolume: Bool?
 
@@ -293,6 +349,7 @@ extension DLM {
             AWSShapeMember(label: "Schedules", required: false, type: .list), 
             AWSShapeMember(label: "TargetTags", required: false, type: .list)
         ]
+
         /// A set of optional parameters that can be provided by the policy. 
         public let parameters: Parameters?
         /// This field determines the valid target resource types and actions a policy can manage. This field defaults to EBS_SNAPSHOT_MANAGEMENT if not present.
@@ -310,6 +367,18 @@ extension DLM {
             self.resourceTypes = resourceTypes
             self.schedules = schedules
             self.targetTags = targetTags
+        }
+
+        public func validate() throws {
+            try validate(resourceTypes, name:"resourceTypes", max: 1)
+            try validate(resourceTypes, name:"resourceTypes", min: 1)
+            try schedules?.forEach {
+                try $0.validate()
+            }
+            try validate(schedules, name:"schedules", max: 1)
+            try validate(schedules, name:"schedules", min: 1)
+            try validate(targetTags, name:"targetTags", max: 50)
+            try validate(targetTags, name:"targetTags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -336,11 +405,17 @@ extension DLM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Count", required: true, type: .integer)
         ]
+
         /// The number of snapshots to keep for each volume, up to a maximum of 1000.
         public let count: Int32
 
         public init(count: Int32) {
             self.count = count
+        }
+
+        public func validate() throws {
+            try validate(count, name:"count", max: 1000)
+            try validate(count, name:"count", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -357,6 +432,7 @@ extension DLM {
             AWSShapeMember(label: "TagsToAdd", required: false, type: .list), 
             AWSShapeMember(label: "VariableTags", required: false, type: .list)
         ]
+
         /// Copy all user-defined tags on a source volume to snapshots of the volume created by this policy.
         public let copyTags: Bool?
         /// The create rule.
@@ -377,6 +453,17 @@ extension DLM {
             self.retainRule = retainRule
             self.tagsToAdd = tagsToAdd
             self.variableTags = variableTags
+        }
+
+        public func validate() throws {
+            try createRule?.validate()
+            try validate(name, name:"name", max: 500)
+            try validate(name, name:"name", min: 0)
+            try retainRule?.validate()
+            try validate(tagsToAdd, name:"tagsToAdd", max: 50)
+            try validate(tagsToAdd, name:"tagsToAdd", min: 0)
+            try validate(variableTags, name:"variableTags", max: 50)
+            try validate(variableTags, name:"variableTags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -400,6 +487,7 @@ extension DLM {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The tag key.
         public let key: String
         /// The tag value.
@@ -424,6 +512,7 @@ extension DLM {
             AWSShapeMember(label: "PolicyId", location: .uri(locationName: "policyId"), required: true, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// A description of the lifecycle policy.
         public let description: String?
         /// The Amazon Resource Name (ARN) of the IAM role used to run the operations specified by the lifecycle policy.
@@ -443,6 +532,12 @@ extension DLM {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 500)
+            try validate(description, name:"description", min: 0)
+            try policyDetails?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case executionRoleArn = "ExecutionRoleArn"
@@ -453,6 +548,7 @@ extension DLM {
     }
 
     public struct UpdateLifecyclePolicyResponse: AWSShape {
+
 
         public init() {
         }

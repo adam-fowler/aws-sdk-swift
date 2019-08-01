@@ -9,11 +9,18 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -25,11 +32,18 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", required: false, type: .string)
         ]
+
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
         public let identityPoolId: String?
 
         public init(identityPoolId: String? = nil) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -51,6 +65,7 @@ extension CognitoSync {
             AWSShapeMember(label: "StreamingStatus", required: false, type: .enum), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// The ARN of the role Amazon Cognito can assume in order to publish to the stream. This role must grant access to Amazon Cognito (cognito-sync) to invoke PutRecord on your Cognito stream.
         public let roleArn: String?
         /// Status of the Cognito streams. Valid values are: ENABLED - Streaming of updates to identity pool is enabled. DISABLED - Streaming of updates to identity pool is disabled. Bulk publish will also fail if StreamingStatus is DISABLED.
@@ -62,6 +77,14 @@ extension CognitoSync {
             self.roleArn = roleArn
             self.streamingStatus = streamingStatus
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws:iam::\\d+:role/.*")
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -81,6 +104,7 @@ extension CognitoSync {
             AWSShapeMember(label: "LastModifiedDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "NumRecords", required: false, type: .long)
         ]
+
         /// Date on which the dataset was created.
         public let creationDate: TimeStamp?
         /// A string of up to 128 characters. Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (dash), and '.' (dot).
@@ -106,6 +130,15 @@ extension CognitoSync {
             self.numRecords = numRecords
         }
 
+        public func validate() throws {
+            try validate(datasetName, name:"datasetName", max: 128)
+            try validate(datasetName, name:"datasetName", min: 1)
+            try validate(datasetName, name:"datasetName", pattern: "[a-zA-Z0-9_.:-]+")
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "CreationDate"
             case datasetName = "DatasetName"
@@ -123,6 +156,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityId", location: .uri(locationName: "IdentityId"), required: true, type: .string), 
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// A string of up to 128 characters. Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (dash), and '.' (dot).
         public let datasetName: String
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
@@ -134,6 +168,18 @@ extension CognitoSync {
             self.datasetName = datasetName
             self.identityId = identityId
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(datasetName, name:"datasetName", max: 128)
+            try validate(datasetName, name:"datasetName", min: 1)
+            try validate(datasetName, name:"datasetName", pattern: "[a-zA-Z0-9_.:-]+")
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -147,11 +193,16 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Dataset", required: false, type: .structure)
         ]
+
         /// A collection of data for an identity pool. An identity pool can have multiple datasets. A dataset is per identity and can be general or associated with a particular entity in an application (like a saved game). Datasets are automatically created if they don't exist. Data is synced by dataset, and a dataset can hold up to 1MB of key-value pairs.
         public let dataset: Dataset?
 
         public init(dataset: Dataset? = nil) {
             self.dataset = dataset
+        }
+
+        public func validate() throws {
+            try dataset?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -165,6 +216,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityId", location: .uri(locationName: "IdentityId"), required: true, type: .string), 
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// A string of up to 128 characters. Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (dash), and '.' (dot).
         public let datasetName: String
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
@@ -178,6 +230,18 @@ extension CognitoSync {
             self.identityPoolId = identityPoolId
         }
 
+        public func validate() throws {
+            try validate(datasetName, name:"datasetName", max: 128)
+            try validate(datasetName, name:"datasetName", min: 1)
+            try validate(datasetName, name:"datasetName", pattern: "[a-zA-Z0-9_.:-]+")
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case datasetName = "DatasetName"
             case identityId = "IdentityId"
@@ -189,11 +253,16 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Dataset", required: false, type: .structure)
         ]
+
         /// Meta data for a collection of data for an identity. An identity can have multiple datasets. A dataset can be general or associated with a particular entity in an application (like a saved game). Datasets are automatically created if they don't exist. Data is synced by dataset, and a dataset can hold up to 1MB of key-value pairs.
         public let dataset: Dataset?
 
         public init(dataset: Dataset? = nil) {
             self.dataset = dataset
+        }
+
+        public func validate() throws {
+            try dataset?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -205,11 +274,18 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -221,11 +297,16 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolUsage", required: false, type: .structure)
         ]
+
         /// Information about the usage of the identity pool.
         public let identityPoolUsage: IdentityPoolUsage?
 
         public init(identityPoolUsage: IdentityPoolUsage? = nil) {
             self.identityPoolUsage = identityPoolUsage
+        }
+
+        public func validate() throws {
+            try identityPoolUsage?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -238,6 +319,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityId", location: .uri(locationName: "IdentityId"), required: true, type: .string), 
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
         public let identityId: String
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
@@ -246,6 +328,15 @@ extension CognitoSync {
         public init(identityId: String, identityPoolId: String) {
             self.identityId = identityId
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -258,11 +349,16 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityUsage", required: false, type: .structure)
         ]
+
         /// Usage information for the identity.
         public let identityUsage: IdentityUsage?
 
         public init(identityUsage: IdentityUsage? = nil) {
             self.identityUsage = identityUsage
+        }
+
+        public func validate() throws {
+            try identityUsage?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -274,11 +370,18 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -294,6 +397,7 @@ extension CognitoSync {
             AWSShapeMember(label: "FailureMessage", required: false, type: .string), 
             AWSShapeMember(label: "IdentityPoolId", required: false, type: .string)
         ]
+
         /// If BulkPublishStatus is SUCCEEDED, the time the last bulk publish operation completed.
         public let bulkPublishCompleteTime: TimeStamp?
         /// The date/time at which the last bulk publish was initiated.
@@ -313,6 +417,12 @@ extension CognitoSync {
             self.identityPoolId = identityPoolId
         }
 
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bulkPublishCompleteTime = "BulkPublishCompleteTime"
             case bulkPublishStartTime = "BulkPublishStartTime"
@@ -326,11 +436,18 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// The Cognito Identity Pool ID for the request
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -342,6 +459,7 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Events", required: false, type: .map)
         ]
+
         /// The Cognito Events returned from the GetCognitoEvents request
         public let events: [String: String]?
 
@@ -358,11 +476,18 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. This is the ID of the pool for which to return a configuration.
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -376,6 +501,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityPoolId", required: false, type: .string), 
             AWSShapeMember(label: "PushSync", required: false, type: .structure)
         ]
+
         /// Options to apply to this identity pool for Amazon Cognito streams.
         public let cognitoStreams: CognitoStreams?
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito.
@@ -387,6 +513,14 @@ extension CognitoSync {
             self.cognitoStreams = cognitoStreams
             self.identityPoolId = identityPoolId
             self.pushSync = pushSync
+        }
+
+        public func validate() throws {
+            try cognitoStreams?.validate()
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try pushSync?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -403,6 +537,7 @@ extension CognitoSync {
             AWSShapeMember(label: "LastModifiedDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "SyncSessionsCount", required: false, type: .long)
         ]
+
         /// Data storage information for the identity pool.
         public let dataStorage: Int64?
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
@@ -417,6 +552,12 @@ extension CognitoSync {
             self.identityPoolId = identityPoolId
             self.lastModifiedDate = lastModifiedDate
             self.syncSessionsCount = syncSessionsCount
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -435,6 +576,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityPoolId", required: false, type: .string), 
             AWSShapeMember(label: "LastModifiedDate", required: false, type: .timestamp)
         ]
+
         /// Number of datasets for the identity.
         public let datasetCount: Int32?
         /// Total data storage for this identity.
@@ -454,6 +596,15 @@ extension CognitoSync {
             self.lastModifiedDate = lastModifiedDate
         }
 
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case datasetCount = "DatasetCount"
             case dataStorage = "DataStorage"
@@ -470,6 +621,7 @@ extension CognitoSync {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
         public let identityId: String
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
@@ -486,6 +638,15 @@ extension CognitoSync {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case identityId = "IdentityId"
             case identityPoolId = "IdentityPoolId"
@@ -500,6 +661,7 @@ extension CognitoSync {
             AWSShapeMember(label: "Datasets", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Number of datasets returned.
         public let count: Int32?
         /// A set of datasets.
@@ -511,6 +673,12 @@ extension CognitoSync {
             self.count = count
             self.datasets = datasets
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try datasets?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -525,6 +693,7 @@ extension CognitoSync {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The maximum number of results to be returned.
         public let maxResults: Int32?
         /// A pagination token for obtaining the next page of results.
@@ -548,6 +717,7 @@ extension CognitoSync {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Total number of identities for the identity pool.
         public let count: Int32?
         /// Usage information for the identity pools.
@@ -562,6 +732,12 @@ extension CognitoSync {
             self.identityPoolUsages = identityPoolUsages
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try identityPoolUsages?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -582,6 +758,7 @@ extension CognitoSync {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "SyncSessionToken", location: .querystring(locationName: "syncSessionToken"), required: false, type: .string)
         ]
+
         /// A string of up to 128 characters. Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (dash), and '.' (dot).
         public let datasetName: String
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.
@@ -607,6 +784,18 @@ extension CognitoSync {
             self.syncSessionToken = syncSessionToken
         }
 
+        public func validate() throws {
+            try validate(datasetName, name:"datasetName", max: 128)
+            try validate(datasetName, name:"datasetName", min: 1)
+            try validate(datasetName, name:"datasetName", pattern: "[a-zA-Z0-9_.:-]+")
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case datasetName = "DatasetName"
             case identityId = "IdentityId"
@@ -630,6 +819,7 @@ extension CognitoSync {
             AWSShapeMember(label: "Records", required: false, type: .list), 
             AWSShapeMember(label: "SyncSessionToken", required: false, type: .string)
         ]
+
         /// Total number of records.
         public let count: Int32?
         /// A boolean value specifying whether to delete the dataset locally.
@@ -659,6 +849,12 @@ extension CognitoSync {
             self.nextToken = nextToken
             self.records = records
             self.syncSessionToken = syncSessionToken
+        }
+
+        public func validate() throws {
+            try records?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -693,6 +889,7 @@ extension CognitoSync {
             AWSShapeMember(label: "ApplicationArns", required: false, type: .list), 
             AWSShapeMember(label: "RoleArn", required: false, type: .string)
         ]
+
         /// List of SNS platform application ARNs that could be used by clients.
         public let applicationArns: [String]?
         /// A role configured to allow Cognito to call SNS on behalf of the developer.
@@ -701,6 +898,15 @@ extension CognitoSync {
         public init(applicationArns: [String]? = nil, roleArn: String? = nil) {
             self.applicationArns = applicationArns
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try applicationArns?.forEach {
+                try validate($0, name:"applicationArns[]", pattern: "arn:aws:sns:[-0-9a-z]+:\\d+:app/[A-Z_]+/[a-zA-Z0-9_.-]+")
+            }
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(roleArn, name:"roleArn", pattern: "arn:aws:iam::\\d+:role/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -718,6 +924,7 @@ extension CognitoSync {
             AWSShapeMember(label: "SyncCount", required: false, type: .long), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The last modified date of the client device.
         public let deviceLastModifiedDate: TimeStamp?
         /// The key for the record.
@@ -740,6 +947,12 @@ extension CognitoSync {
             self.value = value
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", max: 1024)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 1048575)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceLastModifiedDate = "DeviceLastModifiedDate"
             case key = "Key"
@@ -758,6 +971,7 @@ extension CognitoSync {
             AWSShapeMember(label: "SyncCount", required: true, type: .long), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The last modified date of the client device.
         public let deviceLastModifiedDate: TimeStamp?
         /// The key associated with the record patch.
@@ -777,6 +991,12 @@ extension CognitoSync {
             self.value = value
         }
 
+        public func validate() throws {
+            try validate(key, name:"key", max: 1024)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 1048575)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceLastModifiedDate = "DeviceLastModifiedDate"
             case key = "Key"
@@ -793,6 +1013,7 @@ extension CognitoSync {
             AWSShapeMember(label: "Platform", required: true, type: .enum), 
             AWSShapeMember(label: "Token", required: true, type: .string)
         ]
+
         /// The unique ID for this identity.
         public let identityId: String
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. Here, the ID of the pool that the identity belongs to.
@@ -809,6 +1030,15 @@ extension CognitoSync {
             self.token = token
         }
 
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case identityId = "IdentityId"
             case identityPoolId = "IdentityPoolId"
@@ -821,11 +1051,17 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeviceId", required: false, type: .string)
         ]
+
         /// The unique ID generated for this device by Cognito.
         public let deviceId: String?
 
         public init(deviceId: String? = nil) {
             self.deviceId = deviceId
+        }
+
+        public func validate() throws {
+            try validate(deviceId, name:"deviceId", max: 256)
+            try validate(deviceId, name:"deviceId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -838,6 +1074,7 @@ extension CognitoSync {
             AWSShapeMember(label: "Events", required: true, type: .map), 
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// The events to configure
         public let events: [String: String]
         /// The Cognito Identity Pool to use when configuring Cognito Events
@@ -846,6 +1083,12 @@ extension CognitoSync {
         public init(events: [String: String], identityPoolId: String) {
             self.events = events
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -860,6 +1103,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string), 
             AWSShapeMember(label: "PushSync", required: false, type: .structure)
         ]
+
         /// Options to apply to this identity pool for Amazon Cognito streams.
         public let cognitoStreams: CognitoStreams?
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. This is the ID of the pool to modify.
@@ -871,6 +1115,14 @@ extension CognitoSync {
             self.cognitoStreams = cognitoStreams
             self.identityPoolId = identityPoolId
             self.pushSync = pushSync
+        }
+
+        public func validate() throws {
+            try cognitoStreams?.validate()
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try pushSync?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -886,6 +1138,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityPoolId", required: false, type: .string), 
             AWSShapeMember(label: "PushSync", required: false, type: .structure)
         ]
+
         /// Options to apply to this identity pool for Amazon Cognito streams.
         public let cognitoStreams: CognitoStreams?
         /// A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito.
@@ -897,6 +1150,14 @@ extension CognitoSync {
             self.cognitoStreams = cognitoStreams
             self.identityPoolId = identityPoolId
             self.pushSync = pushSync
+        }
+
+        public func validate() throws {
+            try cognitoStreams?.validate()
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try pushSync?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -919,6 +1180,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityId", location: .uri(locationName: "IdentityId"), required: true, type: .string), 
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// The name of the dataset to subcribe to.
         public let datasetName: String
         /// The unique ID generated for this device by Cognito.
@@ -935,6 +1197,20 @@ extension CognitoSync {
             self.identityPoolId = identityPoolId
         }
 
+        public func validate() throws {
+            try validate(datasetName, name:"datasetName", max: 128)
+            try validate(datasetName, name:"datasetName", min: 1)
+            try validate(datasetName, name:"datasetName", pattern: "[a-zA-Z0-9_.:-]+")
+            try validate(deviceId, name:"deviceId", max: 256)
+            try validate(deviceId, name:"deviceId", min: 1)
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case datasetName = "DatasetName"
             case deviceId = "DeviceId"
@@ -944,6 +1220,7 @@ extension CognitoSync {
     }
 
     public struct SubscribeToDatasetResponse: AWSShape {
+
 
         public init() {
         }
@@ -957,6 +1234,7 @@ extension CognitoSync {
             AWSShapeMember(label: "IdentityId", location: .uri(locationName: "IdentityId"), required: true, type: .string), 
             AWSShapeMember(label: "IdentityPoolId", location: .uri(locationName: "IdentityPoolId"), required: true, type: .string)
         ]
+
         /// The name of the dataset from which to unsubcribe.
         public let datasetName: String
         /// The unique ID generated for this device by Cognito.
@@ -973,6 +1251,20 @@ extension CognitoSync {
             self.identityPoolId = identityPoolId
         }
 
+        public func validate() throws {
+            try validate(datasetName, name:"datasetName", max: 128)
+            try validate(datasetName, name:"datasetName", min: 1)
+            try validate(datasetName, name:"datasetName", pattern: "[a-zA-Z0-9_.:-]+")
+            try validate(deviceId, name:"deviceId", max: 256)
+            try validate(deviceId, name:"deviceId", min: 1)
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case datasetName = "DatasetName"
             case deviceId = "DeviceId"
@@ -982,6 +1274,7 @@ extension CognitoSync {
     }
 
     public struct UnsubscribeFromDatasetResponse: AWSShape {
+
 
         public init() {
         }
@@ -998,6 +1291,7 @@ extension CognitoSync {
             AWSShapeMember(label: "RecordPatches", required: false, type: .list), 
             AWSShapeMember(label: "SyncSessionToken", required: true, type: .string)
         ]
+
         /// Intended to supply a device ID that will populate the lastModifiedBy field referenced in other methods. The ClientContext field is not yet implemented.
         public let clientContext: String?
         /// A string of up to 128 characters. Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (dash), and '.' (dot).
@@ -1023,6 +1317,23 @@ extension CognitoSync {
             self.syncSessionToken = syncSessionToken
         }
 
+        public func validate() throws {
+            try validate(datasetName, name:"datasetName", max: 128)
+            try validate(datasetName, name:"datasetName", min: 1)
+            try validate(datasetName, name:"datasetName", pattern: "[a-zA-Z0-9_.:-]+")
+            try validate(deviceId, name:"deviceId", max: 256)
+            try validate(deviceId, name:"deviceId", min: 1)
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try recordPatches?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientContext = "x-amz-Client-Context"
             case datasetName = "DatasetName"
@@ -1038,11 +1349,18 @@ extension CognitoSync {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Records", required: false, type: .list)
         ]
+
         /// A list of records that have been updated.
         public let records: [Record]?
 
         public init(records: [Record]? = nil) {
             self.records = records
+        }
+
+        public func validate() throws {
+            try records?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {

@@ -11,6 +11,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "errorMessage", required: false, type: .string), 
             AWSShapeMember(label: "messageId", required: false, type: .string)
         ]
+
         /// The code associated with the error.
         public let errorCode: ErrorCode?
         /// More information about the error.
@@ -24,6 +25,12 @@ extension IoTEventsData {
             self.messageId = messageId
         }
 
+        public func validate() throws {
+            try validate(messageId, name:"messageId", max: 64)
+            try validate(messageId, name:"messageId", min: 1)
+            try validate(messageId, name:"messageId", pattern: "^[a-zA-Z0-9_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case errorCode = "errorCode"
             case errorMessage = "errorMessage"
@@ -35,11 +42,19 @@ extension IoTEventsData {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "messages", required: true, type: .list)
         ]
+
         /// The list of messages to send. Each message has the following format: '{ "messageId": "string", "inputName": "string", "payload": "string"}' 
         public let messages: [Message]
 
         public init(messages: [Message]) {
             self.messages = messages
+        }
+
+        public func validate() throws {
+            try messages.forEach {
+                try $0.validate()
+            }
+            try validate(messages, name:"messages", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -51,11 +66,18 @@ extension IoTEventsData {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BatchPutMessageErrorEntries", required: false, type: .list)
         ]
+
         /// A list of any errors encountered when sending the messages.
         public let batchPutMessageErrorEntries: [BatchPutMessageErrorEntry]?
 
         public init(batchPutMessageErrorEntries: [BatchPutMessageErrorEntry]? = nil) {
             self.batchPutMessageErrorEntries = batchPutMessageErrorEntries
+        }
+
+        public func validate() throws {
+            try batchPutMessageErrorEntries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -69,6 +91,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "errorMessage", required: false, type: .string), 
             AWSShapeMember(label: "messageId", required: false, type: .string)
         ]
+
         /// The code of the error.
         public let errorCode: ErrorCode?
         /// A message describing the error.
@@ -82,6 +105,12 @@ extension IoTEventsData {
             self.messageId = messageId
         }
 
+        public func validate() throws {
+            try validate(messageId, name:"messageId", max: 64)
+            try validate(messageId, name:"messageId", min: 1)
+            try validate(messageId, name:"messageId", pattern: "^[a-zA-Z0-9_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case errorCode = "errorCode"
             case errorMessage = "errorMessage"
@@ -93,11 +122,19 @@ extension IoTEventsData {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "detectors", required: true, type: .list)
         ]
+
         /// The list of detectors (instances) to update, along with the values to update.
         public let detectors: [UpdateDetectorRequest]
 
         public init(detectors: [UpdateDetectorRequest]) {
             self.detectors = detectors
+        }
+
+        public func validate() throws {
+            try detectors.forEach {
+                try $0.validate()
+            }
+            try validate(detectors, name:"detectors", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -109,11 +146,18 @@ extension IoTEventsData {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "batchUpdateDetectorErrorEntries", required: false, type: .list)
         ]
+
         /// A list of those detector updates that resulted in errors. (If an error is listed here, the specific update did not occur.)
         public let batchUpdateDetectorErrorEntries: [BatchUpdateDetectorErrorEntry]?
 
         public init(batchUpdateDetectorErrorEntries: [BatchUpdateDetectorErrorEntry]? = nil) {
             self.batchUpdateDetectorErrorEntries = batchUpdateDetectorErrorEntries
+        }
+
+        public func validate() throws {
+            try batchUpdateDetectorErrorEntries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -126,6 +170,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "detectorModelName", location: .uri(locationName: "detectorModelName"), required: true, type: .string), 
             AWSShapeMember(label: "keyValue", location: .querystring(locationName: "keyValue"), required: false, type: .string)
         ]
+
         /// The name of the detector model whose detectors (instances) you want information about.
         public let detectorModelName: String
         /// A filter used to limit results to detectors (instances) created because of the given key ID.
@@ -134,6 +179,15 @@ extension IoTEventsData {
         public init(detectorModelName: String, keyValue: String? = nil) {
             self.detectorModelName = detectorModelName
             self.keyValue = keyValue
+        }
+
+        public func validate() throws {
+            try validate(detectorModelName, name:"detectorModelName", max: 128)
+            try validate(detectorModelName, name:"detectorModelName", min: 1)
+            try validate(detectorModelName, name:"detectorModelName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(keyValue, name:"keyValue", max: 128)
+            try validate(keyValue, name:"keyValue", min: 1)
+            try validate(keyValue, name:"keyValue", pattern: "^[a-zA-Z0-9\\-_:]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -146,11 +200,16 @@ extension IoTEventsData {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "detector", required: false, type: .structure)
         ]
+
         /// Information about the detector (instance).
         public let detector: Detector?
 
         public init(detector: Detector? = nil) {
             self.detector = detector
+        }
+
+        public func validate() throws {
+            try detector?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -167,6 +226,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "lastUpdateTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "state", required: false, type: .structure)
         ]
+
         /// The time the detector (instance) was created.
         public let creationTime: TimeStamp?
         /// The name of the detector model that created this detector (instance).
@@ -189,6 +249,18 @@ extension IoTEventsData {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(detectorModelName, name:"detectorModelName", max: 128)
+            try validate(detectorModelName, name:"detectorModelName", min: 1)
+            try validate(detectorModelName, name:"detectorModelName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(detectorModelVersion, name:"detectorModelVersion", max: 128)
+            try validate(detectorModelVersion, name:"detectorModelVersion", min: 1)
+            try validate(keyValue, name:"keyValue", max: 128)
+            try validate(keyValue, name:"keyValue", min: 1)
+            try validate(keyValue, name:"keyValue", pattern: "^[a-zA-Z0-9\\-_:]+$")
+            try state?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "creationTime"
             case detectorModelName = "detectorModelName"
@@ -205,6 +277,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "timers", required: true, type: .list), 
             AWSShapeMember(label: "variables", required: true, type: .list)
         ]
+
         /// The name of the state.
         public let stateName: String
         /// The current state of the detector's timers.
@@ -216,6 +289,17 @@ extension IoTEventsData {
             self.stateName = stateName
             self.timers = timers
             self.variables = variables
+        }
+
+        public func validate() throws {
+            try validate(stateName, name:"stateName", max: 128)
+            try validate(stateName, name:"stateName", min: 1)
+            try timers.forEach {
+                try $0.validate()
+            }
+            try variables.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -231,6 +315,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "timers", required: true, type: .list), 
             AWSShapeMember(label: "variables", required: true, type: .list)
         ]
+
         /// The name of the new state of the detector (instance).
         public let stateName: String
         /// The new values of the detector's timers. Any timer whose value isn't specified is cleared, and its timeout event won't occur.
@@ -244,6 +329,17 @@ extension IoTEventsData {
             self.variables = variables
         }
 
+        public func validate() throws {
+            try validate(stateName, name:"stateName", max: 128)
+            try validate(stateName, name:"stateName", min: 1)
+            try timers.forEach {
+                try $0.validate()
+            }
+            try variables.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case stateName = "stateName"
             case timers = "timers"
@@ -255,11 +351,17 @@ extension IoTEventsData {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "stateName", required: false, type: .string)
         ]
+
         /// The name of the state.
         public let stateName: String?
 
         public init(stateName: String? = nil) {
             self.stateName = stateName
+        }
+
+        public func validate() throws {
+            try validate(stateName, name:"stateName", max: 128)
+            try validate(stateName, name:"stateName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -276,6 +378,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "lastUpdateTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "state", required: false, type: .structure)
         ]
+
         /// The time the detector (instance) was created.
         public let creationTime: TimeStamp?
         /// The name of the detector model that created this detector (instance).
@@ -296,6 +399,18 @@ extension IoTEventsData {
             self.keyValue = keyValue
             self.lastUpdateTime = lastUpdateTime
             self.state = state
+        }
+
+        public func validate() throws {
+            try validate(detectorModelName, name:"detectorModelName", max: 128)
+            try validate(detectorModelName, name:"detectorModelName", min: 1)
+            try validate(detectorModelName, name:"detectorModelName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(detectorModelVersion, name:"detectorModelVersion", max: 128)
+            try validate(detectorModelVersion, name:"detectorModelVersion", min: 1)
+            try validate(keyValue, name:"keyValue", max: 128)
+            try validate(keyValue, name:"keyValue", min: 1)
+            try validate(keyValue, name:"keyValue", pattern: "^[a-zA-Z0-9\\-_:]+$")
+            try state?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -324,6 +439,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "stateName", location: .querystring(locationName: "stateName"), required: false, type: .string)
         ]
+
         /// The name of the detector model whose detectors (instances) are listed.
         public let detectorModelName: String
         /// The maximum number of results to return at one time.
@@ -340,6 +456,16 @@ extension IoTEventsData {
             self.stateName = stateName
         }
 
+        public func validate() throws {
+            try validate(detectorModelName, name:"detectorModelName", max: 128)
+            try validate(detectorModelName, name:"detectorModelName", min: 1)
+            try validate(detectorModelName, name:"detectorModelName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(stateName, name:"stateName", max: 128)
+            try validate(stateName, name:"stateName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorModelName = "detectorModelName"
             case maxResults = "maxResults"
@@ -353,6 +479,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "detectorSummaries", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of summary information about the detectors (instances).
         public let detectorSummaries: [DetectorSummary]?
         /// A token to retrieve the next set of results, or null if there are no additional results.
@@ -361,6 +488,12 @@ extension IoTEventsData {
         public init(detectorSummaries: [DetectorSummary]? = nil, nextToken: String? = nil) {
             self.detectorSummaries = detectorSummaries
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try detectorSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -375,6 +508,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "messageId", required: true, type: .string), 
             AWSShapeMember(label: "payload", required: true, type: .blob)
         ]
+
         /// The name of the input into which the message payload is transformed.
         public let inputName: String
         /// The ID to assign to the message. Within each batch sent, each "messageId" must be unique.
@@ -386,6 +520,15 @@ extension IoTEventsData {
             self.inputName = inputName
             self.messageId = messageId
             self.payload = payload
+        }
+
+        public func validate() throws {
+            try validate(inputName, name:"inputName", max: 128)
+            try validate(inputName, name:"inputName", min: 1)
+            try validate(inputName, name:"inputName", pattern: "^[a-zA-Z][a-zA-Z0-9_]*$")
+            try validate(messageId, name:"messageId", max: 64)
+            try validate(messageId, name:"messageId", min: 1)
+            try validate(messageId, name:"messageId", pattern: "^[a-zA-Z0-9_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -400,6 +543,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "timestamp", required: true, type: .timestamp)
         ]
+
         /// The name of the timer.
         public let name: String
         /// The number of seconds which have elapsed on the timer.
@@ -408,6 +552,11 @@ extension IoTEventsData {
         public init(name: String, timestamp: TimeStamp) {
             self.name = name
             self.timestamp = timestamp
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -421,6 +570,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "seconds", required: true, type: .integer)
         ]
+
         /// The name of the timer.
         public let name: String
         /// The new setting of the timer (the number of seconds before the timer elapses).
@@ -429,6 +579,11 @@ extension IoTEventsData {
         public init(name: String, seconds: Int32) {
             self.name = name
             self.seconds = seconds
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -444,6 +599,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "messageId", required: true, type: .string), 
             AWSShapeMember(label: "state", required: true, type: .structure)
         ]
+
         /// The name of the detector model that created the detectors (instances).
         public let detectorModelName: String
         /// The value of the input key attribute (identifying the device or system) that caused the creation of this detector (instance).
@@ -460,6 +616,19 @@ extension IoTEventsData {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(detectorModelName, name:"detectorModelName", max: 128)
+            try validate(detectorModelName, name:"detectorModelName", min: 1)
+            try validate(detectorModelName, name:"detectorModelName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(keyValue, name:"keyValue", max: 128)
+            try validate(keyValue, name:"keyValue", min: 1)
+            try validate(keyValue, name:"keyValue", pattern: "^[a-zA-Z0-9\\-_:]+$")
+            try validate(messageId, name:"messageId", max: 64)
+            try validate(messageId, name:"messageId", min: 1)
+            try validate(messageId, name:"messageId", pattern: "^[a-zA-Z0-9_-]+$")
+            try state.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorModelName = "detectorModelName"
             case keyValue = "keyValue"
@@ -473,6 +642,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The name of the variable.
         public let name: String
         /// The current value of the variable.
@@ -481,6 +651,14 @@ extension IoTEventsData {
         public init(name: String, value: String) {
             self.name = name
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z][a-zA-Z0-9_]*$")
+            try validate(value, name:"value", max: 1024)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -494,6 +672,7 @@ extension IoTEventsData {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The name of the variable.
         public let name: String
         /// The new value of the variable.
@@ -502,6 +681,14 @@ extension IoTEventsData {
         public init(name: String, value: String) {
             self.name = name
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z][a-zA-Z0-9_]*$")
+            try validate(value, name:"value", max: 1024)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

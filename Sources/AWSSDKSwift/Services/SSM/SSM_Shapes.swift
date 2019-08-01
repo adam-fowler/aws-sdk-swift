@@ -18,6 +18,7 @@ extension SSM {
             AWSShapeMember(label: "RegistrationsCount", required: false, type: .integer), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The ID created by Systems Manager when you submitted the activation.
         public let activationId: String?
         /// The date the activation was created.
@@ -52,6 +53,24 @@ extension SSM {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(activationId, name:"activationId", pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+            try validate(defaultInstanceName, name:"defaultInstanceName", max: 256)
+            try validate(defaultInstanceName, name:"defaultInstanceName", min: 0)
+            try validate(defaultInstanceName, name:"defaultInstanceName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 0)
+            try validate(iamRole, name:"iamRole", max: 64)
+            try validate(registrationLimit, name:"registrationLimit", max: 1000)
+            try validate(registrationLimit, name:"registrationLimit", min: 1)
+            try validate(registrationsCount, name:"registrationsCount", max: 1000)
+            try validate(registrationsCount, name:"registrationsCount", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activationId = "ActivationId"
             case createdDate = "CreatedDate"
@@ -72,6 +91,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceType", required: true, type: .enum), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The resource ID you want to tag. Use the ID of the resource. Here are some examples: ManagedInstance: mi-012345abcde MaintenanceWindow: mw-012345abcde PatchBaseline: pb-012345abcde For the Document and Parameter values, use the name of the resource.  The ManagedInstance type for this API action is only for on-premises managed instances. You must specify the name of the managed instance in the following format: mi-ID_number. For example, mi-1a2b3c4d5e6f. 
         public let resourceId: String
         /// Specifies the type of resource you are tagging.  The ManagedInstance type for this API action is for on-premises managed instances. You must specify the name of the managed instance in the following format: mi-ID_number. For example, mi-1a2b3c4d5e6f. 
@@ -85,6 +105,13 @@ extension SSM {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceId = "ResourceId"
             case resourceType = "ResourceType"
@@ -93,6 +120,7 @@ extension SSM {
     }
 
     public struct AddTagsToResourceResult: AWSShape {
+
 
         public init() {
         }
@@ -112,6 +140,7 @@ extension SSM {
             AWSShapeMember(label: "ScheduleExpression", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// The ID created by the system when you create an association. An association is a binding between a document and a set of targets with a schedule.
         public let associationId: String?
         /// The association name.
@@ -144,6 +173,22 @@ extension SSM {
             self.overview = overview
             self.scheduleExpression = scheduleExpression
             self.targets = targets
+        }
+
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationName, name:"associationName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(scheduleExpression, name:"scheduleExpression", max: 256)
+            try validate(scheduleExpression, name:"scheduleExpression", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -192,6 +237,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .structure), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// The association ID.
         public let associationId: String?
         /// The association name.
@@ -256,6 +302,32 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationName, name:"associationName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", max: 50)
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", min: 1)
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try outputLocation?.validate()
+            try validate(scheduleExpression, name:"scheduleExpression", max: 256)
+            try validate(scheduleExpression, name:"scheduleExpression", min: 1)
+            try status?.validate()
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationName = "AssociationName"
@@ -291,6 +363,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceCountByStatus", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .string)
         ]
+
         /// The association ID.
         public let associationId: String?
         /// The association version.
@@ -319,6 +392,12 @@ extension SSM {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(executionId, name:"executionId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationVersion = "AssociationVersion"
@@ -337,6 +416,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: true, type: .enum), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The key value used in the request.
         public let key: AssociationExecutionFilterKey
         /// The filter type specified in the request.
@@ -348,6 +428,10 @@ extension SSM {
             self.key = key
             self.`type` = `type`
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -376,6 +460,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceType", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .string)
         ]
+
         /// The association ID.
         public let associationId: String?
         /// The association version.
@@ -407,6 +492,17 @@ extension SSM {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(executionId, name:"executionId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try outputSource?.validate()
+            try validate(resourceId, name:"resourceId", max: 100)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 50)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationVersion = "AssociationVersion"
@@ -425,6 +521,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: true, type: .enum), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The key value used in the request.
         public let key: AssociationExecutionTargetsFilterKey
         /// The value specified for the key.
@@ -433,6 +530,10 @@ extension SSM {
         public init(key: AssociationExecutionTargetsFilterKey, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -453,6 +554,7 @@ extension SSM {
             AWSShapeMember(label: "key", required: true, type: .enum), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The name of the filter.
         public let key: AssociationFilterKey
         /// The filter value.
@@ -461,6 +563,10 @@ extension SSM {
         public init(key: AssociationFilterKey, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -493,6 +599,7 @@ extension SSM {
             AWSShapeMember(label: "DetailedStatus", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .string)
         ]
+
         /// Returns the number of targets for the association status. For example, if you created an association with two instances, and one of them was successful, this would return the count of instances by status.
         public let associationStatusAggregatedCount: [String: Int32]?
         /// A detailed status of the association.
@@ -520,6 +627,7 @@ extension SSM {
             AWSShapeMember(label: "Message", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .enum)
         ]
+
         /// A user-defined string.
         public let additionalInfo: String?
         /// The date when the status changed.
@@ -534,6 +642,12 @@ extension SSM {
             self.date = date
             self.message = message
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(additionalInfo, name:"additionalInfo", max: 1024)
+            try validate(message, name:"message", max: 1024)
+            try validate(message, name:"message", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -567,6 +681,7 @@ extension SSM {
             AWSShapeMember(label: "ScheduleExpression", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// The ID created by the system when the association was created.
         public let associationId: String?
         /// The name specified for the association version when the association version was created.
@@ -610,6 +725,28 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationName, name:"associationName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try outputLocation?.validate()
+            try validate(scheduleExpression, name:"scheduleExpression", max: 256)
+            try validate(scheduleExpression, name:"scheduleExpression", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationName = "AssociationName"
@@ -635,6 +772,7 @@ extension SSM {
             AWSShapeMember(label: "Size", required: false, type: .long), 
             AWSShapeMember(label: "Url", required: false, type: .string)
         ]
+
         /// The cryptographic hash value of the document content.
         public let hash: String?
         /// The hash algorithm used to calculate the hash value.
@@ -652,6 +790,11 @@ extension SSM {
             self.name = name
             self.size = size
             self.url = url
+        }
+
+        public func validate() throws {
+            try validate(hash, name:"hash", max: 256)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -672,11 +815,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The name of the attachment.
         public let name: String?
 
         public init(name: String? = nil) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -689,6 +837,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: false, type: .enum), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The key of a key and value pair that identifies the location of an attachment to a document.
         public let key: AttachmentsSourceKey?
         /// The URL of the location of a document attachment, such as the URL of an Amazon S3 bucket.
@@ -697,6 +846,15 @@ extension SSM {
         public init(key: AttachmentsSourceKey? = nil, values: [String]? = nil) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 1024)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 1)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -738,6 +896,7 @@ extension SSM {
             AWSShapeMember(label: "TargetParameterName", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// The execution ID.
         public let automationExecutionId: String?
         /// The execution status of the Automation.
@@ -817,6 +976,38 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(automationExecutionId, name:"automationExecutionId", max: 36)
+            try validate(automationExecutionId, name:"automationExecutionId", min: 36)
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(parentAutomationExecutionId, name:"parentAutomationExecutionId", max: 36)
+            try validate(parentAutomationExecutionId, name:"parentAutomationExecutionId", min: 36)
+            try stepExecutions?.forEach {
+                try $0.validate()
+            }
+            try targetLocations?.forEach {
+                try $0.validate()
+            }
+            try validate(targetLocations, name:"targetLocations", max: 100)
+            try validate(targetLocations, name:"targetLocations", min: 1)
+            try validate(targetMaps, name:"targetMaps", max: 300)
+            try validate(targetMaps, name:"targetMaps", min: 0)
+            try validate(targetParameterName, name:"targetParameterName", max: 50)
+            try validate(targetParameterName, name:"targetParameterName", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case automationExecutionId = "AutomationExecutionId"
             case automationExecutionStatus = "AutomationExecutionStatus"
@@ -851,6 +1042,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// One or more keys to limit the results. Valid filter keys include the following: DocumentNamePrefix, ExecutionStatus, ExecutionId, ParentExecutionId, CurrentAction, StartTimeBefore, StartTimeAfter.
         public let key: AutomationExecutionFilterKey
         /// The values used to limit the execution information associated with the filter's key.
@@ -859,6 +1051,15 @@ extension SSM {
         public init(key: AutomationExecutionFilterKey, values: [String]) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try values.forEach {
+                try validate($0, name:"values[]", max: 150)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 10)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -904,6 +1105,7 @@ extension SSM {
             AWSShapeMember(label: "TargetParameterName", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// The execution ID.
         public let automationExecutionId: String?
         /// The status of the execution. Valid values include: Running, Succeeded, Failed, Timed out, or Cancelled.
@@ -974,6 +1176,30 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(automationExecutionId, name:"automationExecutionId", max: 36)
+            try validate(automationExecutionId, name:"automationExecutionId", min: 36)
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(parentAutomationExecutionId, name:"parentAutomationExecutionId", max: 36)
+            try validate(parentAutomationExecutionId, name:"parentAutomationExecutionId", min: 36)
+            try validate(targetMaps, name:"targetMaps", max: 300)
+            try validate(targetMaps, name:"targetMaps", min: 0)
+            try validate(targetParameterName, name:"targetParameterName", max: 50)
+            try validate(targetParameterName, name:"targetParameterName", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case automationExecutionId = "AutomationExecutionId"
             case automationExecutionStatus = "AutomationExecutionStatus"
@@ -1023,6 +1249,7 @@ extension SSM {
             AWSShapeMember(label: "CommandId", required: true, type: .string), 
             AWSShapeMember(label: "InstanceIds", required: false, type: .list)
         ]
+
         /// The ID of the command you want to cancel.
         public let commandId: String
         /// (Optional) A list of instance IDs on which you want to cancel the command. If not provided, the command is canceled on every instance on which it was requested.
@@ -1033,6 +1260,16 @@ extension SSM {
             self.instanceIds = instanceIds
         }
 
+        public func validate() throws {
+            try validate(commandId, name:"commandId", max: 36)
+            try validate(commandId, name:"commandId", min: 36)
+            try instanceIds?.forEach {
+                try validate($0, name:"instanceIds[]", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            }
+            try validate(instanceIds, name:"instanceIds", max: 50)
+            try validate(instanceIds, name:"instanceIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case commandId = "CommandId"
             case instanceIds = "InstanceIds"
@@ -1040,6 +1277,7 @@ extension SSM {
     }
 
     public struct CancelCommandResult: AWSShape {
+
 
         public init() {
         }
@@ -1050,11 +1288,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowExecutionId", required: true, type: .string)
         ]
+
         /// The ID of the maintenance window execution to stop.
         public let windowExecutionId: String
 
         public init(windowExecutionId: String) {
             self.windowExecutionId = windowExecutionId
+        }
+
+        public func validate() throws {
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1066,11 +1311,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowExecutionId", required: false, type: .string)
         ]
+
         /// The ID of the maintenance window execution that has been stopped.
         public let windowExecutionId: String?
 
         public init(windowExecutionId: String? = nil) {
             self.windowExecutionId = windowExecutionId
+        }
+
+        public func validate() throws {
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1083,6 +1335,7 @@ extension SSM {
             AWSShapeMember(label: "CloudWatchLogGroupName", required: false, type: .string), 
             AWSShapeMember(label: "CloudWatchOutputEnabled", required: false, type: .boolean)
         ]
+
         /// The name of the CloudWatch log group where you want to send command output. If you don't specify a group name, Systems Manager automatically creates a log group for you. The log group uses the following naming format: aws/ssm/SystemsManagerDocumentName.
         public let cloudWatchLogGroupName: String?
         /// Enables Systems Manager to send command output to CloudWatch Logs.
@@ -1091,6 +1344,12 @@ extension SSM {
         public init(cloudWatchLogGroupName: String? = nil, cloudWatchOutputEnabled: Bool? = nil) {
             self.cloudWatchLogGroupName = cloudWatchLogGroupName
             self.cloudWatchOutputEnabled = cloudWatchOutputEnabled
+        }
+
+        public func validate() throws {
+            try validate(cloudWatchLogGroupName, name:"cloudWatchLogGroupName", max: 512)
+            try validate(cloudWatchLogGroupName, name:"cloudWatchLogGroupName", min: 1)
+            try validate(cloudWatchLogGroupName, name:"cloudWatchLogGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1125,6 +1384,7 @@ extension SSM {
             AWSShapeMember(label: "TargetCount", required: false, type: .integer), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// CloudWatch Logs information where you want Systems Manager to send the command output.
         public let cloudWatchOutputConfig: CloudWatchOutputConfig?
         /// A unique identifier for this command.
@@ -1198,6 +1458,38 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try cloudWatchOutputConfig?.validate()
+            try validate(commandId, name:"commandId", max: 36)
+            try validate(commandId, name:"commandId", min: 36)
+            try validate(comment, name:"comment", max: 100)
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try instanceIds?.forEach {
+                try validate($0, name:"instanceIds[]", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            }
+            try validate(instanceIds, name:"instanceIds", max: 50)
+            try validate(instanceIds, name:"instanceIds", min: 0)
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(outputS3BucketName, name:"outputS3BucketName", max: 63)
+            try validate(outputS3BucketName, name:"outputS3BucketName", min: 3)
+            try validate(outputS3KeyPrefix, name:"outputS3KeyPrefix", max: 500)
+            try validate(outputS3Region, name:"outputS3Region", max: 20)
+            try validate(outputS3Region, name:"outputS3Region", min: 3)
+            try validate(statusDetails, name:"statusDetails", max: 100)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudWatchOutputConfig = "CloudWatchOutputConfig"
             case commandId = "CommandId"
@@ -1230,6 +1522,7 @@ extension SSM {
             AWSShapeMember(label: "key", required: true, type: .enum), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The name of the filter.
         public let key: CommandFilterKey
         /// The filter value. Valid values for each filter key are as follows:    InvokedAfter: Specify a timestamp to limit your results. For example, specify 2018-07-07T00:00:00Z to see a list of command executions occurring July 7, 2018, and later.    InvokedBefore: Specify a timestamp to limit your results. For example, specify 2018-07-07T00:00:00Z to see a list of command executions from before July 7, 2018.    Status: Specify a valid command status to see a list of all command executions with that status. Status values you can specify include:    Pending     InProgress     Success     Cancelled     Failed     TimedOut     Cancelling       DocumentName: Specify name of the SSM document for which you want to see command execution results. For example, specify AWS-RunPatchBaseline to see command executions that used this SSM document to perform security patching operations on instances.     ExecutionStage: Specify one of the following values:    Executing: Returns a list of command executions that are currently still running.    Complete: Returns a list of command executions that have already completed.     
@@ -1238,6 +1531,11 @@ extension SSM {
         public init(key: CommandFilterKey, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", max: 128)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1274,6 +1572,7 @@ extension SSM {
             AWSShapeMember(label: "StatusDetails", required: false, type: .string), 
             AWSShapeMember(label: "TraceOutput", required: false, type: .string)
         ]
+
         /// CloudWatch Logs information where you want Systems Manager to send the command output.
         public let cloudWatchOutputConfig: CloudWatchOutputConfig?
         /// The command against which this invocation was requested.
@@ -1325,6 +1624,23 @@ extension SSM {
             self.traceOutput = traceOutput
         }
 
+        public func validate() throws {
+            try cloudWatchOutputConfig?.validate()
+            try validate(commandId, name:"commandId", max: 36)
+            try validate(commandId, name:"commandId", min: 36)
+            try commandPlugins?.forEach {
+                try $0.validate()
+            }
+            try validate(comment, name:"comment", max: 100)
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(instanceName, name:"instanceName", max: 255)
+            try validate(statusDetails, name:"statusDetails", max: 100)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try validate(traceOutput, name:"traceOutput", max: 2500)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudWatchOutputConfig = "CloudWatchOutputConfig"
             case commandId = "CommandId"
@@ -1372,6 +1688,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "StatusDetails", required: false, type: .string)
         ]
+
         /// The name of the plugin. Must be one of the following: aws:updateAgent, aws:domainjoin, aws:applications, aws:runPowerShellScript, aws:psmodule, aws:cloudWatch, aws:runShellScript, or aws:updateSSMAgent. 
         public let name: String?
         /// Output of the plugin execution.
@@ -1410,6 +1727,18 @@ extension SSM {
             self.standardOutputUrl = standardOutputUrl
             self.status = status
             self.statusDetails = statusDetails
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", min: 4)
+            try validate(output, name:"output", max: 2500)
+            try validate(outputS3BucketName, name:"outputS3BucketName", max: 63)
+            try validate(outputS3BucketName, name:"outputS3BucketName", min: 3)
+            try validate(outputS3KeyPrefix, name:"outputS3KeyPrefix", max: 500)
+            try validate(outputS3Region, name:"outputS3Region", max: 20)
+            try validate(outputS3Region, name:"outputS3Region", min: 3)
+            try validate(statusDetails, name:"statusDetails", max: 100)
+            try validate(statusDetails, name:"statusDetails", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1455,6 +1784,7 @@ extension SSM {
             AWSShapeMember(label: "ExecutionTime", required: true, type: .timestamp), 
             AWSShapeMember(label: "ExecutionType", required: false, type: .string)
         ]
+
         /// An ID created by the system when PutComplianceItems was called. For example, CommandID is a valid execution ID. You can use this ID in subsequent calls.
         public let executionId: String?
         /// The time the execution ran as a datetime object that is saved in the following format: yyyy-MM-dd'T'HH:mm:ss'Z'.
@@ -1466,6 +1796,11 @@ extension SSM {
             self.executionId = executionId
             self.executionTime = executionTime
             self.executionType = executionType
+        }
+
+        public func validate() throws {
+            try validate(executionId, name:"executionId", max: 100)
+            try validate(executionType, name:"executionType", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1487,6 +1822,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "Title", required: false, type: .string)
         ]
+
         /// The compliance type. For example, Association (for a State Manager association), Patch, or Custom:string are all valid compliance types.
         public let complianceType: String?
         /// A "Key": "Value" tag combination for the compliance item.
@@ -1518,6 +1854,20 @@ extension SSM {
             self.title = title
         }
 
+        public func validate() throws {
+            try validate(complianceType, name:"complianceType", max: 100)
+            try validate(complianceType, name:"complianceType", min: 1)
+            try validate(complianceType, name:"complianceType", pattern: "[A-Za-z0-9_\\-]\\w+|Custom:[a-zA-Z0-9_\\-]\\w+")
+            try executionSummary?.validate()
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(resourceId, name:"resourceId", max: 100)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 50)
+            try validate(resourceType, name:"resourceType", min: 1)
+            try validate(title, name:"title", max: 500)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceType = "ComplianceType"
             case details = "Details"
@@ -1539,6 +1889,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: true, type: .enum), 
             AWSShapeMember(label: "Title", required: false, type: .string)
         ]
+
         /// A "Key": "Value" tag combination for the compliance item.
         public let details: [String: String]?
         /// The compliance item ID. For example, if the compliance item is a Windows patch, the ID could be the number of the KB article.
@@ -1556,6 +1907,12 @@ extension SSM {
             self.severity = severity
             self.status = status
             self.title = title
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+            try validate(title, name:"title", max: 500)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1598,6 +1955,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The name of the filter.
         public let key: String?
         /// The type of comparison that should be performed for the value: Equal, NotEqual, BeginWith, LessThan, or GreaterThan.
@@ -1609,6 +1967,13 @@ extension SSM {
             self.key = key
             self.`type` = `type`
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 200)
+            try validate(key, name:"key", min: 1)
+            try validate(values, name:"values", max: 20)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1624,6 +1989,7 @@ extension SSM {
             AWSShapeMember(label: "CompliantSummary", required: false, type: .structure), 
             AWSShapeMember(label: "NonCompliantSummary", required: false, type: .structure)
         ]
+
         /// The type of compliance item. For example, the compliance type can be Association, Patch, or Custom:string.
         public let complianceType: String?
         /// A list of COMPLIANT items for the specified compliance type.
@@ -1635,6 +2001,12 @@ extension SSM {
             self.complianceType = complianceType
             self.compliantSummary = compliantSummary
             self.nonCompliantSummary = nonCompliantSummary
+        }
+
+        public func validate() throws {
+            try validate(complianceType, name:"complianceType", max: 100)
+            try validate(complianceType, name:"complianceType", min: 1)
+            try validate(complianceType, name:"complianceType", pattern: "[A-Za-z0-9_\\-]\\w+|Custom:[a-zA-Z0-9_\\-]\\w+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1649,6 +2021,7 @@ extension SSM {
             AWSShapeMember(label: "CompliantCount", required: false, type: .integer), 
             AWSShapeMember(label: "SeveritySummary", required: false, type: .structure)
         ]
+
         /// The total number of resources that are compliant.
         public let compliantCount: Int32?
         /// A summary of the compliance severity by compliance type.
@@ -1680,6 +2053,7 @@ extension SSM {
             AWSShapeMember(label: "RegistrationLimit", required: false, type: .integer), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The name of the registered, managed instance as it will appear in the Amazon EC2 console or when you use the AWS command line tools to list EC2 resources.  Do not enter personally identifiable information in this field. 
         public let defaultInstanceName: String?
         /// A user-defined description of the resource that you want to register with Amazon EC2.   Do not enter personally identifiable information in this field. 
@@ -1702,6 +2076,21 @@ extension SSM {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(defaultInstanceName, name:"defaultInstanceName", max: 256)
+            try validate(defaultInstanceName, name:"defaultInstanceName", min: 0)
+            try validate(defaultInstanceName, name:"defaultInstanceName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(description, name:"description", max: 256)
+            try validate(description, name:"description", min: 0)
+            try validate(iamRole, name:"iamRole", max: 64)
+            try validate(registrationLimit, name:"registrationLimit", max: 1000)
+            try validate(registrationLimit, name:"registrationLimit", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultInstanceName = "DefaultInstanceName"
             case description = "Description"
@@ -1717,6 +2106,7 @@ extension SSM {
             AWSShapeMember(label: "ActivationCode", required: false, type: .string), 
             AWSShapeMember(label: "ActivationId", required: false, type: .string)
         ]
+
         /// The code the system generates when it processes the activation. The activation code functions like a password to validate the activation ID. 
         public let activationCode: String?
         /// The ID number generated by the system when it processed the activation. The activation ID functions like a user name.
@@ -1725,6 +2115,12 @@ extension SSM {
         public init(activationCode: String? = nil, activationId: String? = nil) {
             self.activationCode = activationCode
             self.activationId = activationId
+        }
+
+        public func validate() throws {
+            try validate(activationCode, name:"activationCode", max: 250)
+            try validate(activationCode, name:"activationCode", min: 20)
+            try validate(activationId, name:"activationId", pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1737,11 +2133,19 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Entries", required: true, type: .list)
         ]
+
         /// One or more associations.
         public let entries: [CreateAssociationBatchRequestEntry]
 
         public init(entries: [CreateAssociationBatchRequestEntry]) {
             self.entries = entries
+        }
+
+        public func validate() throws {
+            try entries.forEach {
+                try $0.validate()
+            }
+            try validate(entries, name:"entries", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1764,6 +2168,7 @@ extension SSM {
             AWSShapeMember(label: "ScheduleExpression", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// Specify a descriptive name for the association.
         public let associationName: String?
         /// Specify the target for the association. This target is required for associations that use an Automation document and target resources by using rate controls.
@@ -1804,6 +2209,29 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(associationName, name:"associationName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", max: 50)
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", min: 1)
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try outputLocation?.validate()
+            try validate(scheduleExpression, name:"scheduleExpression", max: 256)
+            try validate(scheduleExpression, name:"scheduleExpression", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationName = "AssociationName"
             case automationTargetParameterName = "AutomationTargetParameterName"
@@ -1825,6 +2253,7 @@ extension SSM {
             AWSShapeMember(label: "Failed", required: false, type: .list), 
             AWSShapeMember(label: "Successful", required: false, type: .list)
         ]
+
         /// Information about the associations that failed.
         public let failed: [FailedCreateAssociation]?
         /// Information about the associations that succeeded.
@@ -1833,6 +2262,15 @@ extension SSM {
         public init(failed: [FailedCreateAssociation]? = nil, successful: [AssociationDescription]? = nil) {
             self.failed = failed
             self.successful = successful
+        }
+
+        public func validate() throws {
+            try failed?.forEach {
+                try $0.validate()
+            }
+            try successful?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1856,6 +2294,7 @@ extension SSM {
             AWSShapeMember(label: "ScheduleExpression", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// Specify a descriptive name for the association.
         public let associationName: String?
         /// Specify the target for the association. This target is required for associations that use an Automation document and target resources by using rate controls.
@@ -1896,6 +2335,29 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(associationName, name:"associationName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", max: 50)
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", min: 1)
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try outputLocation?.validate()
+            try validate(scheduleExpression, name:"scheduleExpression", max: 256)
+            try validate(scheduleExpression, name:"scheduleExpression", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationName = "AssociationName"
             case automationTargetParameterName = "AutomationTargetParameterName"
@@ -1916,11 +2378,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AssociationDescription", required: false, type: .structure)
         ]
+
         /// Information about the association.
         public let associationDescription: AssociationDescription?
 
         public init(associationDescription: AssociationDescription? = nil) {
             self.associationDescription = associationDescription
+        }
+
+        public func validate() throws {
+            try associationDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1939,6 +2406,7 @@ extension SSM {
             AWSShapeMember(label: "TargetType", required: false, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// A list of key and value pairs that describe attachments to a version of a document.
         public let attachments: [AttachmentsSource]?
         /// A valid JSON or YAML string.
@@ -1967,6 +2435,23 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try attachments?.forEach {
+                try $0.validate()
+            }
+            try validate(attachments, name:"attachments", max: 1)
+            try validate(attachments, name:"attachments", min: 0)
+            try validate(content, name:"content", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+            try validate(targetType, name:"targetType", max: 200)
+            try validate(targetType, name:"targetType", pattern: "^\\/[\\w\\.\\-\\:\\/]*$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attachments = "Attachments"
             case content = "Content"
@@ -1983,11 +2468,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentDescription", required: false, type: .structure)
         ]
+
         /// Information about the Systems Manager document.
         public let documentDescription: DocumentDescription?
 
         public init(documentDescription: DocumentDescription? = nil) {
             self.documentDescription = documentDescription
+        }
+
+        public func validate() throws {
+            try documentDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2009,6 +2499,7 @@ extension SSM {
             AWSShapeMember(label: "StartDate", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Enables a maintenance window task to run on managed instances, even if you have not registered those instances as targets. If enabled, then you must specify the unregistered instances (by instance ID) when you register a task with the maintenance window. If you don't enable this option, then you must specify previously-registered targets when you register a task with the maintenance window.
         public let allowUnassociatedTargets: Bool
         /// User-provided idempotency token.
@@ -2032,7 +2523,7 @@ extension SSM {
         /// Optional metadata that you assign to a resource. Tags enable you to categorize a resource in different ways, such as by purpose, owner, or environment. For example, you might want to tag a maintenance window to identify the type of tasks it will run, the types of targets, and the environment it will run in. In this case, you could specify the following key name/value pairs:    Key=TaskType,Value=AgentUpdate     Key=OS,Value=Windows     Key=Environment,Value=Production     To add tags to an existing maintenance window, use the AddTagsToResource action. 
         public let tags: [Tag]?
 
-        public init(allowUnassociatedTargets: Bool, clientToken: String? = nil, cutoff: Int32, description: String? = nil, duration: Int32, endDate: String? = nil, name: String, schedule: String, scheduleTimezone: String? = nil, startDate: String? = nil, tags: [Tag]? = nil) {
+        public init(allowUnassociatedTargets: Bool, clientToken: String? = CreateMaintenanceWindowRequest.idempotencyToken(), cutoff: Int32, description: String? = nil, duration: Int32, endDate: String? = nil, name: String, schedule: String, scheduleTimezone: String? = nil, startDate: String? = nil, tags: [Tag]? = nil) {
             self.allowUnassociatedTargets = allowUnassociatedTargets
             self.clientToken = clientToken
             self.cutoff = cutoff
@@ -2044,6 +2535,26 @@ extension SSM {
             self.scheduleTimezone = scheduleTimezone
             self.startDate = startDate
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(cutoff, name:"cutoff", max: 23)
+            try validate(cutoff, name:"cutoff", min: 0)
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(duration, name:"duration", max: 24)
+            try validate(duration, name:"duration", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(schedule, name:"schedule", max: 256)
+            try validate(schedule, name:"schedule", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2065,11 +2576,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// The ID of the created maintenance window.
         public let windowId: String?
 
         public init(windowId: String? = nil) {
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2088,6 +2606,7 @@ extension SSM {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "Title", required: true, type: .string)
         ]
+
         /// Information about the OpsItem. 
         public let description: String
         /// The Amazon Resource Name (ARN) of an SNS topic where notifications are sent when this OpsItem is edited or changed.
@@ -2116,6 +2635,21 @@ extension SSM {
             self.title = title
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 1)
+            try validate(priority, name:"priority", max: 5)
+            try validate(priority, name:"priority", min: 1)
+            try validate(source, name:"source", max: 64)
+            try validate(source, name:"source", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+            try validate(title, name:"title", max: 1024)
+            try validate(title, name:"title", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case notifications = "Notifications"
@@ -2132,6 +2666,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OpsItemId", required: false, type: .string)
         ]
+
         /// The ID of the OpsItem.
         public let opsItemId: String?
 
@@ -2160,6 +2695,7 @@ extension SSM {
             AWSShapeMember(label: "Sources", required: false, type: .list), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// A set of rules used to include patches in the baseline.
         public let approvalRules: PatchRuleGroup?
         /// A list of explicitly approved patches for the baseline. For information about accepted formats for lists of approved patches and rejected patches, see Package Name Formats for Approved and Rejected Patch Lists in the AWS Systems Manager User Guide.
@@ -2187,7 +2723,7 @@ extension SSM {
         /// Optional metadata that you assign to a resource. Tags enable you to categorize a resource in different ways, such as by purpose, owner, or environment. For example, you might want to tag a patch baseline to identify the severity level of patches it specifies and the operating system family it applies to. In this case, you could specify the following key name/value pairs:    Key=PatchSeverity,Value=Critical     Key=OS,Value=Windows     To add tags to an existing patch baseline, use the AddTagsToResource action. 
         public let tags: [Tag]?
 
-        public init(approvalRules: PatchRuleGroup? = nil, approvedPatches: [String]? = nil, approvedPatchesComplianceLevel: PatchComplianceLevel? = nil, approvedPatchesEnableNonSecurity: Bool? = nil, clientToken: String? = nil, description: String? = nil, globalFilters: PatchFilterGroup? = nil, name: String, operatingSystem: OperatingSystem? = nil, rejectedPatches: [String]? = nil, rejectedPatchesAction: PatchAction? = nil, sources: [PatchSource]? = nil, tags: [Tag]? = nil) {
+        public init(approvalRules: PatchRuleGroup? = nil, approvedPatches: [String]? = nil, approvedPatchesComplianceLevel: PatchComplianceLevel? = nil, approvedPatchesEnableNonSecurity: Bool? = nil, clientToken: String? = CreatePatchBaselineRequest.idempotencyToken(), description: String? = nil, globalFilters: PatchFilterGroup? = nil, name: String, operatingSystem: OperatingSystem? = nil, rejectedPatches: [String]? = nil, rejectedPatchesAction: PatchAction? = nil, sources: [PatchSource]? = nil, tags: [Tag]? = nil) {
             self.approvalRules = approvalRules
             self.approvedPatches = approvedPatches
             self.approvedPatchesComplianceLevel = approvedPatchesComplianceLevel
@@ -2201,6 +2737,39 @@ extension SSM {
             self.rejectedPatchesAction = rejectedPatchesAction
             self.sources = sources
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try approvalRules?.validate()
+            try approvedPatches?.forEach {
+                try validate($0, name:"approvedPatches[]", max: 100)
+                try validate($0, name:"approvedPatches[]", min: 1)
+            }
+            try validate(approvedPatches, name:"approvedPatches", max: 50)
+            try validate(approvedPatches, name:"approvedPatches", min: 0)
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 1)
+            try globalFilters?.validate()
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try rejectedPatches?.forEach {
+                try validate($0, name:"rejectedPatches[]", max: 100)
+                try validate($0, name:"rejectedPatches[]", min: 1)
+            }
+            try validate(rejectedPatches, name:"rejectedPatches", max: 50)
+            try validate(rejectedPatches, name:"rejectedPatches", min: 0)
+            try sources?.forEach {
+                try $0.validate()
+            }
+            try validate(sources, name:"sources", max: 20)
+            try validate(sources, name:"sources", min: 0)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2224,11 +2793,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BaselineId", required: false, type: .string)
         ]
+
         /// The ID of the created patch baseline.
         public let baselineId: String?
 
         public init(baselineId: String? = nil) {
             self.baselineId = baselineId
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2241,6 +2817,7 @@ extension SSM {
             AWSShapeMember(label: "S3Destination", required: true, type: .structure), 
             AWSShapeMember(label: "SyncName", required: true, type: .string)
         ]
+
         /// Amazon S3 configuration details for the sync.
         public let s3Destination: ResourceDataSyncS3Destination
         /// A name for the configuration.
@@ -2251,6 +2828,12 @@ extension SSM {
             self.syncName = syncName
         }
 
+        public func validate() throws {
+            try s3Destination.validate()
+            try validate(syncName, name:"syncName", max: 64)
+            try validate(syncName, name:"syncName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case s3Destination = "S3Destination"
             case syncName = "SyncName"
@@ -2258,6 +2841,7 @@ extension SSM {
     }
 
     public struct CreateResourceDataSyncResult: AWSShape {
+
 
         public init() {
         }
@@ -2268,11 +2852,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ActivationId", required: true, type: .string)
         ]
+
         /// The ID of the activation that you want to delete.
         public let activationId: String
 
         public init(activationId: String) {
             self.activationId = activationId
+        }
+
+        public func validate() throws {
+            try validate(activationId, name:"activationId", pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2281,6 +2870,7 @@ extension SSM {
     }
 
     public struct DeleteActivationResult: AWSShape {
+
 
         public init() {
         }
@@ -2293,6 +2883,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceId", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The association ID that you want to delete.
         public let associationId: String?
         /// The ID of the instance.
@@ -2306,6 +2897,12 @@ extension SSM {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case instanceId = "InstanceId"
@@ -2314,6 +2911,7 @@ extension SSM {
     }
 
     public struct DeleteAssociationResult: AWSShape {
+
 
         public init() {
         }
@@ -2326,6 +2924,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// (Optional) The version of the document that you want to delete. If not provided, all versions of the document are deleted.
         public let documentVersion: String?
         /// The name of the document.
@@ -2339,6 +2938,12 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case documentVersion = "DocumentVersion"
             case name = "Name"
@@ -2347,6 +2952,7 @@ extension SSM {
     }
 
     public struct DeleteDocumentResult: AWSShape {
+
 
         public init() {
         }
@@ -2360,6 +2966,7 @@ extension SSM {
             AWSShapeMember(label: "SchemaDeleteOption", required: false, type: .enum), 
             AWSShapeMember(label: "TypeName", required: true, type: .string)
         ]
+
         /// User-provided idempotency token.
         public let clientToken: String?
         /// Use this option to view a summary of the deletion request without deleting any data or the data type. This option is useful when you only want to understand what will be deleted. Once you validate that the data to be deleted is what you intend to delete, you can run the same command without specifying the DryRun option.
@@ -2369,11 +2976,19 @@ extension SSM {
         /// The name of the custom inventory type for which you want to delete either all previously collected data, or the inventory type itself. 
         public let typeName: String
 
-        public init(clientToken: String? = nil, dryRun: Bool? = nil, schemaDeleteOption: InventorySchemaDeleteOption? = nil, typeName: String) {
+        public init(clientToken: String? = DeleteInventoryRequest.idempotencyToken(), dryRun: Bool? = nil, schemaDeleteOption: InventorySchemaDeleteOption? = nil, typeName: String) {
             self.clientToken = clientToken
             self.dryRun = dryRun
             self.schemaDeleteOption = schemaDeleteOption
             self.typeName = typeName
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2390,6 +3005,7 @@ extension SSM {
             AWSShapeMember(label: "DeletionSummary", required: false, type: .structure), 
             AWSShapeMember(label: "TypeName", required: false, type: .string)
         ]
+
         /// Every DeleteInventory action is assigned a unique ID. This option returns a unique ID. You can use this ID to query the status of a delete operation. This option is useful for ensuring that a delete operation has completed before you begin other actions. 
         public let deletionId: String?
         /// A summary of the delete operation. For more information about this summary, see Understanding the Delete Inventory Summary in the AWS Systems Manager User Guide.
@@ -2403,6 +3019,13 @@ extension SSM {
             self.typeName = typeName
         }
 
+        public func validate() throws {
+            try deletionSummary?.validate()
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deletionId = "DeletionId"
             case deletionSummary = "DeletionSummary"
@@ -2414,11 +3037,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// The ID of the maintenance window to delete.
         public let windowId: String
 
         public init(windowId: String) {
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2430,11 +3060,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// The ID of the deleted maintenance window.
         public let windowId: String?
 
         public init(windowId: String? = nil) {
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2446,11 +3083,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The name of the parameter to delete.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2459,6 +3102,7 @@ extension SSM {
     }
 
     public struct DeleteParameterResult: AWSShape {
+
 
         public init() {
         }
@@ -2469,11 +3113,21 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Names", required: true, type: .list)
         ]
+
         /// The names of the parameters to delete.
         public let names: [String]
 
         public init(names: [String]) {
             self.names = names
+        }
+
+        public func validate() throws {
+            try names.forEach {
+                try validate($0, name:"names[]", max: 2048)
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(names, name:"names", max: 10)
+            try validate(names, name:"names", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2486,6 +3140,7 @@ extension SSM {
             AWSShapeMember(label: "DeletedParameters", required: false, type: .list), 
             AWSShapeMember(label: "InvalidParameters", required: false, type: .list)
         ]
+
         /// The names of the deleted parameters.
         public let deletedParameters: [String]?
         /// The names of parameters that weren't deleted because the parameters are not valid.
@@ -2494,6 +3149,21 @@ extension SSM {
         public init(deletedParameters: [String]? = nil, invalidParameters: [String]? = nil) {
             self.deletedParameters = deletedParameters
             self.invalidParameters = invalidParameters
+        }
+
+        public func validate() throws {
+            try deletedParameters?.forEach {
+                try validate($0, name:"deletedParameters[]", max: 2048)
+                try validate($0, name:"deletedParameters[]", min: 1)
+            }
+            try validate(deletedParameters, name:"deletedParameters", max: 10)
+            try validate(deletedParameters, name:"deletedParameters", min: 1)
+            try invalidParameters?.forEach {
+                try validate($0, name:"invalidParameters[]", max: 2048)
+                try validate($0, name:"invalidParameters[]", min: 1)
+            }
+            try validate(invalidParameters, name:"invalidParameters", max: 10)
+            try validate(invalidParameters, name:"invalidParameters", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2506,11 +3176,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BaselineId", required: true, type: .string)
         ]
+
         /// The ID of the patch baseline to delete.
         public let baselineId: String
 
         public init(baselineId: String) {
             self.baselineId = baselineId
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2522,11 +3199,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BaselineId", required: false, type: .string)
         ]
+
         /// The ID of the deleted patch baseline.
         public let baselineId: String?
 
         public init(baselineId: String? = nil) {
             self.baselineId = baselineId
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2538,11 +3222,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SyncName", required: true, type: .string)
         ]
+
         /// The name of the configuration to delete.
         public let syncName: String
 
         public init(syncName: String) {
             self.syncName = syncName
+        }
+
+        public func validate() throws {
+            try validate(syncName, name:"syncName", max: 64)
+            try validate(syncName, name:"syncName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2551,6 +3241,7 @@ extension SSM {
     }
 
     public struct DeleteResourceDataSyncResult: AWSShape {
+
 
         public init() {
         }
@@ -2561,11 +3252,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "InstanceId", required: true, type: .string)
         ]
+
         /// The ID assigned to the managed instance when you registered it using the activation process. 
         public let instanceId: String
 
         public init(instanceId: String) {
             self.instanceId = instanceId
+        }
+
+        public func validate() throws {
+            try validate(instanceId, name:"instanceId", pattern: "^mi-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2574,6 +3270,7 @@ extension SSM {
     }
 
     public struct DeregisterManagedInstanceResult: AWSShape {
+
 
         public init() {
         }
@@ -2585,6 +3282,7 @@ extension SSM {
             AWSShapeMember(label: "BaselineId", required: true, type: .string), 
             AWSShapeMember(label: "PatchGroup", required: true, type: .string)
         ]
+
         /// The ID of the patch baseline to deregister the patch group from.
         public let baselineId: String
         /// The name of the patch group that should be deregistered from the patch baseline.
@@ -2593,6 +3291,15 @@ extension SSM {
         public init(baselineId: String, patchGroup: String) {
             self.baselineId = baselineId
             self.patchGroup = patchGroup
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2606,6 +3313,7 @@ extension SSM {
             AWSShapeMember(label: "BaselineId", required: false, type: .string), 
             AWSShapeMember(label: "PatchGroup", required: false, type: .string)
         ]
+
         /// The ID of the patch baseline the patch group was deregistered from.
         public let baselineId: String?
         /// The name of the patch group deregistered from the patch baseline.
@@ -2614,6 +3322,15 @@ extension SSM {
         public init(baselineId: String? = nil, patchGroup: String? = nil) {
             self.baselineId = baselineId
             self.patchGroup = patchGroup
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2628,6 +3345,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: true, type: .string), 
             AWSShapeMember(label: "WindowTargetId", required: true, type: .string)
         ]
+
         /// The system checks if the target is being referenced by a task. If the target is being referenced, the system returns an error and does not deregister the target from the maintenance window.
         public let safe: Bool?
         /// The ID of the maintenance window the target should be removed from.
@@ -2639,6 +3357,15 @@ extension SSM {
             self.safe = safe
             self.windowId = windowId
             self.windowTargetId = windowTargetId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+            try validate(windowTargetId, name:"windowTargetId", min: 36)
+            try validate(windowTargetId, name:"windowTargetId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2653,6 +3380,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTargetId", required: false, type: .string)
         ]
+
         /// The ID of the maintenance window the target was removed from.
         public let windowId: String?
         /// The ID of the removed target definition.
@@ -2661,6 +3389,15 @@ extension SSM {
         public init(windowId: String? = nil, windowTargetId: String? = nil) {
             self.windowId = windowId
             self.windowTargetId = windowTargetId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+            try validate(windowTargetId, name:"windowTargetId", min: 36)
+            try validate(windowTargetId, name:"windowTargetId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2674,6 +3411,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: true, type: .string), 
             AWSShapeMember(label: "WindowTaskId", required: true, type: .string)
         ]
+
         /// The ID of the maintenance window the task should be removed from.
         public let windowId: String
         /// The ID of the task to remove from the maintenance window.
@@ -2682,6 +3420,15 @@ extension SSM {
         public init(windowId: String, windowTaskId: String) {
             self.windowId = windowId
             self.windowTaskId = windowTaskId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2695,6 +3442,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTaskId", required: false, type: .string)
         ]
+
         /// The ID of the maintenance window the task was removed from.
         public let windowId: String?
         /// The ID of the task removed from the maintenance window.
@@ -2703,6 +3451,15 @@ extension SSM {
         public init(windowId: String? = nil, windowTaskId: String? = nil) {
             self.windowId = windowId
             self.windowTaskId = windowTaskId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2716,6 +3473,7 @@ extension SSM {
             AWSShapeMember(label: "FilterKey", required: false, type: .enum), 
             AWSShapeMember(label: "FilterValues", required: false, type: .list)
         ]
+
         /// The name of the filter.
         public let filterKey: DescribeActivationsFilterKeys?
         /// The filter values.
@@ -2745,6 +3503,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A filter to view information about your activations.
         public let filters: [DescribeActivationsFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -2756,6 +3515,11 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2770,6 +3534,7 @@ extension SSM {
             AWSShapeMember(label: "ActivationList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of activations for your AWS account.
         public let activationList: [Activation]?
         /// The token for the next set of items to return. Use this token to get the next set of results. 
@@ -2778,6 +3543,12 @@ extension SSM {
         public init(activationList: [Activation]? = nil, nextToken: String? = nil) {
             self.activationList = activationList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try activationList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2794,6 +3565,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The association ID that includes the execution for which you want to view details.
         public let associationId: String
         /// The execution ID for which you want to view details.
@@ -2813,6 +3585,17 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(executionId, name:"executionId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case executionId = "ExecutionId"
@@ -2827,6 +3610,7 @@ extension SSM {
             AWSShapeMember(label: "AssociationExecutionTargets", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about the execution.
         public let associationExecutionTargets: [AssociationExecutionTarget]?
         /// The token for the next set of items to return. Use this token to get the next set of results.
@@ -2835,6 +3619,12 @@ extension SSM {
         public init(associationExecutionTargets: [AssociationExecutionTarget]? = nil, nextToken: String? = nil) {
             self.associationExecutionTargets = associationExecutionTargets
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try associationExecutionTargets?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2850,6 +3640,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The association ID for which you want to view execution history details.
         public let associationId: String
         /// Filters for the request. You can specify the following filters and values. ExecutionId (EQUAL) Status (EQUAL) CreatedTime (EQUAL, GREATER_THAN, LESS_THAN)
@@ -2866,6 +3657,16 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case filters = "Filters"
@@ -2879,6 +3680,7 @@ extension SSM {
             AWSShapeMember(label: "AssociationExecutions", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of the executions for the specified association ID.
         public let associationExecutions: [AssociationExecution]?
         /// The token for the next set of items to return. Use this token to get the next set of results.
@@ -2887,6 +3689,12 @@ extension SSM {
         public init(associationExecutions: [AssociationExecution]? = nil, nextToken: String? = nil) {
             self.associationExecutions = associationExecutions
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try associationExecutions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2902,6 +3710,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceId", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The association ID for which you want information.
         public let associationId: String?
         /// Specify the association version to retrieve. To view the latest version, either specify $LATEST for this parameter, or omit this parameter. To view a list of all associations for an instance, use ListAssociations. To get a list of versions for a specific association, use ListAssociationVersions. 
@@ -2918,6 +3727,13 @@ extension SSM {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationVersion = "AssociationVersion"
@@ -2930,11 +3746,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AssociationDescription", required: false, type: .structure)
         ]
+
         /// Information about the association.
         public let associationDescription: AssociationDescription?
 
         public init(associationDescription: AssociationDescription? = nil) {
             self.associationDescription = associationDescription
+        }
+
+        public func validate() throws {
+            try associationDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2948,6 +3769,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters used to limit the scope of executions that are requested.
         public let filters: [AutomationExecutionFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -2959,6 +3781,16 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 10)
+            try validate(filters, name:"filters", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2973,6 +3805,7 @@ extension SSM {
             AWSShapeMember(label: "AutomationExecutionMetadataList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of details about each automation execution which has occurred which matches the filter specification, if any.
         public let automationExecutionMetadataList: [AutomationExecutionMetadata]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -2981,6 +3814,12 @@ extension SSM {
         public init(automationExecutionMetadataList: [AutomationExecutionMetadata]? = nil, nextToken: String? = nil) {
             self.automationExecutionMetadataList = automationExecutionMetadataList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try automationExecutionMetadataList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2997,6 +3836,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ReverseOrder", required: false, type: .boolean)
         ]
+
         /// The Automation execution ID for which you want step execution descriptions.
         public let automationExecutionId: String
         /// One or more filters to limit the number of step executions returned by the request.
@@ -3016,6 +3856,18 @@ extension SSM {
             self.reverseOrder = reverseOrder
         }
 
+        public func validate() throws {
+            try validate(automationExecutionId, name:"automationExecutionId", max: 36)
+            try validate(automationExecutionId, name:"automationExecutionId", min: 36)
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 6)
+            try validate(filters, name:"filters", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case automationExecutionId = "AutomationExecutionId"
             case filters = "Filters"
@@ -3030,6 +3882,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "StepExecutions", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// A list of details about the current state of all steps that make up an execution.
@@ -3038,6 +3891,12 @@ extension SSM {
         public init(nextToken: String? = nil, stepExecutions: [StepExecution]? = nil) {
             self.nextToken = nextToken
             self.stepExecutions = stepExecutions
+        }
+
+        public func validate() throws {
+            try stepExecutions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3052,6 +3911,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters used to scope down the returned patches.
         public let filters: [PatchOrchestratorFilter]?
         /// The maximum number of patches to return (per page).
@@ -3063,6 +3923,16 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3077,6 +3947,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Patches", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// An array of patches. Each entry in the array is a patch structure.
@@ -3085,6 +3956,12 @@ extension SSM {
         public init(nextToken: String? = nil, patches: [Patch]? = nil) {
             self.nextToken = nextToken
             self.patches = patches
+        }
+
+        public func validate() throws {
+            try patches?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3098,6 +3975,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "PermissionType", required: true, type: .enum)
         ]
+
         /// The name of the document for which you are the owner.
         public let name: String
         /// The permission type for the document. The permission type can be Share.
@@ -3106,6 +3984,10 @@ extension SSM {
         public init(name: String, permissionType: DocumentPermissionType) {
             self.name = name
             self.permissionType = permissionType
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3118,11 +4000,19 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountIds", required: false, type: .list)
         ]
+
         /// The account IDs that have permission to use this document. The ID can be either an AWS account or All.
         public let accountIds: [String]?
 
         public init(accountIds: [String]? = nil) {
             self.accountIds = accountIds
+        }
+
+        public func validate() throws {
+            try accountIds?.forEach {
+                try validate($0, name:"accountIds[]", pattern: "(?i)all|[0-9]{12}")
+            }
+            try validate(accountIds, name:"accountIds", max: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3136,6 +4026,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// The document version for which you want information. Can be a specific version or the default version.
         public let documentVersion: String?
         /// The name of the Systems Manager document.
@@ -3149,6 +4040,12 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case documentVersion = "DocumentVersion"
             case name = "Name"
@@ -3160,11 +4057,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Document", required: false, type: .structure)
         ]
+
         /// Information about the Systems Manager document.
         public let document: DocumentDescription?
 
         public init(document: DocumentDescription? = nil) {
             self.document = document
+        }
+
+        public func validate() throws {
+            try document?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3178,6 +4080,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The instance ID for which you want to view all associations.
         public let instanceId: String
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3189,6 +4092,12 @@ extension SSM {
             self.instanceId = instanceId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxResults, name:"maxResults", max: 5)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3203,6 +4112,7 @@ extension SSM {
             AWSShapeMember(label: "Associations", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The associations for the requested instance.
         public let associations: [InstanceAssociation]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -3211,6 +4121,12 @@ extension SSM {
         public init(associations: [InstanceAssociation]? = nil, nextToken: String? = nil) {
             self.associations = associations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try associations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3225,6 +4141,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ID of the patch baseline to retrieve the effective patches for.
         public let baselineId: String
         /// The maximum number of patches to return (per page).
@@ -3236,6 +4153,14 @@ extension SSM {
             self.baselineId = baselineId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3250,6 +4175,7 @@ extension SSM {
             AWSShapeMember(label: "EffectivePatches", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An array of patches and patch status.
         public let effectivePatches: [EffectivePatch]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -3258,6 +4184,12 @@ extension SSM {
         public init(effectivePatches: [EffectivePatch]? = nil, nextToken: String? = nil) {
             self.effectivePatches = effectivePatches
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try effectivePatches?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3272,6 +4204,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The instance IDs for which you want association status information.
         public let instanceId: String
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3283,6 +4216,12 @@ extension SSM {
             self.instanceId = instanceId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3297,6 +4236,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceAssociationStatusInfos", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Status information about the association.
         public let instanceAssociationStatusInfos: [InstanceAssociationStatusInfo]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -3305,6 +4245,12 @@ extension SSM {
         public init(instanceAssociationStatusInfos: [InstanceAssociationStatusInfo]? = nil, nextToken: String? = nil) {
             self.instanceAssociationStatusInfos = instanceAssociationStatusInfos
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try instanceAssociationStatusInfos?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3320,6 +4266,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// One or more filters. Use a filter to return a more specific list of instances. You can filter on Amazon EC2 tag. Specify tags by using a key-value mapping.
         public let filters: [InstanceInformationStringFilter]?
         /// This is a legacy method. We recommend that you don't use this method. Instead, use the InstanceInformationFilter action. The InstanceInformationFilter action enables you to return instance information by using tags that are specified as a key-value mapping.  If you do use this method, then you can't use the InstanceInformationFilter action. Using this method and the InstanceInformationFilter action causes an exception error. 
@@ -3336,6 +4283,19 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", min: 0)
+            try instanceInformationFilterList?.forEach {
+                try $0.validate()
+            }
+            try validate(instanceInformationFilterList, name:"instanceInformationFilterList", min: 0)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 5)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case instanceInformationFilterList = "InstanceInformationFilterList"
@@ -3349,6 +4309,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceInformationList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The instance information list.
         public let instanceInformationList: [InstanceInformation]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty. 
@@ -3357,6 +4318,12 @@ extension SSM {
         public init(instanceInformationList: [InstanceInformation]? = nil, nextToken: String? = nil) {
             self.instanceInformationList = instanceInformationList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try instanceInformationList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3372,6 +4339,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "PatchGroup", required: true, type: .string)
         ]
+
         /// Each entry in the array is a structure containing: Key (string between 1 and 200 characters)  Values (array containing a single string)  Type (string "Equal", "NotEqual", "LessThan", "GreaterThan")
         public let filters: [InstancePatchStateFilter]?
         /// The maximum number of patches to return (per page).
@@ -3388,6 +4356,19 @@ extension SSM {
             self.patchGroup = patchGroup
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 4)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3401,6 +4382,7 @@ extension SSM {
             AWSShapeMember(label: "InstancePatchStates", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The high-level patch state for the requested instances. 
         public let instancePatchStates: [InstancePatchState]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -3409,6 +4391,14 @@ extension SSM {
         public init(instancePatchStates: [InstancePatchState]? = nil, nextToken: String? = nil) {
             self.instancePatchStates = instancePatchStates
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try instancePatchStates?.forEach {
+                try $0.validate()
+            }
+            try validate(instancePatchStates, name:"instancePatchStates", max: 5)
+            try validate(instancePatchStates, name:"instancePatchStates", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3423,6 +4413,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The ID of the instance whose patch state information should be retrieved.
         public let instanceIds: [String]
         /// The maximum number of instances to return (per page).
@@ -3434,6 +4425,16 @@ extension SSM {
             self.instanceIds = instanceIds
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try instanceIds.forEach {
+                try validate($0, name:"instanceIds[]", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            }
+            try validate(instanceIds, name:"instanceIds", max: 50)
+            try validate(instanceIds, name:"instanceIds", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3448,6 +4449,7 @@ extension SSM {
             AWSShapeMember(label: "InstancePatchStates", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The high-level patch state for the requested instances.
         public let instancePatchStates: [InstancePatchState]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -3456,6 +4458,12 @@ extension SSM {
         public init(instancePatchStates: [InstancePatchState]? = nil, nextToken: String? = nil) {
             self.instancePatchStates = instancePatchStates
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try instancePatchStates?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3471,6 +4479,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Each entry in the array is a structure containing: Key (string, between 1 and 128 characters) Values (array of strings, each string between 1 and 256 characters)
         public let filters: [PatchOrchestratorFilter]?
         /// The ID of the instance whose patch state information should be retrieved.
@@ -3487,6 +4496,17 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case instanceId = "InstanceId"
@@ -3500,6 +4520,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Patches", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Each entry in the array is a structure containing: Title (string) KBId (string) Classification (string) Severity (string) State (string, such as "INSTALLED" or "FAILED") InstalledTime (DateTime) InstalledBy (string)
@@ -3522,6 +4543,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Specify the delete inventory ID for which you want information. This ID was returned by the DeleteInventory action.
         public let deletionId: String?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3533,6 +4555,11 @@ extension SSM {
             self.deletionId = deletionId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3547,6 +4574,7 @@ extension SSM {
             AWSShapeMember(label: "InventoryDeletions", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of status items for deleted inventory.
         public let inventoryDeletions: [InventoryDeletionStatusItem]?
         /// The token for the next set of items to return. Use this token to get the next set of results.
@@ -3555,6 +4583,12 @@ extension SSM {
         public init(inventoryDeletions: [InventoryDeletionStatusItem]? = nil, nextToken: String? = nil) {
             self.inventoryDeletions = inventoryDeletions
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try inventoryDeletions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3571,6 +4605,7 @@ extension SSM {
             AWSShapeMember(label: "TaskId", required: true, type: .string), 
             AWSShapeMember(label: "WindowExecutionId", required: true, type: .string)
         ]
+
         /// Optional filters used to scope down the returned task invocations. The supported filter key is STATUS with the corresponding values PENDING, IN_PROGRESS, SUCCESS, FAILED, TIMED_OUT, CANCELLING, and CANCELLED.
         public let filters: [MaintenanceWindowFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3590,6 +4625,22 @@ extension SSM {
             self.windowExecutionId = windowExecutionId
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
+            try validate(taskId, name:"taskId", max: 36)
+            try validate(taskId, name:"taskId", min: 36)
+            try validate(taskId, name:"taskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3604,6 +4655,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowExecutionTaskInvocationIdentities", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Information about the task invocation results per invocation.
@@ -3612,6 +4664,12 @@ extension SSM {
         public init(nextToken: String? = nil, windowExecutionTaskInvocationIdentities: [MaintenanceWindowExecutionTaskInvocationIdentity]? = nil) {
             self.nextToken = nextToken
             self.windowExecutionTaskInvocationIdentities = windowExecutionTaskInvocationIdentities
+        }
+
+        public func validate() throws {
+            try windowExecutionTaskInvocationIdentities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3627,6 +4685,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowExecutionId", required: true, type: .string)
         ]
+
         /// Optional filters used to scope down the returned tasks. The supported filter key is STATUS with the corresponding values PENDING, IN_PROGRESS, SUCCESS, FAILED, TIMED_OUT, CANCELLING, and CANCELLED. 
         public let filters: [MaintenanceWindowFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3643,6 +4702,19 @@ extension SSM {
             self.windowExecutionId = windowExecutionId
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3656,6 +4728,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowExecutionTaskIdentities", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Information about the task executions.
@@ -3664,6 +4737,12 @@ extension SSM {
         public init(nextToken: String? = nil, windowExecutionTaskIdentities: [MaintenanceWindowExecutionTaskIdentity]? = nil) {
             self.nextToken = nextToken
             self.windowExecutionTaskIdentities = windowExecutionTaskIdentities
+        }
+
+        public func validate() throws {
+            try windowExecutionTaskIdentities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3679,6 +4758,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// Each entry in the array is a structure containing: Key (string, between 1 and 128 characters) Values (array of strings, each string is between 1 and 256 characters) The supported Keys are ExecutedBefore and ExecutedAfter with the value being a date/time string such as 2016-11-04T05:00:00Z.
         public let filters: [MaintenanceWindowFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3695,6 +4775,19 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3708,6 +4801,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowExecutions", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Information about the maintenance window executions.
@@ -3716,6 +4810,12 @@ extension SSM {
         public init(nextToken: String? = nil, windowExecutions: [MaintenanceWindowExecution]? = nil) {
             self.nextToken = nextToken
             self.windowExecutions = windowExecutions
+        }
+
+        public func validate() throws {
+            try windowExecutions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3733,6 +4833,7 @@ extension SSM {
             AWSShapeMember(label: "Targets", required: false, type: .list), 
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// Filters used to limit the range of results. For example, you can limit maintenance window executions to only those scheduled before or after a certain date and time.
         public let filters: [PatchOrchestratorFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3755,6 +4856,23 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3770,6 +4888,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ScheduledWindowExecutions", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. (You use this token in the next call.)
         public let nextToken: String?
         /// Information about maintenance window executions scheduled for the specified time range.
@@ -3778,6 +4897,12 @@ extension SSM {
         public init(nextToken: String? = nil, scheduledWindowExecutions: [ScheduledWindowExecution]? = nil) {
             self.nextToken = nextToken
             self.scheduledWindowExecutions = scheduledWindowExecutions
+        }
+
+        public func validate() throws {
+            try scheduledWindowExecutions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3793,6 +4918,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// Optional filters that can be used to narrow down the scope of the returned window targets. The supported filter keys are Type, WindowTargetId and OwnerInformation.
         public let filters: [MaintenanceWindowFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3809,6 +4935,19 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3822,6 +4961,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Information about the targets in the maintenance window.
@@ -3830,6 +4970,12 @@ extension SSM {
         public init(nextToken: String? = nil, targets: [MaintenanceWindowTarget]? = nil) {
             self.nextToken = nextToken
             self.targets = targets
+        }
+
+        public func validate() throws {
+            try targets?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3845,6 +4991,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// Optional filters used to narrow down the scope of the returned tasks. The supported filter keys are WindowTaskId, TaskArn, Priority, and TaskType.
         public let filters: [MaintenanceWindowFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3861,6 +5008,19 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -3874,6 +5034,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tasks", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Information about the tasks in the maintenance window.
@@ -3882,6 +5043,12 @@ extension SSM {
         public init(nextToken: String? = nil, tasks: [MaintenanceWindowTask]? = nil) {
             self.nextToken = nextToken
             self.tasks = tasks
+        }
+
+        public func validate() throws {
+            try tasks?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3897,6 +5064,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceType", required: true, type: .enum), 
             AWSShapeMember(label: "Targets", required: true, type: .list)
         ]
+
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
         public let maxResults: Int32?
         /// The token for the next set of items to return. (You received this token from a previous call.)
@@ -3913,6 +5081,15 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", min: 1)
+            try targets.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case nextToken = "NextToken"
@@ -3926,6 +5103,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowIdentities", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. (You use this token in the next call.)
         public let nextToken: String?
         /// Information about the maintenance window targets and tasks an instance is associated with.
@@ -3934,6 +5112,12 @@ extension SSM {
         public init(nextToken: String? = nil, windowIdentities: [MaintenanceWindowIdentityForTarget]? = nil) {
             self.nextToken = nextToken
             self.windowIdentities = windowIdentities
+        }
+
+        public func validate() throws {
+            try windowIdentities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3948,6 +5132,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Optional filters used to narrow down the scope of the returned maintenance windows. Supported filter keys are Name and Enabled.
         public let filters: [MaintenanceWindowFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -3959,6 +5144,16 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 10)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3973,6 +5168,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WindowIdentities", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Information about the maintenance windows.
@@ -3981,6 +5177,12 @@ extension SSM {
         public init(nextToken: String? = nil, windowIdentities: [MaintenanceWindowIdentity]? = nil) {
             self.nextToken = nextToken
             self.windowIdentities = windowIdentities
+        }
+
+        public func validate() throws {
+            try windowIdentities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3995,6 +5197,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OpsItemFilters", required: false, type: .list)
         ]
+
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
         public let maxResults: Int32?
         /// A token to start the list. Use this token to get the next set of results.
@@ -4006,6 +5209,11 @@ extension SSM {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.opsItemFilters = opsItemFilters
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4020,6 +5228,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OpsItemSummaries", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. Use this token to get the next set of results.
         public let nextToken: String?
         /// A list of OpsItems.
@@ -4028,6 +5237,12 @@ extension SSM {
         public init(nextToken: String? = nil, opsItemSummaries: [OpsItemSummary]? = nil) {
             self.nextToken = nextToken
             self.opsItemSummaries = opsItemSummaries
+        }
+
+        public func validate() throws {
+            try opsItemSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4043,6 +5258,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ParameterFilters", required: false, type: .list)
         ]
+
         /// One or more filters. Use a filter to return a more specific list of results.
         public let filters: [ParametersFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -4059,6 +5275,17 @@ extension SSM {
             self.parameterFilters = parameterFilters
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try parameterFilters?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -4072,6 +5299,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Parameters", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Parameters returned by the request.
@@ -4080,6 +5308,12 @@ extension SSM {
         public init(nextToken: String? = nil, parameters: [ParameterMetadata]? = nil) {
             self.nextToken = nextToken
             self.parameters = parameters
+        }
+
+        public func validate() throws {
+            try parameters?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4094,6 +5328,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Each element in the array is a structure containing:  Key: (string, "NAME_PREFIX" or "OWNER") Value: (array of strings, exactly 1 entry, between 1 and 255 characters)
         public let filters: [PatchOrchestratorFilter]?
         /// The maximum number of patch baselines to return (per page).
@@ -4105,6 +5340,16 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4119,6 +5364,7 @@ extension SSM {
             AWSShapeMember(label: "BaselineIdentities", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An array of PatchBaselineIdentity elements.
         public let baselineIdentities: [PatchBaselineIdentity]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -4127,6 +5373,12 @@ extension SSM {
         public init(baselineIdentities: [PatchBaselineIdentity]? = nil, nextToken: String? = nil) {
             self.baselineIdentities = baselineIdentities
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try baselineIdentities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4139,11 +5391,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PatchGroup", required: true, type: .string)
         ]
+
         /// The name of the patch group whose patch snapshot should be retrieved.
         public let patchGroup: String
 
         public init(patchGroup: String) {
             self.patchGroup = patchGroup
+        }
+
+        public func validate() throws {
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4162,6 +5421,7 @@ extension SSM {
             AWSShapeMember(label: "InstancesWithNotApplicablePatches", required: false, type: .integer), 
             AWSShapeMember(label: "InstancesWithUnreportedNotApplicablePatches", required: false, type: .integer)
         ]
+
         /// The number of instances in the patch group.
         public let instances: Int32?
         /// The number of instances with patches from the patch baseline that failed to install.
@@ -4208,6 +5468,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// One or more filters. Use a filter to return a more specific list of results.
         public let filters: [PatchOrchestratorFilter]?
         /// The maximum number of patch groups to return (per page).
@@ -4219,6 +5480,16 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4233,6 +5504,7 @@ extension SSM {
             AWSShapeMember(label: "Mappings", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Each entry in the array contains: PatchGroup: string (between 1 and 256 characters, Regex: ^([\p{L}\p{Z}\p{N}_.:/=+\-@]*)$) PatchBaselineIdentity: A PatchBaselineIdentity element. 
         public let mappings: [PatchGroupPatchBaselineMapping]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -4241,6 +5513,12 @@ extension SSM {
         public init(mappings: [PatchGroupPatchBaselineMapping]? = nil, nextToken: String? = nil) {
             self.mappings = mappings
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try mappings?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4257,6 +5535,7 @@ extension SSM {
             AWSShapeMember(label: "PatchSet", required: false, type: .enum), 
             AWSShapeMember(label: "Property", required: true, type: .enum)
         ]
+
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
         public let maxResults: Int32?
         /// The token for the next set of items to return. (You received this token from a previous call.)
@@ -4276,6 +5555,11 @@ extension SSM {
             self.property = property
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case nextToken = "NextToken"
@@ -4290,6 +5574,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Properties", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. (You use this token in the next call.)
         public let nextToken: String?
         /// A list of the properties for patches matching the filter request parameters.
@@ -4313,6 +5598,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "State", required: true, type: .enum)
         ]
+
         /// One or more filters to limit the type of sessions returned by the request.
         public let filters: [SessionFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -4329,6 +5615,16 @@ extension SSM {
             self.state = state
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(maxResults, name:"maxResults", max: 200)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -4342,6 +5638,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Sessions", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. (You received this token from a previous call.)
         public let nextToken: String?
         /// A list of sessions meeting the request parameters.
@@ -4350,6 +5647,12 @@ extension SSM {
         public init(nextToken: String? = nil, sessions: [Session]? = nil) {
             self.nextToken = nextToken
             self.sessions = sessions
+        }
+
+        public func validate() throws {
+            try sessions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4364,6 +5667,7 @@ extension SSM {
             AWSShapeMember(label: "DefaultVersionName", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The default version of the document.
         public let defaultVersion: String?
         /// The default version of the artifact associated with the document.
@@ -4375,6 +5679,12 @@ extension SSM {
             self.defaultVersion = defaultVersion
             self.defaultVersionName = defaultVersionName
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(defaultVersion, name:"defaultVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(defaultVersionName, name:"defaultVersionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4408,6 +5718,7 @@ extension SSM {
             AWSShapeMember(label: "TargetType", required: false, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// Details about the document attachments, including names, locations, sizes, etc.
         public let attachmentsInformation: [AttachmentInformation]?
         /// The date when the document was created.
@@ -4475,6 +5786,25 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try attachmentsInformation?.forEach {
+                try $0.validate()
+            }
+            try validate(defaultVersion, name:"defaultVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(hash, name:"hash", max: 256)
+            try validate(latestVersion, name:"latestVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(schemaVersion, name:"schemaVersion", pattern: "([0-9]+)\\.([0-9]+)")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+            try validate(targetType, name:"targetType", max: 200)
+            try validate(targetType, name:"targetType", pattern: "^\\/[\\w\\.\\-\\:\\/]*$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attachmentsInformation = "AttachmentsInformation"
             case createdDate = "CreatedDate"
@@ -4505,6 +5835,7 @@ extension SSM {
             AWSShapeMember(label: "key", required: true, type: .enum), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The name of the filter.
         public let key: DocumentFilterKey
         /// The value of the filter.
@@ -4513,6 +5844,10 @@ extension SSM {
         public init(key: DocumentFilterKey, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4554,6 +5889,7 @@ extension SSM {
             AWSShapeMember(label: "TargetType", required: false, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// The document format, either JSON or YAML.
         public let documentFormat: DocumentFormat?
         /// The document type.
@@ -4588,6 +5924,19 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(schemaVersion, name:"schemaVersion", pattern: "([0-9]+)\\.([0-9]+)")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+            try validate(targetType, name:"targetType", max: 200)
+            try validate(targetType, name:"targetType", pattern: "^\\/[\\w\\.\\-\\:\\/]*$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case documentFormat = "DocumentFormat"
             case documentType = "DocumentType"
@@ -4607,6 +5956,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The name of the filter key.
         public let key: String?
         /// The value for the filter key.
@@ -4615,6 +5965,15 @@ extension SSM {
         public init(key: String? = nil, values: [String]? = nil) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 256)
+                try validate($0, name:"values[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4630,6 +5989,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// If specified, the default values for the parameters. Parameters without a default value are required. Parameters with a default value are optional.
         public let defaultValue: String?
         /// A description of what the parameter does, how to use it, the default value, and whether or not the parameter is optional.
@@ -4694,6 +6054,7 @@ extension SSM {
             AWSShapeMember(label: "StatusInformation", required: false, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// The date the document was created.
         public let createdDate: TimeStamp?
         /// The document format, either JSON or YAML.
@@ -4722,6 +6083,12 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdDate = "CreatedDate"
             case documentFormat = "DocumentFormat"
@@ -4739,6 +6106,7 @@ extension SSM {
             AWSShapeMember(label: "Patch", required: false, type: .structure), 
             AWSShapeMember(label: "PatchStatus", required: false, type: .structure)
         ]
+
         /// Provides metadata for a patch, including information such as the KB ID, severity, classification and a URL for where more information can be obtained about the patch.
         public let patch: Patch?
         /// The status of the patch in a patch baseline. This includes information about whether the patch is currently approved, due to be approved by a rule, explicitly approved, or explicitly rejected and the date the patch was or will be approved.
@@ -4747,6 +6115,10 @@ extension SSM {
         public init(patch: Patch? = nil, patchStatus: PatchStatus? = nil) {
             self.patch = patch
             self.patchStatus = patchStatus
+        }
+
+        public func validate() throws {
+            try patch?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4767,6 +6139,7 @@ extension SSM {
             AWSShapeMember(label: "Fault", required: false, type: .enum), 
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// The association.
         public let entry: CreateAssociationBatchRequestEntry?
         /// The source of the failure.
@@ -4778,6 +6151,10 @@ extension SSM {
             self.entry = entry
             self.fault = fault
             self.message = message
+        }
+
+        public func validate() throws {
+            try entry?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4793,6 +6170,7 @@ extension SSM {
             AWSShapeMember(label: "FailureStage", required: false, type: .string), 
             AWSShapeMember(label: "FailureType", required: false, type: .string)
         ]
+
         /// Detailed information about the Automation step failure.
         public let details: [String: [String]]?
         /// The stage of the Automation execution when the failure occurred. The stages include the following: InputValidation, PreVerification, Invocation, PostVerification.
@@ -4824,11 +6202,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AutomationExecutionId", required: true, type: .string)
         ]
+
         /// The unique identifier for an existing automation execution to examine. The execution ID is returned by StartAutomationExecution when the execution of an Automation document is initiated.
         public let automationExecutionId: String
 
         public init(automationExecutionId: String) {
             self.automationExecutionId = automationExecutionId
+        }
+
+        public func validate() throws {
+            try validate(automationExecutionId, name:"automationExecutionId", max: 36)
+            try validate(automationExecutionId, name:"automationExecutionId", min: 36)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4840,11 +6224,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AutomationExecution", required: false, type: .structure)
         ]
+
         /// Detailed information about the current state of an automation execution.
         public let automationExecution: AutomationExecution?
 
         public init(automationExecution: AutomationExecution? = nil) {
             self.automationExecution = automationExecution
+        }
+
+        public func validate() throws {
+            try automationExecution?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4858,6 +6247,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceId", required: true, type: .string), 
             AWSShapeMember(label: "PluginName", required: false, type: .string)
         ]
+
         /// (Required) The parent command ID of the invocation plugin.
         public let commandId: String
         /// (Required) The ID of the managed instance targeted by the command. A managed instance can be an Amazon EC2 instance or an instance in your hybrid environment that is configured for Systems Manager.
@@ -4869,6 +6259,13 @@ extension SSM {
             self.commandId = commandId
             self.instanceId = instanceId
             self.pluginName = pluginName
+        }
+
+        public func validate() throws {
+            try validate(commandId, name:"commandId", max: 36)
+            try validate(commandId, name:"commandId", min: 36)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(pluginName, name:"pluginName", min: 4)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4898,6 +6295,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "StatusDetails", required: false, type: .string)
         ]
+
         /// CloudWatch Logs information where Systems Manager sent the command output.
         public let cloudWatchOutputConfig: CloudWatchOutputConfig?
         /// The parent command ID of the invocation plugin.
@@ -4953,6 +6351,24 @@ extension SSM {
             self.statusDetails = statusDetails
         }
 
+        public func validate() throws {
+            try cloudWatchOutputConfig?.validate()
+            try validate(commandId, name:"commandId", max: 36)
+            try validate(commandId, name:"commandId", min: 36)
+            try validate(comment, name:"comment", max: 100)
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(executionElapsedTime, name:"executionElapsedTime", pattern: "^([\\-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d(?!:))?)?(\\17[0-5]\\d([\\.,]\\d)?)?([zZ]|([\\-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$")
+            try validate(executionEndDateTime, name:"executionEndDateTime", pattern: "^([\\-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d(?!:))?)?(\\17[0-5]\\d([\\.,]\\d)?)?([zZ]|([\\-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$")
+            try validate(executionStartDateTime, name:"executionStartDateTime", pattern: "^([\\-]?\\d{4}(?!\\d{2}\\b))((-?)((0[1-9]|1[0-2])(\\3([12]\\d|0[1-9]|3[01]))?|W([0-4]\\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\\d|[12]\\d{2}|3([0-5]\\d|6[1-6])))([T\\s]((([01]\\d|2[0-3])((:?)[0-5]\\d)?|24\\:?00)([\\.,]\\d(?!:))?)?(\\17[0-5]\\d([\\.,]\\d)?)?([zZ]|([\\-])([01]\\d|2[0-3]):?([0-5]\\d)?)?)?)?$")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(pluginName, name:"pluginName", min: 4)
+            try validate(standardErrorContent, name:"standardErrorContent", max: 8000)
+            try validate(standardOutputContent, name:"standardOutputContent", max: 24000)
+            try validate(statusDetails, name:"statusDetails", max: 100)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudWatchOutputConfig = "CloudWatchOutputConfig"
             case commandId = "CommandId"
@@ -4978,11 +6394,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Target", required: true, type: .string)
         ]
+
         /// The ID of the instance.
         public let target: String
 
         public init(target: String) {
             self.target = target
+        }
+
+        public func validate() throws {
+            try validate(target, name:"target", max: 50)
+            try validate(target, name:"target", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4995,6 +6417,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "Target", required: false, type: .string)
         ]
+
         /// The status of the connection to the instance. For example, 'Connected' or 'Not Connected'.
         public let status: ConnectionStatus?
         /// The ID of the instance to check connection status. 
@@ -5003,6 +6426,11 @@ extension SSM {
         public init(status: ConnectionStatus? = nil, target: String? = nil) {
             self.status = status
             self.target = target
+        }
+
+        public func validate() throws {
+            try validate(target, name:"target", max: 50)
+            try validate(target, name:"target", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5015,6 +6443,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OperatingSystem", required: false, type: .enum)
         ]
+
         /// Returns the default patch baseline for the specified operating system.
         public let operatingSystem: OperatingSystem?
 
@@ -5032,6 +6461,7 @@ extension SSM {
             AWSShapeMember(label: "BaselineId", required: false, type: .string), 
             AWSShapeMember(label: "OperatingSystem", required: false, type: .enum)
         ]
+
         /// The ID of the default patch baseline.
         public let baselineId: String?
         /// The operating system for the returned patch baseline. 
@@ -5040,6 +6470,12 @@ extension SSM {
         public init(baselineId: String? = nil, operatingSystem: OperatingSystem? = nil) {
             self.baselineId = baselineId
             self.operatingSystem = operatingSystem
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5053,6 +6489,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceId", required: true, type: .string), 
             AWSShapeMember(label: "SnapshotId", required: true, type: .string)
         ]
+
         /// The ID of the instance for which the appropriate patch snapshot should be retrieved.
         public let instanceId: String
         /// The user-defined snapshot ID.
@@ -5061,6 +6498,13 @@ extension SSM {
         public init(instanceId: String, snapshotId: String) {
             self.instanceId = instanceId
             self.snapshotId = snapshotId
+        }
+
+        public func validate() throws {
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(snapshotId, name:"snapshotId", max: 36)
+            try validate(snapshotId, name:"snapshotId", min: 36)
+            try validate(snapshotId, name:"snapshotId", pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5076,6 +6520,7 @@ extension SSM {
             AWSShapeMember(label: "SnapshotDownloadUrl", required: false, type: .string), 
             AWSShapeMember(label: "SnapshotId", required: false, type: .string)
         ]
+
         /// The ID of the instance.
         public let instanceId: String?
         /// Returns the specific operating system (for example Windows Server 2012 or Amazon Linux 2015.09) on the instance for the specified patch snapshot.
@@ -5090,6 +6535,13 @@ extension SSM {
             self.product = product
             self.snapshotDownloadUrl = snapshotDownloadUrl
             self.snapshotId = snapshotId
+        }
+
+        public func validate() throws {
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(snapshotId, name:"snapshotId", max: 36)
+            try validate(snapshotId, name:"snapshotId", min: 36)
+            try validate(snapshotId, name:"snapshotId", pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5107,6 +6559,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// Returns the document in the specified format. The document format can be either JSON or YAML. JSON is the default format.
         public let documentFormat: DocumentFormat?
         /// The document version for which you want information.
@@ -5121,6 +6574,12 @@ extension SSM {
             self.documentVersion = documentVersion
             self.name = name
             self.versionName = versionName
+        }
+
+        public func validate() throws {
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5143,6 +6602,7 @@ extension SSM {
             AWSShapeMember(label: "StatusInformation", required: false, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// A description of the document attachments, including names, locations, sizes, etc.
         public let attachmentsContent: [AttachmentContent]?
         /// The contents of the Systems Manager document.
@@ -5174,6 +6634,16 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try attachmentsContent?.forEach {
+                try $0.validate()
+            }
+            try validate(content, name:"content", min: 1)
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attachmentsContent = "AttachmentsContent"
             case content = "Content"
@@ -5195,6 +6665,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResultAttributes", required: false, type: .list)
         ]
+
         /// Returns counts of inventory types based on one or more expressions. For example, if you aggregate by using an expression that uses the AWS:InstanceInformation.PlatformType type, you can see a count of how many Windows and Linux instances exist in your inventoried fleet.
         public let aggregators: [InventoryAggregator]?
         /// One or more filters. Use a filter to return a more specific list of results.
@@ -5214,6 +6685,26 @@ extension SSM {
             self.resultAttributes = resultAttributes
         }
 
+        public func validate() throws {
+            try aggregators?.forEach {
+                try $0.validate()
+            }
+            try validate(aggregators, name:"aggregators", max: 10)
+            try validate(aggregators, name:"aggregators", min: 1)
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try resultAttributes?.forEach {
+                try $0.validate()
+            }
+            try validate(resultAttributes, name:"resultAttributes", max: 1)
+            try validate(resultAttributes, name:"resultAttributes", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case aggregators = "Aggregators"
             case filters = "Filters"
@@ -5228,6 +6719,7 @@ extension SSM {
             AWSShapeMember(label: "Entities", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Collection of inventory entities such as a collection of instance inventory. 
         public let entities: [InventoryResultEntity]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -5252,6 +6744,7 @@ extension SSM {
             AWSShapeMember(label: "SubType", required: false, type: .boolean), 
             AWSShapeMember(label: "TypeName", required: false, type: .string)
         ]
+
         /// Returns inventory schemas that support aggregation. For example, this call returns the AWS:InstanceInformation type, because it supports aggregation based on the PlatformName, PlatformType, and PlatformVersion attributes.
         public let aggregator: Bool?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -5271,6 +6764,13 @@ extension SSM {
             self.typeName = typeName
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 200)
+            try validate(maxResults, name:"maxResults", min: 50)
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case aggregator = "Aggregator"
             case maxResults = "MaxResults"
@@ -5285,6 +6785,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Schemas", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// Inventory schemas returned by the request.
@@ -5293,6 +6794,12 @@ extension SSM {
         public init(nextToken: String? = nil, schemas: [InventoryItemSchema]? = nil) {
             self.nextToken = nextToken
             self.schemas = schemas
+        }
+
+        public func validate() throws {
+            try schemas?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5305,11 +6812,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowExecutionId", required: true, type: .string)
         ]
+
         /// The ID of the maintenance window execution that includes the task.
         public let windowExecutionId: String
 
         public init(windowExecutionId: String) {
             self.windowExecutionId = windowExecutionId
+        }
+
+        public func validate() throws {
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5326,6 +6840,7 @@ extension SSM {
             AWSShapeMember(label: "TaskIds", required: false, type: .list), 
             AWSShapeMember(label: "WindowExecutionId", required: false, type: .string)
         ]
+
         /// The time the maintenance window finished running.
         public let endTime: TimeStamp?
         /// The time the maintenance window started running.
@@ -5348,6 +6863,19 @@ extension SSM {
             self.windowExecutionId = windowExecutionId
         }
 
+        public func validate() throws {
+            try validate(statusDetails, name:"statusDetails", max: 250)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try taskIds?.forEach {
+                try validate($0, name:"taskIds[]", max: 36)
+                try validate($0, name:"taskIds[]", min: 36)
+                try validate($0, name:"taskIds[]", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            }
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "EndTime"
             case startTime = "StartTime"
@@ -5364,6 +6892,7 @@ extension SSM {
             AWSShapeMember(label: "TaskId", required: true, type: .string), 
             AWSShapeMember(label: "WindowExecutionId", required: true, type: .string)
         ]
+
         /// The invocation ID to retrieve.
         public let invocationId: String
         /// The ID of the specific task in the maintenance window task that should be retrieved. 
@@ -5375,6 +6904,18 @@ extension SSM {
             self.invocationId = invocationId
             self.taskId = taskId
             self.windowExecutionId = windowExecutionId
+        }
+
+        public func validate() throws {
+            try validate(invocationId, name:"invocationId", max: 36)
+            try validate(invocationId, name:"invocationId", min: 36)
+            try validate(invocationId, name:"invocationId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(taskId, name:"taskId", max: 36)
+            try validate(taskId, name:"taskId", min: 36)
+            try validate(taskId, name:"taskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5399,6 +6940,7 @@ extension SSM {
             AWSShapeMember(label: "WindowExecutionId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTargetId", required: false, type: .string)
         ]
+
         /// The time that the task finished running on the target.
         public let endTime: TimeStamp?
         /// The execution ID.
@@ -5439,6 +6981,23 @@ extension SSM {
             self.windowTargetId = windowTargetId
         }
 
+        public func validate() throws {
+            try validate(invocationId, name:"invocationId", max: 36)
+            try validate(invocationId, name:"invocationId", min: 36)
+            try validate(invocationId, name:"invocationId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(ownerInformation, name:"ownerInformation", max: 128)
+            try validate(ownerInformation, name:"ownerInformation", min: 1)
+            try validate(statusDetails, name:"statusDetails", max: 250)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try validate(taskExecutionId, name:"taskExecutionId", max: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", min: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "EndTime"
             case executionId = "ExecutionId"
@@ -5460,6 +7019,7 @@ extension SSM {
             AWSShapeMember(label: "TaskId", required: true, type: .string), 
             AWSShapeMember(label: "WindowExecutionId", required: true, type: .string)
         ]
+
         /// The ID of the specific task execution in the maintenance window task that should be retrieved.
         public let taskId: String
         /// The ID of the maintenance window execution that includes the task.
@@ -5468,6 +7028,15 @@ extension SSM {
         public init(taskId: String, windowExecutionId: String) {
             self.taskId = taskId
             self.windowExecutionId = windowExecutionId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 36)
+            try validate(taskId, name:"taskId", min: 36)
+            try validate(taskId, name:"taskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5492,6 +7061,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "WindowExecutionId", required: false, type: .string)
         ]
+
         /// The time the task execution completed.
         public let endTime: TimeStamp?
         /// The defined maximum number of task executions that could be run in parallel.
@@ -5535,6 +7105,26 @@ extension SSM {
             self.windowExecutionId = windowExecutionId
         }
 
+        public func validate() throws {
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(priority, name:"priority", min: 0)
+            try validate(statusDetails, name:"statusDetails", max: 250)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try validate(taskArn, name:"taskArn", max: 1600)
+            try validate(taskArn, name:"taskArn", min: 1)
+            try validate(taskExecutionId, name:"taskExecutionId", max: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", min: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "EndTime"
             case maxConcurrency = "MaxConcurrency"
@@ -5556,11 +7146,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// The ID of the maintenance window for which you want to retrieve information.
         public let windowId: String
 
         public init(windowId: String) {
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5585,6 +7182,7 @@ extension SSM {
             AWSShapeMember(label: "StartDate", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// Whether targets must be registered with the maintenance window before tasks can be defined for those targets.
         public let allowUnassociatedTargets: Bool?
         /// The date the maintenance window was created.
@@ -5631,6 +7229,23 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try validate(cutoff, name:"cutoff", max: 23)
+            try validate(cutoff, name:"cutoff", min: 0)
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(duration, name:"duration", max: 24)
+            try validate(duration, name:"duration", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(schedule, name:"schedule", max: 256)
+            try validate(schedule, name:"schedule", min: 1)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowUnassociatedTargets = "AllowUnassociatedTargets"
             case createdDate = "CreatedDate"
@@ -5654,6 +7269,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: true, type: .string), 
             AWSShapeMember(label: "WindowTaskId", required: true, type: .string)
         ]
+
         /// The maintenance window ID that includes the task to retrieve.
         public let windowId: String
         /// The maintenance window task ID to retrieve.
@@ -5662,6 +7278,15 @@ extension SSM {
         public init(windowId: String, windowTaskId: String) {
             self.windowId = windowId
             self.windowTaskId = windowTaskId
+        }
+
+        public func validate() throws {
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5687,6 +7312,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTaskId", required: false, type: .string)
         ]
+
         /// The retrieved task description.
         public let description: String?
         /// The location in Amazon S3 where the task results are logged.   LoggingInfo has been deprecated. To specify an S3 bucket to contain logs, instead use the OutputS3BucketName and OutputS3KeyPrefix options in the TaskInvocationParameters structure. For information about how Systems Manager handles these options for the supported maintenance window task types, see MaintenanceWindowTaskInvocationParameters. 
@@ -5733,6 +7359,36 @@ extension SSM {
             self.windowTaskId = windowTaskId
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try loggingInfo?.validate()
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(priority, name:"priority", min: 0)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(taskArn, name:"taskArn", max: 1600)
+            try validate(taskArn, name:"taskArn", min: 1)
+            try taskInvocationParameters?.validate()
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case loggingInfo = "LoggingInfo"
@@ -5755,11 +7411,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OpsItemId", required: true, type: .string)
         ]
+
         /// The ID of the OpsItem that you want to get.
         public let opsItemId: String
 
         public init(opsItemId: String) {
             self.opsItemId = opsItemId
+        }
+
+        public func validate() throws {
+            try validate(opsItemId, name:"opsItemId", pattern: "^(oi)-[0-9a-f]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5771,11 +7432,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OpsItem", required: false, type: .structure)
         ]
+
         /// The OpsItem.
         public let opsItem: OpsItem?
 
         public init(opsItem: OpsItem? = nil) {
             self.opsItem = opsItem
+        }
+
+        public func validate() throws {
+            try opsItem?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5790,6 +7456,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Optional aggregators that return counts of OpsItems based on one or more expressions.
         public let aggregators: [OpsAggregator]
         /// Optional filters used to scope down the returned OpsItems. 
@@ -5806,6 +7473,21 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try aggregators.forEach {
+                try $0.validate()
+            }
+            try validate(aggregators, name:"aggregators", max: 12)
+            try validate(aggregators, name:"aggregators", min: 1)
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case aggregators = "Aggregators"
             case filters = "Filters"
@@ -5819,6 +7501,7 @@ extension SSM {
             AWSShapeMember(label: "Entities", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of aggregated and filtered OpsItems.
         public let entities: [OpsEntity]?
         /// The token for the next set of items to return. Use this token to get the next set of results.
@@ -5842,6 +7525,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "WithDecryption", required: false, type: .boolean)
         ]
+
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
         public let maxResults: Int32?
         /// The name of a parameter you want to query.
@@ -5858,6 +7542,13 @@ extension SSM {
             self.withDecryption = withDecryption
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case name = "Name"
@@ -5871,6 +7562,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Parameters", required: false, type: .list)
         ]
+
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
         public let nextToken: String?
         /// A list of parameters returned by the request.
@@ -5879,6 +7571,12 @@ extension SSM {
         public init(nextToken: String? = nil, parameters: [ParameterHistory]? = nil) {
             self.nextToken = nextToken
             self.parameters = parameters
+        }
+
+        public func validate() throws {
+            try parameters?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5892,6 +7590,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "WithDecryption", required: false, type: .boolean)
         ]
+
         /// The name of the parameter you want to query.
         public let name: String
         /// Return decrypted values for secure string parameters. This flag is ignored for String and StringList parameter types.
@@ -5900,6 +7599,11 @@ extension SSM {
         public init(name: String, withDecryption: Bool? = nil) {
             self.name = name
             self.withDecryption = withDecryption
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5912,11 +7616,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Parameter", required: false, type: .structure)
         ]
+
         /// Information about a parameter.
         public let parameter: Parameter?
 
         public init(parameter: Parameter? = nil) {
             self.parameter = parameter
+        }
+
+        public func validate() throws {
+            try parameter?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5933,6 +7642,7 @@ extension SSM {
             AWSShapeMember(label: "Recursive", required: false, type: .boolean), 
             AWSShapeMember(label: "WithDecryption", required: false, type: .boolean)
         ]
+
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
         public let maxResults: Int32?
         /// A token to start the list. Use this token to get the next set of results. 
@@ -5955,6 +7665,16 @@ extension SSM {
             self.withDecryption = withDecryption
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 10)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try parameterFilters?.forEach {
+                try $0.validate()
+            }
+            try validate(path, name:"path", max: 2048)
+            try validate(path, name:"path", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case nextToken = "NextToken"
@@ -5970,6 +7690,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Parameters", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. Use this token to get the next set of results.
         public let nextToken: String?
         /// A list of parameters found in the specified hierarchy.
@@ -5978,6 +7699,12 @@ extension SSM {
         public init(nextToken: String? = nil, parameters: [Parameter]? = nil) {
             self.nextToken = nextToken
             self.parameters = parameters
+        }
+
+        public func validate() throws {
+            try parameters?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5991,6 +7718,7 @@ extension SSM {
             AWSShapeMember(label: "Names", required: true, type: .list), 
             AWSShapeMember(label: "WithDecryption", required: false, type: .boolean)
         ]
+
         /// Names of the parameters for which you want to query information.
         public let names: [String]
         /// Return decrypted secure string value. Return decrypted values for secure string parameters. This flag is ignored for String and StringList parameter types.
@@ -5999,6 +7727,15 @@ extension SSM {
         public init(names: [String], withDecryption: Bool? = nil) {
             self.names = names
             self.withDecryption = withDecryption
+        }
+
+        public func validate() throws {
+            try names.forEach {
+                try validate($0, name:"names[]", max: 2048)
+                try validate($0, name:"names[]", min: 1)
+            }
+            try validate(names, name:"names", max: 10)
+            try validate(names, name:"names", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6012,6 +7749,7 @@ extension SSM {
             AWSShapeMember(label: "InvalidParameters", required: false, type: .list), 
             AWSShapeMember(label: "Parameters", required: false, type: .list)
         ]
+
         /// A list of parameters that are not formatted correctly or do not run during an execution.
         public let invalidParameters: [String]?
         /// A list of details for a parameter.
@@ -6020,6 +7758,18 @@ extension SSM {
         public init(invalidParameters: [String]? = nil, parameters: [Parameter]? = nil) {
             self.invalidParameters = invalidParameters
             self.parameters = parameters
+        }
+
+        public func validate() throws {
+            try invalidParameters?.forEach {
+                try validate($0, name:"invalidParameters[]", max: 2048)
+                try validate($0, name:"invalidParameters[]", min: 1)
+            }
+            try validate(invalidParameters, name:"invalidParameters", max: 10)
+            try validate(invalidParameters, name:"invalidParameters", min: 1)
+            try parameters?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6033,6 +7783,7 @@ extension SSM {
             AWSShapeMember(label: "OperatingSystem", required: false, type: .enum), 
             AWSShapeMember(label: "PatchGroup", required: true, type: .string)
         ]
+
         /// Returns he operating system rule specified for patch groups using the patch baseline.
         public let operatingSystem: OperatingSystem?
         /// The name of the patch group whose patch baseline should be retrieved.
@@ -6041,6 +7792,12 @@ extension SSM {
         public init(operatingSystem: OperatingSystem? = nil, patchGroup: String) {
             self.operatingSystem = operatingSystem
             self.patchGroup = patchGroup
+        }
+
+        public func validate() throws {
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6055,6 +7812,7 @@ extension SSM {
             AWSShapeMember(label: "OperatingSystem", required: false, type: .enum), 
             AWSShapeMember(label: "PatchGroup", required: false, type: .string)
         ]
+
         /// The ID of the patch baseline that should be used for the patch group.
         public let baselineId: String?
         /// The operating system rule specified for patch groups using the patch baseline.
@@ -6068,6 +7826,15 @@ extension SSM {
             self.patchGroup = patchGroup
         }
 
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case baselineId = "BaselineId"
             case operatingSystem = "OperatingSystem"
@@ -6079,11 +7846,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BaselineId", required: true, type: .string)
         ]
+
         /// The ID of the patch baseline to retrieve.
         public let baselineId: String
 
         public init(baselineId: String) {
             self.baselineId = baselineId
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6109,6 +7883,7 @@ extension SSM {
             AWSShapeMember(label: "RejectedPatchesAction", required: false, type: .enum), 
             AWSShapeMember(label: "Sources", required: false, type: .list)
         ]
+
         /// A set of rules used to include patches in the baseline.
         public let approvalRules: PatchRuleGroup?
         /// A list of explicitly approved patches for the baseline.
@@ -6158,6 +7933,41 @@ extension SSM {
             self.sources = sources
         }
 
+        public func validate() throws {
+            try approvalRules?.validate()
+            try approvedPatches?.forEach {
+                try validate($0, name:"approvedPatches[]", max: 100)
+                try validate($0, name:"approvedPatches[]", min: 1)
+            }
+            try validate(approvedPatches, name:"approvedPatches", max: 50)
+            try validate(approvedPatches, name:"approvedPatches", min: 0)
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 1)
+            try globalFilters?.validate()
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try patchGroups?.forEach {
+                try validate($0, name:"patchGroups[]", max: 256)
+                try validate($0, name:"patchGroups[]", min: 1)
+                try validate($0, name:"patchGroups[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+            try rejectedPatches?.forEach {
+                try validate($0, name:"rejectedPatches[]", max: 100)
+                try validate($0, name:"rejectedPatches[]", min: 1)
+            }
+            try validate(rejectedPatches, name:"rejectedPatches", max: 50)
+            try validate(rejectedPatches, name:"rejectedPatches", min: 0)
+            try sources?.forEach {
+                try $0.validate()
+            }
+            try validate(sources, name:"sources", max: 20)
+            try validate(sources, name:"sources", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case approvalRules = "ApprovalRules"
             case approvedPatches = "ApprovedPatches"
@@ -6181,11 +7991,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SettingId", required: true, type: .string)
         ]
+
         /// The ID of the service setting to get.
         public let settingId: String
 
         public init(settingId: String) {
             self.settingId = settingId
+        }
+
+        public func validate() throws {
+            try validate(settingId, name:"settingId", max: 1000)
+            try validate(settingId, name:"settingId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6197,11 +8013,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServiceSetting", required: false, type: .structure)
         ]
+
         /// The query result of the current service setting.
         public let serviceSetting: ServiceSetting?
 
         public init(serviceSetting: ServiceSetting? = nil) {
             self.serviceSetting = serviceSetting
+        }
+
+        public func validate() throws {
+            try serviceSetting?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6214,6 +8035,7 @@ extension SSM {
             AWSShapeMember(label: "DetailedStatus", required: false, type: .string), 
             AWSShapeMember(label: "InstanceAssociationStatusAggregatedCount", required: false, type: .map)
         ]
+
         /// Detailed status information about the aggregated associations.
         public let detailedStatus: String?
         /// The number of associations for the instance(s).
@@ -6237,6 +8059,7 @@ extension SSM {
             AWSShapeMember(label: "Content", required: false, type: .string), 
             AWSShapeMember(label: "InstanceId", required: false, type: .string)
         ]
+
         /// The association ID.
         public let associationId: String?
         /// Version information for the association on the instance.
@@ -6253,6 +8076,13 @@ extension SSM {
             self.instanceId = instanceId
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(content, name:"content", min: 1)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationVersion = "AssociationVersion"
@@ -6265,11 +8095,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3Location", required: false, type: .structure)
         ]
+
         /// An Amazon S3 bucket where you want to store the results of this request.
         public let s3Location: S3OutputLocation?
 
         public init(s3Location: S3OutputLocation? = nil) {
             self.s3Location = s3Location
+        }
+
+        public func validate() throws {
+            try s3Location?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6281,6 +8116,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3OutputUrl", required: false, type: .structure)
         ]
+
         /// The URL of Amazon S3 bucket where you want to store the results of this request.
         public let s3OutputUrl: S3OutputUrl?
 
@@ -6308,6 +8144,7 @@ extension SSM {
             AWSShapeMember(label: "OutputUrl", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .string)
         ]
+
         /// The association ID.
         public let associationId: String?
         /// The name of the association applied to the instance.
@@ -6348,6 +8185,18 @@ extension SSM {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationName, name:"associationName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(errorCode, name:"errorCode", max: 10)
+            try validate(executionSummary, name:"executionSummary", max: 512)
+            try validate(executionSummary, name:"executionSummary", min: 1)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationName = "AssociationName"
@@ -6386,6 +8235,7 @@ extension SSM {
             AWSShapeMember(label: "RegistrationDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "ResourceType", required: false, type: .enum)
         ]
+
         /// The activation ID created by Systems Manager when the server or VM was registered.
         public let activationId: String?
         /// The version of SSM Agent running on your Linux instance. 
@@ -6447,6 +8297,17 @@ extension SSM {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(activationId, name:"activationId", pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+            try validate(agentVersion, name:"agentVersion", pattern: "^[0-9]{1,6}(\\.[0-9]{1,6}){2,3}$")
+            try validate(computerName, name:"computerName", max: 255)
+            try validate(computerName, name:"computerName", min: 1)
+            try validate(iamRole, name:"iamRole", max: 64)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(iPAddress, name:"iPAddress", max: 46)
+            try validate(iPAddress, name:"iPAddress", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activationId = "ActivationId"
             case agentVersion = "AgentVersion"
@@ -6475,6 +8336,7 @@ extension SSM {
             AWSShapeMember(label: "key", required: true, type: .enum), 
             AWSShapeMember(label: "valueSet", required: true, type: .list)
         ]
+
         /// The name of the filter. 
         public let key: InstanceInformationFilterKey
         /// The filter values.
@@ -6483,6 +8345,14 @@ extension SSM {
         public init(key: InstanceInformationFilterKey, valueSet: [String]) {
             self.key = key
             self.valueSet = valueSet
+        }
+
+        public func validate() throws {
+            try valueSet.forEach {
+                try validate($0, name:"valueSet[]", min: 1)
+            }
+            try validate(valueSet, name:"valueSet", max: 100)
+            try validate(valueSet, name:"valueSet", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6508,6 +8378,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The filter key name to describe your instances. For example: "InstanceIds"|"AgentVersion"|"PingStatus"|"PlatformTypes"|"ActivationIds"|"IamRole"|"ResourceType"|"AssociationStatus"|"Tag Key"
         public let key: String
         /// The filter values.
@@ -6516,6 +8387,15 @@ extension SSM {
         public init(key: String, values: [String]) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", min: 1)
+            try values.forEach {
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 100)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6543,6 +8423,7 @@ extension SSM {
             AWSShapeMember(label: "SnapshotId", required: false, type: .string), 
             AWSShapeMember(label: "UnreportedNotApplicableCount", required: false, type: .integer)
         ]
+
         /// The ID of the patch baseline used to patch the instance.
         public let baselineId: String
         /// The number of patches from the patch baseline that were attempted to be installed during the last patching operation, but failed to install.
@@ -6595,6 +8476,24 @@ extension SSM {
             self.unreportedNotApplicableCount = unreportedNotApplicableCount
         }
 
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(installOverrideList, name:"installOverrideList", max: 256)
+            try validate(installOverrideList, name:"installOverrideList", min: 1)
+            try validate(installOverrideList, name:"installOverrideList", pattern: "^https://.+$|^s3://([^/]+)/(.*?([^/]+))$")
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(ownerInformation, name:"ownerInformation", max: 128)
+            try validate(ownerInformation, name:"ownerInformation", min: 1)
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(snapshotId, name:"snapshotId", max: 36)
+            try validate(snapshotId, name:"snapshotId", min: 36)
+            try validate(snapshotId, name:"snapshotId", pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case baselineId = "BaselineId"
             case failedCount = "FailedCount"
@@ -6621,6 +8520,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The key for the filter. Supported values are FailedCount, InstalledCount, InstalledOtherCount, MissingCount and NotApplicableCount.
         public let key: String
         /// The type of comparison that should be performed for the value: Equal, NotEqual, LessThan or GreaterThan.
@@ -6632,6 +8532,13 @@ extension SSM {
             self.key = key
             self.`type` = `type`
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 200)
+            try validate(key, name:"key", min: 1)
+            try validate(values, name:"values", max: 1)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6655,6 +8562,7 @@ extension SSM {
             AWSShapeMember(label: "Expression", required: false, type: .string), 
             AWSShapeMember(label: "Groups", required: false, type: .list)
         ]
+
         /// Nested aggregators to further refine aggregation for an inventory type.
         public let aggregators: [InventoryAggregator]?
         /// The inventory type and attribute name for aggregation.
@@ -6666,6 +8574,21 @@ extension SSM {
             self.aggregators = aggregators
             self.expression = expression
             self.groups = groups
+        }
+
+        public func validate() throws {
+            try aggregators?.forEach {
+                try $0.validate()
+            }
+            try validate(aggregators, name:"aggregators", max: 10)
+            try validate(aggregators, name:"aggregators", min: 1)
+            try validate(expression, name:"expression", max: 1000)
+            try validate(expression, name:"expression", min: 1)
+            try groups?.forEach {
+                try $0.validate()
+            }
+            try validate(groups, name:"groups", max: 10)
+            try validate(groups, name:"groups", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6697,6 +8620,7 @@ extension SSM {
             AWSShapeMember(label: "LastStatusUpdateTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "TypeName", required: false, type: .string)
         ]
+
         /// The deletion ID returned by the DeleteInventory action.
         public let deletionId: String?
         /// The UTC timestamp when the delete operation started.
@@ -6722,6 +8646,13 @@ extension SSM {
             self.typeName = typeName
         }
 
+        public func validate() throws {
+            try deletionSummary?.validate()
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deletionId = "DeletionId"
             case deletionStartTime = "DeletionStartTime"
@@ -6739,6 +8670,7 @@ extension SSM {
             AWSShapeMember(label: "SummaryItems", required: false, type: .list), 
             AWSShapeMember(label: "TotalCount", required: false, type: .integer)
         ]
+
         /// Remaining number of items to delete.
         public let remainingCount: Int32?
         /// A list of counts and versions for deleted items.
@@ -6750,6 +8682,12 @@ extension SSM {
             self.remainingCount = remainingCount
             self.summaryItems = summaryItems
             self.totalCount = totalCount
+        }
+
+        public func validate() throws {
+            try summaryItems?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6765,6 +8703,7 @@ extension SSM {
             AWSShapeMember(label: "RemainingCount", required: false, type: .integer), 
             AWSShapeMember(label: "Version", required: false, type: .string)
         ]
+
         /// A count of the number of deleted items.
         public let count: Int32?
         /// The remaining number of items to delete.
@@ -6776,6 +8715,10 @@ extension SSM {
             self.count = count
             self.remainingCount = remainingCount
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(version, name:"version", pattern: "^([0-9]{1,6})(\\.[0-9]{1,6})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6791,6 +8734,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The name of the filter key.
         public let key: String
         /// The type of filter. Valid values include the following: "Equal"|"NotEqual"|"BeginWith"|"LessThan"|"GreaterThan"
@@ -6802,6 +8746,13 @@ extension SSM {
             self.key = key
             self.`type` = `type`
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 200)
+            try validate(key, name:"key", min: 1)
+            try validate(values, name:"values", max: 40)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6816,6 +8767,7 @@ extension SSM {
             AWSShapeMember(label: "Filters", required: true, type: .list), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// Filters define the criteria for the group. The matchingCount field displays the number of resources that match the criteria. The notMatchingCount field displays the number of resources that don't match the criteria. 
         public let filters: [InventoryFilter]
         /// The name of the group.
@@ -6824,6 +8776,16 @@ extension SSM {
         public init(filters: [InventoryFilter], name: String) {
             self.filters = filters
             self.name = name
+        }
+
+        public func validate() throws {
+            try filters.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(name, name:"name", max: 200)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6841,6 +8803,7 @@ extension SSM {
             AWSShapeMember(label: "SchemaVersion", required: true, type: .string), 
             AWSShapeMember(label: "TypeName", required: true, type: .string)
         ]
+
         /// The time the inventory information was collected.
         public let captureTime: String
         /// The inventory data of the inventory type.
@@ -6863,6 +8826,17 @@ extension SSM {
             self.typeName = typeName
         }
 
+        public func validate() throws {
+            try validate(captureTime, name:"captureTime", pattern: "^(20)[0-9][0-9]-(0[1-9]|1[012])-([12][0-9]|3[01]|0[1-9])(T)(2[0-3]|[0-1][0-9])(:[0-5][0-9])(:[0-5][0-9])(Z)$")
+            try validate(content, name:"content", max: 10000)
+            try validate(content, name:"content", min: 0)
+            try validate(contentHash, name:"contentHash", max: 256)
+            try validate(schemaVersion, name:"schemaVersion", pattern: "^([0-9]{1,6})(\\.[0-9]{1,6})$")
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case captureTime = "CaptureTime"
             case content = "Content"
@@ -6878,6 +8852,7 @@ extension SSM {
             AWSShapeMember(label: "DataType", required: true, type: .enum), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The data type of the inventory item attribute. 
         public let dataType: InventoryAttributeDataType
         /// Name of the inventory item attribute.
@@ -6901,6 +8876,7 @@ extension SSM {
             AWSShapeMember(label: "TypeName", required: true, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .string)
         ]
+
         /// The schema attributes for inventory. This contains data type and attribute name.
         public let attributes: [InventoryItemAttribute]
         /// The alias name of the inventory type. The alias name is used for display purposes.
@@ -6915,6 +8891,15 @@ extension SSM {
             self.displayName = displayName
             self.typeName = typeName
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(attributes, name:"attributes", max: 50)
+            try validate(attributes, name:"attributes", min: 1)
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
+            try validate(version, name:"version", pattern: "^([0-9]{1,6})(\\.[0-9]{1,6})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6940,6 +8925,7 @@ extension SSM {
             AWSShapeMember(label: "Data", required: false, type: .map), 
             AWSShapeMember(label: "Id", required: false, type: .string)
         ]
+
         /// The data section in the inventory result entity JSON.
         public let data: [String: InventoryResultItem]?
         /// ID of the inventory result entity. For example, for managed instance inventory the result will be the managed instance ID. For EC2 instance inventory, the result will be the instance ID. 
@@ -6964,6 +8950,7 @@ extension SSM {
             AWSShapeMember(label: "SchemaVersion", required: true, type: .string), 
             AWSShapeMember(label: "TypeName", required: true, type: .string)
         ]
+
         /// The time inventory item data was captured.
         public let captureTime: String?
         /// Contains all the inventory data of the item type. Results include attribute names and values. 
@@ -6981,6 +8968,17 @@ extension SSM {
             self.contentHash = contentHash
             self.schemaVersion = schemaVersion
             self.typeName = typeName
+        }
+
+        public func validate() throws {
+            try validate(captureTime, name:"captureTime", pattern: "^(20)[0-9][0-9]-(0[1-9]|1[012])-([12][0-9]|3[01]|0[1-9])(T)(2[0-3]|[0-1][0-9])(:[0-5][0-9])(:[0-5][0-9])(Z)$")
+            try validate(content, name:"content", max: 10000)
+            try validate(content, name:"content", min: 0)
+            try validate(contentHash, name:"contentHash", max: 256)
+            try validate(schemaVersion, name:"schemaVersion", pattern: "^([0-9]{1,6})(\\.[0-9]{1,6})$")
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7004,6 +9002,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "ParameterVersion", required: false, type: .long)
         ]
+
         /// One or more labels to attach to the specified parameter version.
         public let labels: [String]
         /// The parameter name on which you want to attach one or more labels.
@@ -7017,6 +9016,17 @@ extension SSM {
             self.parameterVersion = parameterVersion
         }
 
+        public func validate() throws {
+            try labels.forEach {
+                try validate($0, name:"labels[]", max: 100)
+                try validate($0, name:"labels[]", min: 1)
+            }
+            try validate(labels, name:"labels", max: 10)
+            try validate(labels, name:"labels", min: 1)
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case labels = "Labels"
             case name = "Name"
@@ -7028,11 +9038,21 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "InvalidLabels", required: false, type: .list)
         ]
+
         /// The label does not meet the requirements. For information about parameter label requirements, see Labeling Parameters in the AWS Systems Manager User Guide.
         public let invalidLabels: [String]?
 
         public init(invalidLabels: [String]? = nil) {
             self.invalidLabels = invalidLabels
+        }
+
+        public func validate() throws {
+            try invalidLabels?.forEach {
+                try validate($0, name:"invalidLabels[]", max: 100)
+                try validate($0, name:"invalidLabels[]", min: 1)
+            }
+            try validate(invalidLabels, name:"invalidLabels", max: 10)
+            try validate(invalidLabels, name:"invalidLabels", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7053,6 +9073,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The association ID for which you want to view all versions.
         public let associationId: String
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -7064,6 +9085,12 @@ extension SSM {
             self.associationId = associationId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7078,6 +9105,7 @@ extension SSM {
             AWSShapeMember(label: "AssociationVersions", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Information about all versions of the association for the specified association ID.
         public let associationVersions: [AssociationVersionInfo]?
         /// The token for the next set of items to return. Use this token to get the next set of results.
@@ -7086,6 +9114,13 @@ extension SSM {
         public init(associationVersions: [AssociationVersionInfo]? = nil, nextToken: String? = nil) {
             self.associationVersions = associationVersions
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try associationVersions?.forEach {
+                try $0.validate()
+            }
+            try validate(associationVersions, name:"associationVersions", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7100,6 +9135,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// One or more filters. Use a filter to return a more specific list of results.
         public let associationFilterList: [AssociationFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -7111,6 +9147,15 @@ extension SSM {
             self.associationFilterList = associationFilterList
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try associationFilterList?.forEach {
+                try $0.validate()
+            }
+            try validate(associationFilterList, name:"associationFilterList", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7125,6 +9170,7 @@ extension SSM {
             AWSShapeMember(label: "Associations", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The associations.
         public let associations: [Association]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -7133,6 +9179,12 @@ extension SSM {
         public init(associations: [Association]? = nil, nextToken: String? = nil) {
             self.associations = associations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try associations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7150,6 +9202,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// (Optional) The invocations for a specific command ID.
         public let commandId: String?
         /// (Optional) If set this returns the response of the command executions and any command output. By default this is set to False. 
@@ -7172,6 +9225,19 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(commandId, name:"commandId", max: 36)
+            try validate(commandId, name:"commandId", min: 36)
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case commandId = "CommandId"
             case details = "Details"
@@ -7187,6 +9253,7 @@ extension SSM {
             AWSShapeMember(label: "CommandInvocations", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// (Optional) A list of all invocations. 
         public let commandInvocations: [CommandInvocation]?
         /// (Optional) The token for the next set of items to return. (You received this token from a previous call.)
@@ -7195,6 +9262,12 @@ extension SSM {
         public init(commandInvocations: [CommandInvocation]? = nil, nextToken: String? = nil) {
             self.commandInvocations = commandInvocations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try commandInvocations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7211,6 +9284,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// (Optional) If provided, lists only the specified command.
         public let commandId: String?
         /// (Optional) One or more filters. Use a filter to return a more specific list of results. 
@@ -7230,6 +9304,19 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(commandId, name:"commandId", max: 36)
+            try validate(commandId, name:"commandId", min: 36)
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case commandId = "CommandId"
             case filters = "Filters"
@@ -7244,6 +9331,7 @@ extension SSM {
             AWSShapeMember(label: "Commands", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// (Optional) The list of commands requested by the user. 
         public let commands: [Command]?
         /// (Optional) The token for the next set of items to return. (You received this token from a previous call.)
@@ -7252,6 +9340,12 @@ extension SSM {
         public init(commands: [Command]? = nil, nextToken: String? = nil) {
             self.commands = commands
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try commands?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7268,6 +9362,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceIds", required: false, type: .list), 
             AWSShapeMember(label: "ResourceTypes", required: false, type: .list)
         ]
+
         /// One or more compliance filters. Use a filter to return a more specific list of results.
         public let filters: [ComplianceStringFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -7287,6 +9382,24 @@ extension SSM {
             self.resourceTypes = resourceTypes
         }
 
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try resourceIds?.forEach {
+                try validate($0, name:"resourceIds[]", max: 100)
+                try validate($0, name:"resourceIds[]", min: 1)
+            }
+            try validate(resourceIds, name:"resourceIds", min: 1)
+            try resourceTypes?.forEach {
+                try validate($0, name:"resourceTypes[]", max: 50)
+                try validate($0, name:"resourceTypes[]", min: 1)
+            }
+            try validate(resourceTypes, name:"resourceTypes", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filters = "Filters"
             case maxResults = "MaxResults"
@@ -7301,6 +9414,7 @@ extension SSM {
             AWSShapeMember(label: "ComplianceItems", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of compliance information for the specified resource ID. 
         public let complianceItems: [ComplianceItem]?
         /// The token for the next set of items to return. Use this token to get the next set of results.
@@ -7309,6 +9423,12 @@ extension SSM {
         public init(complianceItems: [ComplianceItem]? = nil, nextToken: String? = nil) {
             self.complianceItems = complianceItems
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try complianceItems?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7323,6 +9443,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// One or more compliance or inventory filters. Use a filter to return a more specific list of results.
         public let filters: [ComplianceStringFilter]?
         /// The maximum number of items to return for this call. Currently, you can specify null or 50. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -7334,6 +9455,14 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7348,6 +9477,7 @@ extension SSM {
             AWSShapeMember(label: "ComplianceSummaryItems", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of compliant and non-compliant summary counts based on compliance types. For example, this call returns State Manager associations, patches, or custom compliance types according to the filter criteria that you specified.
         public let complianceSummaryItems: [ComplianceSummaryItem]?
         /// The token for the next set of items to return. Use this token to get the next set of results.
@@ -7356,6 +9486,12 @@ extension SSM {
         public init(complianceSummaryItems: [ComplianceSummaryItem]? = nil, nextToken: String? = nil) {
             self.complianceSummaryItems = complianceSummaryItems
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try complianceSummaryItems?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7370,6 +9506,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
         public let maxResults: Int32?
         /// The name of the document about which you want version information.
@@ -7381,6 +9518,12 @@ extension SSM {
             self.maxResults = maxResults
             self.name = name
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7395,6 +9538,7 @@ extension SSM {
             AWSShapeMember(label: "DocumentVersions", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The document versions.
         public let documentVersions: [DocumentVersionInfo]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -7403,6 +9547,13 @@ extension SSM {
         public init(documentVersions: [DocumentVersionInfo]? = nil, nextToken: String? = nil) {
             self.documentVersions = documentVersions
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try documentVersions?.forEach {
+                try $0.validate()
+            }
+            try validate(documentVersions, name:"documentVersions", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7418,6 +9569,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// One or more filters. Use a filter to return a more specific list of results.
         public let documentFilterList: [DocumentFilter]?
         /// One or more filters. Use a filter to return a more specific list of results.
@@ -7434,6 +9586,20 @@ extension SSM {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try documentFilterList?.forEach {
+                try $0.validate()
+            }
+            try validate(documentFilterList, name:"documentFilterList", min: 1)
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 6)
+            try validate(filters, name:"filters", min: 0)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case documentFilterList = "DocumentFilterList"
             case filters = "Filters"
@@ -7447,6 +9613,7 @@ extension SSM {
             AWSShapeMember(label: "DocumentIdentifiers", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The names of the Systems Manager documents.
         public let documentIdentifiers: [DocumentIdentifier]?
         /// The token to use when requesting the next set of items. If there are no additional items to return, the string is empty.
@@ -7455,6 +9622,12 @@ extension SSM {
         public init(documentIdentifiers: [DocumentIdentifier]? = nil, nextToken: String? = nil) {
             self.documentIdentifiers = documentIdentifiers
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try documentIdentifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7471,6 +9644,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TypeName", required: true, type: .string)
         ]
+
         /// One or more filters. Use a filter to return a more specific list of results.
         public let filters: [InventoryFilter]?
         /// The instance ID for which you want inventory information.
@@ -7488,6 +9662,20 @@ extension SSM {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.typeName = typeName
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7508,6 +9696,7 @@ extension SSM {
             AWSShapeMember(label: "SchemaVersion", required: false, type: .string), 
             AWSShapeMember(label: "TypeName", required: false, type: .string)
         ]
+
         /// The time that inventory information was collected for the instance(s).
         public let captureTime: String?
         /// A list of inventory items on the instance(s).
@@ -7530,6 +9719,17 @@ extension SSM {
             self.typeName = typeName
         }
 
+        public func validate() throws {
+            try validate(captureTime, name:"captureTime", pattern: "^(20)[0-9][0-9]-(0[1-9]|1[012])-([12][0-9]|3[01]|0[1-9])(T)(2[0-3]|[0-1][0-9])(:[0-5][0-9])(:[0-5][0-9])(Z)$")
+            try validate(entries, name:"entries", max: 10000)
+            try validate(entries, name:"entries", min: 0)
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(schemaVersion, name:"schemaVersion", pattern: "^([0-9]{1,6})(\\.[0-9]{1,6})$")
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case captureTime = "CaptureTime"
             case entries = "Entries"
@@ -7546,6 +9746,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// One or more filters. Use a filter to return a more specific list of results.
         public let filters: [ComplianceStringFilter]?
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
@@ -7557,6 +9758,14 @@ extension SSM {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7571,6 +9780,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceComplianceSummaryItems", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. Use this token to get the next set of results.
         public let nextToken: String?
         /// A summary count for specified or targeted managed instances. Summary count includes information about compliant and non-compliant State Manager associations, patch status, or custom items according to the filter criteria that you specify. 
@@ -7579,6 +9789,12 @@ extension SSM {
         public init(nextToken: String? = nil, resourceComplianceSummaryItems: [ResourceComplianceSummaryItem]? = nil) {
             self.nextToken = nextToken
             self.resourceComplianceSummaryItems = resourceComplianceSummaryItems
+        }
+
+        public func validate() throws {
+            try resourceComplianceSummaryItems?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7592,6 +9808,7 @@ extension SSM {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.
         public let maxResults: Int32?
         /// A token to start the list. Use this token to get the next set of results. 
@@ -7600,6 +9817,11 @@ extension SSM {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7613,6 +9835,7 @@ extension SSM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceDataSyncItems", required: false, type: .list)
         ]
+
         /// The token for the next set of items to return. Use this token to get the next set of results.
         public let nextToken: String?
         /// A list of your current Resource Data Sync configurations and their statuses.
@@ -7621,6 +9844,12 @@ extension SSM {
         public init(nextToken: String? = nil, resourceDataSyncItems: [ResourceDataSyncItem]? = nil) {
             self.nextToken = nextToken
             self.resourceDataSyncItems = resourceDataSyncItems
+        }
+
+        public func validate() throws {
+            try resourceDataSyncItems?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7634,6 +9863,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceType", required: true, type: .enum)
         ]
+
         /// The resource ID for which you want to see a list of tags.
         public let resourceId: String
         /// Returns a list of tags for a specific resource type.
@@ -7654,11 +9884,19 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagList", required: false, type: .list)
         ]
+
         /// A list of tags.
         public let tagList: [Tag]?
 
         public init(tagList: [Tag]? = nil) {
             self.tagList = tagList
+        }
+
+        public func validate() throws {
+            try tagList?.forEach {
+                try $0.validate()
+            }
+            try validate(tagList, name:"tagList", max: 1000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7672,6 +9910,7 @@ extension SSM {
             AWSShapeMember(label: "S3KeyPrefix", required: false, type: .string), 
             AWSShapeMember(label: "S3Region", required: true, type: .string)
         ]
+
         /// The name of an Amazon S3 bucket where execution logs are stored .
         public let s3BucketName: String
         /// (Optional) The Amazon S3 bucket subfolder. 
@@ -7683,6 +9922,14 @@ extension SSM {
             self.s3BucketName = s3BucketName
             self.s3KeyPrefix = s3KeyPrefix
             self.s3Region = s3Region
+        }
+
+        public func validate() throws {
+            try validate(s3BucketName, name:"s3BucketName", max: 63)
+            try validate(s3BucketName, name:"s3BucketName", min: 3)
+            try validate(s3KeyPrefix, name:"s3KeyPrefix", max: 500)
+            try validate(s3Region, name:"s3Region", max: 20)
+            try validate(s3Region, name:"s3Region", min: 3)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7697,6 +9944,7 @@ extension SSM {
             AWSShapeMember(label: "DocumentVersion", required: false, type: .string), 
             AWSShapeMember(label: "Parameters", required: false, type: .map)
         ]
+
         /// The version of an Automation document to use during task execution.
         public let documentVersion: String?
         /// The parameters for the AUTOMATION task. For information about specifying and updating task parameters, see RegisterTaskWithMaintenanceWindow and UpdateMaintenanceWindowTask.   LoggingInfo has been deprecated. To specify an S3 bucket to contain logs, instead use the OutputS3BucketName and OutputS3KeyPrefix options in the TaskInvocationParameters structure. For information about how Systems Manager handles these options for the supported maintenance window task types, see MaintenanceWindowTaskInvocationParameters.  TaskParameters has been deprecated. To specify parameters to pass to a task when it runs, instead use the Parameters option in the TaskInvocationParameters structure. For information about how Systems Manager handles these options for the supported maintenance window task types, see MaintenanceWindowTaskInvocationParameters. For AUTOMATION task types, Systems Manager ignores any values specified for these parameters. 
@@ -7705,6 +9953,10 @@ extension SSM {
         public init(documentVersion: String? = nil, parameters: [String: [String]]? = nil) {
             self.documentVersion = documentVersion
             self.parameters = parameters
+        }
+
+        public func validate() throws {
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7722,6 +9974,7 @@ extension SSM {
             AWSShapeMember(label: "WindowExecutionId", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// The time the execution finished.
         public let endTime: TimeStamp?
         /// The time the execution started.
@@ -7742,6 +9995,17 @@ extension SSM {
             self.statusDetails = statusDetails
             self.windowExecutionId = windowExecutionId
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(statusDetails, name:"statusDetails", max: 250)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7777,6 +10041,7 @@ extension SSM {
             AWSShapeMember(label: "TaskType", required: false, type: .enum), 
             AWSShapeMember(label: "WindowExecutionId", required: false, type: .string)
         ]
+
         /// The time the task execution finished.
         public let endTime: TimeStamp?
         /// The time the task execution started.
@@ -7803,6 +10068,19 @@ extension SSM {
             self.taskExecutionId = taskExecutionId
             self.taskType = taskType
             self.windowExecutionId = windowExecutionId
+        }
+
+        public func validate() throws {
+            try validate(statusDetails, name:"statusDetails", max: 250)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try validate(taskArn, name:"taskArn", max: 1600)
+            try validate(taskArn, name:"taskArn", min: 1)
+            try validate(taskExecutionId, name:"taskExecutionId", max: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", min: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7832,6 +10110,7 @@ extension SSM {
             AWSShapeMember(label: "WindowExecutionId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTargetId", required: false, type: .string)
         ]
+
         /// The time the invocation finished.
         public let endTime: TimeStamp?
         /// The ID of the action performed in the service that actually handled the task invocation. If the task type is RUN_COMMAND, this value is the command ID.
@@ -7872,6 +10151,23 @@ extension SSM {
             self.windowTargetId = windowTargetId
         }
 
+        public func validate() throws {
+            try validate(invocationId, name:"invocationId", max: 36)
+            try validate(invocationId, name:"invocationId", min: 36)
+            try validate(invocationId, name:"invocationId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(ownerInformation, name:"ownerInformation", max: 128)
+            try validate(ownerInformation, name:"ownerInformation", min: 1)
+            try validate(statusDetails, name:"statusDetails", max: 250)
+            try validate(statusDetails, name:"statusDetails", min: 0)
+            try validate(taskExecutionId, name:"taskExecutionId", max: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", min: 36)
+            try validate(taskExecutionId, name:"taskExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowExecutionId, name:"windowExecutionId", max: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", min: 36)
+            try validate(windowExecutionId, name:"windowExecutionId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "EndTime"
             case executionId = "ExecutionId"
@@ -7893,6 +10189,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The name of the filter.
         public let key: String?
         /// The filter values.
@@ -7901,6 +10198,15 @@ extension SSM {
         public init(key: String? = nil, values: [String]? = nil) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 256)
+                try validate($0, name:"values[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7923,6 +10229,7 @@ extension SSM {
             AWSShapeMember(label: "StartDate", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// The number of hours before the end of the maintenance window that Systems Manager stops scheduling new tasks for execution.
         public let cutoff: Int32?
         /// A description of the maintenance window.
@@ -7960,6 +10267,23 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try validate(cutoff, name:"cutoff", max: 23)
+            try validate(cutoff, name:"cutoff", min: 0)
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(duration, name:"duration", max: 24)
+            try validate(duration, name:"duration", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(schedule, name:"schedule", max: 256)
+            try validate(schedule, name:"schedule", min: 1)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cutoff = "Cutoff"
             case description = "Description"
@@ -7980,6 +10304,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// The name of the maintenance window.
         public let name: String?
         /// The ID of the maintenance window.
@@ -7988,6 +10313,15 @@ extension SSM {
         public init(name: String? = nil, windowId: String? = nil) {
             self.name = name
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8002,6 +10336,7 @@ extension SSM {
             AWSShapeMember(label: "Payload", required: false, type: .blob), 
             AWSShapeMember(label: "Qualifier", required: false, type: .string)
         ]
+
         /// Pass client-specific information to the Lambda function that you are invoking. You can then process the client information in your Lambda function as you choose through the context variable.
         public let clientContext: String?
         /// JSON to provide to your Lambda function as input.
@@ -8013,6 +10348,14 @@ extension SSM {
             self.clientContext = clientContext
             self.payload = payload
             self.qualifier = qualifier
+        }
+
+        public func validate() throws {
+            try validate(clientContext, name:"clientContext", max: 8000)
+            try validate(clientContext, name:"clientContext", min: 1)
+            try validate(payload, name:"payload", max: 4096)
+            try validate(qualifier, name:"qualifier", max: 128)
+            try validate(qualifier, name:"qualifier", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8039,6 +10382,7 @@ extension SSM {
             AWSShapeMember(label: "ServiceRoleArn", required: false, type: .string), 
             AWSShapeMember(label: "TimeoutSeconds", required: false, type: .integer)
         ]
+
         /// Information about the commands to run.
         public let comment: String?
         /// The SHA-256 or SHA-1 hash created by the system when the document was created. SHA-1 hashes have been deprecated.
@@ -8070,6 +10414,16 @@ extension SSM {
             self.timeoutSeconds = timeoutSeconds
         }
 
+        public func validate() throws {
+            try validate(comment, name:"comment", max: 100)
+            try validate(documentHash, name:"documentHash", max: 256)
+            try validate(outputS3BucketName, name:"outputS3BucketName", max: 63)
+            try validate(outputS3BucketName, name:"outputS3BucketName", min: 3)
+            try validate(outputS3KeyPrefix, name:"outputS3KeyPrefix", max: 500)
+            try validate(timeoutSeconds, name:"timeoutSeconds", max: 2592000)
+            try validate(timeoutSeconds, name:"timeoutSeconds", min: 30)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case comment = "Comment"
             case documentHash = "DocumentHash"
@@ -8088,6 +10442,7 @@ extension SSM {
             AWSShapeMember(label: "Input", required: false, type: .string), 
             AWSShapeMember(label: "Name", required: false, type: .string)
         ]
+
         /// The inputs for the STEP_FUNCTION task.
         public let input: String?
         /// The name of the STEP_FUNCTION task.
@@ -8096,6 +10451,12 @@ extension SSM {
         public init(input: String? = nil, name: String? = nil) {
             self.input = input
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(input, name:"input", max: 4096)
+            try validate(name, name:"name", max: 80)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8114,6 +10475,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTargetId", required: false, type: .string)
         ]
+
         /// A description for the target.
         public let description: String?
         /// The name for the maintenance window target.
@@ -8137,6 +10499,27 @@ extension SSM {
             self.targets = targets
             self.windowId = windowId
             self.windowTargetId = windowTargetId
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(ownerInformation, name:"ownerInformation", max: 128)
+            try validate(ownerInformation, name:"ownerInformation", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+            try validate(windowTargetId, name:"windowTargetId", min: 36)
+            try validate(windowTargetId, name:"windowTargetId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8166,6 +10549,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTaskId", required: false, type: .string)
         ]
+
         /// A description of the task.
         public let description: String?
         /// Information about an Amazon S3 bucket to write task-level logs to.   LoggingInfo has been deprecated. To specify an S3 bucket to contain logs, instead use the OutputS3BucketName and OutputS3KeyPrefix options in the TaskInvocationParameters structure. For information about how Systems Manager handles these options for the supported maintenance window task types, see MaintenanceWindowTaskInvocationParameters. 
@@ -8209,6 +10593,35 @@ extension SSM {
             self.windowTaskId = windowTaskId
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try loggingInfo?.validate()
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(priority, name:"priority", min: 0)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(taskArn, name:"taskArn", max: 1600)
+            try validate(taskArn, name:"taskArn", min: 1)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case loggingInfo = "LoggingInfo"
@@ -8233,6 +10646,7 @@ extension SSM {
             AWSShapeMember(label: "RunCommand", required: false, type: .structure), 
             AWSShapeMember(label: "StepFunctions", required: false, type: .structure)
         ]
+
         /// The parameters for an AUTOMATION task type.
         public let automation: MaintenanceWindowAutomationParameters?
         /// The parameters for a LAMBDA task type.
@@ -8249,6 +10663,13 @@ extension SSM {
             self.stepFunctions = stepFunctions
         }
 
+        public func validate() throws {
+            try automation?.validate()
+            try lambda?.validate()
+            try runCommand?.validate()
+            try stepFunctions?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case automation = "Automation"
             case lambda = "Lambda"
@@ -8261,11 +10682,19 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// This field contains an array of 0 or more strings, each 1 to 255 characters in length.
         public let values: [String]?
 
         public init(values: [String]? = nil) {
             self.values = values
+        }
+
+        public func validate() throws {
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 255)
+                try validate($0, name:"values[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8288,6 +10717,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "PermissionType", required: true, type: .enum)
         ]
+
         /// The AWS user accounts that should have access to the document. The account IDs can either be a group of account IDs or All.
         public let accountIdsToAdd: [String]?
         /// The AWS user accounts that should no longer have access to the document. The AWS user account can either be a group of account IDs or All. This action has a higher priority than AccountIdsToAdd. If you specify an account ID to add and the same ID to remove, the system removes access to the document.
@@ -8304,6 +10734,18 @@ extension SSM {
             self.permissionType = permissionType
         }
 
+        public func validate() throws {
+            try accountIdsToAdd?.forEach {
+                try validate($0, name:"accountIdsToAdd[]", pattern: "(?i)all|[0-9]{12}")
+            }
+            try validate(accountIdsToAdd, name:"accountIdsToAdd", max: 20)
+            try accountIdsToRemove?.forEach {
+                try validate($0, name:"accountIdsToRemove[]", pattern: "(?i)all|[0-9]{12}")
+            }
+            try validate(accountIdsToRemove, name:"accountIdsToRemove", max: 20)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountIdsToAdd = "AccountIdsToAdd"
             case accountIdsToRemove = "AccountIdsToRemove"
@@ -8313,6 +10755,7 @@ extension SSM {
     }
 
     public struct ModifyDocumentPermissionResponse: AWSShape {
+
 
         public init() {
         }
@@ -8324,6 +10767,7 @@ extension SSM {
             AWSShapeMember(label: "NonCompliantCount", required: false, type: .integer), 
             AWSShapeMember(label: "SeveritySummary", required: false, type: .structure)
         ]
+
         /// The total number of compliance items that are not compliant.
         public let nonCompliantCount: Int32?
         /// A summary of the non-compliance severity by compliance type
@@ -8346,6 +10790,7 @@ extension SSM {
             AWSShapeMember(label: "NotificationEvents", required: false, type: .list), 
             AWSShapeMember(label: "NotificationType", required: false, type: .enum)
         ]
+
         /// An Amazon Resource Name (ARN) for an Amazon Simple Notification Service (Amazon SNS) topic. Run Command pushes notifications about command status changes to this topic.
         public let notificationArn: String?
         /// The different events for which you can receive notifications. These events include the following: All (events), InProgress, Success, TimedOut, Cancelled, Failed. To learn more about these events, see Configuring Amazon SNS Notifications for AWS Systems Manager in the AWS Systems Manager User Guide.
@@ -8402,6 +10847,7 @@ extension SSM {
             AWSShapeMember(label: "TypeName", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .map)
         ]
+
         /// A nested aggregator for viewing counts of OpsItems.
         public let aggregators: [OpsAggregator]?
         /// Either a Range or Count aggregator for limiting an OpsItem summary.
@@ -8424,6 +10870,25 @@ extension SSM {
             self.values = values
         }
 
+        public func validate() throws {
+            try aggregators?.forEach {
+                try $0.validate()
+            }
+            try validate(aggregators, name:"aggregators", max: 12)
+            try validate(aggregators, name:"aggregators", min: 1)
+            try validate(aggregatorType, name:"aggregatorType", max: 20)
+            try validate(aggregatorType, name:"aggregatorType", min: 1)
+            try validate(aggregatorType, name:"aggregatorType", pattern: "^(range|count)")
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(filters, name:"filters", max: 5)
+            try validate(filters, name:"filters", min: 1)
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case aggregators = "Aggregators"
             case aggregatorType = "AggregatorType"
@@ -8439,6 +10904,7 @@ extension SSM {
             AWSShapeMember(label: "Data", required: false, type: .map), 
             AWSShapeMember(label: "Id", required: false, type: .string)
         ]
+
         /// The data returned by the query.
         public let data: [String: OpsEntityItem]?
         /// The query ID.
@@ -8459,11 +10925,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Content", required: false, type: .list)
         ]
+
         /// The detailed data content for an OpsItem summaries result item.
         public let content: [[String: String]]?
 
         public init(content: [[String: String]]? = nil) {
             self.content = content
+        }
+
+        public func validate() throws {
+            try validate(content, name:"content", max: 10000)
+            try validate(content, name:"content", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8477,6 +10949,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The name of the filter.
         public let key: String
         /// The type of filter.
@@ -8488,6 +10961,13 @@ extension SSM {
             self.key = key
             self.`type` = `type`
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 200)
+            try validate(key, name:"key", min: 1)
+            try validate(values, name:"values", max: 40)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8524,6 +11004,7 @@ extension SSM {
             AWSShapeMember(label: "Title", required: false, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .string)
         ]
+
         /// The ARN of the AWS account that created the OpsItem.
         public let createdBy: String?
         /// The date and time the OpsItem was created.
@@ -8570,6 +11051,18 @@ extension SSM {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 1)
+            try validate(opsItemId, name:"opsItemId", pattern: "^(oi)-[0-9a-f]{12}$")
+            try validate(priority, name:"priority", max: 5)
+            try validate(priority, name:"priority", min: 1)
+            try validate(source, name:"source", max: 64)
+            try validate(source, name:"source", min: 1)
+            try validate(title, name:"title", max: 1024)
+            try validate(title, name:"title", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdBy = "CreatedBy"
             case createdTime = "CreatedTime"
@@ -8599,6 +11092,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The type of key-value pair. Valid types include SearchableString and String.
         public let `type`: OpsItemDataType?
         /// The value of the OperationalData key.
@@ -8621,6 +11115,7 @@ extension SSM {
             AWSShapeMember(label: "Operator", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The name of the filter.
         public let key: OpsItemFilterKey
         /// The operator used by the filter call.
@@ -8670,6 +11165,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of an SNS topic where notifications are sent when this OpsItem is edited or changed.
         public let arn: String?
 
@@ -8702,6 +11198,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "Title", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the IAM entity that created the OpsItem.
         public let createdBy: String?
         /// The date and time the OpsItem was created.
@@ -8736,6 +11233,16 @@ extension SSM {
             self.title = title
         }
 
+        public func validate() throws {
+            try validate(opsItemId, name:"opsItemId", pattern: "^(oi)-[0-9a-f]{12}$")
+            try validate(priority, name:"priority", max: 5)
+            try validate(priority, name:"priority", min: 1)
+            try validate(source, name:"source", max: 64)
+            try validate(source, name:"source", min: 1)
+            try validate(title, name:"title", max: 1024)
+            try validate(title, name:"title", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdBy = "CreatedBy"
             case createdTime = "CreatedTime"
@@ -8755,6 +11262,7 @@ extension SSM {
             AWSShapeMember(label: "OutputSourceId", required: false, type: .string), 
             AWSShapeMember(label: "OutputSourceType", required: false, type: .string)
         ]
+
         /// The ID of the output source, for example the URL of an Amazon S3 bucket.
         public let outputSourceId: String?
         /// The type of source where the association execution details are stored, for example, Amazon S3.
@@ -8763,6 +11271,11 @@ extension SSM {
         public init(outputSourceId: String? = nil, outputSourceType: String? = nil) {
             self.outputSourceId = outputSourceId
             self.outputSourceType = outputSourceType
+        }
+
+        public func validate() throws {
+            try validate(outputSourceId, name:"outputSourceId", max: 36)
+            try validate(outputSourceId, name:"outputSourceId", min: 36)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8782,6 +11295,7 @@ extension SSM {
             AWSShapeMember(label: "Value", required: false, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// The Amazon Resource Name (ARN) of the parameter.
         public let arn: String?
         /// Date the parameter was last changed or updated and the parameter version was created.
@@ -8808,6 +11322,13 @@ extension SSM {
             self.`type` = `type`
             self.value = value
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
+            try validate(selector, name:"selector", max: 128)
+            try validate(selector, name:"selector", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8837,6 +11358,7 @@ extension SSM {
             AWSShapeMember(label: "Value", required: false, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// Parameter names can include the following letters and symbols. a-zA-Z0-9_.-
         public let allowedPattern: String?
         /// Information about the parameter.
@@ -8877,6 +11399,24 @@ extension SSM {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(allowedPattern, name:"allowedPattern", max: 1024)
+            try validate(allowedPattern, name:"allowedPattern", min: 0)
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 0)
+            try validate(keyId, name:"keyId", max: 256)
+            try validate(keyId, name:"keyId", min: 1)
+            try validate(keyId, name:"keyId", pattern: "^([a-zA-Z0-9:/_-]+)$")
+            try labels?.forEach {
+                try validate($0, name:"labels[]", max: 100)
+                try validate($0, name:"labels[]", min: 1)
+            }
+            try validate(labels, name:"labels", max: 10)
+            try validate(labels, name:"labels", min: 1)
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowedPattern = "AllowedPattern"
             case description = "Description"
@@ -8899,6 +11439,7 @@ extension SSM {
             AWSShapeMember(label: "PolicyText", required: false, type: .string), 
             AWSShapeMember(label: "PolicyType", required: false, type: .string)
         ]
+
         /// The status of the policy. Policies report the following statuses: Pending (the policy has not been enforced or applied yet), Finished (the policy was applied), Failed (the policy was not applied), or InProgress (the policy is being applied now). 
         public let policyStatus: String?
         /// The JSON text of the policy.
@@ -8932,6 +11473,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: false, type: .enum), 
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// A parameter name can include only the following letters and symbols. a-zA-Z0-9_.-
         public let allowedPattern: String?
         /// Description of the parameter actions.
@@ -8966,6 +11508,18 @@ extension SSM {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(allowedPattern, name:"allowedPattern", max: 1024)
+            try validate(allowedPattern, name:"allowedPattern", min: 0)
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 0)
+            try validate(keyId, name:"keyId", max: 256)
+            try validate(keyId, name:"keyId", min: 1)
+            try validate(keyId, name:"keyId", pattern: "^([a-zA-Z0-9:/_-]+)$")
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowedPattern = "AllowedPattern"
             case description = "Description"
@@ -8986,6 +11540,7 @@ extension SSM {
             AWSShapeMember(label: "Option", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The name of the filter.
         public let key: String
         /// Valid options are Equals and BeginsWith. For Path filter, valid options are Recursive and OneLevel.
@@ -8997,6 +11552,20 @@ extension SSM {
             self.key = key
             self.option = option
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 132)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "tag:.+|Name|Type|KeyId|Path|Label|Tier")
+            try validate(option, name:"option", max: 10)
+            try validate(option, name:"option", min: 1)
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 1024)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 50)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9024,6 +11593,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The name of the filter.
         public let key: ParametersFilterKey
         /// The filter values.
@@ -9032,6 +11602,15 @@ extension SSM {
         public init(key: ParametersFilterKey, values: [String]) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try values.forEach {
+                try validate($0, name:"values[]", max: 1024)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 50)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9063,6 +11642,7 @@ extension SSM {
             AWSShapeMember(label: "Title", required: false, type: .string), 
             AWSShapeMember(label: "Vendor", required: false, type: .string)
         ]
+
         /// The classification of the patch (for example, SecurityUpdates, Updates, CriticalUpdates).
         public let classification: String?
         /// The URL where more information can be obtained about the patch.
@@ -9106,6 +11686,11 @@ extension SSM {
             self.vendor = vendor
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 100)
+            try validate(id, name:"id", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case classification = "Classification"
             case contentUrl = "ContentUrl"
@@ -9137,6 +11722,7 @@ extension SSM {
             AWSShapeMember(label: "DefaultBaseline", required: false, type: .boolean), 
             AWSShapeMember(label: "OperatingSystem", required: false, type: .enum)
         ]
+
         /// The description of the patch baseline.
         public let baselineDescription: String?
         /// The ID of the patch baseline.
@@ -9154,6 +11740,17 @@ extension SSM {
             self.baselineName = baselineName
             self.defaultBaseline = defaultBaseline
             self.operatingSystem = operatingSystem
+        }
+
+        public func validate() throws {
+            try validate(baselineDescription, name:"baselineDescription", max: 1024)
+            try validate(baselineDescription, name:"baselineDescription", min: 1)
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(baselineName, name:"baselineName", max: 128)
+            try validate(baselineName, name:"baselineName", min: 3)
+            try validate(baselineName, name:"baselineName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9174,6 +11771,7 @@ extension SSM {
             AWSShapeMember(label: "State", required: true, type: .enum), 
             AWSShapeMember(label: "Title", required: true, type: .string)
         ]
+
         /// The classification of the patch (for example, SecurityUpdates, Updates, CriticalUpdates).
         public let classification: String
         /// The date/time the patch was installed on the instance. Note that not all operating systems provide this level of information.
@@ -9239,6 +11837,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// The key for the filter. Run the DescribePatchProperties command to view lists of valid keys for each operating system type.
         public let key: PatchFilterKey
         /// The value for the filter key. Run the DescribePatchProperties command to view lists of valid values for each key based on operating system type.
@@ -9247,6 +11846,15 @@ extension SSM {
         public init(key: PatchFilterKey, values: [String]) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try values.forEach {
+                try validate($0, name:"values[]", max: 64)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 20)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9259,11 +11867,20 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PatchFilters", required: true, type: .list)
         ]
+
         /// The set of patch filters that make up the group.
         public let patchFilters: [PatchFilter]
 
         public init(patchFilters: [PatchFilter]) {
             self.patchFilters = patchFilters
+        }
+
+        public func validate() throws {
+            try patchFilters.forEach {
+                try $0.validate()
+            }
+            try validate(patchFilters, name:"patchFilters", max: 4)
+            try validate(patchFilters, name:"patchFilters", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9289,6 +11906,7 @@ extension SSM {
             AWSShapeMember(label: "BaselineIdentity", required: false, type: .structure), 
             AWSShapeMember(label: "PatchGroup", required: false, type: .string)
         ]
+
         /// The patch baseline the patch group is registered with.
         public let baselineIdentity: PatchBaselineIdentity?
         /// The name of the patch group registered with the patch baseline.
@@ -9297,6 +11915,13 @@ extension SSM {
         public init(baselineIdentity: PatchBaselineIdentity? = nil, patchGroup: String? = nil) {
             self.baselineIdentity = baselineIdentity
             self.patchGroup = patchGroup
+        }
+
+        public func validate() throws {
+            try baselineIdentity?.validate()
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9316,6 +11941,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// The key for the filter.
         public let key: String?
         /// The value for the filter.
@@ -9324,6 +11950,15 @@ extension SSM {
         public init(key: String? = nil, values: [String]? = nil) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 256)
+                try validate($0, name:"values[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9349,6 +11984,7 @@ extension SSM {
             AWSShapeMember(label: "EnableNonSecurity", required: false, type: .boolean), 
             AWSShapeMember(label: "PatchFilterGroup", required: true, type: .structure)
         ]
+
         /// The number of days after the release date of each patch matched by the rule that the patch is marked as approved in the patch baseline. For example, a value of 7 means that patches are approved seven days after they are released. 
         public let approveAfterDays: Int32
         /// A compliance severity level for all approved patches in a patch baseline. Valid compliance severity levels include the following: Unspecified, Critical, High, Medium, Low, and Informational.
@@ -9365,6 +12001,12 @@ extension SSM {
             self.patchFilterGroup = patchFilterGroup
         }
 
+        public func validate() throws {
+            try validate(approveAfterDays, name:"approveAfterDays", max: 100)
+            try validate(approveAfterDays, name:"approveAfterDays", min: 0)
+            try patchFilterGroup.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case approveAfterDays = "ApproveAfterDays"
             case complianceLevel = "ComplianceLevel"
@@ -9377,11 +12019,20 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PatchRules", required: true, type: .list)
         ]
+
         /// The rules that make up the rule group.
         public let patchRules: [PatchRule]
 
         public init(patchRules: [PatchRule]) {
             self.patchRules = patchRules
+        }
+
+        public func validate() throws {
+            try patchRules.forEach {
+                try $0.validate()
+            }
+            try validate(patchRules, name:"patchRules", max: 10)
+            try validate(patchRules, name:"patchRules", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9401,6 +12052,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Products", required: true, type: .list)
         ]
+
         /// The value of the yum repo configuration. For example:  [main]   cachedir=/var/cache/yum/$basesearch$releasever   keepcache=0   debuglevel=2 
         public let configuration: String
         /// The name specified to identify the patch source.
@@ -9412,6 +12064,18 @@ extension SSM {
             self.configuration = configuration
             self.name = name
             self.products = products
+        }
+
+        public func validate() throws {
+            try validate(configuration, name:"configuration", max: 512)
+            try validate(configuration, name:"configuration", min: 1)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,50}$")
+            try products.forEach {
+                try validate($0, name:"products[]", max: 128)
+                try validate($0, name:"products[]", min: 1)
+            }
+            try validate(products, name:"products", max: 20)
+            try validate(products, name:"products", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9427,6 +12091,7 @@ extension SSM {
             AWSShapeMember(label: "ComplianceLevel", required: false, type: .enum), 
             AWSShapeMember(label: "DeploymentStatus", required: false, type: .enum)
         ]
+
         /// The date the patch was approved (or will be approved if the status is PENDING_APPROVAL).
         public let approvalDate: TimeStamp?
         /// The compliance severity level for a patch.
@@ -9468,6 +12133,7 @@ extension SSM {
             AWSShapeMember(label: "TimedOutSteps", required: false, type: .integer), 
             AWSShapeMember(label: "TotalSteps", required: false, type: .integer)
         ]
+
         /// The total number of steps that the system cancelled in all specified AWS Regions and accounts for the current Automation execution.
         public let cancelledSteps: Int32?
         /// The total number of steps that failed to run in all specified AWS Regions and accounts for the current Automation execution.
@@ -9505,6 +12171,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceType", required: true, type: .string)
         ]
+
         /// Specify the compliance type. For example, specify Association (for a State Manager association), Patch, or Custom:string.
         public let complianceType: String
         /// A summary of the call execution that includes an execution ID, the type of execution (for example, Command), and the date/time of the execution using a datetime object that is saved in the following format: yyyy-MM-dd'T'HH:mm:ss'Z'.
@@ -9527,6 +12194,23 @@ extension SSM {
             self.resourceType = resourceType
         }
 
+        public func validate() throws {
+            try validate(complianceType, name:"complianceType", max: 100)
+            try validate(complianceType, name:"complianceType", min: 1)
+            try validate(complianceType, name:"complianceType", pattern: "[A-Za-z0-9_\\-]\\w+|Custom:[a-zA-Z0-9_\\-]\\w+")
+            try executionSummary.validate()
+            try validate(itemContentHash, name:"itemContentHash", max: 256)
+            try items.forEach {
+                try $0.validate()
+            }
+            try validate(items, name:"items", max: 10000)
+            try validate(items, name:"items", min: 0)
+            try validate(resourceId, name:"resourceId", max: 100)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 50)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceType = "ComplianceType"
             case executionSummary = "ExecutionSummary"
@@ -9539,6 +12223,7 @@ extension SSM {
 
     public struct PutComplianceItemsResult: AWSShape {
 
+
         public init() {
         }
 
@@ -9549,6 +12234,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceId", required: true, type: .string), 
             AWSShapeMember(label: "Items", required: true, type: .list)
         ]
+
         /// One or more instance IDs where you want to add or update inventory items.
         public let instanceId: String
         /// The inventory items that you want to add or update on instances.
@@ -9557,6 +12243,15 @@ extension SSM {
         public init(instanceId: String, items: [InventoryItem]) {
             self.instanceId = instanceId
             self.items = items
+        }
+
+        public func validate() throws {
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try items.forEach {
+                try $0.validate()
+            }
+            try validate(items, name:"items", max: 30)
+            try validate(items, name:"items", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9569,6 +12264,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// Information about the request.
         public let message: String?
 
@@ -9594,6 +12290,7 @@ extension SSM {
             AWSShapeMember(label: "Type", required: true, type: .enum), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// A regular expression used to validate the parameter value. For example, for String types with values restricted to numbers, you can specify the following: AllowedPattern=^\d+$ 
         public let allowedPattern: String?
         /// Information about the parameter that you want to add to the system. Optional but recommended.  Do not enter personally identifiable information in this field. 
@@ -9628,6 +12325,24 @@ extension SSM {
             self.value = value
         }
 
+        public func validate() throws {
+            try validate(allowedPattern, name:"allowedPattern", max: 1024)
+            try validate(allowedPattern, name:"allowedPattern", min: 0)
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 0)
+            try validate(keyId, name:"keyId", max: 256)
+            try validate(keyId, name:"keyId", min: 1)
+            try validate(keyId, name:"keyId", pattern: "^([a-zA-Z0-9:/_-]+)$")
+            try validate(name, name:"name", max: 2048)
+            try validate(name, name:"name", min: 1)
+            try validate(policies, name:"policies", max: 4096)
+            try validate(policies, name:"policies", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 1000)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowedPattern = "AllowedPattern"
             case description = "Description"
@@ -9646,6 +12361,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Version", required: false, type: .long)
         ]
+
         /// The new version number of a parameter. If you edit a parameter value, Parameter Store automatically creates a new version and assigns this new version a unique ID. You can reference a parameter version ID in API actions or in Systems Manager documents (SSM documents). By default, if you don't specify a specific version, the system returns the latest parameter value when a parameter is called.
         public let version: Int64?
 
@@ -9662,11 +12378,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BaselineId", required: true, type: .string)
         ]
+
         /// The ID of the patch baseline that should be the default patch baseline.
         public let baselineId: String
 
         public init(baselineId: String) {
             self.baselineId = baselineId
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9678,11 +12401,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BaselineId", required: false, type: .string)
         ]
+
         /// The ID of the default patch baseline.
         public let baselineId: String?
 
         public init(baselineId: String? = nil) {
             self.baselineId = baselineId
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9695,6 +12425,7 @@ extension SSM {
             AWSShapeMember(label: "BaselineId", required: true, type: .string), 
             AWSShapeMember(label: "PatchGroup", required: true, type: .string)
         ]
+
         /// The ID of the patch baseline to register the patch group with.
         public let baselineId: String
         /// The name of the patch group that should be registered with the patch baseline.
@@ -9703,6 +12434,15 @@ extension SSM {
         public init(baselineId: String, patchGroup: String) {
             self.baselineId = baselineId
             self.patchGroup = patchGroup
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9716,6 +12456,7 @@ extension SSM {
             AWSShapeMember(label: "BaselineId", required: false, type: .string), 
             AWSShapeMember(label: "PatchGroup", required: false, type: .string)
         ]
+
         /// The ID of the patch baseline the patch group was registered with.
         public let baselineId: String?
         /// The name of the patch group registered with the patch baseline.
@@ -9724,6 +12465,15 @@ extension SSM {
         public init(baselineId: String? = nil, patchGroup: String? = nil) {
             self.baselineId = baselineId
             self.patchGroup = patchGroup
+        }
+
+        public func validate() throws {
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(patchGroup, name:"patchGroup", max: 256)
+            try validate(patchGroup, name:"patchGroup", min: 1)
+            try validate(patchGroup, name:"patchGroup", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9742,6 +12492,7 @@ extension SSM {
             AWSShapeMember(label: "Targets", required: true, type: .list), 
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// User-provided idempotency token.
         public let clientToken: String?
         /// An optional description for the target.
@@ -9757,7 +12508,7 @@ extension SSM {
         /// The ID of the maintenance window the target should be registered with.
         public let windowId: String
 
-        public init(clientToken: String? = nil, description: String? = nil, name: String? = nil, ownerInformation: String? = nil, resourceType: MaintenanceWindowResourceType, targets: [Target], windowId: String) {
+        public init(clientToken: String? = RegisterTargetWithMaintenanceWindowRequest.idempotencyToken(), description: String? = nil, name: String? = nil, ownerInformation: String? = nil, resourceType: MaintenanceWindowResourceType, targets: [Target], windowId: String) {
             self.clientToken = clientToken
             self.description = description
             self.name = name
@@ -9765,6 +12516,26 @@ extension SSM {
             self.resourceType = resourceType
             self.targets = targets
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(ownerInformation, name:"ownerInformation", max: 128)
+            try validate(ownerInformation, name:"ownerInformation", min: 1)
+            try targets.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9782,11 +12553,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowTargetId", required: false, type: .string)
         ]
+
         /// The ID of the target definition in this maintenance window.
         public let windowTargetId: String?
 
         public init(windowTargetId: String? = nil) {
             self.windowTargetId = windowTargetId
+        }
+
+        public func validate() throws {
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+            try validate(windowTargetId, name:"windowTargetId", min: 36)
+            try validate(windowTargetId, name:"windowTargetId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9811,6 +12589,7 @@ extension SSM {
             AWSShapeMember(label: "TaskType", required: true, type: .enum), 
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// User-provided idempotency token.
         public let clientToken: String?
         /// An optional description for the task.
@@ -9840,7 +12619,7 @@ extension SSM {
         /// The ID of the maintenance window the task should be added to.
         public let windowId: String
 
-        public init(clientToken: String? = nil, description: String? = nil, loggingInfo: LoggingInfo? = nil, maxConcurrency: String, maxErrors: String, name: String? = nil, priority: Int32? = nil, serviceRoleArn: String? = nil, targets: [Target], taskArn: String, taskInvocationParameters: MaintenanceWindowTaskInvocationParameters? = nil, taskParameters: [String: MaintenanceWindowTaskParameterValueExpression]? = nil, taskType: MaintenanceWindowTaskType, windowId: String) {
+        public init(clientToken: String? = RegisterTaskWithMaintenanceWindowRequest.idempotencyToken(), description: String? = nil, loggingInfo: LoggingInfo? = nil, maxConcurrency: String, maxErrors: String, name: String? = nil, priority: Int32? = nil, serviceRoleArn: String? = nil, targets: [Target], taskArn: String, taskInvocationParameters: MaintenanceWindowTaskInvocationParameters? = nil, taskParameters: [String: MaintenanceWindowTaskParameterValueExpression]? = nil, taskType: MaintenanceWindowTaskType, windowId: String) {
             self.clientToken = clientToken
             self.description = description
             self.loggingInfo = loggingInfo
@@ -9855,6 +12634,35 @@ extension SSM {
             self.taskParameters = taskParameters
             self.taskType = taskType
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 1)
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try loggingInfo?.validate()
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(priority, name:"priority", min: 0)
+            try targets.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(taskArn, name:"taskArn", max: 1600)
+            try validate(taskArn, name:"taskArn", min: 1)
+            try taskInvocationParameters?.validate()
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9879,11 +12687,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "WindowTaskId", required: false, type: .string)
         ]
+
         /// The ID of the task in the maintenance window.
         public let windowTaskId: String?
 
         public init(windowTaskId: String? = nil) {
             self.windowTaskId = windowTaskId
+        }
+
+        public func validate() throws {
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9895,6 +12710,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OpsItemId", required: true, type: .string)
         ]
+
         /// The ID of an OpsItem related to the current OpsItem.
         public let opsItemId: String
 
@@ -9913,6 +12729,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceType", required: true, type: .enum), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The resource ID for which you want to remove tags. Use the ID of the resource. Here are some examples: ManagedInstance: mi-012345abcde MaintenanceWindow: mw-012345abcde PatchBaseline: pb-012345abcde For the Document and Parameter values, use the name of the resource.  The ManagedInstance type for this API action is only for on-premises managed instances. You must specify the name of the managed instance in the following format: mi-ID_number. For example, mi-1a2b3c4d5e6f. 
         public let resourceId: String
         /// The type of resource of which you want to remove a tag.  The ManagedInstance type for this API action is only for on-premises managed instances. You must specify the name of the managed instance in the following format: mi-ID_number. For example, mi-1a2b3c4d5e6f. 
@@ -9926,6 +12743,14 @@ extension SSM {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name:"tagKeys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceId = "ResourceId"
             case resourceType = "ResourceType"
@@ -9934,6 +12759,7 @@ extension SSM {
     }
 
     public struct RemoveTagsFromResourceResult: AWSShape {
+
 
         public init() {
         }
@@ -9944,11 +12770,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SettingId", required: true, type: .string)
         ]
+
         /// The ID of the service setting to reset.
         public let settingId: String
 
         public init(settingId: String) {
             self.settingId = settingId
+        }
+
+        public func validate() throws {
+            try validate(settingId, name:"settingId", max: 1000)
+            try validate(settingId, name:"settingId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9960,11 +12792,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServiceSetting", required: false, type: .structure)
         ]
+
         /// The current, effective service setting after calling the ResetServiceSetting API action.
         public let serviceSetting: ServiceSetting?
 
         public init(serviceSetting: ServiceSetting? = nil) {
             self.serviceSetting = serviceSetting
+        }
+
+        public func validate() throws {
+            try serviceSetting?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9977,6 +12814,7 @@ extension SSM {
             AWSShapeMember(label: "ParameterValues", required: false, type: .list), 
             AWSShapeMember(label: "Truncated", required: false, type: .boolean)
         ]
+
         /// A list of parameter values sent to targets that resolved during the Automation execution.
         public let parameterValues: [String]?
         /// A boolean value indicating whether the resolved target list is truncated.
@@ -10004,6 +12842,7 @@ extension SSM {
             AWSShapeMember(label: "ResourceType", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// The compliance type.
         public let complianceType: String?
         /// A list of items that are compliant for the resource.
@@ -10032,6 +12871,17 @@ extension SSM {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(complianceType, name:"complianceType", max: 100)
+            try validate(complianceType, name:"complianceType", min: 1)
+            try validate(complianceType, name:"complianceType", pattern: "[A-Za-z0-9_\\-]\\w+|Custom:[a-zA-Z0-9_\\-]\\w+")
+            try executionSummary?.validate()
+            try validate(resourceId, name:"resourceId", max: 100)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceType, name:"resourceType", max: 50)
+            try validate(resourceType, name:"resourceType", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceType = "ComplianceType"
             case compliantSummary = "CompliantSummary"
@@ -10054,6 +12904,7 @@ extension SSM {
             AWSShapeMember(label: "SyncCreatedTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "SyncName", required: false, type: .string)
         ]
+
         /// The status reported by the last sync.
         public let lastStatus: LastResourceDataSyncStatus?
         /// The last time the sync operations returned a status of SUCCESSFUL (UTC).
@@ -10079,6 +12930,12 @@ extension SSM {
             self.syncName = syncName
         }
 
+        public func validate() throws {
+            try s3Destination?.validate()
+            try validate(syncName, name:"syncName", max: 64)
+            try validate(syncName, name:"syncName", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case lastStatus = "LastStatus"
             case lastSuccessfulSyncTime = "LastSuccessfulSyncTime"
@@ -10098,6 +12955,7 @@ extension SSM {
             AWSShapeMember(label: "Region", required: true, type: .string), 
             AWSShapeMember(label: "SyncFormat", required: true, type: .enum)
         ]
+
         /// The ARN of an encryption key for a destination in Amazon S3. Must belong to the same Region as the destination Amazon S3 bucket.
         public let aWSKMSKeyARN: String?
         /// The name of the Amazon S3 bucket where the aggregated data is stored.
@@ -10115,6 +12973,18 @@ extension SSM {
             self.prefix = prefix
             self.region = region
             self.syncFormat = syncFormat
+        }
+
+        public func validate() throws {
+            try validate(aWSKMSKeyARN, name:"aWSKMSKeyARN", max: 512)
+            try validate(aWSKMSKeyARN, name:"aWSKMSKeyARN", min: 1)
+            try validate(aWSKMSKeyARN, name:"aWSKMSKeyARN", pattern: "arn:.*")
+            try validate(bucketName, name:"bucketName", max: 2048)
+            try validate(bucketName, name:"bucketName", min: 1)
+            try validate(prefix, name:"prefix", max: 256)
+            try validate(prefix, name:"prefix", min: 1)
+            try validate(region, name:"region", max: 64)
+            try validate(region, name:"region", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10152,11 +13022,18 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TypeName", required: true, type: .string)
         ]
+
         /// Name of the inventory item type. Valid value: AWS:InstanceInformation. Default Value: AWS:InstanceInformation.
         public let typeName: String
 
         public init(typeName: String) {
             self.typeName = typeName
+        }
+
+        public func validate() throws {
+            try validate(typeName, name:"typeName", max: 100)
+            try validate(typeName, name:"typeName", min: 1)
+            try validate(typeName, name:"typeName", pattern: "^(AWS|Custom):.*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10168,11 +13045,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SessionId", required: true, type: .string)
         ]
+
         /// The ID of the disconnected session to resume.
         public let sessionId: String
 
         public init(sessionId: String) {
             self.sessionId = sessionId
+        }
+
+        public func validate() throws {
+            try validate(sessionId, name:"sessionId", max: 96)
+            try validate(sessionId, name:"sessionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10186,6 +13069,7 @@ extension SSM {
             AWSShapeMember(label: "StreamUrl", required: false, type: .string), 
             AWSShapeMember(label: "TokenValue", required: false, type: .string)
         ]
+
         /// The ID of the session.
         public let sessionId: String?
         /// A URL back to SSM Agent on the instance that the Session Manager client uses to send commands and receive output from the instance. Format: wss://ssm-messages.region.amazonaws.com/v1/data-channel/session-id?stream=(input|output).  region represents the Region identifier for an AWS Region supported by AWS Systems Manager, such as us-east-2 for the US East (Ohio) Region. For a list of supported region values, see the Region column in the AWS Systems Manager table of regions and endpoints in the AWS General Reference.  session-id represents the ID of a Session Manager session, such as 1a2b3c4dEXAMPLE.
@@ -10197,6 +13081,13 @@ extension SSM {
             self.sessionId = sessionId
             self.streamUrl = streamUrl
             self.tokenValue = tokenValue
+        }
+
+        public func validate() throws {
+            try validate(sessionId, name:"sessionId", max: 96)
+            try validate(sessionId, name:"sessionId", min: 1)
+            try validate(tokenValue, name:"tokenValue", max: 300)
+            try validate(tokenValue, name:"tokenValue", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10212,6 +13103,7 @@ extension SSM {
             AWSShapeMember(label: "OutputS3KeyPrefix", required: false, type: .string), 
             AWSShapeMember(label: "OutputS3Region", required: false, type: .string)
         ]
+
         /// The name of the Amazon S3 bucket.
         public let outputS3BucketName: String?
         /// The Amazon S3 bucket subfolder.
@@ -10225,6 +13117,14 @@ extension SSM {
             self.outputS3Region = outputS3Region
         }
 
+        public func validate() throws {
+            try validate(outputS3BucketName, name:"outputS3BucketName", max: 63)
+            try validate(outputS3BucketName, name:"outputS3BucketName", min: 3)
+            try validate(outputS3KeyPrefix, name:"outputS3KeyPrefix", max: 500)
+            try validate(outputS3Region, name:"outputS3Region", max: 20)
+            try validate(outputS3Region, name:"outputS3Region", min: 3)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case outputS3BucketName = "OutputS3BucketName"
             case outputS3KeyPrefix = "OutputS3KeyPrefix"
@@ -10236,6 +13136,7 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OutputUrl", required: false, type: .string)
         ]
+
         /// A URL for an Amazon S3 bucket where you want to store the results of this request.
         public let outputUrl: String?
 
@@ -10254,6 +13155,7 @@ extension SSM {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// The time, in ISO-8601 Extended format, that the maintenance window is scheduled to be run.
         public let executionTime: String?
         /// The name of the maintenance window to be run.
@@ -10265,6 +13167,15 @@ extension SSM {
             self.executionTime = executionTime
             self.name = name
             self.windowId = windowId
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10280,6 +13191,7 @@ extension SSM {
             AWSShapeMember(label: "Payload", required: false, type: .map), 
             AWSShapeMember(label: "SignalType", required: true, type: .enum)
         ]
+
         /// The unique identifier for an existing Automation execution that you want to send the signal to.
         public let automationExecutionId: String
         /// The data sent with the signal. The data schema depends on the type of signal used in the request. For Approve and Reject signal types, the payload is an optional comment that you can send with the signal type. For example:  Comment="Looks good"  For StartStep and Resume signal types, you must send the name of the Automation step to start or resume as the payload. For example:  StepName="step1"  For the StopStep signal type, you must send the step execution ID as the payload. For example:  StepExecutionId="97fff367-fc5a-4299-aed8-0123456789ab" 
@@ -10293,6 +13205,11 @@ extension SSM {
             self.signalType = signalType
         }
 
+        public func validate() throws {
+            try validate(automationExecutionId, name:"automationExecutionId", max: 36)
+            try validate(automationExecutionId, name:"automationExecutionId", min: 36)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case automationExecutionId = "AutomationExecutionId"
             case payload = "Payload"
@@ -10301,6 +13218,7 @@ extension SSM {
     }
 
     public struct SendAutomationSignalResult: AWSShape {
+
 
         public init() {
         }
@@ -10327,6 +13245,7 @@ extension SSM {
             AWSShapeMember(label: "Targets", required: false, type: .list), 
             AWSShapeMember(label: "TimeoutSeconds", required: false, type: .integer)
         ]
+
         /// Enables Systems Manager to send Run Command output to Amazon CloudWatch Logs. 
         public let cloudWatchOutputConfig: CloudWatchOutputConfig?
         /// User-specified information about the command, such as a brief description of what the command should do.
@@ -10382,6 +13301,37 @@ extension SSM {
             self.timeoutSeconds = timeoutSeconds
         }
 
+        public func validate() throws {
+            try cloudWatchOutputConfig?.validate()
+            try validate(comment, name:"comment", max: 100)
+            try validate(documentHash, name:"documentHash", max: 256)
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try instanceIds?.forEach {
+                try validate($0, name:"instanceIds[]", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            }
+            try validate(instanceIds, name:"instanceIds", max: 50)
+            try validate(instanceIds, name:"instanceIds", min: 0)
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(outputS3BucketName, name:"outputS3BucketName", max: 63)
+            try validate(outputS3BucketName, name:"outputS3BucketName", min: 3)
+            try validate(outputS3KeyPrefix, name:"outputS3KeyPrefix", max: 500)
+            try validate(outputS3Region, name:"outputS3Region", max: 20)
+            try validate(outputS3Region, name:"outputS3Region", min: 3)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(timeoutSeconds, name:"timeoutSeconds", max: 2592000)
+            try validate(timeoutSeconds, name:"timeoutSeconds", min: 30)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudWatchOutputConfig = "CloudWatchOutputConfig"
             case comment = "Comment"
@@ -10407,11 +13357,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Command", required: false, type: .structure)
         ]
+
         /// The request as it was received by Systems Manager. Also provides the command ID which can be used future references to this request.
         public let command: Command?
 
         public init(command: Command? = nil) {
             self.command = command
+        }
+
+        public func validate() throws {
+            try command?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10428,6 +13383,7 @@ extension SSM {
             AWSShapeMember(label: "SettingValue", required: false, type: .string), 
             AWSShapeMember(label: "Status", required: false, type: .string)
         ]
+
         /// The ARN of the service setting.
         public let arn: String?
         /// The last time the service setting was modified.
@@ -10448,6 +13404,13 @@ extension SSM {
             self.settingId = settingId
             self.settingValue = settingValue
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(settingId, name:"settingId", max: 1000)
+            try validate(settingId, name:"settingId", min: 1)
+            try validate(settingValue, name:"settingValue", max: 4096)
+            try validate(settingValue, name:"settingValue", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10472,6 +13435,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "Target", required: false, type: .string)
         ]
+
         /// Reserved for future use.
         public let details: String?
         /// The name of the Session Manager SSM document used to define the parameters and plugin settings for the session. For example, SSM-SessionManagerRunShell.
@@ -10503,6 +13467,19 @@ extension SSM {
             self.target = target
         }
 
+        public func validate() throws {
+            try validate(details, name:"details", max: 1024)
+            try validate(details, name:"details", min: 1)
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try outputUrl?.validate()
+            try validate(owner, name:"owner", max: 256)
+            try validate(owner, name:"owner", min: 1)
+            try validate(sessionId, name:"sessionId", max: 96)
+            try validate(sessionId, name:"sessionId", min: 1)
+            try validate(target, name:"target", max: 50)
+            try validate(target, name:"target", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case details = "Details"
             case documentName = "DocumentName"
@@ -10521,6 +13498,7 @@ extension SSM {
             AWSShapeMember(label: "key", required: true, type: .enum), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The name of the filter.
         public let key: SessionFilterKey
         /// The filter value. Valid values for each filter key are as follows:   InvokedAfter: Specify a timestamp to limit your results. For example, specify 2018-08-29T00:00:00Z to see sessions that started August 29, 2018, and later.   InvokedBefore: Specify a timestamp to limit your results. For example, specify 2018-08-29T00:00:00Z to see sessions that started before August 29, 2018.   Target: Specify an instance to which session connections have been made.   Owner: Specify an AWS user account to see a list of sessions started by that user.   Status: Specify a valid session status to see a list of all sessions with that status. Status values you can specify include:   Connected   Connecting   Disconnected   Terminated   Terminating   Failed    
@@ -10529,6 +13507,11 @@ extension SSM {
         public init(key: SessionFilterKey, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", max: 200)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10551,6 +13534,7 @@ extension SSM {
             AWSShapeMember(label: "CloudWatchOutputUrl", required: false, type: .string), 
             AWSShapeMember(label: "S3OutputUrl", required: false, type: .string)
         ]
+
         /// Reserved for future use.
         public let cloudWatchOutputUrl: String?
         /// Reserved for future use.
@@ -10559,6 +13543,13 @@ extension SSM {
         public init(cloudWatchOutputUrl: String? = nil, s3OutputUrl: String? = nil) {
             self.cloudWatchOutputUrl = cloudWatchOutputUrl
             self.s3OutputUrl = s3OutputUrl
+        }
+
+        public func validate() throws {
+            try validate(cloudWatchOutputUrl, name:"cloudWatchOutputUrl", max: 2083)
+            try validate(cloudWatchOutputUrl, name:"cloudWatchOutputUrl", min: 1)
+            try validate(s3OutputUrl, name:"s3OutputUrl", max: 2083)
+            try validate(s3OutputUrl, name:"s3OutputUrl", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10592,6 +13583,7 @@ extension SSM {
             AWSShapeMember(label: "MediumCount", required: false, type: .integer), 
             AWSShapeMember(label: "UnspecifiedCount", required: false, type: .integer)
         ]
+
         /// The total number of resources or compliance items that have a severity level of critical. Critical severity is determined by the organization that published the compliance items.
         public let criticalCount: Int32?
         /// The total number of resources or compliance items that have a severity level of high. High severity is determined by the organization that published the compliance items.
@@ -10637,11 +13629,20 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AssociationIds", required: true, type: .list)
         ]
+
         /// The association IDs that you want to run immediately and only one time.
         public let associationIds: [String]
 
         public init(associationIds: [String]) {
             self.associationIds = associationIds
+        }
+
+        public func validate() throws {
+            try associationIds.forEach {
+                try validate($0, name:"associationIds[]", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            }
+            try validate(associationIds, name:"associationIds", max: 10)
+            try validate(associationIds, name:"associationIds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10650,6 +13651,7 @@ extension SSM {
     }
 
     public struct StartAssociationsOnceResult: AWSShape {
+
 
         public init() {
         }
@@ -10670,6 +13672,7 @@ extension SSM {
             AWSShapeMember(label: "TargetParameterName", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// User-provided idempotency token. The token must be unique, is case insensitive, enforces the UUID format, and can't be reused.
         public let clientToken: String?
         /// The name of the Automation document to use for this execution.
@@ -10707,6 +13710,34 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 36)
+            try validate(clientToken, name:"clientToken", min: 36)
+            try validate(clientToken, name:"clientToken", pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}")
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try targetLocations?.forEach {
+                try $0.validate()
+            }
+            try validate(targetLocations, name:"targetLocations", max: 100)
+            try validate(targetLocations, name:"targetLocations", min: 1)
+            try validate(targetMaps, name:"targetMaps", max: 300)
+            try validate(targetMaps, name:"targetMaps", min: 0)
+            try validate(targetParameterName, name:"targetParameterName", max: 50)
+            try validate(targetParameterName, name:"targetParameterName", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientToken = "ClientToken"
             case documentName = "DocumentName"
@@ -10726,11 +13757,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AutomationExecutionId", required: false, type: .string)
         ]
+
         /// The unique ID of a newly scheduled automation execution.
         public let automationExecutionId: String?
 
         public init(automationExecutionId: String? = nil) {
             self.automationExecutionId = automationExecutionId
+        }
+
+        public func validate() throws {
+            try validate(automationExecutionId, name:"automationExecutionId", max: 36)
+            try validate(automationExecutionId, name:"automationExecutionId", min: 36)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10744,6 +13781,7 @@ extension SSM {
             AWSShapeMember(label: "Parameters", required: false, type: .map), 
             AWSShapeMember(label: "Target", required: true, type: .string)
         ]
+
         /// The name of the SSM document to define the parameters and plugin settings for the session. For example, SSM-SessionManagerRunShell. If no document name is provided, a shell to the instance is launched by default.
         public let documentName: String?
         /// Reserved for future use.
@@ -10755,6 +13793,12 @@ extension SSM {
             self.documentName = documentName
             self.parameters = parameters
             self.target = target
+        }
+
+        public func validate() throws {
+            try validate(documentName, name:"documentName", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try validate(target, name:"target", max: 50)
+            try validate(target, name:"target", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10770,6 +13814,7 @@ extension SSM {
             AWSShapeMember(label: "StreamUrl", required: false, type: .string), 
             AWSShapeMember(label: "TokenValue", required: false, type: .string)
         ]
+
         /// The ID of the session.
         public let sessionId: String?
         /// A URL back to SSM Agent on the instance that the Session Manager client uses to send commands and receive output from the instance. Format: wss://ssm-messages.region.amazonaws.com/v1/data-channel/session-id?stream=(input|output)   region represents the Region identifier for an AWS Region supported by AWS Systems Manager, such as us-east-2 for the US East (Ohio) Region. For a list of supported region values, see the Region column in the AWS Systems Manager table of regions and endpoints in the AWS General Reference.  session-id represents the ID of a Session Manager session, such as 1a2b3c4dEXAMPLE.
@@ -10781,6 +13826,13 @@ extension SSM {
             self.sessionId = sessionId
             self.streamUrl = streamUrl
             self.tokenValue = tokenValue
+        }
+
+        public func validate() throws {
+            try validate(sessionId, name:"sessionId", max: 96)
+            try validate(sessionId, name:"sessionId", min: 1)
+            try validate(tokenValue, name:"tokenValue", max: 300)
+            try validate(tokenValue, name:"tokenValue", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10815,6 +13867,7 @@ extension SSM {
             AWSShapeMember(label: "TimeoutSeconds", required: false, type: .long), 
             AWSShapeMember(label: "ValidNextSteps", required: false, type: .list)
         ]
+
         /// The action this step performs. The action determines the behavior of the step.
         public let action: String?
         /// If a step has finished execution, this contains the time the execution ended. If the step has not yet concluded, this field is not populated.
@@ -10885,6 +13938,20 @@ extension SSM {
             self.validNextSteps = validNextSteps
         }
 
+        public func validate() throws {
+            try validate(action, name:"action", pattern: "^aws:[a-zA-Z]{3,25}$")
+            try targetLocation?.validate()
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validNextSteps?.forEach {
+                try validate($0, name:"validNextSteps[]", max: 65535)
+                try validate($0, name:"validNextSteps[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case action = "Action"
             case executionEndTime = "ExecutionEndTime"
@@ -10916,6 +13983,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: true, type: .enum), 
             AWSShapeMember(label: "Values", required: true, type: .list)
         ]
+
         /// One or more keys to limit the results. Valid filter keys include the following: StepName, Action, StepExecutionId, StepExecutionStatus, StartTimeBefore, StartTimeAfter.
         public let key: StepExecutionFilterKey
         /// The values of the filter key.
@@ -10924,6 +13992,15 @@ extension SSM {
         public init(key: StepExecutionFilterKey, values: [String]) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try values.forEach {
+                try validate($0, name:"values[]", max: 150)
+                try validate($0, name:"values[]", min: 1)
+            }
+            try validate(values, name:"values", max: 10)
+            try validate(values, name:"values", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10947,6 +14024,7 @@ extension SSM {
             AWSShapeMember(label: "AutomationExecutionId", required: true, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The execution ID of the Automation to stop.
         public let automationExecutionId: String
         /// The stop request type. Valid types include the following: Cancel and Complete. The default type is Cancel.
@@ -10957,6 +14035,11 @@ extension SSM {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(automationExecutionId, name:"automationExecutionId", max: 36)
+            try validate(automationExecutionId, name:"automationExecutionId", min: 36)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case automationExecutionId = "AutomationExecutionId"
             case `type` = "Type"
@@ -10964,6 +14047,7 @@ extension SSM {
     }
 
     public struct StopAutomationExecutionResult: AWSShape {
+
 
         public init() {
         }
@@ -10981,6 +14065,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The name of the tag.
         public let key: String
         /// The value of the tag.
@@ -10989,6 +14074,15 @@ extension SSM {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11002,6 +14096,7 @@ extension SSM {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// User-defined criteria for sending commands that target instances that meet the criteria. Key can be tag:&lt;Amazon EC2 tag&gt; or InstanceIds. For more information about how to send commands that target instances using Key,Value parameters, see Using Targets and Rate Controls to Send Commands to a Fleet in the AWS Systems Manager User Guide.
         public let key: String?
         /// User-defined criteria that maps to Key. For example, if you specified tag:ServerRole, you could specify value:WebServer to run a command on instances that include Amazon EC2 tags of ServerRole,WebServer. For more information about how to send commands that target instances using Key,Value parameters, see Using Targets and Rate Controls to Send Commands to a Fleet in the AWS Systems Manager User Guide.
@@ -11010,6 +14105,14 @@ extension SSM {
         public init(key: String? = nil, values: [String]? = nil) {
             self.key = key
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^[\\p{L}\\p{Z}\\p{N}_.:/=\\-@]*$")
+            try validate(values, name:"values", max: 50)
+            try validate(values, name:"values", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11026,6 +14129,7 @@ extension SSM {
             AWSShapeMember(label: "TargetLocationMaxConcurrency", required: false, type: .string), 
             AWSShapeMember(label: "TargetLocationMaxErrors", required: false, type: .string)
         ]
+
         /// The AWS accounts targeted by the current Automation execution.
         public let accounts: [String]?
         /// The Automation execution role used by the currently running Automation.
@@ -11045,6 +14149,21 @@ extension SSM {
             self.targetLocationMaxErrors = targetLocationMaxErrors
         }
 
+        public func validate() throws {
+            try validate(accounts, name:"accounts", max: 50)
+            try validate(accounts, name:"accounts", min: 1)
+            try validate(executionRoleName, name:"executionRoleName", max: 64)
+            try validate(executionRoleName, name:"executionRoleName", min: 1)
+            try validate(regions, name:"regions", max: 50)
+            try validate(regions, name:"regions", min: 1)
+            try validate(targetLocationMaxConcurrency, name:"targetLocationMaxConcurrency", max: 7)
+            try validate(targetLocationMaxConcurrency, name:"targetLocationMaxConcurrency", min: 1)
+            try validate(targetLocationMaxConcurrency, name:"targetLocationMaxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(targetLocationMaxErrors, name:"targetLocationMaxErrors", max: 7)
+            try validate(targetLocationMaxErrors, name:"targetLocationMaxErrors", min: 1)
+            try validate(targetLocationMaxErrors, name:"targetLocationMaxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accounts = "Accounts"
             case executionRoleName = "ExecutionRoleName"
@@ -11058,11 +14177,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SessionId", required: true, type: .string)
         ]
+
         /// The ID of the session to terminate.
         public let sessionId: String
 
         public init(sessionId: String) {
             self.sessionId = sessionId
+        }
+
+        public func validate() throws {
+            try validate(sessionId, name:"sessionId", max: 96)
+            try validate(sessionId, name:"sessionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11074,11 +14199,17 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SessionId", required: false, type: .string)
         ]
+
         /// The ID of the session that has been terminated.
         public let sessionId: String?
 
         public init(sessionId: String? = nil) {
             self.sessionId = sessionId
+        }
+
+        public func validate() throws {
+            try validate(sessionId, name:"sessionId", max: 96)
+            try validate(sessionId, name:"sessionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11102,6 +14233,7 @@ extension SSM {
             AWSShapeMember(label: "ScheduleExpression", required: false, type: .string), 
             AWSShapeMember(label: "Targets", required: false, type: .list)
         ]
+
         /// The ID of the association you want to update. 
         public let associationId: String
         /// The name of the association that you want to update.
@@ -11145,6 +14277,30 @@ extension SSM {
             self.targets = targets
         }
 
+        public func validate() throws {
+            try validate(associationId, name:"associationId", pattern: "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+            try validate(associationName, name:"associationName", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(associationVersion, name:"associationVersion", pattern: "([$]LATEST)|([1-9][0-9]*)")
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", max: 50)
+            try validate(automationTargetParameterName, name:"automationTargetParameterName", min: 1)
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+            try outputLocation?.validate()
+            try validate(scheduleExpression, name:"scheduleExpression", max: 256)
+            try validate(scheduleExpression, name:"scheduleExpression", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationId = "AssociationId"
             case associationName = "AssociationName"
@@ -11166,11 +14322,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AssociationDescription", required: false, type: .structure)
         ]
+
         /// The description of the association that was updated.
         public let associationDescription: AssociationDescription?
 
         public init(associationDescription: AssociationDescription? = nil) {
             self.associationDescription = associationDescription
+        }
+
+        public func validate() throws {
+            try associationDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11184,6 +14345,7 @@ extension SSM {
             AWSShapeMember(label: "InstanceId", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The association status.
         public let associationStatus: AssociationStatus
         /// The ID of the instance.
@@ -11197,6 +14359,12 @@ extension SSM {
             self.name = name
         }
 
+        public func validate() throws {
+            try associationStatus.validate()
+            try validate(instanceId, name:"instanceId", pattern: "(^i-(\\w{8}|\\w{17})$)|(^mi-\\w{17}$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.:/]{3,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associationStatus = "AssociationStatus"
             case instanceId = "InstanceId"
@@ -11208,11 +14376,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AssociationDescription", required: false, type: .structure)
         ]
+
         /// Information about the association.
         public let associationDescription: AssociationDescription?
 
         public init(associationDescription: AssociationDescription? = nil) {
             self.associationDescription = associationDescription
+        }
+
+        public func validate() throws {
+            try associationDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11225,6 +14398,7 @@ extension SSM {
             AWSShapeMember(label: "DocumentVersion", required: true, type: .string), 
             AWSShapeMember(label: "Name", required: true, type: .string)
         ]
+
         /// The version of a custom document that you want to set as the default version.
         public let documentVersion: String
         /// The name of a custom document that you want to set as the default version.
@@ -11233,6 +14407,11 @@ extension SSM {
         public init(documentVersion: String, name: String) {
             self.documentVersion = documentVersion
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(documentVersion, name:"documentVersion", pattern: "(^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11245,11 +14424,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Description", required: false, type: .structure)
         ]
+
         /// The description of a custom document that you want to set as the default version.
         public let description: DocumentDefaultVersionDescription?
 
         public init(description: DocumentDefaultVersionDescription? = nil) {
             self.description = description
+        }
+
+        public func validate() throws {
+            try description?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11267,6 +14451,7 @@ extension SSM {
             AWSShapeMember(label: "TargetType", required: false, type: .string), 
             AWSShapeMember(label: "VersionName", required: false, type: .string)
         ]
+
         /// A list of key and value pairs that describe attachments to a version of a document.
         public let attachments: [AttachmentsSource]?
         /// A valid JSON or YAML string.
@@ -11292,6 +14477,20 @@ extension SSM {
             self.versionName = versionName
         }
 
+        public func validate() throws {
+            try attachments?.forEach {
+                try $0.validate()
+            }
+            try validate(attachments, name:"attachments", max: 1)
+            try validate(attachments, name:"attachments", min: 0)
+            try validate(content, name:"content", min: 1)
+            try validate(documentVersion, name:"documentVersion", pattern: "([$]LATEST|[$]DEFAULT|^[1-9][0-9]*$)")
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(targetType, name:"targetType", max: 200)
+            try validate(targetType, name:"targetType", pattern: "^\\/[\\w\\.\\-\\:\\/]*$")
+            try validate(versionName, name:"versionName", pattern: "^[a-zA-Z0-9_\\-.]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attachments = "Attachments"
             case content = "Content"
@@ -11307,11 +14506,16 @@ extension SSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentDescription", required: false, type: .structure)
         ]
+
         /// A description of the document that was updated.
         public let documentDescription: DocumentDescription?
 
         public init(documentDescription: DocumentDescription? = nil) {
             self.documentDescription = documentDescription
+        }
+
+        public func validate() throws {
+            try documentDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11334,6 +14538,7 @@ extension SSM {
             AWSShapeMember(label: "StartDate", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: true, type: .string)
         ]
+
         /// Whether targets must be registered with the maintenance window before tasks can be defined for those targets.
         public let allowUnassociatedTargets: Bool?
         /// The number of hours before the end of the maintenance window that Systems Manager stops scheduling new tasks for execution.
@@ -11374,6 +14579,23 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try validate(cutoff, name:"cutoff", max: 23)
+            try validate(cutoff, name:"cutoff", min: 0)
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(duration, name:"duration", max: 24)
+            try validate(duration, name:"duration", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(schedule, name:"schedule", max: 256)
+            try validate(schedule, name:"schedule", min: 1)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowUnassociatedTargets = "AllowUnassociatedTargets"
             case cutoff = "Cutoff"
@@ -11404,6 +14626,7 @@ extension SSM {
             AWSShapeMember(label: "StartDate", required: false, type: .string), 
             AWSShapeMember(label: "WindowId", required: false, type: .string)
         ]
+
         /// Whether targets must be registered with the maintenance window before tasks can be defined for those targets.
         public let allowUnassociatedTargets: Bool?
         /// The number of hours before the end of the maintenance window that Systems Manager stops scheduling new tasks for execution.
@@ -11441,6 +14664,23 @@ extension SSM {
             self.windowId = windowId
         }
 
+        public func validate() throws {
+            try validate(cutoff, name:"cutoff", max: 23)
+            try validate(cutoff, name:"cutoff", min: 0)
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(duration, name:"duration", max: 24)
+            try validate(duration, name:"duration", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(schedule, name:"schedule", max: 256)
+            try validate(schedule, name:"schedule", min: 1)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowUnassociatedTargets = "AllowUnassociatedTargets"
             case cutoff = "Cutoff"
@@ -11466,6 +14706,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: true, type: .string), 
             AWSShapeMember(label: "WindowTargetId", required: true, type: .string)
         ]
+
         /// An optional description for the update.
         public let description: String?
         /// A name for the update.
@@ -11491,6 +14732,27 @@ extension SSM {
             self.windowTargetId = windowTargetId
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(ownerInformation, name:"ownerInformation", max: 128)
+            try validate(ownerInformation, name:"ownerInformation", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+            try validate(windowTargetId, name:"windowTargetId", min: 36)
+            try validate(windowTargetId, name:"windowTargetId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case name = "Name"
@@ -11511,6 +14773,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTargetId", required: false, type: .string)
         ]
+
         /// The updated description.
         public let description: String?
         /// The updated name.
@@ -11531,6 +14794,27 @@ extension SSM {
             self.targets = targets
             self.windowId = windowId
             self.windowTargetId = windowTargetId
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(ownerInformation, name:"ownerInformation", max: 128)
+            try validate(ownerInformation, name:"ownerInformation", min: 1)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTargetId, name:"windowTargetId", max: 36)
+            try validate(windowTargetId, name:"windowTargetId", min: 36)
+            try validate(windowTargetId, name:"windowTargetId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -11560,6 +14844,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: true, type: .string), 
             AWSShapeMember(label: "WindowTaskId", required: true, type: .string)
         ]
+
         /// The new task description to specify.
         public let description: String?
         /// The new logging location in Amazon S3 to specify.   LoggingInfo has been deprecated. To specify an S3 bucket to contain logs, instead use the OutputS3BucketName and OutputS3KeyPrefix options in the TaskInvocationParameters structure. For information about how Systems Manager handles these options for the supported maintenance window task types, see MaintenanceWindowTaskInvocationParameters. 
@@ -11606,6 +14891,36 @@ extension SSM {
             self.windowTaskId = windowTaskId
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try loggingInfo?.validate()
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(priority, name:"priority", min: 0)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(taskArn, name:"taskArn", max: 1600)
+            try validate(taskArn, name:"taskArn", min: 1)
+            try taskInvocationParameters?.validate()
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case loggingInfo = "LoggingInfo"
@@ -11640,6 +14955,7 @@ extension SSM {
             AWSShapeMember(label: "WindowId", required: false, type: .string), 
             AWSShapeMember(label: "WindowTaskId", required: false, type: .string)
         ]
+
         /// The updated task description.
         public let description: String?
         /// The updated logging information in Amazon S3.   LoggingInfo has been deprecated. To specify an S3 bucket to contain logs, instead use the OutputS3BucketName and OutputS3KeyPrefix options in the TaskInvocationParameters structure. For information about how Systems Manager handles these options for the supported maintenance window task types, see MaintenanceWindowTaskInvocationParameters. 
@@ -11683,6 +14999,36 @@ extension SSM {
             self.windowTaskId = windowTaskId
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 128)
+            try validate(description, name:"description", min: 1)
+            try loggingInfo?.validate()
+            try validate(maxConcurrency, name:"maxConcurrency", max: 7)
+            try validate(maxConcurrency, name:"maxConcurrency", min: 1)
+            try validate(maxConcurrency, name:"maxConcurrency", pattern: "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$")
+            try validate(maxErrors, name:"maxErrors", max: 7)
+            try validate(maxErrors, name:"maxErrors", min: 1)
+            try validate(maxErrors, name:"maxErrors", pattern: "^([1-9][0-9]*|[0]|[1-9][0-9]%|[0-9]%|100%)$")
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try validate(priority, name:"priority", min: 0)
+            try targets?.forEach {
+                try $0.validate()
+            }
+            try validate(targets, name:"targets", max: 5)
+            try validate(targets, name:"targets", min: 0)
+            try validate(taskArn, name:"taskArn", max: 1600)
+            try validate(taskArn, name:"taskArn", min: 1)
+            try taskInvocationParameters?.validate()
+            try validate(windowId, name:"windowId", max: 20)
+            try validate(windowId, name:"windowId", min: 20)
+            try validate(windowId, name:"windowId", pattern: "^mw-[0-9a-f]{17}$")
+            try validate(windowTaskId, name:"windowTaskId", max: 36)
+            try validate(windowTaskId, name:"windowTaskId", min: 36)
+            try validate(windowTaskId, name:"windowTaskId", pattern: "^[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case loggingInfo = "LoggingInfo"
@@ -11705,6 +15051,7 @@ extension SSM {
             AWSShapeMember(label: "IamRole", required: true, type: .string), 
             AWSShapeMember(label: "InstanceId", required: true, type: .string)
         ]
+
         /// The IAM role you want to assign or change.
         public let iamRole: String
         /// The ID of the managed instance where you want to update the role.
@@ -11715,6 +15062,11 @@ extension SSM {
             self.instanceId = instanceId
         }
 
+        public func validate() throws {
+            try validate(iamRole, name:"iamRole", max: 64)
+            try validate(instanceId, name:"instanceId", pattern: "^mi-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case iamRole = "IamRole"
             case instanceId = "InstanceId"
@@ -11722,6 +15074,7 @@ extension SSM {
     }
 
     public struct UpdateManagedInstanceRoleResult: AWSShape {
+
 
         public init() {
         }
@@ -11740,6 +15093,7 @@ extension SSM {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "Title", required: false, type: .string)
         ]
+
         /// Update the information about the OpsItem. Provide enough information so that users reading this OpsItem for the first time understand the issue. 
         public let description: String?
         /// The Amazon Resource Name (ARN) of an SNS topic where notifications are sent when this OpsItem is edited or changed.
@@ -11771,6 +15125,16 @@ extension SSM {
             self.title = title
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 1)
+            try validate(opsItemId, name:"opsItemId", pattern: "^(oi)-[0-9a-f]{12}$")
+            try validate(priority, name:"priority", max: 5)
+            try validate(priority, name:"priority", min: 1)
+            try validate(title, name:"title", max: 1024)
+            try validate(title, name:"title", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case notifications = "Notifications"
@@ -11785,6 +15149,7 @@ extension SSM {
     }
 
     public struct UpdateOpsItemResponse: AWSShape {
+
 
         public init() {
         }
@@ -11806,6 +15171,7 @@ extension SSM {
             AWSShapeMember(label: "Replace", required: false, type: .boolean), 
             AWSShapeMember(label: "Sources", required: false, type: .list)
         ]
+
         /// A set of rules used to include patches in the baseline.
         public let approvalRules: PatchRuleGroup?
         /// A list of explicitly approved patches for the baseline. For information about accepted formats for lists of approved patches and rejected patches, see Package Name Formats for Approved and Rejected Patch Lists in the AWS Systems Manager User Guide.
@@ -11846,6 +15212,36 @@ extension SSM {
             self.sources = sources
         }
 
+        public func validate() throws {
+            try approvalRules?.validate()
+            try approvedPatches?.forEach {
+                try validate($0, name:"approvedPatches[]", max: 100)
+                try validate($0, name:"approvedPatches[]", min: 1)
+            }
+            try validate(approvedPatches, name:"approvedPatches", max: 50)
+            try validate(approvedPatches, name:"approvedPatches", min: 0)
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 1)
+            try globalFilters?.validate()
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try rejectedPatches?.forEach {
+                try validate($0, name:"rejectedPatches[]", max: 100)
+                try validate($0, name:"rejectedPatches[]", min: 1)
+            }
+            try validate(rejectedPatches, name:"rejectedPatches", max: 50)
+            try validate(rejectedPatches, name:"rejectedPatches", min: 0)
+            try sources?.forEach {
+                try $0.validate()
+            }
+            try validate(sources, name:"sources", max: 20)
+            try validate(sources, name:"sources", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case approvalRules = "ApprovalRules"
             case approvedPatches = "ApprovedPatches"
@@ -11879,6 +15275,7 @@ extension SSM {
             AWSShapeMember(label: "RejectedPatchesAction", required: false, type: .enum), 
             AWSShapeMember(label: "Sources", required: false, type: .list)
         ]
+
         /// A set of rules used to include patches in the baseline.
         public let approvalRules: PatchRuleGroup?
         /// A list of explicitly approved patches for the baseline.
@@ -11925,6 +15322,36 @@ extension SSM {
             self.sources = sources
         }
 
+        public func validate() throws {
+            try approvalRules?.validate()
+            try approvedPatches?.forEach {
+                try validate($0, name:"approvedPatches[]", max: 100)
+                try validate($0, name:"approvedPatches[]", min: 1)
+            }
+            try validate(approvedPatches, name:"approvedPatches", max: 50)
+            try validate(approvedPatches, name:"approvedPatches", min: 0)
+            try validate(baselineId, name:"baselineId", max: 128)
+            try validate(baselineId, name:"baselineId", min: 20)
+            try validate(baselineId, name:"baselineId", pattern: "^[a-zA-Z0-9_\\-:/]{20,128}$")
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", min: 1)
+            try globalFilters?.validate()
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 3)
+            try validate(name, name:"name", pattern: "^[a-zA-Z0-9_\\-.]{3,128}$")
+            try rejectedPatches?.forEach {
+                try validate($0, name:"rejectedPatches[]", max: 100)
+                try validate($0, name:"rejectedPatches[]", min: 1)
+            }
+            try validate(rejectedPatches, name:"rejectedPatches", max: 50)
+            try validate(rejectedPatches, name:"rejectedPatches", min: 0)
+            try sources?.forEach {
+                try $0.validate()
+            }
+            try validate(sources, name:"sources", max: 20)
+            try validate(sources, name:"sources", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case approvalRules = "ApprovalRules"
             case approvedPatches = "ApprovedPatches"
@@ -11948,6 +15375,7 @@ extension SSM {
             AWSShapeMember(label: "SettingId", required: true, type: .string), 
             AWSShapeMember(label: "SettingValue", required: true, type: .string)
         ]
+
         /// The ID of the service setting to update.
         public let settingId: String
         /// The new value to specify for the service setting.
@@ -11958,6 +15386,13 @@ extension SSM {
             self.settingValue = settingValue
         }
 
+        public func validate() throws {
+            try validate(settingId, name:"settingId", max: 1000)
+            try validate(settingId, name:"settingId", min: 1)
+            try validate(settingValue, name:"settingValue", max: 4096)
+            try validate(settingValue, name:"settingValue", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case settingId = "SettingId"
             case settingValue = "SettingValue"
@@ -11965,6 +15400,7 @@ extension SSM {
     }
 
     public struct UpdateServiceSettingResult: AWSShape {
+
 
         public init() {
         }

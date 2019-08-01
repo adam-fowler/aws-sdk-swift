@@ -10,6 +10,7 @@ extension Textract {
             AWSShapeMember(label: "Document", required: true, type: .structure), 
             AWSShapeMember(label: "FeatureTypes", required: true, type: .list)
         ]
+
         /// The input document as base64-encoded bytes or an Amazon S3 object. If you use the AWS CLI to call Amazon Textract operations, you can't pass image bytes. The document must be an image in JPG or PNG format. If you are using an AWS SDK to call Amazon Textract, you might not need to base64-encode image bytes passed using the Bytes field. 
         public let document: Document
         /// A list of the types of analysis to perform. Add TABLES to the list to return information about the tables detected in the input document. Add FORMS to return detected fields and the associated text. To perform both types of analysis, add TABLES and FORMS to FeatureTypes.
@@ -18,6 +19,10 @@ extension Textract {
         public init(document: Document, featureTypes: [FeatureType]) {
             self.document = document
             self.featureTypes = featureTypes
+        }
+
+        public func validate() throws {
+            try document.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -31,6 +36,7 @@ extension Textract {
             AWSShapeMember(label: "Blocks", required: false, type: .list), 
             AWSShapeMember(label: "DocumentMetadata", required: false, type: .structure)
         ]
+
         /// The text that's detected and analyzed by AnalyzeDocument.
         public let blocks: [Block]?
         /// Metadata about the analyzed document. An example is the number of pages.
@@ -39,6 +45,13 @@ extension Textract {
         public init(blocks: [Block]? = nil, documentMetadata: DocumentMetadata? = nil) {
             self.blocks = blocks
             self.documentMetadata = documentMetadata
+        }
+
+        public func validate() throws {
+            try blocks?.forEach {
+                try $0.validate()
+            }
+            try documentMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -63,6 +76,7 @@ extension Textract {
             AWSShapeMember(label: "SelectionStatus", required: false, type: .enum), 
             AWSShapeMember(label: "Text", required: false, type: .string)
         ]
+
         /// The type of text that's recognized in a block. In text-detection operations, the following types are returned:    PAGE - Contains a list of the LINE Block objects that are detected on a document page.    WORD - A word detected on a document page. A word is one or more ISO basic Latin script characters that aren't separated by spaces.    LINE - A string of tab-delimited, contiguous words that's detected on a document page.   In text analysis operations, the following types are returned:    PAGE - Contains a list of child Block objects that are detected on a document page.    KEY_VALUE_SET - Stores the KEY and VALUE Block objects for a field that's detected on a document page. Use the EntityType field to determine if a KEY_VALUE_SET object is a KEY Block object or a VALUE Block object.     WORD - A word detected on a document page. A word is one or more ISO basic Latin script characters that aren't separated by spaces that's detected on a document page.    LINE - A string of tab-delimited, contiguous words that's detected on a document page.    TABLE - A table that's detected on a document page. A table is any grid-based information with 2 or more rows or columns with a cell span of 1 row and 1 column each.     CELL - A cell within a detected table. The cell is the parent of the block that contains the text in the cell.    SELECTION_ELEMENT - A selectable element such as a radio button or checkbox that's detected on a document page. Use the value of SelectionStatus to determine the status of the selection element.  
         public let blockType: BlockType?
         /// The column in which a table cell appears. The first column position is 1. ColumnIndex isn't returned by DetectDocumentText and GetDocumentTextDetection.
@@ -106,6 +120,20 @@ extension Textract {
             self.text = text
         }
 
+        public func validate() throws {
+            try validate(columnIndex, name:"columnIndex", min: 0)
+            try validate(columnSpan, name:"columnSpan", min: 0)
+            try validate(confidence, name:"confidence", max: 100)
+            try validate(confidence, name:"confidence", min: 0)
+            try validate(id, name:"id", pattern: ".*\\S.*")
+            try validate(page, name:"page", min: 0)
+            try relationships?.forEach {
+                try $0.validate()
+            }
+            try validate(rowIndex, name:"rowIndex", min: 0)
+            try validate(rowSpan, name:"rowSpan", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case blockType = "BlockType"
             case columnIndex = "ColumnIndex"
@@ -141,6 +169,7 @@ extension Textract {
             AWSShapeMember(label: "Top", required: false, type: .float), 
             AWSShapeMember(label: "Width", required: false, type: .float)
         ]
+
         /// The height of the bounding box as a ratio of the overall document page height.
         public let height: Float?
         /// The left coordinate of the bounding box as a ratio of overall document page width.
@@ -169,11 +198,16 @@ extension Textract {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Document", required: true, type: .structure)
         ]
+
         /// The input document as base64-encoded bytes or an Amazon S3 object. If you use the AWS CLI to call Amazon Textract operations, you can't pass image bytes. The document must be an image in JPG or PNG format. If you are using an AWS SDK to call Amazon Textract, you might not need to base64-encode image bytes passed using the Bytes field. 
         public let document: Document
 
         public init(document: Document) {
             self.document = document
+        }
+
+        public func validate() throws {
+            try document.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -186,6 +220,7 @@ extension Textract {
             AWSShapeMember(label: "Blocks", required: false, type: .list), 
             AWSShapeMember(label: "DocumentMetadata", required: false, type: .structure)
         ]
+
         /// An array of Block objects containing the text detected in the document.
         public let blocks: [Block]?
         /// Metadata about the document. Contains the number of pages that are detected in the document.
@@ -194,6 +229,13 @@ extension Textract {
         public init(blocks: [Block]? = nil, documentMetadata: DocumentMetadata? = nil) {
             self.blocks = blocks
             self.documentMetadata = documentMetadata
+        }
+
+        public func validate() throws {
+            try blocks?.forEach {
+                try $0.validate()
+            }
+            try documentMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -207,6 +249,7 @@ extension Textract {
             AWSShapeMember(label: "Bytes", required: false, type: .blob), 
             AWSShapeMember(label: "S3Object", required: false, type: .structure)
         ]
+
         /// A blob of base-64 encoded documents bytes. The maximum size of a document that's provided in a blob of bytes is 5 MB. The document bytes must be in PNG or JPG format. If you are using an AWS SDK to call Amazon Textract, you might not need to base64-encode image bytes passed using the Bytes field. 
         public let bytes: Data?
         /// Identifies an S3 object as the document source. The maximum size of a document stored in an S3 bucket is 5 MB.
@@ -215,6 +258,12 @@ extension Textract {
         public init(bytes: Data? = nil, s3Object: S3Object? = nil) {
             self.bytes = bytes
             self.s3Object = s3Object
+        }
+
+        public func validate() throws {
+            try validate(bytes, name:"bytes", max: 5242880)
+            try validate(bytes, name:"bytes", min: 1)
+            try s3Object?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -227,11 +276,16 @@ extension Textract {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3Object", required: false, type: .structure)
         ]
+
         /// The Amazon S3 bucket that contains the input document.
         public let s3Object: S3Object?
 
         public init(s3Object: S3Object? = nil) {
             self.s3Object = s3Object
+        }
+
+        public func validate() throws {
+            try s3Object?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -243,11 +297,16 @@ extension Textract {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Pages", required: false, type: .integer)
         ]
+
         /// The number of pages detected in the document.
         public let pages: Int32?
 
         public init(pages: Int32? = nil) {
             self.pages = pages
+        }
+
+        public func validate() throws {
+            try validate(pages, name:"pages", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -272,6 +331,7 @@ extension Textract {
             AWSShapeMember(label: "BoundingBox", required: false, type: .structure), 
             AWSShapeMember(label: "Polygon", required: false, type: .list)
         ]
+
         /// An axis-aligned coarse representation of the location of the recognized text on the document page.
         public let boundingBox: BoundingBox?
         /// Within the bounding box, a fine-grained polygon around the recognized text.
@@ -294,6 +354,7 @@ extension Textract {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A unique identifier for the text-detection job. The JobId is returned from StartDocumentAnalysis.
         public let jobId: String
         /// The maximum number of results to return per paginated call. The largest value that you can specify is 1,000. If you specify a value greater than 1,000, a maximum of 1,000 results is returned. The default value is 1,000.
@@ -305,6 +366,16 @@ extension Textract {
             self.jobId = jobId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -323,6 +394,7 @@ extension Textract {
             AWSShapeMember(label: "StatusMessage", required: false, type: .string), 
             AWSShapeMember(label: "Warnings", required: false, type: .list)
         ]
+
         /// The results of the text analysis operation.
         public let blocks: [Block]?
         /// Information about a document that Amazon Textract processed. DocumentMetadata is returned in every page of paginated responses from an Amazon Textract video operation.
@@ -345,6 +417,19 @@ extension Textract {
             self.warnings = warnings
         }
 
+        public func validate() throws {
+            try blocks?.forEach {
+                try $0.validate()
+            }
+            try documentMetadata?.validate()
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
+            try warnings?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case blocks = "Blocks"
             case documentMetadata = "DocumentMetadata"
@@ -361,6 +446,7 @@ extension Textract {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A unique identifier for the text detection job. The JobId is returned from StartDocumentTextDetection.
         public let jobId: String
         /// The maximum number of results to return per paginated call. The largest value you can specify is 1,000. If you specify a value greater than 1,000, a maximum of 1,000 results is returned. The default value is 1,000.
@@ -372,6 +458,16 @@ extension Textract {
             self.jobId = jobId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -390,6 +486,7 @@ extension Textract {
             AWSShapeMember(label: "StatusMessage", required: false, type: .string), 
             AWSShapeMember(label: "Warnings", required: false, type: .list)
         ]
+
         /// The results of the text-detection operation.
         public let blocks: [Block]?
         /// Information about a document that Amazon Textract processed. DocumentMetadata is returned in every page of paginated responses from an Amazon Textract video operation.
@@ -410,6 +507,19 @@ extension Textract {
             self.nextToken = nextToken
             self.statusMessage = statusMessage
             self.warnings = warnings
+        }
+
+        public func validate() throws {
+            try blocks?.forEach {
+                try $0.validate()
+            }
+            try documentMetadata?.validate()
+            try validate(nextToken, name:"nextToken", max: 255)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
+            try warnings?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -435,6 +545,7 @@ extension Textract {
             AWSShapeMember(label: "RoleArn", required: true, type: .string), 
             AWSShapeMember(label: "SNSTopicArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of an IAM role that gives Amazon Textract publishing permissions to the Amazon SNS topic. 
         public let roleArn: String
         /// The Amazon SNS topic that Amazon Textract posts the completion status to.
@@ -443,6 +554,15 @@ extension Textract {
         public init(roleArn: String, sNSTopicArn: String) {
             self.roleArn = roleArn
             self.sNSTopicArn = sNSTopicArn
+        }
+
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(roleArn, name:"roleArn", pattern: "arn:([a-z\\d-]+):iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+")
+            try validate(sNSTopicArn, name:"sNSTopicArn", max: 1024)
+            try validate(sNSTopicArn, name:"sNSTopicArn", min: 20)
+            try validate(sNSTopicArn, name:"sNSTopicArn", pattern: "(^arn:([a-z\\d-]+):sns:[a-zA-Z\\d-]{1,20}:\\w{12}:.+$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -456,6 +576,7 @@ extension Textract {
             AWSShapeMember(label: "X", required: false, type: .float), 
             AWSShapeMember(label: "Y", required: false, type: .float)
         ]
+
         /// The value of the X coordinate for a point on a Polygon.
         public let x: Float?
         /// The value of the Y coordinate for a point on a Polygon.
@@ -477,6 +598,7 @@ extension Textract {
             AWSShapeMember(label: "Ids", required: false, type: .list), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// An array of IDs for related blocks. You can get the type of the relationship from the Type element.
         public let ids: [String]?
         /// The type of relationship that the blocks in the IDs array have with the current block. The relationship can be VALUE or CHILD.
@@ -485,6 +607,12 @@ extension Textract {
         public init(ids: [String]? = nil, type: RelationshipType? = nil) {
             self.ids = ids
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try ids?.forEach {
+                try validate($0, name:"ids[]", pattern: ".*\\S.*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -505,6 +633,7 @@ extension Textract {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .string)
         ]
+
         /// The name of the S3 bucket.
         public let bucket: String?
         /// The file name of the input document. It must be an image file (.JPG or .PNG format). Asynchronous operations also support PDF files.
@@ -516,6 +645,18 @@ extension Textract {
             self.bucket = bucket
             self.name = name
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(bucket, name:"bucket", max: 255)
+            try validate(bucket, name:"bucket", min: 3)
+            try validate(bucket, name:"bucket", pattern: "[0-9A-Za-z\\.\\-_]*")
+            try validate(name, name:"name", max: 1024)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: ".*\\S.*")
+            try validate(version, name:"version", max: 1024)
+            try validate(version, name:"version", min: 1)
+            try validate(version, name:"version", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -539,6 +680,7 @@ extension Textract {
             AWSShapeMember(label: "JobTag", required: false, type: .string), 
             AWSShapeMember(label: "NotificationChannel", required: false, type: .structure)
         ]
+
         /// The idempotent token that you use to identify the start request. If you use the same token with multiple StartDocumentAnalysis requests, the same JobId is returned. Use ClientRequestToken to prevent the same job from being accidentally started more than once. 
         public let clientRequestToken: String?
         /// The location of the document to be processed.
@@ -558,6 +700,17 @@ extension Textract {
             self.notificationChannel = notificationChannel
         }
 
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-_]+$")
+            try documentLocation.validate()
+            try validate(jobTag, name:"jobTag", max: 64)
+            try validate(jobTag, name:"jobTag", min: 1)
+            try validate(jobTag, name:"jobTag", pattern: "[a-zA-Z0-9_.\\-:]+")
+            try notificationChannel?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientRequestToken = "ClientRequestToken"
             case documentLocation = "DocumentLocation"
@@ -571,11 +724,18 @@ extension Textract {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: false, type: .string)
         ]
+
         /// The identifier for the document text detection job. Use JobId to identify the job in a subsequent call to GetDocumentAnalysis.
         public let jobId: String?
 
         public init(jobId: String? = nil) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -590,6 +750,7 @@ extension Textract {
             AWSShapeMember(label: "JobTag", required: false, type: .string), 
             AWSShapeMember(label: "NotificationChannel", required: false, type: .structure)
         ]
+
         /// The idempotent token that's used to identify the start request. If you use the same token with multiple StartDocumentTextDetection requests, the same JobId is returned. Use ClientRequestToken to prevent the same job from being accidentally started more than once. 
         public let clientRequestToken: String?
         /// The location of the document to be processed.
@@ -606,6 +767,17 @@ extension Textract {
             self.notificationChannel = notificationChannel
         }
 
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-_]+$")
+            try documentLocation.validate()
+            try validate(jobTag, name:"jobTag", max: 64)
+            try validate(jobTag, name:"jobTag", min: 1)
+            try validate(jobTag, name:"jobTag", pattern: "[a-zA-Z0-9_.\\-:]+")
+            try notificationChannel?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientRequestToken = "ClientRequestToken"
             case documentLocation = "DocumentLocation"
@@ -618,11 +790,18 @@ extension Textract {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: false, type: .string)
         ]
+
         /// The identifier for the document text-detection job. Use JobId to identify the job in a subsequent call to GetDocumentTextDetection.
         public let jobId: String?
 
         public init(jobId: String? = nil) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -635,6 +814,7 @@ extension Textract {
             AWSShapeMember(label: "ErrorCode", required: false, type: .string), 
             AWSShapeMember(label: "Pages", required: false, type: .list)
         ]
+
         /// The error code for the warning.
         public let errorCode: String?
         /// A list of the pages that the warning applies to.
@@ -643,6 +823,12 @@ extension Textract {
         public init(errorCode: String? = nil, pages: [Int32]? = nil) {
             self.errorCode = errorCode
             self.pages = pages
+        }
+
+        public func validate() throws {
+            try pages?.forEach {
+                try validate($0, name:"pages[]", min: 0)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {

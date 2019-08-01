@@ -14,11 +14,19 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "criteriaList", required: true, type: .list)
         ]
+
         /// The list of abort criteria to define rules to abort the job.
         public let criteriaList: [AbortCriteria]
 
         public init(criteriaList: [AbortCriteria]) {
             self.criteriaList = criteriaList
+        }
+
+        public func validate() throws {
+            try criteriaList.forEach {
+                try $0.validate()
+            }
+            try validate(criteriaList, name:"criteriaList", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -33,6 +41,7 @@ extension IoT {
             AWSShapeMember(label: "minNumberOfExecutedThings", required: true, type: .integer), 
             AWSShapeMember(label: "thresholdPercentage", required: true, type: .double)
         ]
+
         /// The type of abort action to initiate a job abort.
         public let action: AbortAction
         /// The type of job execution failure to define a rule to initiate a job abort.
@@ -49,6 +58,11 @@ extension IoT {
             self.thresholdPercentage = thresholdPercentage
         }
 
+        public func validate() throws {
+            try validate(minNumberOfExecutedThings, name:"minNumberOfExecutedThings", min: 1)
+            try validate(thresholdPercentage, name:"thresholdPercentage", max: 100)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case action = "action"
             case failureType = "failureType"
@@ -62,6 +76,7 @@ extension IoT {
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "certificateId"), required: true, type: .string), 
             AWSShapeMember(label: "setAsActive", location: .querystring(locationName: "setAsActive"), required: false, type: .boolean)
         ]
+
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
         /// Specifies whether the certificate is active.
@@ -70,6 +85,12 @@ extension IoT {
         public init(certificateId: String, setAsActive: Bool? = nil) {
             self.certificateId = certificateId
             self.setAsActive = setAsActive
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -97,6 +118,7 @@ extension IoT {
             AWSShapeMember(label: "sqs", required: false, type: .structure), 
             AWSShapeMember(label: "stepFunctions", required: false, type: .structure)
         ]
+
         /// Change the state of a CloudWatch alarm.
         public let cloudwatchAlarm: CloudwatchAlarmAction?
         /// Capture a CloudWatch metric.
@@ -149,6 +171,13 @@ extension IoT {
             self.stepFunctions = stepFunctions
         }
 
+        public func validate() throws {
+            try elasticsearch?.validate()
+            try firehose?.validate()
+            try iotEvents?.validate()
+            try salesforce?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cloudwatchAlarm = "cloudwatchAlarm"
             case cloudwatchMetric = "cloudwatchMetric"
@@ -187,6 +216,7 @@ extension IoT {
             AWSShapeMember(label: "violationId", required: false, type: .string), 
             AWSShapeMember(label: "violationStartTime", required: false, type: .timestamp)
         ]
+
         /// The behavior which is being violated.
         public let behavior: Behavior?
         /// The time the most recent violation occurred.
@@ -212,6 +242,20 @@ extension IoT {
             self.violationStartTime = violationStartTime
         }
 
+        public func validate() throws {
+            try behavior?.validate()
+            try lastViolationValue?.validate()
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(violationId, name:"violationId", max: 128)
+            try validate(violationId, name:"violationId", min: 1)
+            try validate(violationId, name:"violationId", pattern: "[a-zA-Z0-9\\-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case behavior = "behavior"
             case lastViolationTime = "lastViolationTime"
@@ -230,6 +274,7 @@ extension IoT {
             AWSShapeMember(label: "thingArn", required: false, type: .string), 
             AWSShapeMember(label: "thingName", required: false, type: .string)
         ]
+
         /// The ARN of the billing group.
         public let billingGroupArn: String?
         /// The name of the billing group.
@@ -246,6 +291,15 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case billingGroupArn = "billingGroupArn"
             case billingGroupName = "billingGroupName"
@@ -255,6 +309,7 @@ extension IoT {
     }
 
     public struct AddThingToBillingGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -269,6 +324,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupName", required: false, type: .string), 
             AWSShapeMember(label: "thingName", required: false, type: .string)
         ]
+
         /// Override dynamic thing groups with static thing groups when 10-group limit is reached. If a thing belongs to 10 thing groups, and one or more of those groups are dynamic thing groups, adding a thing to a static group removes the thing from the last dynamic group.
         public let overrideDynamicGroups: Bool?
         /// The ARN of the thing to add to a group.
@@ -288,6 +344,15 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case overrideDynamicGroups = "overrideDynamicGroups"
             case thingArn = "thingArn"
@@ -299,6 +364,7 @@ extension IoT {
 
     public struct AddThingToThingGroupResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -309,6 +375,7 @@ extension IoT {
             AWSShapeMember(label: "alertTargetArn", required: true, type: .string), 
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// The ARN of the notification target to which alerts are sent.
         public let alertTargetArn: String
         /// The ARN of the role that grants permission to send alerts to the notification target.
@@ -317,6 +384,11 @@ extension IoT {
         public init(alertTargetArn: String, roleArn: String) {
             self.alertTargetArn = alertTargetArn
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -334,11 +406,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policies", required: false, type: .list)
         ]
+
         /// A list of policies that allowed the authentication.
         public let policies: [Policy]?
 
         public init(policies: [Policy]? = nil) {
             self.policies = policies
+        }
+
+        public func validate() throws {
+            try policies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -352,6 +431,7 @@ extension IoT {
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string), 
             AWSShapeMember(label: "targets", required: true, type: .list)
         ]
+
         /// An optional comment string describing why the job was associated with the targets.
         public let comment: String?
         /// The unique identifier you assigned to this job when it was created.
@@ -363,6 +443,15 @@ extension IoT {
             self.comment = comment
             self.jobId = jobId
             self.targets = targets
+        }
+
+        public func validate() throws {
+            try validate(comment, name:"comment", max: 2028)
+            try validate(comment, name:"comment", pattern: "[^\\p{C}]+")
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(targets, name:"targets", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -378,6 +467,7 @@ extension IoT {
             AWSShapeMember(label: "jobArn", required: false, type: .string), 
             AWSShapeMember(label: "jobId", required: false, type: .string)
         ]
+
         /// A short text description of the job.
         public let description: String?
         /// An ARN identifying the job.
@@ -389,6 +479,14 @@ extension IoT {
             self.description = description
             self.jobArn = jobArn
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -403,6 +501,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "target", required: true, type: .string)
         ]
+
         /// The name of the policy to attach.
         public let policyName: String
         /// The identity to which the policy is attached.
@@ -411,6 +510,12 @@ extension IoT {
         public init(policyName: String, target: String) {
             self.policyName = policyName
             self.target = target
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -424,6 +529,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "principal", location: .header(locationName: "x-amzn-iot-principal"), required: true, type: .string)
         ]
+
         /// The policy name.
         public let policyName: String
         /// The principal, which can be a certificate ARN (as returned from the CreateCertificate operation) or an Amazon Cognito ID.
@@ -432,6 +538,12 @@ extension IoT {
         public init(policyName: String, principal: String) {
             self.policyName = policyName
             self.principal = principal
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -445,6 +557,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileName", location: .uri(locationName: "securityProfileName"), required: true, type: .string), 
             AWSShapeMember(label: "securityProfileTargetArn", location: .querystring(locationName: "securityProfileTargetArn"), required: true, type: .string)
         ]
+
         /// The security profile that is attached.
         public let securityProfileName: String
         /// The ARN of the target (thing group) to which the security profile is attached.
@@ -455,6 +568,12 @@ extension IoT {
             self.securityProfileTargetArn = securityProfileTargetArn
         }
 
+        public func validate() throws {
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case securityProfileName = "securityProfileName"
             case securityProfileTargetArn = "securityProfileTargetArn"
@@ -462,6 +581,7 @@ extension IoT {
     }
 
     public struct AttachSecurityProfileResponse: AWSShape {
+
 
         public init() {
         }
@@ -473,6 +593,7 @@ extension IoT {
             AWSShapeMember(label: "principal", location: .header(locationName: "x-amzn-principal"), required: true, type: .string), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The principal, such as a certificate or other credential.
         public let principal: String
         /// The name of the thing.
@@ -483,6 +604,12 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case principal = "x-amzn-principal"
             case thingName = "thingName"
@@ -490,6 +617,7 @@ extension IoT {
     }
 
     public struct AttachThingPrincipalResponse: AWSShape {
+
 
         public init() {
         }
@@ -501,6 +629,7 @@ extension IoT {
             AWSShapeMember(label: "attributes", required: false, type: .map), 
             AWSShapeMember(label: "merge", required: false, type: .boolean)
         ]
+
         /// A JSON string containing up to three key-value pair in JSON format. For example:  {\"attributes\":{\"string1\":\"string2\"}} 
         public let attributes: [String: String]?
         /// Specifies whether the list of attributes provided in the AttributePayload is merged with the attributes stored in the registry, instead of overwriting them. To remove an attribute, call UpdateThing with an empty attribute value.  The merge attribute is only valid when calling UpdateThing. 
@@ -521,6 +650,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "enabled", required: false, type: .boolean)
         ]
+
         /// True if this audit check is enabled for this account.
         public let enabled: Bool?
 
@@ -542,6 +672,7 @@ extension IoT {
             AWSShapeMember(label: "nonCompliantResourcesCount", required: false, type: .long), 
             AWSShapeMember(label: "totalResourcesCount", required: false, type: .long)
         ]
+
         /// True if the check completed and found all resources compliant.
         public let checkCompliant: Bool?
         /// The completion status of this check, one of "IN_PROGRESS", "WAITING_FOR_DATA_COLLECTION", "CANCELED", "COMPLETED_COMPLIANT", "COMPLETED_NON_COMPLIANT", or "FAILED".
@@ -562,6 +693,10 @@ extension IoT {
             self.message = message
             self.nonCompliantResourcesCount = nonCompliantResourcesCount
             self.totalResourcesCount = totalResourcesCount
+        }
+
+        public func validate() throws {
+            try validate(message, name:"message", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -596,6 +731,7 @@ extension IoT {
             AWSShapeMember(label: "taskId", required: false, type: .string), 
             AWSShapeMember(label: "taskStartTime", required: false, type: .timestamp)
         ]
+
         /// The audit check that generated this result.
         public let checkName: String?
         /// The time the result (finding) was discovered.
@@ -625,6 +761,16 @@ extension IoT {
             self.severity = severity
             self.taskId = taskId
             self.taskStartTime = taskStartTime
+        }
+
+        public func validate() throws {
+            try nonCompliantResource?.validate()
+            try relatedResources?.forEach {
+                try $0.validate()
+            }
+            try validate(taskId, name:"taskId", max: 40)
+            try validate(taskId, name:"taskId", min: 1)
+            try validate(taskId, name:"taskId", pattern: "[a-zA-Z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -662,6 +808,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: false, type: .string), 
             AWSShapeMember(label: "targetArn", required: false, type: .string)
         ]
+
         /// True if notifications to the target are enabled.
         public let enabled: Bool?
         /// The ARN of the role that grants permission to send notifications to the target.
@@ -673,6 +820,11 @@ extension IoT {
             self.enabled = enabled
             self.roleArn = roleArn
             self.targetArn = targetArn
+        }
+
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -693,6 +845,7 @@ extension IoT {
             AWSShapeMember(label: "taskStatus", required: false, type: .enum), 
             AWSShapeMember(label: "taskType", required: false, type: .enum)
         ]
+
         /// The ID of this audit.
         public let taskId: String?
         /// The status of this audit: one of "IN_PROGRESS", "COMPLETED", "FAILED" or "CANCELED".
@@ -704,6 +857,12 @@ extension IoT {
             self.taskId = taskId
             self.taskStatus = taskStatus
             self.taskType = taskType
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 40)
+            try validate(taskId, name:"taskId", min: 1)
+            try validate(taskId, name:"taskId", pattern: "[a-zA-Z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -739,6 +898,7 @@ extension IoT {
             AWSShapeMember(label: "actionType", required: false, type: .enum), 
             AWSShapeMember(label: "resources", required: false, type: .list)
         ]
+
         /// The type of action for which the principal is being authorized.
         public let actionType: ActionType?
         /// The resources for which the principal is being authorized to perform the specified action.
@@ -763,6 +923,7 @@ extension IoT {
             AWSShapeMember(label: "denied", required: false, type: .structure), 
             AWSShapeMember(label: "missingContextValues", required: false, type: .list)
         ]
+
         /// The policies and statements that allowed the specified action.
         public let allowed: Allowed?
         /// The final authorization decision of this scenario. Multiple statements are taken into account when determining the authorization decision. An explicit deny statement can override multiple allow statements.
@@ -780,6 +941,11 @@ extension IoT {
             self.authInfo = authInfo
             self.denied = denied
             self.missingContextValues = missingContextValues
+        }
+
+        public func validate() throws {
+            try allowed?.validate()
+            try denied?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -802,6 +968,7 @@ extension IoT {
             AWSShapeMember(label: "tokenKeyName", required: false, type: .string), 
             AWSShapeMember(label: "tokenSigningPublicKeys", required: false, type: .map)
         ]
+
         /// The authorizer ARN.
         public let authorizerArn: String?
         /// The authorizer's Lambda function ARN.
@@ -830,6 +997,15 @@ extension IoT {
             self.tokenSigningPublicKeys = tokenSigningPublicKeys
         }
 
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
+            try validate(tokenKeyName, name:"tokenKeyName", max: 128)
+            try validate(tokenKeyName, name:"tokenKeyName", min: 1)
+            try validate(tokenKeyName, name:"tokenKeyName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authorizerArn = "authorizerArn"
             case authorizerFunctionArn = "authorizerFunctionArn"
@@ -853,6 +1029,7 @@ extension IoT {
             AWSShapeMember(label: "authorizerArn", required: false, type: .string), 
             AWSShapeMember(label: "authorizerName", required: false, type: .string)
         ]
+
         /// The authorizer ARN.
         public let authorizerArn: String?
         /// The authorizer name.
@@ -861,6 +1038,12 @@ extension IoT {
         public init(authorizerArn: String? = nil, authorizerName: String? = nil) {
             self.authorizerArn = authorizerArn
             self.authorizerName = authorizerName
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -879,11 +1062,17 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "maximumPerMinute", required: false, type: .integer)
         ]
+
         /// The maximum number of OTA update job executions started per minute.
         public let maximumPerMinute: Int32?
 
         public init(maximumPerMinute: Int32? = nil) {
             self.maximumPerMinute = maximumPerMinute
+        }
+
+        public func validate() throws {
+            try validate(maximumPerMinute, name:"maximumPerMinute", max: 1000)
+            try validate(maximumPerMinute, name:"maximumPerMinute", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -897,6 +1086,7 @@ extension IoT {
             AWSShapeMember(label: "metric", required: false, type: .string), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The criteria that determine if a device is behaving normally in regard to the metric.
         public let criteria: BehaviorCriteria?
         /// What is measured by the behavior.
@@ -908,6 +1098,13 @@ extension IoT {
             self.criteria = criteria
             self.metric = metric
             self.name = name
+        }
+
+        public func validate() throws {
+            try criteria?.validate()
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -926,6 +1123,7 @@ extension IoT {
             AWSShapeMember(label: "statisticalThreshold", required: false, type: .structure), 
             AWSShapeMember(label: "value", required: false, type: .structure)
         ]
+
         /// The operator that relates the thing measured (metric) to the criteria (containing a value or statisticalThreshold).
         public let comparisonOperator: ComparisonOperator?
         /// If a device is in violation of the behavior for the specified number of consecutive datapoints, an alarm occurs. If not specified, the default is 1.
@@ -948,6 +1146,15 @@ extension IoT {
             self.value = value
         }
 
+        public func validate() throws {
+            try validate(consecutiveDatapointsToAlarm, name:"consecutiveDatapointsToAlarm", max: 10)
+            try validate(consecutiveDatapointsToAlarm, name:"consecutiveDatapointsToAlarm", min: 1)
+            try validate(consecutiveDatapointsToClear, name:"consecutiveDatapointsToClear", max: 10)
+            try validate(consecutiveDatapointsToClear, name:"consecutiveDatapointsToClear", min: 1)
+            try statisticalThreshold?.validate()
+            try value?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case comparisonOperator = "comparisonOperator"
             case consecutiveDatapointsToAlarm = "consecutiveDatapointsToAlarm"
@@ -962,6 +1169,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "creationDate", required: false, type: .timestamp)
         ]
+
         /// The date the billing group was created.
         public let creationDate: TimeStamp?
 
@@ -978,11 +1186,17 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "billingGroupDescription", required: false, type: .string)
         ]
+
         /// The description of the billing group.
         public let billingGroupDescription: String?
 
         public init(billingGroupDescription: String? = nil) {
             self.billingGroupDescription = billingGroupDescription
+        }
+
+        public func validate() throws {
+            try validate(billingGroupDescription, name:"billingGroupDescription", max: 2028)
+            try validate(billingGroupDescription, name:"billingGroupDescription", pattern: "[\\p{Graph}\\x20]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -997,6 +1211,7 @@ extension IoT {
             AWSShapeMember(label: "creationDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The ARN of the CA certificate.
         public let certificateArn: String?
         /// The ID of the CA certificate.
@@ -1011,6 +1226,12 @@ extension IoT {
             self.certificateId = certificateId
             self.creationDate = creationDate
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1035,6 +1256,7 @@ extension IoT {
             AWSShapeMember(label: "status", required: false, type: .enum), 
             AWSShapeMember(label: "validity", required: false, type: .structure)
         ]
+
         /// Whether the CA certificate configured for auto registration of device certificates. Valid values are "ENABLE" and "DISABLE"
         public let autoRegistrationStatus: AutoRegistrationStatus?
         /// The CA certificate ARN.
@@ -1072,6 +1294,18 @@ extension IoT {
             self.validity = validity
         }
 
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(certificatePem, name:"certificatePem", max: 65536)
+            try validate(certificatePem, name:"certificatePem", min: 1)
+            try validate(customerVersion, name:"customerVersion", min: 1)
+            try validate(ownedBy, name:"ownedBy", max: 12)
+            try validate(ownedBy, name:"ownedBy", min: 12)
+            try validate(ownedBy, name:"ownedBy", pattern: "[0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case autoRegistrationStatus = "autoRegistrationStatus"
             case certificateArn = "certificateArn"
@@ -1097,11 +1331,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", location: .uri(locationName: "taskId"), required: true, type: .string)
         ]
+
         /// The ID of the audit you want to cancel. You can only cancel an audit that is "IN_PROGRESS".
         public let taskId: String
 
         public init(taskId: String) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 40)
+            try validate(taskId, name:"taskId", min: 1)
+            try validate(taskId, name:"taskId", pattern: "[a-zA-Z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1110,6 +1351,7 @@ extension IoT {
     }
 
     public struct CancelAuditTaskResponse: AWSShape {
+
 
         public init() {
         }
@@ -1120,11 +1362,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "certificateId"), required: true, type: .string)
         ]
+
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
 
         public init(certificateId: String) {
             self.certificateId = certificateId
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1140,6 +1389,7 @@ extension IoT {
             AWSShapeMember(label: "statusDetails", required: false, type: .map), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// (Optional) The expected current version of the job execution. Each time you update the job execution, its version is incremented. If the version of the job execution stored in Jobs does not match, the update is rejected with a VersionMismatch error, and an ErrorResponse that contains the current job execution status data is returned. (This makes it unnecessary to perform a separate DescribeJobExecution request in order to obtain the job execution status data.)
         public let expectedVersion: Int64?
         /// (Optional) If true the job execution will be canceled if it has status IN_PROGRESS or QUEUED, otherwise the job execution will be canceled only if it has status QUEUED. If you attempt to cancel a job execution that is IN_PROGRESS, and you do not set force to true, then an InvalidStateTransitionException will be thrown. The default is false. Canceling a job execution which is "IN_PROGRESS", will cause the device to be unable to update the job execution status. Use caution and ensure that the device is able to recover to a valid state.
@@ -1159,6 +1409,15 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expectedVersion = "expectedVersion"
             case force = "force"
@@ -1175,6 +1434,7 @@ extension IoT {
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string), 
             AWSShapeMember(label: "reasonCode", required: false, type: .string)
         ]
+
         /// An optional comment string describing why the job was canceled.
         public let comment: String?
         /// (Optional) If true job executions with status "IN_PROGRESS" and "QUEUED" are canceled, otherwise only job executions with status "QUEUED" are canceled. The default is false. Canceling a job which is "IN_PROGRESS", will cause a device which is executing the job to be unable to update the job execution status. Use caution and ensure that each device executing a job which is canceled is able to recover to a valid state.
@@ -1191,6 +1451,16 @@ extension IoT {
             self.reasonCode = reasonCode
         }
 
+        public func validate() throws {
+            try validate(comment, name:"comment", max: 2028)
+            try validate(comment, name:"comment", pattern: "[^\\p{C}]+")
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(reasonCode, name:"reasonCode", max: 128)
+            try validate(reasonCode, name:"reasonCode", pattern: "[\\p{Upper}\\p{Digit}_]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case comment = "comment"
             case force = "force"
@@ -1205,6 +1475,7 @@ extension IoT {
             AWSShapeMember(label: "jobArn", required: false, type: .string), 
             AWSShapeMember(label: "jobId", required: false, type: .string)
         ]
+
         /// A short text description of the job.
         public let description: String?
         /// The job ARN.
@@ -1216,6 +1487,14 @@ extension IoT {
             self.description = description
             self.jobArn = jobArn
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1244,6 +1523,7 @@ extension IoT {
             AWSShapeMember(label: "creationDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The ARN of the certificate.
         public let certificateArn: String?
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
@@ -1258,6 +1538,12 @@ extension IoT {
             self.certificateId = certificateId
             self.creationDate = creationDate
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1284,6 +1570,7 @@ extension IoT {
             AWSShapeMember(label: "transferData", required: false, type: .structure), 
             AWSShapeMember(label: "validity", required: false, type: .structure)
         ]
+
         /// The certificate ID of the CA certificate used to sign this certificate.
         public let caCertificateId: String?
         /// The ARN of the certificate.
@@ -1327,6 +1614,25 @@ extension IoT {
             self.validity = validity
         }
 
+        public func validate() throws {
+            try validate(caCertificateId, name:"caCertificateId", max: 64)
+            try validate(caCertificateId, name:"caCertificateId", min: 64)
+            try validate(caCertificateId, name:"caCertificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(certificatePem, name:"certificatePem", max: 65536)
+            try validate(certificatePem, name:"certificatePem", min: 1)
+            try validate(customerVersion, name:"customerVersion", min: 1)
+            try validate(ownedBy, name:"ownedBy", max: 12)
+            try validate(ownedBy, name:"ownedBy", min: 12)
+            try validate(ownedBy, name:"ownedBy", pattern: "[0-9]+")
+            try validate(previousOwnedBy, name:"previousOwnedBy", max: 12)
+            try validate(previousOwnedBy, name:"previousOwnedBy", min: 12)
+            try validate(previousOwnedBy, name:"previousOwnedBy", pattern: "[0-9]+")
+            try transferData?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case caCertificateId = "caCertificateId"
             case certificateArn = "certificateArn"
@@ -1359,6 +1665,7 @@ extension IoT {
             AWSShapeMember(label: "notAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "notBefore", required: false, type: .timestamp)
         ]
+
         /// The certificate is not valid after this date.
         public let notAfter: TimeStamp?
         /// The certificate is not valid before this date.
@@ -1377,12 +1684,14 @@ extension IoT {
 
     public struct ClearDefaultAuthorizerRequest: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct ClearDefaultAuthorizerResponse: AWSShape {
+
 
         public init() {
         }
@@ -1396,6 +1705,7 @@ extension IoT {
             AWSShapeMember(label: "stateReason", required: true, type: .string), 
             AWSShapeMember(label: "stateValue", required: true, type: .string)
         ]
+
         /// The CloudWatch alarm name.
         public let alarmName: String
         /// The IAM role that allows access to the CloudWatch alarm.
@@ -1429,6 +1739,7 @@ extension IoT {
             AWSShapeMember(label: "metricValue", required: true, type: .string), 
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// The CloudWatch metric name.
         public let metricName: String
         /// The CloudWatch metric namespace name.
@@ -1467,6 +1778,7 @@ extension IoT {
             AWSShapeMember(label: "customCodeSigning", required: false, type: .structure), 
             AWSShapeMember(label: "startSigningJobParameter", required: false, type: .structure)
         ]
+
         /// The ID of the AWSSignerJob which was created to sign the file.
         public let awsSignerJobId: String?
         /// A custom method for code signing a file.
@@ -1478,6 +1790,10 @@ extension IoT {
             self.awsSignerJobId = awsSignerJobId
             self.customCodeSigning = customCodeSigning
             self.startSigningJobParameter = startSigningJobParameter
+        }
+
+        public func validate() throws {
+            try startSigningJobParameter?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1492,6 +1808,7 @@ extension IoT {
             AWSShapeMember(label: "certificateName", required: false, type: .string), 
             AWSShapeMember(label: "inlineDocument", required: false, type: .string)
         ]
+
         /// The name of the certificate.
         public let certificateName: String?
         /// A base64 encoded binary representation of the code signing certificate chain.
@@ -1512,6 +1829,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "inlineDocument", required: false, type: .blob)
         ]
+
         /// A base64 encoded binary representation of the code signing signature.
         public let inlineDocument: Data?
 
@@ -1540,6 +1858,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Enabled", required: false, type: .boolean)
         ]
+
         /// True to enable the configuration.
         public let enabled: Bool?
 
@@ -1560,6 +1879,7 @@ extension IoT {
             AWSShapeMember(label: "tokenKeyName", required: true, type: .string), 
             AWSShapeMember(label: "tokenSigningPublicKeys", required: true, type: .map)
         ]
+
         /// The ARN of the authorizer's Lambda function.
         public let authorizerFunctionArn: String
         /// The authorizer name.
@@ -1579,6 +1899,15 @@ extension IoT {
             self.tokenSigningPublicKeys = tokenSigningPublicKeys
         }
 
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
+            try validate(tokenKeyName, name:"tokenKeyName", max: 128)
+            try validate(tokenKeyName, name:"tokenKeyName", min: 1)
+            try validate(tokenKeyName, name:"tokenKeyName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authorizerFunctionArn = "authorizerFunctionArn"
             case authorizerName = "authorizerName"
@@ -1593,6 +1922,7 @@ extension IoT {
             AWSShapeMember(label: "authorizerArn", required: false, type: .string), 
             AWSShapeMember(label: "authorizerName", required: false, type: .string)
         ]
+
         /// The authorizer ARN.
         public let authorizerArn: String?
         /// The authorizer's name.
@@ -1601,6 +1931,12 @@ extension IoT {
         public init(authorizerArn: String? = nil, authorizerName: String? = nil) {
             self.authorizerArn = authorizerArn
             self.authorizerName = authorizerName
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1615,6 +1951,7 @@ extension IoT {
             AWSShapeMember(label: "billingGroupProperties", required: false, type: .structure), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// The name you wish to give to the billing group.
         public let billingGroupName: String
         /// The properties of the billing group.
@@ -1626,6 +1963,13 @@ extension IoT {
             self.billingGroupName = billingGroupName
             self.billingGroupProperties = billingGroupProperties
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try billingGroupProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1641,6 +1985,7 @@ extension IoT {
             AWSShapeMember(label: "billingGroupId", required: false, type: .string), 
             AWSShapeMember(label: "billingGroupName", required: false, type: .string)
         ]
+
         /// The ARN of the billing group.
         public let billingGroupArn: String?
         /// The ID of the billing group.
@@ -1652,6 +1997,15 @@ extension IoT {
             self.billingGroupArn = billingGroupArn
             self.billingGroupId = billingGroupId
             self.billingGroupName = billingGroupName
+        }
+
+        public func validate() throws {
+            try validate(billingGroupId, name:"billingGroupId", max: 128)
+            try validate(billingGroupId, name:"billingGroupId", min: 1)
+            try validate(billingGroupId, name:"billingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1666,6 +2020,7 @@ extension IoT {
             AWSShapeMember(label: "certificateSigningRequest", required: true, type: .string), 
             AWSShapeMember(label: "setAsActive", location: .querystring(locationName: "setAsActive"), required: false, type: .boolean)
         ]
+
         /// The certificate signing request (CSR).
         public let certificateSigningRequest: String
         /// Specifies whether the certificate is active.
@@ -1674,6 +2029,10 @@ extension IoT {
         public init(certificateSigningRequest: String, setAsActive: Bool? = nil) {
             self.certificateSigningRequest = certificateSigningRequest
             self.setAsActive = setAsActive
+        }
+
+        public func validate() throws {
+            try validate(certificateSigningRequest, name:"certificateSigningRequest", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1688,6 +2047,7 @@ extension IoT {
             AWSShapeMember(label: "certificateId", required: false, type: .string), 
             AWSShapeMember(label: "certificatePem", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the certificate. You can use the ARN as a principal for policy operations.
         public let certificateArn: String?
         /// The ID of the certificate. Certificate management operations only take a certificateId.
@@ -1699,6 +2059,14 @@ extension IoT {
             self.certificateArn = certificateArn
             self.certificateId = certificateId
             self.certificatePem = certificatePem
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(certificatePem, name:"certificatePem", max: 65536)
+            try validate(certificatePem, name:"certificatePem", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1717,6 +2085,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string), 
             AWSShapeMember(label: "thingGroupProperties", required: false, type: .structure)
         ]
+
         /// The dynamic thing group index name.  Currently one index is supported: "AWS_Things". 
         public let indexName: String?
         /// The dynamic thing group search query string. See Query Syntax for information about query string syntax.
@@ -1739,6 +2108,17 @@ extension IoT {
             self.thingGroupProperties = thingGroupProperties
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(queryString, name:"queryString", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingGroupProperties?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case indexName = "indexName"
             case queryString = "queryString"
@@ -1758,6 +2138,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupId", required: false, type: .string), 
             AWSShapeMember(label: "thingGroupName", required: false, type: .string)
         ]
+
         /// The dynamic thing group index name.
         public let indexName: String?
         /// The dynamic thing group search query string.
@@ -1778,6 +2159,19 @@ extension IoT {
             self.thingGroupArn = thingGroupArn
             self.thingGroupId = thingGroupId
             self.thingGroupName = thingGroupName
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(queryString, name:"queryString", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", max: 128)
+            try validate(thingGroupId, name:"thingGroupId", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1804,6 +2198,7 @@ extension IoT {
             AWSShapeMember(label: "targetSelection", required: false, type: .enum), 
             AWSShapeMember(label: "timeoutConfig", required: false, type: .structure)
         ]
+
         /// Allows you to create criteria to abort a job.
         public let abortConfig: AbortConfig?
         /// A short text description of the job.
@@ -1841,6 +2236,21 @@ extension IoT {
             self.timeoutConfig = timeoutConfig
         }
 
+        public func validate() throws {
+            try abortConfig?.validate()
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try validate(document, name:"document", max: 32768)
+            try validate(documentSource, name:"documentSource", max: 1350)
+            try validate(documentSource, name:"documentSource", min: 1)
+            try jobExecutionsRolloutConfig?.validate()
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try presignedUrlConfig?.validate()
+            try validate(targets, name:"targets", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case abortConfig = "abortConfig"
             case description = "description"
@@ -1862,6 +2272,7 @@ extension IoT {
             AWSShapeMember(label: "jobArn", required: false, type: .string), 
             AWSShapeMember(label: "jobId", required: false, type: .string)
         ]
+
         /// The job description.
         public let description: String?
         /// The job ARN.
@@ -1875,6 +2286,14 @@ extension IoT {
             self.jobId = jobId
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case jobArn = "jobArn"
@@ -1886,6 +2305,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "setAsActive", location: .querystring(locationName: "setAsActive"), required: false, type: .boolean)
         ]
+
         /// Specifies whether the certificate is active.
         public let setAsActive: Bool?
 
@@ -1905,6 +2325,7 @@ extension IoT {
             AWSShapeMember(label: "certificatePem", required: false, type: .string), 
             AWSShapeMember(label: "keyPair", required: false, type: .structure)
         ]
+
         /// The ARN of the certificate.
         public let certificateArn: String?
         /// The ID of the certificate. AWS IoT issues a default subject name for the certificate (for example, AWS IoT Certificate).
@@ -1919,6 +2340,15 @@ extension IoT {
             self.certificateId = certificateId
             self.certificatePem = certificatePem
             self.keyPair = keyPair
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(certificatePem, name:"certificatePem", max: 65536)
+            try validate(certificatePem, name:"certificatePem", min: 1)
+            try keyPair?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1941,6 +2371,7 @@ extension IoT {
             AWSShapeMember(label: "targets", required: true, type: .list), 
             AWSShapeMember(label: "targetSelection", required: false, type: .enum)
         ]
+
         /// A list of additional OTA update parameters which are name-value pairs.
         public let additionalParameters: [String: String]?
         /// Configuration for the rollout of OTA updates.
@@ -1972,6 +2403,23 @@ extension IoT {
             self.targetSelection = targetSelection
         }
 
+        public func validate() throws {
+            try awsJobExecutionsRolloutConfig?.validate()
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try files.forEach {
+                try $0.validate()
+            }
+            try validate(files, name:"files", max: 50)
+            try validate(files, name:"files", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", max: 128)
+            try validate(otaUpdateId, name:"otaUpdateId", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(targets, name:"targets", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case additionalParameters = "additionalParameters"
             case awsJobExecutionsRolloutConfig = "awsJobExecutionsRolloutConfig"
@@ -1993,6 +2441,7 @@ extension IoT {
             AWSShapeMember(label: "otaUpdateId", required: false, type: .string), 
             AWSShapeMember(label: "otaUpdateStatus", required: false, type: .enum)
         ]
+
         /// The AWS IoT job ARN associated with the OTA update.
         public let awsIotJobArn: String?
         /// The AWS IoT job ID associated with the OTA update.
@@ -2012,6 +2461,12 @@ extension IoT {
             self.otaUpdateStatus = otaUpdateStatus
         }
 
+        public func validate() throws {
+            try validate(otaUpdateId, name:"otaUpdateId", max: 128)
+            try validate(otaUpdateId, name:"otaUpdateId", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case awsIotJobArn = "awsIotJobArn"
             case awsIotJobId = "awsIotJobId"
@@ -2026,6 +2481,7 @@ extension IoT {
             AWSShapeMember(label: "policyDocument", required: true, type: .string), 
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string)
         ]
+
         /// The JSON document that describes the policy. policyDocument must have a minimum length of 1, with a maximum length of 2048, excluding whitespace.
         public let policyDocument: String
         /// The policy name.
@@ -2034,6 +2490,12 @@ extension IoT {
         public init(policyDocument: String, policyName: String) {
             self.policyDocument = policyDocument
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2049,6 +2511,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", required: false, type: .string), 
             AWSShapeMember(label: "policyVersionId", required: false, type: .string)
         ]
+
         /// The policy ARN.
         public let policyArn: String?
         /// The JSON document that describes the policy.
@@ -2065,6 +2528,13 @@ extension IoT {
             self.policyVersionId = policyVersionId
         }
 
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+            try validate(policyVersionId, name:"policyVersionId", pattern: "[0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case policyArn = "policyArn"
             case policyDocument = "policyDocument"
@@ -2079,6 +2549,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "setAsDefault", location: .querystring(locationName: "setAsDefault"), required: false, type: .boolean)
         ]
+
         /// The JSON document that describes the policy. Minimum length of 1. Maximum length of 2048, excluding whitespace.
         public let policyDocument: String
         /// The policy name.
@@ -2090,6 +2561,12 @@ extension IoT {
             self.policyDocument = policyDocument
             self.policyName = policyName
             self.setAsDefault = setAsDefault
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2106,6 +2583,7 @@ extension IoT {
             AWSShapeMember(label: "policyDocument", required: false, type: .string), 
             AWSShapeMember(label: "policyVersionId", required: false, type: .string)
         ]
+
         /// Specifies whether the policy version is the default.
         public let isDefaultVersion: Bool?
         /// The policy ARN.
@@ -2122,6 +2600,10 @@ extension IoT {
             self.policyVersionId = policyVersionId
         }
 
+        public func validate() throws {
+            try validate(policyVersionId, name:"policyVersionId", pattern: "[0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case isDefaultVersion = "isDefaultVersion"
             case policyArn = "policyArn"
@@ -2136,6 +2618,7 @@ extension IoT {
             AWSShapeMember(label: "roleAlias", location: .uri(locationName: "roleAlias"), required: true, type: .string), 
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// How long (in seconds) the credentials will be valid.
         public let credentialDurationSeconds: Int32?
         /// The role alias that points to a role ARN. This allows you to change the role without having to update the device.
@@ -2147,6 +2630,16 @@ extension IoT {
             self.credentialDurationSeconds = credentialDurationSeconds
             self.roleAlias = roleAlias
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(credentialDurationSeconds, name:"credentialDurationSeconds", max: 3600)
+            try validate(credentialDurationSeconds, name:"credentialDurationSeconds", min: 900)
+            try validate(roleAlias, name:"roleAlias", max: 128)
+            try validate(roleAlias, name:"roleAlias", min: 1)
+            try validate(roleAlias, name:"roleAlias", pattern: "[\\w=,@-]+")
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2161,6 +2654,7 @@ extension IoT {
             AWSShapeMember(label: "roleAlias", required: false, type: .string), 
             AWSShapeMember(label: "roleAliasArn", required: false, type: .string)
         ]
+
         /// The role alias.
         public let roleAlias: String?
         /// The role alias ARN.
@@ -2169,6 +2663,12 @@ extension IoT {
         public init(roleAlias: String? = nil, roleAliasArn: String? = nil) {
             self.roleAlias = roleAlias
             self.roleAliasArn = roleAliasArn
+        }
+
+        public func validate() throws {
+            try validate(roleAlias, name:"roleAlias", max: 128)
+            try validate(roleAlias, name:"roleAlias", min: 1)
+            try validate(roleAlias, name:"roleAlias", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2186,6 +2686,7 @@ extension IoT {
             AWSShapeMember(label: "tags", required: false, type: .list), 
             AWSShapeMember(label: "targetCheckNames", required: true, type: .list)
         ]
+
         /// The day of the month on which the scheduled audit takes place. Can be "1" through "31" or "LAST". This field is required if the "frequency" parameter is set to "MONTHLY". If days 29-31 are specified, and the month does not have that many days, the audit takes place on the "LAST" day of the month.
         public let dayOfMonth: String?
         /// The day of the week on which the scheduled audit takes place. Can be one of "SUN", "MON", "TUE", "WED", "THU", "FRI" or "SAT". This field is required if the "frequency" parameter is set to "WEEKLY" or "BIWEEKLY".
@@ -2208,6 +2709,13 @@ extension IoT {
             self.targetCheckNames = targetCheckNames
         }
 
+        public func validate() throws {
+            try validate(dayOfMonth, name:"dayOfMonth", pattern: "^([1-9]|[12][0-9]|3[01])$|^LAST$")
+            try validate(scheduledAuditName, name:"scheduledAuditName", max: 128)
+            try validate(scheduledAuditName, name:"scheduledAuditName", min: 1)
+            try validate(scheduledAuditName, name:"scheduledAuditName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dayOfMonth = "dayOfMonth"
             case dayOfWeek = "dayOfWeek"
@@ -2222,6 +2730,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "scheduledAuditArn", required: false, type: .string)
         ]
+
         /// The ARN of the scheduled audit.
         public let scheduledAuditArn: String?
 
@@ -2243,6 +2752,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileName", location: .uri(locationName: "securityProfileName"), required: true, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's behaviors but it is also retained for any metric specified here.
         public let additionalMetricsToRetain: [String]?
         /// Specifies the destinations to which alerts are sent. (Alerts are always sent to the console.) Alerts are generated when a device (thing) violates a behavior.
@@ -2265,6 +2775,18 @@ extension IoT {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try behaviors?.forEach {
+                try $0.validate()
+            }
+            try validate(behaviors, name:"behaviors", max: 100)
+            try validate(securityProfileDescription, name:"securityProfileDescription", max: 1000)
+            try validate(securityProfileDescription, name:"securityProfileDescription", pattern: "[\\p{Graph}\\x20]*")
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case additionalMetricsToRetain = "additionalMetricsToRetain"
             case alertTargets = "alertTargets"
@@ -2280,6 +2802,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileArn", required: false, type: .string), 
             AWSShapeMember(label: "securityProfileName", required: false, type: .string)
         ]
+
         /// The ARN of the security profile.
         public let securityProfileArn: String?
         /// The name you gave to the security profile.
@@ -2288,6 +2811,12 @@ extension IoT {
         public init(securityProfileArn: String? = nil, securityProfileName: String? = nil) {
             self.securityProfileArn = securityProfileArn
             self.securityProfileName = securityProfileName
+        }
+
+        public func validate() throws {
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2304,6 +2833,7 @@ extension IoT {
             AWSShapeMember(label: "streamId", location: .uri(locationName: "streamId"), required: true, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// A description of the stream.
         public let description: String?
         /// The files to stream.
@@ -2323,6 +2853,21 @@ extension IoT {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try files.forEach {
+                try $0.validate()
+            }
+            try validate(files, name:"files", max: 50)
+            try validate(files, name:"files", min: 1)
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case files = "files"
@@ -2339,6 +2884,7 @@ extension IoT {
             AWSShapeMember(label: "streamId", required: false, type: .string), 
             AWSShapeMember(label: "streamVersion", required: false, type: .integer)
         ]
+
         /// A description of the stream.
         public let description: String?
         /// The stream ARN.
@@ -2353,6 +2899,16 @@ extension IoT {
             self.streamArn = streamArn
             self.streamId = streamId
             self.streamVersion = streamVersion
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(streamVersion, name:"streamVersion", max: 65535)
+            try validate(streamVersion, name:"streamVersion", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2370,6 +2926,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string), 
             AWSShapeMember(label: "thingGroupProperties", required: false, type: .structure)
         ]
+
         /// The name of the parent thing group.
         public let parentGroupName: String?
         /// Metadata which can be used to manage the thing group.
@@ -2386,6 +2943,16 @@ extension IoT {
             self.thingGroupProperties = thingGroupProperties
         }
 
+        public func validate() throws {
+            try validate(parentGroupName, name:"parentGroupName", max: 128)
+            try validate(parentGroupName, name:"parentGroupName", min: 1)
+            try validate(parentGroupName, name:"parentGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingGroupProperties?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case parentGroupName = "parentGroupName"
             case tags = "tags"
@@ -2400,6 +2967,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupId", required: false, type: .string), 
             AWSShapeMember(label: "thingGroupName", required: false, type: .string)
         ]
+
         /// The thing group ARN.
         public let thingGroupArn: String?
         /// The thing group ID.
@@ -2411,6 +2979,15 @@ extension IoT {
             self.thingGroupArn = thingGroupArn
             self.thingGroupId = thingGroupId
             self.thingGroupName = thingGroupName
+        }
+
+        public func validate() throws {
+            try validate(thingGroupId, name:"thingGroupId", max: 128)
+            try validate(thingGroupId, name:"thingGroupId", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2427,6 +3004,7 @@ extension IoT {
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string), 
             AWSShapeMember(label: "thingTypeName", required: false, type: .string)
         ]
+
         /// The attribute payload, which consists of up to three name/value pairs in a JSON document. For example:  {\"attributes\":{\"string1\":\"string2\"}} 
         public let attributePayload: AttributePayload?
         /// The name of the billing group the thing will be added to.
@@ -2443,6 +3021,18 @@ extension IoT {
             self.thingTypeName = thingTypeName
         }
 
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributePayload = "attributePayload"
             case billingGroupName = "billingGroupName"
@@ -2457,6 +3047,7 @@ extension IoT {
             AWSShapeMember(label: "thingId", required: false, type: .string), 
             AWSShapeMember(label: "thingName", required: false, type: .string)
         ]
+
         /// The ARN of the new thing.
         public let thingArn: String?
         /// The thing ID.
@@ -2468,6 +3059,12 @@ extension IoT {
             self.thingArn = thingArn
             self.thingId = thingId
             self.thingName = thingName
+        }
+
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2483,6 +3080,7 @@ extension IoT {
             AWSShapeMember(label: "thingTypeName", location: .uri(locationName: "thingTypeName"), required: true, type: .string), 
             AWSShapeMember(label: "thingTypeProperties", required: false, type: .structure)
         ]
+
         /// Metadata which can be used to manage the thing type.
         public let tags: [Tag]?
         /// The name of the thing type.
@@ -2494,6 +3092,13 @@ extension IoT {
             self.tags = tags
             self.thingTypeName = thingTypeName
             self.thingTypeProperties = thingTypeProperties
+        }
+
+        public func validate() throws {
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingTypeProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2509,6 +3114,7 @@ extension IoT {
             AWSShapeMember(label: "thingTypeId", required: false, type: .string), 
             AWSShapeMember(label: "thingTypeName", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the thing type.
         public let thingTypeArn: String?
         /// The thing type ID.
@@ -2520,6 +3126,12 @@ extension IoT {
             self.thingTypeArn = thingTypeArn
             self.thingTypeId = thingTypeId
             self.thingTypeName = thingTypeName
+        }
+
+        public func validate() throws {
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2537,6 +3149,7 @@ extension IoT {
             AWSShapeMember(label: "tags", location: .header(locationName: "x-amz-tagging"), required: false, type: .string), 
             AWSShapeMember(label: "topicRulePayload", required: true, type: .structure)
         ]
+
         /// The name of the rule.
         public let ruleName: String
         /// Metadata which can be used to manage the topic rule.  For URI Request parameters use format: ...key1=value1&amp;key2=value2... For the CLI command-line parameter use format: --tags "key1=value1&amp;key2=value2..." For the cli-input-json file use format: "tags": "key1=value1&amp;key2=value2..." 
@@ -2548,6 +3161,13 @@ extension IoT {
             self.ruleName = ruleName
             self.tags = tags
             self.topicRulePayload = topicRulePayload
+        }
+
+        public func validate() throws {
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
+            try topicRulePayload.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2564,6 +3184,7 @@ extension IoT {
             AWSShapeMember(label: "signature", required: false, type: .structure), 
             AWSShapeMember(label: "signatureAlgorithm", required: false, type: .string)
         ]
+
         /// The certificate chain.
         public let certificateChain: CodeSigningCertificateChain?
         /// The hash algorithm used to code sign the file.
@@ -2603,6 +3224,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "deleteScheduledAudits", location: .querystring(locationName: "deleteScheduledAudits"), required: false, type: .boolean)
         ]
+
         /// If true, all scheduled audits are deleted.
         public let deleteScheduledAudits: Bool?
 
@@ -2617,6 +3239,7 @@ extension IoT {
 
     public struct DeleteAccountAuditConfigurationResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -2626,11 +3249,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "authorizerName", location: .uri(locationName: "authorizerName"), required: true, type: .string)
         ]
+
         /// The name of the authorizer to delete.
         public let authorizerName: String
 
         public init(authorizerName: String) {
             self.authorizerName = authorizerName
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2639,6 +3269,7 @@ extension IoT {
     }
 
     public struct DeleteAuthorizerResponse: AWSShape {
+
 
         public init() {
         }
@@ -2650,6 +3281,7 @@ extension IoT {
             AWSShapeMember(label: "billingGroupName", location: .uri(locationName: "billingGroupName"), required: true, type: .string), 
             AWSShapeMember(label: "expectedVersion", location: .querystring(locationName: "expectedVersion"), required: false, type: .long)
         ]
+
         /// The name of the billing group.
         public let billingGroupName: String
         /// The expected version of the billing group. If the version of the billing group does not match the expected version specified in the request, the DeleteBillingGroup request is rejected with a VersionConflictException.
@@ -2660,6 +3292,12 @@ extension IoT {
             self.expectedVersion = expectedVersion
         }
 
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case billingGroupName = "billingGroupName"
             case expectedVersion = "expectedVersion"
@@ -2667,6 +3305,7 @@ extension IoT {
     }
 
     public struct DeleteBillingGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -2677,11 +3316,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "caCertificateId"), required: true, type: .string)
         ]
+
         /// The ID of the certificate to delete. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
 
         public init(certificateId: String) {
             self.certificateId = certificateId
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2690,6 +3336,7 @@ extension IoT {
     }
 
     public struct DeleteCACertificateResponse: AWSShape {
+
 
         public init() {
         }
@@ -2701,6 +3348,7 @@ extension IoT {
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "certificateId"), required: true, type: .string), 
             AWSShapeMember(label: "forceDelete", location: .querystring(locationName: "forceDelete"), required: false, type: .boolean)
         ]
+
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
         /// Forces a certificate request to be deleted.
@@ -2709,6 +3357,12 @@ extension IoT {
         public init(certificateId: String, forceDelete: Bool? = nil) {
             self.certificateId = certificateId
             self.forceDelete = forceDelete
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2722,6 +3376,7 @@ extension IoT {
             AWSShapeMember(label: "expectedVersion", location: .querystring(locationName: "expectedVersion"), required: false, type: .long), 
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string)
         ]
+
         /// The expected version of the dynamic thing group to delete.
         public let expectedVersion: Int64?
         /// The name of the dynamic thing group to delete.
@@ -2732,6 +3387,12 @@ extension IoT {
             self.thingGroupName = thingGroupName
         }
 
+        public func validate() throws {
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expectedVersion = "expectedVersion"
             case thingGroupName = "thingGroupName"
@@ -2739,6 +3400,7 @@ extension IoT {
     }
 
     public struct DeleteDynamicThingGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -2752,6 +3414,7 @@ extension IoT {
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The ID of the job execution to be deleted. The executionNumber refers to the execution of a particular job on a particular device. Note that once a job execution is deleted, the executionNumber may be reused by IoT, so be sure you get and use the correct value here.
         public let executionNumber: Int64
         /// (Optional) When true, you can delete a job execution which is "IN_PROGRESS". Otherwise, you can only delete a job execution which is in a terminal state ("SUCCEEDED", "FAILED", "REJECTED", "REMOVED" or "CANCELED") or an exception will occur. The default is false.  Deleting a job execution which is "IN_PROGRESS", will cause the device to be unable to access job information or update the job execution status. Use caution and ensure that the device is able to recover to a valid state. 
@@ -2768,6 +3431,15 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionNumber = "executionNumber"
             case force = "force"
@@ -2781,6 +3453,7 @@ extension IoT {
             AWSShapeMember(label: "force", location: .querystring(locationName: "force"), required: false, type: .boolean), 
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string)
         ]
+
         /// (Optional) When true, you can delete a job which is "IN_PROGRESS". Otherwise, you can only delete a job which is in a terminal state ("COMPLETED" or "CANCELED") or an exception will occur. The default is false.  Deleting a job which is "IN_PROGRESS", will cause a device which is executing the job to be unable to access job information or update the job execution status. Use caution and ensure that each device executing a job which is deleted is able to recover to a valid state. 
         public let force: Bool?
         /// The ID of the job to be deleted. After a job deletion is completed, you may reuse this jobId when you create a new job. However, this is not recommended, and you must ensure that your devices are not using the jobId to refer to the deleted job.
@@ -2789,6 +3462,12 @@ extension IoT {
         public init(force: Bool? = nil, jobId: String) {
             self.force = force
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2803,6 +3482,7 @@ extension IoT {
             AWSShapeMember(label: "forceDeleteAWSJob", location: .querystring(locationName: "forceDeleteAWSJob"), required: false, type: .boolean), 
             AWSShapeMember(label: "otaUpdateId", location: .uri(locationName: "otaUpdateId"), required: true, type: .string)
         ]
+
         /// Specifies if the stream associated with an OTA update should be deleted when the OTA update is deleted.
         public let deleteStream: Bool?
         /// Specifies if the AWS Job associated with the OTA update should be deleted with the OTA update is deleted.
@@ -2816,6 +3496,12 @@ extension IoT {
             self.otaUpdateId = otaUpdateId
         }
 
+        public func validate() throws {
+            try validate(otaUpdateId, name:"otaUpdateId", max: 128)
+            try validate(otaUpdateId, name:"otaUpdateId", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deleteStream = "deleteStream"
             case forceDeleteAWSJob = "forceDeleteAWSJob"
@@ -2824,6 +3510,7 @@ extension IoT {
     }
 
     public struct DeleteOTAUpdateResponse: AWSShape {
+
 
         public init() {
         }
@@ -2834,11 +3521,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string)
         ]
+
         /// The name of the policy to delete.
         public let policyName: String
 
         public init(policyName: String) {
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2851,6 +3545,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "policyVersionId", location: .uri(locationName: "policyVersionId"), required: true, type: .string)
         ]
+
         /// The name of the policy.
         public let policyName: String
         /// The policy version ID.
@@ -2861,6 +3556,13 @@ extension IoT {
             self.policyVersionId = policyVersionId
         }
 
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+            try validate(policyVersionId, name:"policyVersionId", pattern: "[0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case policyName = "policyName"
             case policyVersionId = "policyVersionId"
@@ -2869,12 +3571,14 @@ extension IoT {
 
     public struct DeleteRegistrationCodeRequest: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct DeleteRegistrationCodeResponse: AWSShape {
+
 
         public init() {
         }
@@ -2885,11 +3589,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "roleAlias", location: .uri(locationName: "roleAlias"), required: true, type: .string)
         ]
+
         /// The role alias to delete.
         public let roleAlias: String
 
         public init(roleAlias: String) {
             self.roleAlias = roleAlias
+        }
+
+        public func validate() throws {
+            try validate(roleAlias, name:"roleAlias", max: 128)
+            try validate(roleAlias, name:"roleAlias", min: 1)
+            try validate(roleAlias, name:"roleAlias", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2898,6 +3609,7 @@ extension IoT {
     }
 
     public struct DeleteRoleAliasResponse: AWSShape {
+
 
         public init() {
         }
@@ -2908,11 +3620,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "scheduledAuditName", location: .uri(locationName: "scheduledAuditName"), required: true, type: .string)
         ]
+
         /// The name of the scheduled audit you want to delete.
         public let scheduledAuditName: String
 
         public init(scheduledAuditName: String) {
             self.scheduledAuditName = scheduledAuditName
+        }
+
+        public func validate() throws {
+            try validate(scheduledAuditName, name:"scheduledAuditName", max: 128)
+            try validate(scheduledAuditName, name:"scheduledAuditName", min: 1)
+            try validate(scheduledAuditName, name:"scheduledAuditName", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2921,6 +3640,7 @@ extension IoT {
     }
 
     public struct DeleteScheduledAuditResponse: AWSShape {
+
 
         public init() {
         }
@@ -2932,6 +3652,7 @@ extension IoT {
             AWSShapeMember(label: "expectedVersion", location: .querystring(locationName: "expectedVersion"), required: false, type: .long), 
             AWSShapeMember(label: "securityProfileName", location: .uri(locationName: "securityProfileName"), required: true, type: .string)
         ]
+
         /// The expected version of the security profile. A new version is generated whenever the security profile is updated. If you specify a value that is different than the actual version, a VersionConflictException is thrown.
         public let expectedVersion: Int64?
         /// The name of the security profile to be deleted.
@@ -2942,6 +3663,12 @@ extension IoT {
             self.securityProfileName = securityProfileName
         }
 
+        public func validate() throws {
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expectedVersion = "expectedVersion"
             case securityProfileName = "securityProfileName"
@@ -2949,6 +3676,7 @@ extension IoT {
     }
 
     public struct DeleteSecurityProfileResponse: AWSShape {
+
 
         public init() {
         }
@@ -2959,11 +3687,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "streamId", location: .uri(locationName: "streamId"), required: true, type: .string)
         ]
+
         /// The stream ID.
         public let streamId: String
 
         public init(streamId: String) {
             self.streamId = streamId
+        }
+
+        public func validate() throws {
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2972,6 +3707,7 @@ extension IoT {
     }
 
     public struct DeleteStreamResponse: AWSShape {
+
 
         public init() {
         }
@@ -2983,6 +3719,7 @@ extension IoT {
             AWSShapeMember(label: "expectedVersion", location: .querystring(locationName: "expectedVersion"), required: false, type: .long), 
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string)
         ]
+
         /// The expected version of the thing group to delete.
         public let expectedVersion: Int64?
         /// The name of the thing group to delete.
@@ -2993,6 +3730,12 @@ extension IoT {
             self.thingGroupName = thingGroupName
         }
 
+        public func validate() throws {
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expectedVersion = "expectedVersion"
             case thingGroupName = "thingGroupName"
@@ -3000,6 +3743,7 @@ extension IoT {
     }
 
     public struct DeleteThingGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -3011,6 +3755,7 @@ extension IoT {
             AWSShapeMember(label: "expectedVersion", location: .querystring(locationName: "expectedVersion"), required: false, type: .long), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The expected version of the thing record in the registry. If the version of the record in the registry does not match the expected version specified in the request, the DeleteThing request is rejected with a VersionConflictException.
         public let expectedVersion: Int64?
         /// The name of the thing to delete.
@@ -3021,6 +3766,12 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expectedVersion = "expectedVersion"
             case thingName = "thingName"
@@ -3028,6 +3779,7 @@ extension IoT {
     }
 
     public struct DeleteThingResponse: AWSShape {
+
 
         public init() {
         }
@@ -3038,11 +3790,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "thingTypeName", location: .uri(locationName: "thingTypeName"), required: true, type: .string)
         ]
+
         /// The name of the thing type.
         public let thingTypeName: String
 
         public init(thingTypeName: String) {
             self.thingTypeName = thingTypeName
+        }
+
+        public func validate() throws {
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3051,6 +3810,7 @@ extension IoT {
     }
 
     public struct DeleteThingTypeResponse: AWSShape {
+
 
         public init() {
         }
@@ -3061,11 +3821,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ruleName", location: .uri(locationName: "ruleName"), required: true, type: .string)
         ]
+
         /// The name of the rule.
         public let ruleName: String
 
         public init(ruleName: String) {
             self.ruleName = ruleName
+        }
+
+        public func validate() throws {
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3078,6 +3845,7 @@ extension IoT {
             AWSShapeMember(label: "targetName", location: .querystring(locationName: "targetName"), required: true, type: .string), 
             AWSShapeMember(label: "targetType", location: .querystring(locationName: "targetType"), required: true, type: .enum)
         ]
+
         /// The name of the resource for which you are configuring logging.
         public let targetName: String
         /// The type of resource for which you are configuring logging. Must be THING_Group.
@@ -3099,6 +3867,7 @@ extension IoT {
             AWSShapeMember(label: "explicitDeny", required: false, type: .structure), 
             AWSShapeMember(label: "implicitDeny", required: false, type: .structure)
         ]
+
         /// Information that explicitly denies the authorization. 
         public let explicitDeny: ExplicitDeny?
         /// Information that implicitly denies the authorization. When a policy doesn't explicitly deny or allow an action on a resource it is considered an implicit deny.
@@ -3107,6 +3876,11 @@ extension IoT {
         public init(explicitDeny: ExplicitDeny? = nil, implicitDeny: ImplicitDeny? = nil) {
             self.explicitDeny = explicitDeny
             self.implicitDeny = implicitDeny
+        }
+
+        public func validate() throws {
+            try explicitDeny?.validate()
+            try implicitDeny?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3120,6 +3894,7 @@ extension IoT {
             AWSShapeMember(label: "thingTypeName", location: .uri(locationName: "thingTypeName"), required: true, type: .string), 
             AWSShapeMember(label: "undoDeprecate", required: false, type: .boolean)
         ]
+
         /// The name of the thing type to deprecate.
         public let thingTypeName: String
         /// Whether to undeprecate a deprecated thing type. If true, the thing type will not be deprecated anymore and you can associate it with things.
@@ -3130,6 +3905,12 @@ extension IoT {
             self.undoDeprecate = undoDeprecate
         }
 
+        public func validate() throws {
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case thingTypeName = "thingTypeName"
             case undoDeprecate = "undoDeprecate"
@@ -3138,12 +3919,14 @@ extension IoT {
 
     public struct DeprecateThingTypeResponse: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct DescribeAccountAuditConfigurationRequest: AWSShape {
+
 
         public init() {
         }
@@ -3156,6 +3939,7 @@ extension IoT {
             AWSShapeMember(label: "auditNotificationTargetConfigurations", required: false, type: .map), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// Which audit checks are enabled and disabled for this account.
         public let auditCheckConfigurations: [String: AuditCheckConfiguration]?
         /// Information about the targets to which audit notifications are sent for this account.
@@ -3169,6 +3953,11 @@ extension IoT {
             self.roleArn = roleArn
         }
 
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case auditCheckConfigurations = "auditCheckConfigurations"
             case auditNotificationTargetConfigurations = "auditNotificationTargetConfigurations"
@@ -3180,11 +3969,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", location: .uri(locationName: "taskId"), required: true, type: .string)
         ]
+
         /// The ID of the audit whose information you want to get.
         public let taskId: String
 
         public init(taskId: String) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 40)
+            try validate(taskId, name:"taskId", min: 1)
+            try validate(taskId, name:"taskId", pattern: "[a-zA-Z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3201,6 +3997,7 @@ extension IoT {
             AWSShapeMember(label: "taskStatus", required: false, type: .enum), 
             AWSShapeMember(label: "taskType", required: false, type: .enum)
         ]
+
         /// Detailed information about each check performed during this audit.
         public let auditDetails: [String: AuditCheckDetails]?
         /// The name of the scheduled audit (only if the audit was a scheduled audit).
@@ -3223,6 +4020,12 @@ extension IoT {
             self.taskType = taskType
         }
 
+        public func validate() throws {
+            try validate(scheduledAuditName, name:"scheduledAuditName", max: 128)
+            try validate(scheduledAuditName, name:"scheduledAuditName", min: 1)
+            try validate(scheduledAuditName, name:"scheduledAuditName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case auditDetails = "auditDetails"
             case scheduledAuditName = "scheduledAuditName"
@@ -3237,11 +4040,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "authorizerName", location: .uri(locationName: "authorizerName"), required: true, type: .string)
         ]
+
         /// The name of the authorizer to describe.
         public let authorizerName: String
 
         public init(authorizerName: String) {
             self.authorizerName = authorizerName
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3253,11 +4063,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "authorizerDescription", required: false, type: .structure)
         ]
+
         /// The authorizer description.
         public let authorizerDescription: AuthorizerDescription?
 
         public init(authorizerDescription: AuthorizerDescription? = nil) {
             self.authorizerDescription = authorizerDescription
+        }
+
+        public func validate() throws {
+            try authorizerDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3269,11 +4084,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "billingGroupName", location: .uri(locationName: "billingGroupName"), required: true, type: .string)
         ]
+
         /// The name of the billing group.
         public let billingGroupName: String
 
         public init(billingGroupName: String) {
             self.billingGroupName = billingGroupName
+        }
+
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3290,6 +4112,7 @@ extension IoT {
             AWSShapeMember(label: "billingGroupProperties", required: false, type: .structure), 
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// The ARN of the billing group.
         public let billingGroupArn: String?
         /// The ID of the billing group.
@@ -3312,6 +4135,16 @@ extension IoT {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(billingGroupId, name:"billingGroupId", max: 128)
+            try validate(billingGroupId, name:"billingGroupId", min: 1)
+            try validate(billingGroupId, name:"billingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try billingGroupProperties?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case billingGroupArn = "billingGroupArn"
             case billingGroupId = "billingGroupId"
@@ -3326,11 +4159,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "caCertificateId"), required: true, type: .string)
         ]
+
         /// The CA certificate identifier.
         public let certificateId: String
 
         public init(certificateId: String) {
             self.certificateId = certificateId
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3343,6 +4183,7 @@ extension IoT {
             AWSShapeMember(label: "certificateDescription", required: false, type: .structure), 
             AWSShapeMember(label: "registrationConfig", required: false, type: .structure)
         ]
+
         /// The CA certificate description.
         public let certificateDescription: CACertificateDescription?
         /// Information about the registration configuration.
@@ -3351,6 +4192,11 @@ extension IoT {
         public init(certificateDescription: CACertificateDescription? = nil, registrationConfig: RegistrationConfig? = nil) {
             self.certificateDescription = certificateDescription
             self.registrationConfig = registrationConfig
+        }
+
+        public func validate() throws {
+            try certificateDescription?.validate()
+            try registrationConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3363,11 +4209,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "certificateId"), required: true, type: .string)
         ]
+
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
 
         public init(certificateId: String) {
             self.certificateId = certificateId
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3379,11 +4232,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "certificateDescription", required: false, type: .structure)
         ]
+
         /// The description of the certificate.
         public let certificateDescription: CertificateDescription?
 
         public init(certificateDescription: CertificateDescription? = nil) {
             self.certificateDescription = certificateDescription
+        }
+
+        public func validate() throws {
+            try certificateDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3392,6 +4250,7 @@ extension IoT {
     }
 
     public struct DescribeDefaultAuthorizerRequest: AWSShape {
+
 
         public init() {
         }
@@ -3402,11 +4261,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "authorizerDescription", required: false, type: .structure)
         ]
+
         /// The default authorizer's description.
         public let authorizerDescription: AuthorizerDescription?
 
         public init(authorizerDescription: AuthorizerDescription? = nil) {
             self.authorizerDescription = authorizerDescription
+        }
+
+        public func validate() throws {
+            try authorizerDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3418,6 +4282,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "endpointType", location: .querystring(locationName: "endpointType"), required: false, type: .string)
         ]
+
         /// The endpoint type. Valid endpoint types include:    iot:Data - Returns a VeriSign signed data endpoint.      iot:Data-ATS - Returns an ATS signed data endpoint.      iot:CredentialProvider - Returns an AWS IoT credentials provider API endpoint.      iot:Jobs - Returns an AWS IoT device management Jobs API endpoint.  
         public let endpointType: String?
 
@@ -3434,6 +4299,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "endpointAddress", required: false, type: .string)
         ]
+
         /// The endpoint. The format of the endpoint is as follows: identifier.iot.region.amazonaws.com.
         public let endpointAddress: String?
 
@@ -3448,6 +4314,7 @@ extension IoT {
 
     public struct DescribeEventConfigurationsRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -3459,6 +4326,7 @@ extension IoT {
             AWSShapeMember(label: "eventConfigurations", required: false, type: .map), 
             AWSShapeMember(label: "lastModifiedDate", required: false, type: .timestamp)
         ]
+
         /// The creation date of the event configuration.
         public let creationDate: TimeStamp?
         /// The event configurations.
@@ -3483,11 +4351,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "indexName", location: .uri(locationName: "indexName"), required: true, type: .string)
         ]
+
         /// The index name.
         public let indexName: String
 
         public init(indexName: String) {
             self.indexName = indexName
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3501,6 +4376,7 @@ extension IoT {
             AWSShapeMember(label: "indexStatus", required: false, type: .enum), 
             AWSShapeMember(label: "schema", required: false, type: .string)
         ]
+
         /// The index name.
         public let indexName: String?
         /// The index status.
@@ -3512,6 +4388,12 @@ extension IoT {
             self.indexName = indexName
             self.indexStatus = indexStatus
             self.schema = schema
+        }
+
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3527,6 +4409,7 @@ extension IoT {
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// A string (consisting of the digits "0" through "9" which is used to specify a particular job execution on a particular device.
         public let executionNumber: Int64?
         /// The unique identifier you assigned to this job when it was created.
@@ -3540,6 +4423,15 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionNumber = "executionNumber"
             case jobId = "jobId"
@@ -3551,11 +4443,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "execution", required: false, type: .structure)
         ]
+
         /// Information about the job execution.
         public let execution: JobExecution?
 
         public init(execution: JobExecution? = nil) {
             self.execution = execution
+        }
+
+        public func validate() throws {
+            try execution?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3567,11 +4464,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string)
         ]
+
         /// The unique identifier you assigned to this job when it was created.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3584,6 +4488,7 @@ extension IoT {
             AWSShapeMember(label: "documentSource", required: false, type: .string), 
             AWSShapeMember(label: "job", required: false, type: .structure)
         ]
+
         /// An S3 link to the job document.
         public let documentSource: String?
         /// Information about the job.
@@ -3592,6 +4497,12 @@ extension IoT {
         public init(documentSource: String? = nil, job: Job? = nil) {
             self.documentSource = documentSource
             self.job = job
+        }
+
+        public func validate() throws {
+            try validate(documentSource, name:"documentSource", max: 1350)
+            try validate(documentSource, name:"documentSource", min: 1)
+            try job?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3604,11 +4515,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "roleAlias", location: .uri(locationName: "roleAlias"), required: true, type: .string)
         ]
+
         /// The role alias to describe.
         public let roleAlias: String
 
         public init(roleAlias: String) {
             self.roleAlias = roleAlias
+        }
+
+        public func validate() throws {
+            try validate(roleAlias, name:"roleAlias", max: 128)
+            try validate(roleAlias, name:"roleAlias", min: 1)
+            try validate(roleAlias, name:"roleAlias", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3620,11 +4538,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "roleAliasDescription", required: false, type: .structure)
         ]
+
         /// The role alias description.
         public let roleAliasDescription: RoleAliasDescription?
 
         public init(roleAliasDescription: RoleAliasDescription? = nil) {
             self.roleAliasDescription = roleAliasDescription
+        }
+
+        public func validate() throws {
+            try roleAliasDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3636,11 +4559,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "scheduledAuditName", location: .uri(locationName: "scheduledAuditName"), required: true, type: .string)
         ]
+
         /// The name of the scheduled audit whose information you want to get.
         public let scheduledAuditName: String
 
         public init(scheduledAuditName: String) {
             self.scheduledAuditName = scheduledAuditName
+        }
+
+        public func validate() throws {
+            try validate(scheduledAuditName, name:"scheduledAuditName", max: 128)
+            try validate(scheduledAuditName, name:"scheduledAuditName", min: 1)
+            try validate(scheduledAuditName, name:"scheduledAuditName", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3657,6 +4587,7 @@ extension IoT {
             AWSShapeMember(label: "scheduledAuditName", required: false, type: .string), 
             AWSShapeMember(label: "targetCheckNames", required: false, type: .list)
         ]
+
         /// The day of the month on which the scheduled audit takes place. Will be "1" through "31" or "LAST". If days 29-31 are specified, and the month does not have that many days, the audit takes place on the "LAST" day of the month.
         public let dayOfMonth: String?
         /// The day of the week on which the scheduled audit takes place. One of "SUN", "MON", "TUE", "WED", "THU", "FRI" or "SAT".
@@ -3679,6 +4610,13 @@ extension IoT {
             self.targetCheckNames = targetCheckNames
         }
 
+        public func validate() throws {
+            try validate(dayOfMonth, name:"dayOfMonth", pattern: "^([1-9]|[12][0-9]|3[01])$|^LAST$")
+            try validate(scheduledAuditName, name:"scheduledAuditName", max: 128)
+            try validate(scheduledAuditName, name:"scheduledAuditName", min: 1)
+            try validate(scheduledAuditName, name:"scheduledAuditName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dayOfMonth = "dayOfMonth"
             case dayOfWeek = "dayOfWeek"
@@ -3693,11 +4631,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "securityProfileName", location: .uri(locationName: "securityProfileName"), required: true, type: .string)
         ]
+
         /// The name of the security profile whose information you want to get.
         public let securityProfileName: String
 
         public init(securityProfileName: String) {
             self.securityProfileName = securityProfileName
+        }
+
+        public func validate() throws {
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3717,6 +4662,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileName", required: false, type: .string), 
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's behaviors but it is also retained for any metric specified here.
         public let additionalMetricsToRetain: [String]?
         /// Where the alerts are sent. (Alerts are always sent to the console.)
@@ -3748,6 +4694,18 @@ extension IoT {
             self.version = version
         }
 
+        public func validate() throws {
+            try behaviors?.forEach {
+                try $0.validate()
+            }
+            try validate(behaviors, name:"behaviors", max: 100)
+            try validate(securityProfileDescription, name:"securityProfileDescription", max: 1000)
+            try validate(securityProfileDescription, name:"securityProfileDescription", pattern: "[\\p{Graph}\\x20]*")
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case additionalMetricsToRetain = "additionalMetricsToRetain"
             case alertTargets = "alertTargets"
@@ -3765,11 +4723,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "streamId", location: .uri(locationName: "streamId"), required: true, type: .string)
         ]
+
         /// The stream ID.
         public let streamId: String
 
         public init(streamId: String) {
             self.streamId = streamId
+        }
+
+        public func validate() throws {
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3781,11 +4746,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "streamInfo", required: false, type: .structure)
         ]
+
         /// Information about the stream.
         public let streamInfo: StreamInfo?
 
         public init(streamInfo: StreamInfo? = nil) {
             self.streamInfo = streamInfo
+        }
+
+        public func validate() throws {
+            try streamInfo?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3797,11 +4767,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string)
         ]
+
         /// The name of the thing group.
         public let thingGroupName: String
 
         public init(thingGroupName: String) {
             self.thingGroupName = thingGroupName
+        }
+
+        public func validate() throws {
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3822,6 +4799,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupProperties", required: false, type: .structure), 
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// The dynamic thing group index name.
         public let indexName: String?
         /// The dynamic thing group search query string.
@@ -3856,6 +4834,21 @@ extension IoT {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(queryString, name:"queryString", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", max: 128)
+            try validate(thingGroupId, name:"thingGroupId", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+            try thingGroupMetadata?.validate()
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingGroupProperties?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case indexName = "indexName"
             case queryString = "queryString"
@@ -3874,11 +4867,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", location: .uri(locationName: "taskId"), required: true, type: .string)
         ]
+
         /// The task ID.
         public let taskId: String
 
         public init(taskId: String) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 40)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3901,6 +4899,7 @@ extension IoT {
             AWSShapeMember(label: "taskId", required: false, type: .string), 
             AWSShapeMember(label: "templateBody", required: false, type: .string)
         ]
+
         /// The task creation date.
         public let creationDate: TimeStamp?
         /// The number of things that failed to be provisioned.
@@ -3941,6 +4940,21 @@ extension IoT {
             self.templateBody = templateBody
         }
 
+        public func validate() throws {
+            try validate(inputFileBucket, name:"inputFileBucket", max: 256)
+            try validate(inputFileBucket, name:"inputFileBucket", min: 3)
+            try validate(inputFileBucket, name:"inputFileBucket", pattern: "[a-zA-Z0-9._-]+")
+            try validate(inputFileKey, name:"inputFileKey", max: 1024)
+            try validate(inputFileKey, name:"inputFileKey", min: 1)
+            try validate(inputFileKey, name:"inputFileKey", pattern: "[a-zA-Z0-9!_.*'()-\\/]+")
+            try validate(message, name:"message", max: 2048)
+            try validate(percentageProgress, name:"percentageProgress", max: 100)
+            try validate(percentageProgress, name:"percentageProgress", min: 0)
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(taskId, name:"taskId", max: 40)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "creationDate"
             case failureCount = "failureCount"
@@ -3961,11 +4975,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The name of the thing.
         public let thingName: String
 
         public init(thingName: String) {
             self.thingName = thingName
+        }
+
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3984,6 +5005,7 @@ extension IoT {
             AWSShapeMember(label: "thingTypeName", required: false, type: .string), 
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// The thing attributes.
         public let attributes: [String: String]?
         /// The name of the billing group the thing belongs to.
@@ -4012,6 +5034,18 @@ extension IoT {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case billingGroupName = "billingGroupName"
@@ -4028,11 +5062,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "thingTypeName", location: .uri(locationName: "thingTypeName"), required: true, type: .string)
         ]
+
         /// The name of the thing type.
         public let thingTypeName: String
 
         public init(thingTypeName: String) {
             self.thingTypeName = thingTypeName
+        }
+
+        public func validate() throws {
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4048,6 +5089,7 @@ extension IoT {
             AWSShapeMember(label: "thingTypeName", required: false, type: .string), 
             AWSShapeMember(label: "thingTypeProperties", required: false, type: .structure)
         ]
+
         /// The thing type ARN.
         public let thingTypeArn: String?
         /// The thing type ID.
@@ -4067,6 +5109,13 @@ extension IoT {
             self.thingTypeProperties = thingTypeProperties
         }
 
+        public func validate() throws {
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingTypeProperties?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case thingTypeArn = "thingTypeArn"
             case thingTypeId = "thingTypeId"
@@ -4080,11 +5129,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "s3Destination", required: false, type: .structure)
         ]
+
         /// Describes the location in S3 of the updated firmware.
         public let s3Destination: S3Destination?
 
         public init(s3Destination: S3Destination? = nil) {
             self.s3Destination = s3Destination
+        }
+
+        public func validate() throws {
+            try s3Destination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4097,6 +5151,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "target", required: true, type: .string)
         ]
+
         /// The policy to detach.
         public let policyName: String
         /// The target from which the policy will be detached.
@@ -4105,6 +5160,12 @@ extension IoT {
         public init(policyName: String, target: String) {
             self.policyName = policyName
             self.target = target
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4118,6 +5179,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "principal", location: .header(locationName: "x-amzn-iot-principal"), required: true, type: .string)
         ]
+
         /// The name of the policy to detach.
         public let policyName: String
         /// The principal. If the principal is a certificate, specify the certificate ARN. If the principal is an Amazon Cognito identity, specify the identity ID.
@@ -4126,6 +5188,12 @@ extension IoT {
         public init(policyName: String, principal: String) {
             self.policyName = policyName
             self.principal = principal
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4139,6 +5207,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileName", location: .uri(locationName: "securityProfileName"), required: true, type: .string), 
             AWSShapeMember(label: "securityProfileTargetArn", location: .querystring(locationName: "securityProfileTargetArn"), required: true, type: .string)
         ]
+
         /// The security profile that is detached.
         public let securityProfileName: String
         /// The ARN of the thing group from which the security profile is detached.
@@ -4149,6 +5218,12 @@ extension IoT {
             self.securityProfileTargetArn = securityProfileTargetArn
         }
 
+        public func validate() throws {
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case securityProfileName = "securityProfileName"
             case securityProfileTargetArn = "securityProfileTargetArn"
@@ -4156,6 +5231,7 @@ extension IoT {
     }
 
     public struct DetachSecurityProfileResponse: AWSShape {
+
 
         public init() {
         }
@@ -4167,6 +5243,7 @@ extension IoT {
             AWSShapeMember(label: "principal", location: .header(locationName: "x-amzn-principal"), required: true, type: .string), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// If the principal is a certificate, this value must be ARN of the certificate. If the principal is an Amazon Cognito identity, this value must be the ID of the Amazon Cognito identity.
         public let principal: String
         /// The name of the thing.
@@ -4177,6 +5254,12 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case principal = "x-amzn-principal"
             case thingName = "thingName"
@@ -4184,6 +5267,7 @@ extension IoT {
     }
 
     public struct DetachThingPrincipalResponse: AWSShape {
+
 
         public init() {
         }
@@ -4194,11 +5278,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ruleName", location: .uri(locationName: "ruleName"), required: true, type: .string)
         ]
+
         /// The name of the rule to disable.
         public let ruleName: String
 
         public init(ruleName: String) {
             self.ruleName = ruleName
+        }
+
+        public func validate() throws {
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4226,6 +5317,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "tableName", required: true, type: .string)
         ]
+
         /// The hash key name.
         public let hashKeyField: String
         /// The hash key type. Valid values are "STRING" or "NUMBER"
@@ -4279,6 +5371,7 @@ extension IoT {
             AWSShapeMember(label: "putItem", required: true, type: .structure), 
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// Specifies the DynamoDB table to which the message data will be written. For example:  { "dynamoDBv2": { "roleArn": "aws:iam:12341251:my-role" "putItem": { "tableName": "my-table" } } }  Each attribute in the message payload will be written to a separate column in the DynamoDB database.
         public let putItem: PutItemInput
         /// The ARN of the IAM role that grants access to the DynamoDB table.
@@ -4307,6 +5400,7 @@ extension IoT {
             AWSShapeMember(label: "policyDocument", required: false, type: .string), 
             AWSShapeMember(label: "policyName", required: false, type: .string)
         ]
+
         /// The policy ARN.
         public let policyArn: String?
         /// The IAM policy document.
@@ -4318,6 +5412,12 @@ extension IoT {
             self.policyArn = policyArn
             self.policyDocument = policyDocument
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4335,6 +5435,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "type", required: true, type: .string)
         ]
+
         /// The endpoint of your Elasticsearch domain.
         public let endpoint: String
         /// The unique identifier for the document you are storing.
@@ -4354,6 +5455,10 @@ extension IoT {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(endpoint, name:"endpoint", pattern: "https?://.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endpoint = "endpoint"
             case id = "id"
@@ -4367,11 +5472,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ruleName", location: .uri(locationName: "ruleName"), required: true, type: .string)
         ]
+
         /// The name of the topic rule to enable.
         public let ruleName: String
 
         public init(ruleName: String) {
             self.ruleName = ruleName
+        }
+
+        public func validate() throws {
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4384,6 +5496,7 @@ extension IoT {
             AWSShapeMember(label: "code", required: false, type: .string), 
             AWSShapeMember(label: "message", required: false, type: .string)
         ]
+
         /// The error code.
         public let code: String?
         /// The error message.
@@ -4419,11 +5532,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policies", required: false, type: .list)
         ]
+
         /// The policies that denied the authorization.
         public let policies: [Policy]?
 
         public init(policies: [Policy]? = nil) {
             self.policies = policies
+        }
+
+        public func validate() throws {
+            try policies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4437,6 +5557,7 @@ extension IoT {
             AWSShapeMember(label: "incrementFactor", required: true, type: .double), 
             AWSShapeMember(label: "rateIncreaseCriteria", required: true, type: .structure)
         ]
+
         /// The minimum number of things that will be notified of a pending job, per minute at the start of job rollout. This parameter allows you to define the initial rate of rollout.
         public let baseRatePerMinute: Int32
         /// The exponential factor to increase the rate of rollout for a job.
@@ -4448,6 +5569,14 @@ extension IoT {
             self.baseRatePerMinute = baseRatePerMinute
             self.incrementFactor = incrementFactor
             self.rateIncreaseCriteria = rateIncreaseCriteria
+        }
+
+        public func validate() throws {
+            try validate(baseRatePerMinute, name:"baseRatePerMinute", max: 1000)
+            try validate(baseRatePerMinute, name:"baseRatePerMinute", min: 1)
+            try validate(incrementFactor, name:"incrementFactor", max: 5)
+            try validate(incrementFactor, name:"incrementFactor", min: 1)
+            try rateIncreaseCriteria.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4462,6 +5591,7 @@ extension IoT {
             AWSShapeMember(label: "s3Location", required: false, type: .structure), 
             AWSShapeMember(label: "stream", required: false, type: .structure)
         ]
+
         /// The location of the updated firmware in S3.
         public let s3Location: S3Location?
         /// The stream that contains the OTA update.
@@ -4470,6 +5600,11 @@ extension IoT {
         public init(s3Location: S3Location? = nil, stream: Stream? = nil) {
             self.s3Location = s3Location
             self.stream = stream
+        }
+
+        public func validate() throws {
+            try s3Location?.validate()
+            try stream?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4484,6 +5619,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "separator", required: false, type: .string)
         ]
+
         /// The delivery stream name.
         public let deliveryStreamName: String
         /// The IAM role that grants access to the Amazon Kinesis Firehose stream.
@@ -4495,6 +5631,10 @@ extension IoT {
             self.deliveryStreamName = deliveryStreamName
             self.roleArn = roleArn
             self.separator = separator
+        }
+
+        public func validate() throws {
+            try validate(separator, name:"separator", pattern: "([\\n\\t])|(\\r\\n)|(,)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4510,6 +5650,7 @@ extension IoT {
             AWSShapeMember(label: "principal", required: false, type: .string), 
             AWSShapeMember(label: "thingName", location: .querystring(locationName: "thingName"), required: false, type: .string)
         ]
+
         /// The Cognito identity pool ID.
         public let cognitoIdentityPoolId: String?
         /// The principal.
@@ -4523,6 +5664,12 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cognitoIdentityPoolId = "cognitoIdentityPoolId"
             case principal = "principal"
@@ -4534,11 +5681,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "effectivePolicies", required: false, type: .list)
         ]
+
         /// The effective policies.
         public let effectivePolicies: [EffectivePolicy]?
 
         public init(effectivePolicies: [EffectivePolicy]? = nil) {
             self.effectivePolicies = effectivePolicies
+        }
+
+        public func validate() throws {
+            try effectivePolicies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4547,6 +5701,7 @@ extension IoT {
     }
 
     public struct GetIndexingConfigurationRequest: AWSShape {
+
 
         public init() {
         }
@@ -4558,6 +5713,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupIndexingConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "thingIndexingConfiguration", required: false, type: .structure)
         ]
+
         /// The index configuration.
         public let thingGroupIndexingConfiguration: ThingGroupIndexingConfiguration?
         /// Thing indexing configuration.
@@ -4578,11 +5734,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string)
         ]
+
         /// The unique identifier you assigned to this job when it was created.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4594,11 +5757,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "document", required: false, type: .string)
         ]
+
         /// The job document content.
         public let document: String?
 
         public init(document: String? = nil) {
             self.document = document
+        }
+
+        public func validate() throws {
+            try validate(document, name:"document", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4607,6 +5775,7 @@ extension IoT {
     }
 
     public struct GetLoggingOptionsRequest: AWSShape {
+
 
         public init() {
         }
@@ -4618,6 +5787,7 @@ extension IoT {
             AWSShapeMember(label: "logLevel", required: false, type: .enum), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The logging level.
         public let logLevel: LogLevel?
         /// The ARN of the IAM role that grants access.
@@ -4638,11 +5808,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "otaUpdateId", location: .uri(locationName: "otaUpdateId"), required: true, type: .string)
         ]
+
         /// The OTA update ID.
         public let otaUpdateId: String
 
         public init(otaUpdateId: String) {
             self.otaUpdateId = otaUpdateId
+        }
+
+        public func validate() throws {
+            try validate(otaUpdateId, name:"otaUpdateId", max: 128)
+            try validate(otaUpdateId, name:"otaUpdateId", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4654,11 +5831,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "otaUpdateInfo", required: false, type: .structure)
         ]
+
         /// The OTA update info.
         public let otaUpdateInfo: OTAUpdateInfo?
 
         public init(otaUpdateInfo: OTAUpdateInfo? = nil) {
             self.otaUpdateInfo = otaUpdateInfo
+        }
+
+        public func validate() throws {
+            try otaUpdateInfo?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4670,11 +5852,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string)
         ]
+
         /// The name of the policy.
         public let policyName: String
 
         public init(policyName: String) {
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4692,6 +5881,7 @@ extension IoT {
             AWSShapeMember(label: "policyDocument", required: false, type: .string), 
             AWSShapeMember(label: "policyName", required: false, type: .string)
         ]
+
         /// The date the policy was created.
         public let creationDate: TimeStamp?
         /// The default policy version ID.
@@ -4717,6 +5907,13 @@ extension IoT {
             self.policyName = policyName
         }
 
+        public func validate() throws {
+            try validate(defaultVersionId, name:"defaultVersionId", pattern: "[0-9]+")
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "creationDate"
             case defaultVersionId = "defaultVersionId"
@@ -4733,6 +5930,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "policyVersionId", location: .uri(locationName: "policyVersionId"), required: true, type: .string)
         ]
+
         /// The name of the policy.
         public let policyName: String
         /// The policy version ID.
@@ -4741,6 +5939,13 @@ extension IoT {
         public init(policyName: String, policyVersionId: String) {
             self.policyName = policyName
             self.policyVersionId = policyVersionId
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+            try validate(policyVersionId, name:"policyVersionId", pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4760,6 +5965,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", required: false, type: .string), 
             AWSShapeMember(label: "policyVersionId", required: false, type: .string)
         ]
+
         /// The date the policy version was created.
         public let creationDate: TimeStamp?
         /// The generation ID of the policy version.
@@ -4788,6 +5994,13 @@ extension IoT {
             self.policyVersionId = policyVersionId
         }
 
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+            try validate(policyVersionId, name:"policyVersionId", pattern: "[0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "creationDate"
             case generationId = "generationId"
@@ -4802,6 +6015,7 @@ extension IoT {
 
     public struct GetRegistrationCodeRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -4811,11 +6025,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "registrationCode", required: false, type: .string)
         ]
+
         /// The CA certificate registration code.
         public let registrationCode: String?
 
         public init(registrationCode: String? = nil) {
             self.registrationCode = registrationCode
+        }
+
+        public func validate() throws {
+            try validate(registrationCode, name:"registrationCode", max: 64)
+            try validate(registrationCode, name:"registrationCode", min: 64)
+            try validate(registrationCode, name:"registrationCode", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4830,6 +6051,7 @@ extension IoT {
             AWSShapeMember(label: "queryString", required: true, type: .string), 
             AWSShapeMember(label: "queryVersion", required: false, type: .string)
         ]
+
         /// The aggregation field name. Currently not supported.
         public let aggregationField: String?
         /// The name of the index to search. The default value is AWS_Things.
@@ -4846,6 +6068,14 @@ extension IoT {
             self.queryVersion = queryVersion
         }
 
+        public func validate() throws {
+            try validate(aggregationField, name:"aggregationField", min: 1)
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(queryString, name:"queryString", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case aggregationField = "aggregationField"
             case indexName = "indexName"
@@ -4858,6 +6088,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "statistics", required: false, type: .structure)
         ]
+
         /// The statistics returned by the Fleet Indexing service based on the query and aggregation field.
         public let statistics: Statistics?
 
@@ -4874,11 +6105,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ruleName", location: .uri(locationName: "ruleName"), required: true, type: .string)
         ]
+
         /// The name of the rule.
         public let ruleName: String
 
         public init(ruleName: String) {
             self.ruleName = ruleName
+        }
+
+        public func validate() throws {
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4891,6 +6129,7 @@ extension IoT {
             AWSShapeMember(label: "rule", required: false, type: .structure), 
             AWSShapeMember(label: "ruleArn", required: false, type: .string)
         ]
+
         /// The rule.
         public let rule: TopicRule?
         /// The rule ARN.
@@ -4901,6 +6140,10 @@ extension IoT {
             self.ruleArn = ruleArn
         }
 
+        public func validate() throws {
+            try rule?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case rule = "rule"
             case ruleArn = "ruleArn"
@@ -4908,6 +6151,7 @@ extension IoT {
     }
 
     public struct GetV2LoggingOptionsRequest: AWSShape {
+
 
         public init() {
         }
@@ -4920,6 +6164,7 @@ extension IoT {
             AWSShapeMember(label: "disableAllLogs", required: false, type: .boolean), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The default log level.
         public let defaultLogLevel: LogLevel?
         /// Disables all logs.
@@ -4945,6 +6190,7 @@ extension IoT {
             AWSShapeMember(label: "groupArn", required: false, type: .string), 
             AWSShapeMember(label: "groupName", required: false, type: .string)
         ]
+
         /// The group ARN.
         public let groupArn: String?
         /// The group name.
@@ -4953,6 +6199,12 @@ extension IoT {
         public init(groupArn: String? = nil, groupName: String? = nil) {
             self.groupArn = groupArn
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(groupName, name:"groupName", max: 128)
+            try validate(groupName, name:"groupName", min: 1)
+            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4965,11 +6217,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policies", required: false, type: .list)
         ]
+
         /// Policies that don't contain a matching allow or deny statement for the specified action on the specified resource. 
         public let policies: [Policy]?
 
         public init(policies: [Policy]? = nil) {
             self.policies = policies
+        }
+
+        public func validate() throws {
+            try policies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4990,6 +6249,7 @@ extension IoT {
             AWSShapeMember(label: "channelName", required: false, type: .string), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// (deprecated) The ARN of the IoT Analytics channel to which message data will be sent.
         public let channelArn: String?
         /// The name of the IoT Analytics channel to which message data will be sent.
@@ -5016,6 +6276,7 @@ extension IoT {
             AWSShapeMember(label: "messageId", required: false, type: .string), 
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// The name of the AWS IoT Events input.
         public let inputName: String
         /// [Optional] Use this to ensure that only one input (message) with a given messageId will be processed by an AWS IoT Events detector.
@@ -5027,6 +6288,12 @@ extension IoT {
             self.inputName = inputName
             self.messageId = messageId
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(inputName, name:"inputName", max: 128)
+            try validate(inputName, name:"inputName", min: 1)
+            try validate(messageId, name:"messageId", max: 128)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5056,6 +6323,7 @@ extension IoT {
             AWSShapeMember(label: "targetSelection", required: false, type: .enum), 
             AWSShapeMember(label: "timeoutConfig", required: false, type: .structure)
         ]
+
         /// Configuration for criteria to abort the job.
         public let abortConfig: AbortConfig?
         /// If the job was updated, describes the reason for the update.
@@ -5111,6 +6379,22 @@ extension IoT {
             self.timeoutConfig = timeoutConfig
         }
 
+        public func validate() throws {
+            try abortConfig?.validate()
+            try validate(comment, name:"comment", max: 2028)
+            try validate(comment, name:"comment", pattern: "[^\\p{C}]+")
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try jobExecutionsRolloutConfig?.validate()
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try presignedUrlConfig?.validate()
+            try validate(reasonCode, name:"reasonCode", max: 128)
+            try validate(reasonCode, name:"reasonCode", pattern: "[\\p{Upper}\\p{Digit}_]+")
+            try validate(targets, name:"targets", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case abortConfig = "abortConfig"
             case comment = "comment"
@@ -5146,6 +6430,7 @@ extension IoT {
             AWSShapeMember(label: "thingArn", required: false, type: .string), 
             AWSShapeMember(label: "versionNumber", required: false, type: .long)
         ]
+
         /// The estimated number of seconds that remain before the job execution status will be changed to TIMED_OUT. The timeout interval can be anywhere between 1 minute and 7 days (1 to 10080 minutes). The actual job execution timeout can occur up to 60 seconds later than the estimated duration. This value will not be included if the job execution has reached a terminal status.
         public let approximateSecondsBeforeTimedOut: Int64?
         /// A string (consisting of the digits "0" through "9") which identifies this particular job execution on this particular device. It can be used in commands which return or update job execution information. 
@@ -5181,6 +6466,12 @@ extension IoT {
             self.statusDetails = statusDetails
             self.thingArn = thingArn
             self.versionNumber = versionNumber
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5222,6 +6513,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "detailsMap", required: false, type: .map)
         ]
+
         /// The job execution status.
         public let detailsMap: [String: String]?
 
@@ -5242,6 +6534,7 @@ extension IoT {
             AWSShapeMember(label: "startedAt", required: false, type: .timestamp), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// A string (consisting of the digits "0" through "9") which identifies this particular job execution on this particular device. It can be used later in commands which return or update job execution information.
         public let executionNumber: Int64?
         /// The time, in seconds since the epoch, when the job execution was last updated.
@@ -5275,6 +6568,7 @@ extension IoT {
             AWSShapeMember(label: "jobExecutionSummary", required: false, type: .structure), 
             AWSShapeMember(label: "thingArn", required: false, type: .string)
         ]
+
         /// Contains a subset of information about a job execution.
         public let jobExecutionSummary: JobExecutionSummary?
         /// The ARN of the thing on which the job execution is running.
@@ -5296,6 +6590,7 @@ extension IoT {
             AWSShapeMember(label: "jobExecutionSummary", required: false, type: .structure), 
             AWSShapeMember(label: "jobId", required: false, type: .string)
         ]
+
         /// Contains a subset of information about a job execution.
         public let jobExecutionSummary: JobExecutionSummary?
         /// The unique identifier you assigned to this job when it was created.
@@ -5304,6 +6599,12 @@ extension IoT {
         public init(jobExecutionSummary: JobExecutionSummary? = nil, jobId: String? = nil) {
             self.jobExecutionSummary = jobExecutionSummary
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5317,6 +6618,7 @@ extension IoT {
             AWSShapeMember(label: "exponentialRate", required: false, type: .structure), 
             AWSShapeMember(label: "maximumPerMinute", required: false, type: .integer)
         ]
+
         /// The rate of increase for a job rollout. This parameter allows you to define an exponential rate for a job rollout.
         public let exponentialRate: ExponentialRolloutRate?
         /// The maximum number of things that will be notified of a pending job, per minute. This parameter allows you to create a staged rollout.
@@ -5325,6 +6627,11 @@ extension IoT {
         public init(exponentialRate: ExponentialRolloutRate? = nil, maximumPerMinute: Int32? = nil) {
             self.exponentialRate = exponentialRate
             self.maximumPerMinute = maximumPerMinute
+        }
+
+        public func validate() throws {
+            try exponentialRate?.validate()
+            try validate(maximumPerMinute, name:"maximumPerMinute", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5345,6 +6652,7 @@ extension IoT {
             AWSShapeMember(label: "numberOfTimedOutThings", required: false, type: .integer), 
             AWSShapeMember(label: "processingTargets", required: false, type: .list)
         ]
+
         /// The number of things that cancelled the job.
         public let numberOfCanceledThings: Int32?
         /// The number of things that failed executing the job.
@@ -5408,6 +6716,7 @@ extension IoT {
             AWSShapeMember(label: "targetSelection", required: false, type: .enum), 
             AWSShapeMember(label: "thingGroupId", required: false, type: .string)
         ]
+
         /// The time, in seconds since the epoch, when the job completed.
         public let completedAt: TimeStamp?
         /// The time, in seconds since the epoch, when the job was created.
@@ -5436,6 +6745,15 @@ extension IoT {
             self.thingGroupId = thingGroupId
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(thingGroupId, name:"thingGroupId", max: 128)
+            try validate(thingGroupId, name:"thingGroupId", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case completedAt = "completedAt"
             case createdAt = "createdAt"
@@ -5453,6 +6771,7 @@ extension IoT {
             AWSShapeMember(label: "PrivateKey", required: false, type: .string), 
             AWSShapeMember(label: "PublicKey", required: false, type: .string)
         ]
+
         /// The private key.
         public let privateKey: String?
         /// The public key.
@@ -5461,6 +6780,11 @@ extension IoT {
         public init(privateKey: String? = nil, publicKey: String? = nil) {
             self.privateKey = privateKey
             self.publicKey = publicKey
+        }
+
+        public func validate() throws {
+            try validate(privateKey, name:"privateKey", min: 1)
+            try validate(publicKey, name:"publicKey", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5475,6 +6799,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "streamName", required: true, type: .string)
         ]
+
         /// The partition key.
         public let partitionKey: String?
         /// The ARN of the IAM role that grants access to the Amazon Kinesis stream.
@@ -5499,6 +6824,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "functionArn", required: true, type: .string)
         ]
+
         /// The ARN of the Lambda function.
         public let functionArn: String
 
@@ -5518,6 +6844,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileName", location: .querystring(locationName: "securityProfileName"), required: false, type: .string), 
             AWSShapeMember(label: "thingName", location: .querystring(locationName: "thingName"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token for the next set of results.
@@ -5534,6 +6861,17 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -5547,6 +6885,7 @@ extension IoT {
             AWSShapeMember(label: "activeViolations", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The list of active violations.
         public let activeViolations: [ActiveViolation]?
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
@@ -5555,6 +6894,12 @@ extension IoT {
         public init(activeViolations: [ActiveViolation]? = nil, nextToken: String? = nil) {
             self.activeViolations = activeViolations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try activeViolations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5570,6 +6915,7 @@ extension IoT {
             AWSShapeMember(label: "recursive", location: .querystring(locationName: "recursive"), required: false, type: .boolean), 
             AWSShapeMember(label: "target", location: .uri(locationName: "target"), required: true, type: .string)
         ]
+
         /// The token to retrieve the next set of results.
         public let marker: String?
         /// The maximum number of results to be returned per request.
@@ -5586,6 +6932,12 @@ extension IoT {
             self.target = target
         }
 
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case marker = "marker"
             case pageSize = "pageSize"
@@ -5599,6 +6951,7 @@ extension IoT {
             AWSShapeMember(label: "nextMarker", required: false, type: .string), 
             AWSShapeMember(label: "policies", required: false, type: .list)
         ]
+
         /// The token to retrieve the next set of results, or ``null`` if there are no more results.
         public let nextMarker: String?
         /// The policies.
@@ -5607,6 +6960,13 @@ extension IoT {
         public init(nextMarker: String? = nil, policies: [Policy]? = nil) {
             self.nextMarker = nextMarker
             self.policies = policies
+        }
+
+        public func validate() throws {
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try policies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5625,6 +6985,7 @@ extension IoT {
             AWSShapeMember(label: "startTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "taskId", required: false, type: .string)
         ]
+
         /// A filter to limit results to the findings for the specified audit check.
         public let checkName: String?
         /// A filter to limit results to those found before the specified time. You must specify either the startTime and endTime or the taskId, but not both.
@@ -5650,6 +7011,15 @@ extension IoT {
             self.taskId = taskId
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try resourceIdentifier?.validate()
+            try validate(taskId, name:"taskId", max: 40)
+            try validate(taskId, name:"taskId", min: 1)
+            try validate(taskId, name:"taskId", pattern: "[a-zA-Z0-9\\-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case checkName = "checkName"
             case endTime = "endTime"
@@ -5666,6 +7036,7 @@ extension IoT {
             AWSShapeMember(label: "findings", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The findings (results) of the audit.
         public let findings: [AuditFinding]?
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
@@ -5674,6 +7045,12 @@ extension IoT {
         public init(findings: [AuditFinding]? = nil, nextToken: String? = nil) {
             self.findings = findings
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try findings?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5691,6 +7068,7 @@ extension IoT {
             AWSShapeMember(label: "taskStatus", location: .querystring(locationName: "taskStatus"), required: false, type: .enum), 
             AWSShapeMember(label: "taskType", location: .querystring(locationName: "taskType"), required: false, type: .enum)
         ]
+
         /// The end of the time period.
         public let endTime: TimeStamp
         /// The maximum number of results to return at one time. The default is 25.
@@ -5713,6 +7091,11 @@ extension IoT {
             self.taskType = taskType
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "endTime"
             case maxResults = "maxResults"
@@ -5728,6 +7111,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "tasks", required: false, type: .list)
         ]
+
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The audits that were performed during the specified time period.
@@ -5736,6 +7120,12 @@ extension IoT {
         public init(nextToken: String? = nil, tasks: [AuditTaskMetadata]? = nil) {
             self.nextToken = nextToken
             self.tasks = tasks
+        }
+
+        public func validate() throws {
+            try tasks?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5751,6 +7141,7 @@ extension IoT {
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer), 
             AWSShapeMember(label: "status", location: .querystring(locationName: "status"), required: false, type: .enum)
         ]
+
         /// Return the list of authorizers in ascending alphabetical order.
         public let ascendingOrder: Bool?
         /// A marker used to get the next set of results.
@@ -5767,6 +7158,12 @@ extension IoT {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case ascendingOrder = "isAscendingOrder"
             case marker = "marker"
@@ -5780,6 +7177,7 @@ extension IoT {
             AWSShapeMember(label: "authorizers", required: false, type: .list), 
             AWSShapeMember(label: "nextMarker", required: false, type: .string)
         ]
+
         /// The authorizers.
         public let authorizers: [AuthorizerSummary]?
         /// A marker used to get the next set of results.
@@ -5788,6 +7186,13 @@ extension IoT {
         public init(authorizers: [AuthorizerSummary]? = nil, nextMarker: String? = nil) {
             self.authorizers = authorizers
             self.nextMarker = nextMarker
+        }
+
+        public func validate() throws {
+            try authorizers?.forEach {
+                try $0.validate()
+            }
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5802,6 +7207,7 @@ extension IoT {
             AWSShapeMember(label: "namePrefixFilter", location: .querystring(locationName: "namePrefixFilter"), required: false, type: .string), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return per request.
         public let maxResults: Int32?
         /// Limit the results to billing groups whose names have the given prefix.
@@ -5813,6 +7219,14 @@ extension IoT {
             self.maxResults = maxResults
             self.namePrefixFilter = namePrefixFilter
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(namePrefixFilter, name:"namePrefixFilter", max: 128)
+            try validate(namePrefixFilter, name:"namePrefixFilter", min: 1)
+            try validate(namePrefixFilter, name:"namePrefixFilter", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5827,6 +7241,7 @@ extension IoT {
             AWSShapeMember(label: "billingGroups", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The list of billing groups.
         public let billingGroups: [GroupNameAndArn]?
         /// The token used to get the next set of results, or null if there are no additional results.
@@ -5835,6 +7250,12 @@ extension IoT {
         public init(billingGroups: [GroupNameAndArn]? = nil, nextToken: String? = nil) {
             self.billingGroups = billingGroups
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try billingGroups?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5849,6 +7270,7 @@ extension IoT {
             AWSShapeMember(label: "marker", location: .querystring(locationName: "marker"), required: false, type: .string), 
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer)
         ]
+
         /// Determines the order of the results.
         public let ascendingOrder: Bool?
         /// The marker for the next set of results.
@@ -5860,6 +7282,12 @@ extension IoT {
             self.ascendingOrder = ascendingOrder
             self.marker = marker
             self.pageSize = pageSize
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5874,6 +7302,7 @@ extension IoT {
             AWSShapeMember(label: "certificates", required: false, type: .list), 
             AWSShapeMember(label: "nextMarker", required: false, type: .string)
         ]
+
         /// The CA certificates registered in your AWS account.
         public let certificates: [CACertificate]?
         /// The current position within the list of CA certificates.
@@ -5882,6 +7311,13 @@ extension IoT {
         public init(certificates: [CACertificate]? = nil, nextMarker: String? = nil) {
             self.certificates = certificates
             self.nextMarker = nextMarker
+        }
+
+        public func validate() throws {
+            try certificates?.forEach {
+                try $0.validate()
+            }
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5897,6 +7333,7 @@ extension IoT {
             AWSShapeMember(label: "marker", location: .querystring(locationName: "marker"), required: false, type: .string), 
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer)
         ]
+
         /// Specifies the order for results. If True, the results are returned in ascending order, based on the creation date.
         public let ascendingOrder: Bool?
         /// The ID of the CA certificate. This operation will list all registered device certificate that were signed by this CA certificate.
@@ -5913,6 +7350,15 @@ extension IoT {
             self.pageSize = pageSize
         }
 
+        public func validate() throws {
+            try validate(caCertificateId, name:"caCertificateId", max: 64)
+            try validate(caCertificateId, name:"caCertificateId", min: 64)
+            try validate(caCertificateId, name:"caCertificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case ascendingOrder = "isAscendingOrder"
             case caCertificateId = "caCertificateId"
@@ -5926,6 +7372,7 @@ extension IoT {
             AWSShapeMember(label: "certificates", required: false, type: .list), 
             AWSShapeMember(label: "nextMarker", required: false, type: .string)
         ]
+
         /// The device certificates signed by the specified CA certificate.
         public let certificates: [Certificate]?
         /// The marker for the next set of results, or null if there are no additional results.
@@ -5934,6 +7381,13 @@ extension IoT {
         public init(certificates: [Certificate]? = nil, nextMarker: String? = nil) {
             self.certificates = certificates
             self.nextMarker = nextMarker
+        }
+
+        public func validate() throws {
+            try certificates?.forEach {
+                try $0.validate()
+            }
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5948,6 +7402,7 @@ extension IoT {
             AWSShapeMember(label: "marker", location: .querystring(locationName: "marker"), required: false, type: .string), 
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer)
         ]
+
         /// Specifies the order for results. If True, the results are returned in ascending order, based on the creation date.
         public let ascendingOrder: Bool?
         /// The marker for the next set of results.
@@ -5959,6 +7414,12 @@ extension IoT {
             self.ascendingOrder = ascendingOrder
             self.marker = marker
             self.pageSize = pageSize
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5973,6 +7434,7 @@ extension IoT {
             AWSShapeMember(label: "certificates", required: false, type: .list), 
             AWSShapeMember(label: "nextMarker", required: false, type: .string)
         ]
+
         /// The descriptions of the certificates.
         public let certificates: [Certificate]?
         /// The marker for the next set of results, or null if there are no additional results.
@@ -5981,6 +7443,13 @@ extension IoT {
         public init(certificates: [Certificate]? = nil, nextMarker: String? = nil) {
             self.certificates = certificates
             self.nextMarker = nextMarker
+        }
+
+        public func validate() throws {
+            try certificates?.forEach {
+                try $0.validate()
+            }
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5994,6 +7463,7 @@ extension IoT {
             AWSShapeMember(label: "maxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token used to get the next set of results, or null if there are no additional results.
@@ -6002,6 +7472,11 @@ extension IoT {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6015,6 +7490,7 @@ extension IoT {
             AWSShapeMember(label: "indexNames", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The index names.
         public let indexNames: [String]?
         /// The token used to get the next set of results, or null if there are no additional results.
@@ -6023,6 +7499,14 @@ extension IoT {
         public init(indexNames: [String]? = nil, nextToken: String? = nil) {
             self.indexNames = indexNames
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try indexNames?.forEach {
+                try validate($0, name:"indexNames[]", max: 128)
+                try validate($0, name:"indexNames[]", min: 1)
+                try validate($0, name:"indexNames[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6038,6 +7522,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "status", location: .querystring(locationName: "status"), required: false, type: .enum)
         ]
+
         /// The unique identifier you assigned to this job when it was created.
         public let jobId: String
         /// The maximum number of results to be returned per request.
@@ -6054,6 +7539,14 @@ extension IoT {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case jobId = "jobId"
             case maxResults = "maxResults"
@@ -6067,6 +7560,7 @@ extension IoT {
             AWSShapeMember(label: "executionSummaries", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of job execution summaries.
         public let executionSummaries: [JobExecutionSummaryForJob]?
         /// The token for the next set of results, or null if there are no additional results.
@@ -6090,6 +7584,7 @@ extension IoT {
             AWSShapeMember(label: "status", location: .querystring(locationName: "status"), required: false, type: .enum), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The maximum number of results to be returned per request.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -6106,6 +7601,14 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -6119,6 +7622,7 @@ extension IoT {
             AWSShapeMember(label: "executionSummaries", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of job execution summaries.
         public let executionSummaries: [JobExecutionSummaryForThing]?
         /// The token for the next set of results, or null if there are no additional results.
@@ -6127,6 +7631,12 @@ extension IoT {
         public init(executionSummaries: [JobExecutionSummaryForThing]? = nil, nextToken: String? = nil) {
             self.executionSummaries = executionSummaries
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try executionSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6144,6 +7654,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupId", location: .querystring(locationName: "thingGroupId"), required: false, type: .string), 
             AWSShapeMember(label: "thingGroupName", location: .querystring(locationName: "thingGroupName"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return per request.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -6166,6 +7677,17 @@ extension IoT {
             self.thingGroupName = thingGroupName
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", max: 128)
+            try validate(thingGroupId, name:"thingGroupId", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -6181,6 +7703,7 @@ extension IoT {
             AWSShapeMember(label: "jobs", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of jobs.
         public let jobs: [JobSummary]?
         /// The token for the next set of results, or null if there are no additional results.
@@ -6189,6 +7712,12 @@ extension IoT {
         public init(jobs: [JobSummary]? = nil, nextToken: String? = nil) {
             self.jobs = jobs
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobs?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6203,6 +7732,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "otaUpdateStatus", location: .querystring(locationName: "otaUpdateStatus"), required: false, type: .enum)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// A token used to retrieve the next set of results.
@@ -6214,6 +7744,11 @@ extension IoT {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.otaUpdateStatus = otaUpdateStatus
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6228,6 +7763,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "otaUpdates", required: false, type: .list)
         ]
+
         /// A token to use to get the next set of results.
         public let nextToken: String?
         /// A list of OTA update jobs.
@@ -6236,6 +7772,12 @@ extension IoT {
         public init(nextToken: String? = nil, otaUpdates: [OTAUpdateSummary]? = nil) {
             self.nextToken = nextToken
             self.otaUpdates = otaUpdates
+        }
+
+        public func validate() throws {
+            try otaUpdates?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6250,6 +7792,7 @@ extension IoT {
             AWSShapeMember(label: "marker", location: .querystring(locationName: "marker"), required: false, type: .string), 
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer)
         ]
+
         /// Specifies the order for results. If True, the results are returned in ascending order, based on the creation date.
         public let ascendingOrder: Bool?
         /// The marker for the next set of results.
@@ -6261,6 +7804,12 @@ extension IoT {
             self.ascendingOrder = ascendingOrder
             self.marker = marker
             self.pageSize = pageSize
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6275,6 +7824,7 @@ extension IoT {
             AWSShapeMember(label: "nextMarker", required: false, type: .string), 
             AWSShapeMember(label: "outgoingCertificates", required: false, type: .list)
         ]
+
         /// The marker for the next set of results.
         public let nextMarker: String?
         /// The certificates that are being transferred but not yet accepted.
@@ -6283,6 +7833,13 @@ extension IoT {
         public init(nextMarker: String? = nil, outgoingCertificates: [OutgoingCertificate]? = nil) {
             self.nextMarker = nextMarker
             self.outgoingCertificates = outgoingCertificates
+        }
+
+        public func validate() throws {
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try outgoingCertificates?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6297,6 +7854,7 @@ extension IoT {
             AWSShapeMember(label: "marker", location: .querystring(locationName: "marker"), required: false, type: .string), 
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer)
         ]
+
         /// Specifies the order for results. If true, the results are returned in ascending creation order.
         public let ascendingOrder: Bool?
         /// The marker for the next set of results.
@@ -6308,6 +7866,12 @@ extension IoT {
             self.ascendingOrder = ascendingOrder
             self.marker = marker
             self.pageSize = pageSize
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6322,6 +7886,7 @@ extension IoT {
             AWSShapeMember(label: "nextMarker", required: false, type: .string), 
             AWSShapeMember(label: "policies", required: false, type: .list)
         ]
+
         /// The marker for the next set of results, or null if there are no additional results.
         public let nextMarker: String?
         /// The descriptions of the policies.
@@ -6330,6 +7895,13 @@ extension IoT {
         public init(nextMarker: String? = nil, policies: [Policy]? = nil) {
             self.nextMarker = nextMarker
             self.policies = policies
+        }
+
+        public func validate() throws {
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try policies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6345,6 +7917,7 @@ extension IoT {
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer), 
             AWSShapeMember(label: "policyName", location: .header(locationName: "x-amzn-iot-policy"), required: true, type: .string)
         ]
+
         /// Specifies the order for results. If true, the results are returned in ascending creation order.
         public let ascendingOrder: Bool?
         /// The marker for the next set of results.
@@ -6361,6 +7934,15 @@ extension IoT {
             self.policyName = policyName
         }
 
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case ascendingOrder = "isAscendingOrder"
             case marker = "marker"
@@ -6374,6 +7956,7 @@ extension IoT {
             AWSShapeMember(label: "nextMarker", required: false, type: .string), 
             AWSShapeMember(label: "principals", required: false, type: .list)
         ]
+
         /// The marker for the next set of results, or null if there are no additional results.
         public let nextMarker: String?
         /// The descriptions of the principals.
@@ -6382,6 +7965,10 @@ extension IoT {
         public init(nextMarker: String? = nil, principals: [String]? = nil) {
             self.nextMarker = nextMarker
             self.principals = principals
+        }
+
+        public func validate() throws {
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6394,11 +7981,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string)
         ]
+
         /// The policy name.
         public let policyName: String
 
         public init(policyName: String) {
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6410,11 +8004,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policyVersions", required: false, type: .list)
         ]
+
         /// The policy versions.
         public let policyVersions: [PolicyVersion]?
 
         public init(policyVersions: [PolicyVersion]? = nil) {
             self.policyVersions = policyVersions
+        }
+
+        public func validate() throws {
+            try policyVersions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6429,6 +8030,7 @@ extension IoT {
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer), 
             AWSShapeMember(label: "principal", location: .header(locationName: "x-amzn-iot-principal"), required: true, type: .string)
         ]
+
         /// Specifies the order for results. If true, results are returned in ascending creation order.
         public let ascendingOrder: Bool?
         /// The marker for the next set of results.
@@ -6445,6 +8047,12 @@ extension IoT {
             self.principal = principal
         }
 
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case ascendingOrder = "isAscendingOrder"
             case marker = "marker"
@@ -6458,6 +8066,7 @@ extension IoT {
             AWSShapeMember(label: "nextMarker", required: false, type: .string), 
             AWSShapeMember(label: "policies", required: false, type: .list)
         ]
+
         /// The marker for the next set of results, or null if there are no additional results.
         public let nextMarker: String?
         /// The policies.
@@ -6466,6 +8075,13 @@ extension IoT {
         public init(nextMarker: String? = nil, policies: [Policy]? = nil) {
             self.nextMarker = nextMarker
             self.policies = policies
+        }
+
+        public func validate() throws {
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try policies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6480,6 +8096,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "principal", location: .header(locationName: "x-amzn-principal"), required: true, type: .string)
         ]
+
         /// The maximum number of results to return in this operation.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -6491,6 +8108,11 @@ extension IoT {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.principal = principal
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6505,6 +8127,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "things", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The things.
@@ -6513,6 +8136,14 @@ extension IoT {
         public init(nextToken: String? = nil, things: [String]? = nil) {
             self.nextToken = nextToken
             self.things = things
+        }
+
+        public func validate() throws {
+            try things?.forEach {
+                try validate($0, name:"things[]", max: 128)
+                try validate($0, name:"things[]", min: 1)
+                try validate($0, name:"things[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6527,6 +8158,7 @@ extension IoT {
             AWSShapeMember(label: "marker", location: .querystring(locationName: "marker"), required: false, type: .string), 
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer)
         ]
+
         /// Return the list of role aliases in ascending alphabetical order.
         public let ascendingOrder: Bool?
         /// A marker used to get the next set of results.
@@ -6538,6 +8170,12 @@ extension IoT {
             self.ascendingOrder = ascendingOrder
             self.marker = marker
             self.pageSize = pageSize
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6552,6 +8190,7 @@ extension IoT {
             AWSShapeMember(label: "nextMarker", required: false, type: .string), 
             AWSShapeMember(label: "roleAliases", required: false, type: .list)
         ]
+
         /// A marker used to get the next set of results.
         public let nextMarker: String?
         /// The role aliases.
@@ -6560,6 +8199,15 @@ extension IoT {
         public init(nextMarker: String? = nil, roleAliases: [String]? = nil) {
             self.nextMarker = nextMarker
             self.roleAliases = roleAliases
+        }
+
+        public func validate() throws {
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try roleAliases?.forEach {
+                try validate($0, name:"roleAliases[]", max: 128)
+                try validate($0, name:"roleAliases[]", min: 1)
+                try validate($0, name:"roleAliases[]", pattern: "[\\w=,@-]+")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6573,6 +8221,7 @@ extension IoT {
             AWSShapeMember(label: "maxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return at one time. The default is 25.
         public let maxResults: Int32?
         /// The token for the next set of results.
@@ -6581,6 +8230,11 @@ extension IoT {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6594,6 +8248,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "scheduledAudits", required: false, type: .list)
         ]
+
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The list of scheduled audits.
@@ -6602,6 +8257,12 @@ extension IoT {
         public init(nextToken: String? = nil, scheduledAudits: [ScheduledAuditMetadata]? = nil) {
             self.nextToken = nextToken
             self.scheduledAudits = scheduledAudits
+        }
+
+        public func validate() throws {
+            try scheduledAudits?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6617,6 +8278,7 @@ extension IoT {
             AWSShapeMember(label: "recursive", location: .querystring(locationName: "recursive"), required: false, type: .boolean), 
             AWSShapeMember(label: "securityProfileTargetArn", location: .querystring(locationName: "securityProfileTargetArn"), required: true, type: .string)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token for the next set of results.
@@ -6633,6 +8295,11 @@ extension IoT {
             self.securityProfileTargetArn = securityProfileTargetArn
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -6646,6 +8313,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "securityProfileTargetMappings", required: false, type: .list)
         ]
+
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// A list of security profiles and their associated targets.
@@ -6654,6 +8322,12 @@ extension IoT {
         public init(nextToken: String? = nil, securityProfileTargetMappings: [SecurityProfileTargetMapping]? = nil) {
             self.nextToken = nextToken
             self.securityProfileTargetMappings = securityProfileTargetMappings
+        }
+
+        public func validate() throws {
+            try securityProfileTargetMappings?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6667,6 +8341,7 @@ extension IoT {
             AWSShapeMember(label: "maxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token for the next set of results.
@@ -6675,6 +8350,11 @@ extension IoT {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6688,6 +8368,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "securityProfileIdentifiers", required: false, type: .list)
         ]
+
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// A list of security profile identifiers (names and ARNs).
@@ -6696,6 +8377,12 @@ extension IoT {
         public init(nextToken: String? = nil, securityProfileIdentifiers: [SecurityProfileIdentifier]? = nil) {
             self.nextToken = nextToken
             self.securityProfileIdentifiers = securityProfileIdentifiers
+        }
+
+        public func validate() throws {
+            try securityProfileIdentifiers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6710,6 +8397,7 @@ extension IoT {
             AWSShapeMember(label: "maxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// Set to true to return the list of streams in ascending order.
         public let ascendingOrder: Bool?
         /// The maximum number of results to return at a time.
@@ -6721,6 +8409,11 @@ extension IoT {
             self.ascendingOrder = ascendingOrder
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6735,6 +8428,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "streams", required: false, type: .list)
         ]
+
         /// A token used to get the next set of results.
         public let nextToken: String?
         /// A list of streams.
@@ -6743,6 +8437,12 @@ extension IoT {
         public init(nextToken: String? = nil, streams: [StreamSummary]? = nil) {
             self.nextToken = nextToken
             self.streams = streams
+        }
+
+        public func validate() throws {
+            try streams?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6756,6 +8456,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "resourceArn", location: .querystring(locationName: "resourceArn"), required: true, type: .string)
         ]
+
         /// The token to retrieve the next set of results.
         public let nextToken: String?
         /// The ARN of the resource.
@@ -6777,6 +8478,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The list of tags assigned to the resource.
@@ -6799,6 +8501,7 @@ extension IoT {
             AWSShapeMember(label: "pageSize", location: .querystring(locationName: "pageSize"), required: false, type: .integer), 
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string)
         ]
+
         /// A marker used to get the next set of results.
         public let marker: String?
         /// The maximum number of results to return at one time.
@@ -6810,6 +8513,15 @@ extension IoT {
             self.marker = marker
             self.pageSize = pageSize
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(marker, name:"marker", pattern: "[A-Za-z0-9+/]+={0,2}")
+            try validate(pageSize, name:"pageSize", max: 250)
+            try validate(pageSize, name:"pageSize", min: 1)
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6824,6 +8536,7 @@ extension IoT {
             AWSShapeMember(label: "nextMarker", required: false, type: .string), 
             AWSShapeMember(label: "targets", required: false, type: .list)
         ]
+
         /// A marker used to get the next set of results.
         public let nextMarker: String?
         /// The policy targets.
@@ -6832,6 +8545,10 @@ extension IoT {
         public init(nextMarker: String? = nil, targets: [String]? = nil) {
             self.nextMarker = nextMarker
             self.targets = targets
+        }
+
+        public func validate() throws {
+            try validate(nextMarker, name:"nextMarker", pattern: "[A-Za-z0-9+/]+={0,2}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6846,6 +8563,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "securityProfileName", location: .uri(locationName: "securityProfileName"), required: true, type: .string)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token for the next set of results.
@@ -6857,6 +8575,14 @@ extension IoT {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.securityProfileName = securityProfileName
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6871,6 +8597,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "securityProfileTargets", required: false, type: .list)
         ]
+
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The thing groups to which the security profile is attached.
@@ -6893,6 +8620,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -6904,6 +8632,14 @@ extension IoT {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.thingName = thingName
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6918,6 +8654,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "thingGroups", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The thing groups.
@@ -6926,6 +8663,12 @@ extension IoT {
         public init(nextToken: String? = nil, thingGroups: [GroupNameAndArn]? = nil) {
             self.nextToken = nextToken
             self.thingGroups = thingGroups
+        }
+
+        public func validate() throws {
+            try thingGroups?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6942,6 +8685,7 @@ extension IoT {
             AWSShapeMember(label: "parentGroup", location: .querystring(locationName: "parentGroup"), required: false, type: .string), 
             AWSShapeMember(label: "recursive", location: .querystring(locationName: "recursive"), required: false, type: .boolean)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// A filter that limits the results to those with the specified name prefix.
@@ -6961,6 +8705,17 @@ extension IoT {
             self.recursive = recursive
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(namePrefixFilter, name:"namePrefixFilter", max: 128)
+            try validate(namePrefixFilter, name:"namePrefixFilter", min: 1)
+            try validate(namePrefixFilter, name:"namePrefixFilter", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(parentGroup, name:"parentGroup", max: 128)
+            try validate(parentGroup, name:"parentGroup", min: 1)
+            try validate(parentGroup, name:"parentGroup", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case namePrefixFilter = "namePrefixFilter"
@@ -6975,6 +8730,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "thingGroups", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The thing groups.
@@ -6983,6 +8739,12 @@ extension IoT {
         public init(nextToken: String? = nil, thingGroups: [GroupNameAndArn]? = nil) {
             self.nextToken = nextToken
             self.thingGroups = thingGroups
+        }
+
+        public func validate() throws {
+            try thingGroups?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6995,11 +8757,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string)
         ]
+
         /// The name of the thing.
         public let thingName: String
 
         public init(thingName: String) {
             self.thingName = thingName
+        }
+
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7011,6 +8780,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "principals", required: false, type: .list)
         ]
+
         /// The principals associated with the thing.
         public let principals: [String]?
 
@@ -7030,6 +8800,7 @@ extension IoT {
             AWSShapeMember(label: "reportType", location: .querystring(locationName: "reportType"), required: true, type: .enum), 
             AWSShapeMember(label: "taskId", location: .uri(locationName: "taskId"), required: true, type: .string)
         ]
+
         /// The maximum number of results to return per request.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -7046,6 +8817,12 @@ extension IoT {
             self.taskId = taskId
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(taskId, name:"taskId", max: 40)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -7060,6 +8837,7 @@ extension IoT {
             AWSShapeMember(label: "reportType", required: false, type: .enum), 
             AWSShapeMember(label: "resourceLinks", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The type of task report.
@@ -7071,6 +8849,12 @@ extension IoT {
             self.nextToken = nextToken
             self.reportType = reportType
             self.resourceLinks = resourceLinks
+        }
+
+        public func validate() throws {
+            try resourceLinks?.forEach {
+                try validate($0, name:"resourceLinks[]", max: 65535)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7086,6 +8870,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "status", location: .querystring(locationName: "status"), required: false, type: .enum)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -7097,6 +8882,11 @@ extension IoT {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7111,6 +8901,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "taskIds", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// A list of bulk thing provisioning task IDs.
@@ -7119,6 +8910,12 @@ extension IoT {
         public init(nextToken: String? = nil, taskIds: [String]? = nil) {
             self.nextToken = nextToken
             self.taskIds = taskIds
+        }
+
+        public func validate() throws {
+            try taskIds?.forEach {
+                try validate($0, name:"taskIds[]", max: 40)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7133,6 +8930,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "thingTypeName", location: .querystring(locationName: "thingTypeName"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return in this operation.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -7144,6 +8942,14 @@ extension IoT {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.thingTypeName = thingTypeName
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7158,6 +8964,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "thingTypes", required: false, type: .list)
         ]
+
         /// The token for the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The thing types.
@@ -7166,6 +8973,12 @@ extension IoT {
         public init(nextToken: String? = nil, thingTypes: [ThingTypeDefinition]? = nil) {
             self.nextToken = nextToken
             self.thingTypes = thingTypes
+        }
+
+        public func validate() throws {
+            try thingTypes?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7180,6 +8993,7 @@ extension IoT {
             AWSShapeMember(label: "maxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The name of the billing group.
         public let billingGroupName: String
         /// The maximum number of results to return per request.
@@ -7191,6 +9005,14 @@ extension IoT {
             self.billingGroupName = billingGroupName
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7205,6 +9027,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "things", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// A list of things in the billing group.
@@ -7213,6 +9036,14 @@ extension IoT {
         public init(nextToken: String? = nil, things: [String]? = nil) {
             self.nextToken = nextToken
             self.things = things
+        }
+
+        public func validate() throws {
+            try things?.forEach {
+                try validate($0, name:"things[]", max: 128)
+                try validate($0, name:"things[]", min: 1)
+                try validate($0, name:"things[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7228,6 +9059,7 @@ extension IoT {
             AWSShapeMember(label: "recursive", location: .querystring(locationName: "recursive"), required: false, type: .boolean), 
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -7244,6 +9076,14 @@ extension IoT {
             self.thingGroupName = thingGroupName
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -7257,6 +9097,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "things", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The things in the specified thing group.
@@ -7265,6 +9106,14 @@ extension IoT {
         public init(nextToken: String? = nil, things: [String]? = nil) {
             self.nextToken = nextToken
             self.things = things
+        }
+
+        public func validate() throws {
+            try things?.forEach {
+                try validate($0, name:"things[]", max: 128)
+                try validate($0, name:"things[]", min: 1)
+                try validate($0, name:"things[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7281,6 +9130,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "thingTypeName", location: .querystring(locationName: "thingTypeName"), required: false, type: .string)
         ]
+
         /// The attribute name used to search for things.
         public let attributeName: String?
         /// The attribute value used to search for things.
@@ -7300,6 +9150,18 @@ extension IoT {
             self.thingTypeName = thingTypeName
         }
 
+        public func validate() throws {
+            try validate(attributeName, name:"attributeName", max: 128)
+            try validate(attributeName, name:"attributeName", pattern: "[a-zA-Z0-9_.,@/:#-]+")
+            try validate(attributeValue, name:"attributeValue", max: 800)
+            try validate(attributeValue, name:"attributeValue", pattern: "[a-zA-Z0-9_.,@/:#-]*")
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributeName = "attributeName"
             case attributeValue = "attributeValue"
@@ -7314,6 +9176,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "things", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The things.
@@ -7322,6 +9185,12 @@ extension IoT {
         public init(nextToken: String? = nil, things: [ThingAttribute]? = nil) {
             self.nextToken = nextToken
             self.things = things
+        }
+
+        public func validate() throws {
+            try things?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7337,6 +9206,7 @@ extension IoT {
             AWSShapeMember(label: "ruleDisabled", location: .querystring(locationName: "ruleDisabled"), required: false, type: .boolean), 
             AWSShapeMember(label: "topic", location: .querystring(locationName: "topic"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return.
         public let maxResults: Int32?
         /// A token used to retrieve the next value.
@@ -7353,6 +9223,11 @@ extension IoT {
             self.topic = topic
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 10000)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -7366,6 +9241,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "rules", required: false, type: .list)
         ]
+
         /// A token used to retrieve the next value.
         public let nextToken: String?
         /// The rules.
@@ -7374,6 +9250,12 @@ extension IoT {
         public init(nextToken: String? = nil, rules: [TopicRuleListItem]? = nil) {
             self.nextToken = nextToken
             self.rules = rules
+        }
+
+        public func validate() throws {
+            try rules?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7388,6 +9270,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "targetType", location: .querystring(locationName: "targetType"), required: false, type: .enum)
         ]
+
         /// The maximum number of results to return at one time.
         public let maxResults: Int32?
         /// The token used to get the next set of results, or null if there are no additional results.
@@ -7399,6 +9282,11 @@ extension IoT {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.targetType = targetType
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7413,6 +9301,7 @@ extension IoT {
             AWSShapeMember(label: "logTargetConfigurations", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The logging configuration for a target.
         public let logTargetConfigurations: [LogTargetConfiguration]?
         /// The token used to get the next set of results, or null if there are no additional results.
@@ -7438,6 +9327,7 @@ extension IoT {
             AWSShapeMember(label: "startTime", location: .querystring(locationName: "startTime"), required: true, type: .timestamp), 
             AWSShapeMember(label: "thingName", location: .querystring(locationName: "thingName"), required: false, type: .string)
         ]
+
         /// The end time for the alerts to be listed.
         public let endTime: TimeStamp
         /// The maximum number of results to return at one time.
@@ -7460,6 +9350,17 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "endTime"
             case maxResults = "maxResults"
@@ -7475,6 +9376,7 @@ extension IoT {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "violationEvents", required: false, type: .list)
         ]
+
         /// A token that can be used to retrieve the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The security profile violation alerts issued for this account during the given time frame, potentially filtered by security profile, behavior violated, or thing (device) violating.
@@ -7483,6 +9385,12 @@ extension IoT {
         public init(nextToken: String? = nil, violationEvents: [ViolationEvent]? = nil) {
             self.nextToken = nextToken
             self.violationEvents = violationEvents
+        }
+
+        public func validate() throws {
+            try violationEvents?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7505,6 +9413,7 @@ extension IoT {
             AWSShapeMember(label: "targetName", required: false, type: .string), 
             AWSShapeMember(label: "targetType", required: true, type: .enum)
         ]
+
         /// The target name.
         public let targetName: String?
         /// The target type.
@@ -7526,6 +9435,7 @@ extension IoT {
             AWSShapeMember(label: "logLevel", required: false, type: .enum), 
             AWSShapeMember(label: "logTarget", required: false, type: .structure)
         ]
+
         /// The logging level.
         public let logLevel: LogLevel?
         /// A log target
@@ -7553,6 +9463,7 @@ extension IoT {
             AWSShapeMember(label: "logLevel", required: false, type: .enum), 
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// The log level.
         public let logLevel: LogLevel?
         /// The ARN of the IAM role that grants access.
@@ -7581,6 +9492,7 @@ extension IoT {
             AWSShapeMember(label: "count", required: false, type: .long), 
             AWSShapeMember(label: "ports", required: false, type: .list)
         ]
+
         /// If the comparisonOperator calls for a set of CIDRs, use this to specify that set to be compared with the metric.
         public let cidrs: [String]?
         /// If the comparisonOperator calls for a numeric value, use this to specify that numeric value to be compared with the metric.
@@ -7592,6 +9504,19 @@ extension IoT {
             self.cidrs = cidrs
             self.count = count
             self.ports = ports
+        }
+
+        public func validate() throws {
+            try cidrs?.forEach {
+                try validate($0, name:"cidrs[]", max: 43)
+                try validate($0, name:"cidrs[]", min: 2)
+                try validate($0, name:"cidrs[]", pattern: "[a-fA-F0-9:\\.\\/]+")
+            }
+            try validate(count, name:"count", min: 0)
+            try ports?.forEach {
+                try validate($0, name:"ports[]", max: 65535)
+                try validate($0, name:"ports[]", min: 0)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7607,6 +9532,7 @@ extension IoT {
             AWSShapeMember(label: "resourceIdentifier", required: false, type: .structure), 
             AWSShapeMember(label: "resourceType", required: false, type: .enum)
         ]
+
         /// Additional information about the non-compliant resource.
         public let additionalInfo: [String: String]?
         /// Information identifying the non-compliant resource.
@@ -7618,6 +9544,10 @@ extension IoT {
             self.additionalInfo = additionalInfo
             self.resourceIdentifier = resourceIdentifier
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try resourceIdentifier?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7635,6 +9565,7 @@ extension IoT {
             AWSShapeMember(label: "fileName", required: false, type: .string), 
             AWSShapeMember(label: "fileVersion", required: false, type: .string)
         ]
+
         /// A list of name/attribute pairs.
         public let attributes: [String: String]?
         /// The code signing method of the file.
@@ -7652,6 +9583,11 @@ extension IoT {
             self.fileLocation = fileLocation
             self.fileName = fileName
             self.fileVersion = fileVersion
+        }
+
+        public func validate() throws {
+            try codeSigning?.validate()
+            try fileLocation?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7680,6 +9616,7 @@ extension IoT {
             AWSShapeMember(label: "targets", required: false, type: .list), 
             AWSShapeMember(label: "targetSelection", required: false, type: .enum)
         ]
+
         /// A collection of name/value pairs
         public let additionalParameters: [String: String]?
         /// The AWS IoT job ARN associated with the OTA update.
@@ -7726,6 +9663,21 @@ extension IoT {
             self.targetSelection = targetSelection
         }
 
+        public func validate() throws {
+            try awsJobExecutionsRolloutConfig?.validate()
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try otaUpdateFiles?.forEach {
+                try $0.validate()
+            }
+            try validate(otaUpdateFiles, name:"otaUpdateFiles", max: 50)
+            try validate(otaUpdateFiles, name:"otaUpdateFiles", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", max: 128)
+            try validate(otaUpdateId, name:"otaUpdateId", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(targets, name:"targets", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case additionalParameters = "additionalParameters"
             case awsIotJobArn = "awsIotJobArn"
@@ -7758,6 +9710,7 @@ extension IoT {
             AWSShapeMember(label: "otaUpdateArn", required: false, type: .string), 
             AWSShapeMember(label: "otaUpdateId", required: false, type: .string)
         ]
+
         /// The date when the OTA update was created.
         public let creationDate: TimeStamp?
         /// The OTA update ARN.
@@ -7769,6 +9722,12 @@ extension IoT {
             self.creationDate = creationDate
             self.otaUpdateArn = otaUpdateArn
             self.otaUpdateId = otaUpdateId
+        }
+
+        public func validate() throws {
+            try validate(otaUpdateId, name:"otaUpdateId", max: 128)
+            try validate(otaUpdateId, name:"otaUpdateId", min: 1)
+            try validate(otaUpdateId, name:"otaUpdateId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7787,6 +9746,7 @@ extension IoT {
             AWSShapeMember(label: "transferMessage", required: false, type: .string), 
             AWSShapeMember(label: "transferredTo", required: false, type: .string)
         ]
+
         /// The certificate ARN.
         public let certificateArn: String?
         /// The certificate ID.
@@ -7809,6 +9769,16 @@ extension IoT {
             self.transferredTo = transferredTo
         }
 
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(transferMessage, name:"transferMessage", max: 128)
+            try validate(transferredTo, name:"transferredTo", max: 12)
+            try validate(transferredTo, name:"transferredTo", min: 12)
+            try validate(transferredTo, name:"transferredTo", pattern: "[0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificateArn = "certificateArn"
             case certificateId = "certificateId"
@@ -7824,6 +9794,7 @@ extension IoT {
             AWSShapeMember(label: "policyArn", required: false, type: .string), 
             AWSShapeMember(label: "policyName", required: false, type: .string)
         ]
+
         /// The policy ARN.
         public let policyArn: String?
         /// The policy name.
@@ -7832,6 +9803,12 @@ extension IoT {
         public init(policyArn: String? = nil, policyName: String? = nil) {
             self.policyArn = policyArn
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7846,6 +9823,7 @@ extension IoT {
             AWSShapeMember(label: "isDefaultVersion", required: false, type: .boolean), 
             AWSShapeMember(label: "versionId", required: false, type: .string)
         ]
+
         /// The date and time the policy was created.
         public let createDate: TimeStamp?
         /// Specifies whether the policy version is the default.
@@ -7857,6 +9835,10 @@ extension IoT {
             self.createDate = createDate
             self.isDefaultVersion = isDefaultVersion
             self.versionId = versionId
+        }
+
+        public func validate() throws {
+            try validate(versionId, name:"versionId", pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7871,6 +9853,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", required: false, type: .string), 
             AWSShapeMember(label: "policyVersionId", required: false, type: .string)
         ]
+
         /// The name of the policy.
         public let policyName: String?
         /// The ID of the version of the policy associated with the resource.
@@ -7879,6 +9862,13 @@ extension IoT {
         public init(policyName: String? = nil, policyVersionId: String? = nil) {
             self.policyName = policyName
             self.policyVersionId = policyVersionId
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+            try validate(policyVersionId, name:"policyVersionId", pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7892,6 +9882,7 @@ extension IoT {
             AWSShapeMember(label: "expiresInSec", required: false, type: .long), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// How long (in seconds) pre-signed URLs are valid. Valid values are 60 - 3600, the default value is 3600 seconds. Pre-signed URLs are generated when Jobs receives an MQTT request for the job document.
         public let expiresInSec: Int64?
         /// The ARN of an IAM role that grants grants permission to download files from the S3 bucket where the job data/updates are stored. The role must also grant permission for IoT to download the files.
@@ -7900,6 +9891,13 @@ extension IoT {
         public init(expiresInSec: Int64? = nil, roleArn: String? = nil) {
             self.expiresInSec = expiresInSec
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(expiresInSec, name:"expiresInSec", max: 3600)
+            try validate(expiresInSec, name:"expiresInSec", min: 60)
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7912,6 +9910,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tableName", required: true, type: .string)
         ]
+
         /// The table where the message data will be written
         public let tableName: String
 
@@ -7929,6 +9928,7 @@ extension IoT {
             AWSShapeMember(label: "numberOfNotifiedThings", required: false, type: .integer), 
             AWSShapeMember(label: "numberOfSucceededThings", required: false, type: .integer)
         ]
+
         /// The threshold for number of notified things that will initiate the increase in rate of rollout.
         public let numberOfNotifiedThings: Int32?
         /// The threshold for number of succeeded things that will initiate the increase in rate of rollout.
@@ -7937,6 +9937,11 @@ extension IoT {
         public init(numberOfNotifiedThings: Int32? = nil, numberOfSucceededThings: Int32? = nil) {
             self.numberOfNotifiedThings = numberOfNotifiedThings
             self.numberOfSucceededThings = numberOfSucceededThings
+        }
+
+        public func validate() throws {
+            try validate(numberOfNotifiedThings, name:"numberOfNotifiedThings", min: 1)
+            try validate(numberOfSucceededThings, name:"numberOfSucceededThings", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7953,6 +9958,7 @@ extension IoT {
             AWSShapeMember(label: "setAsActive", location: .querystring(locationName: "setAsActive"), required: false, type: .boolean), 
             AWSShapeMember(label: "verificationCertificate", required: true, type: .string)
         ]
+
         /// Allows this CA certificate to be used for auto registration of device certificates.
         public let allowAutoRegistration: Bool?
         /// The CA certificate.
@@ -7972,6 +9978,14 @@ extension IoT {
             self.verificationCertificate = verificationCertificate
         }
 
+        public func validate() throws {
+            try validate(caCertificate, name:"caCertificate", max: 65536)
+            try validate(caCertificate, name:"caCertificate", min: 1)
+            try registrationConfig?.validate()
+            try validate(verificationCertificate, name:"verificationCertificate", max: 65536)
+            try validate(verificationCertificate, name:"verificationCertificate", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowAutoRegistration = "allowAutoRegistration"
             case caCertificate = "caCertificate"
@@ -7986,6 +10000,7 @@ extension IoT {
             AWSShapeMember(label: "certificateArn", required: false, type: .string), 
             AWSShapeMember(label: "certificateId", required: false, type: .string)
         ]
+
         /// The CA certificate ARN.
         public let certificateArn: String?
         /// The CA certificate identifier.
@@ -7994,6 +10009,12 @@ extension IoT {
         public init(certificateArn: String? = nil, certificateId: String? = nil) {
             self.certificateArn = certificateArn
             self.certificateId = certificateId
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8008,6 +10029,7 @@ extension IoT {
             AWSShapeMember(label: "certificatePem", required: true, type: .string), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The CA certificate used to sign the device certificate being registered.
         public let caCertificatePem: String?
         /// The certificate data, in PEM format.
@@ -8019,6 +10041,13 @@ extension IoT {
             self.caCertificatePem = caCertificatePem
             self.certificatePem = certificatePem
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(caCertificatePem, name:"caCertificatePem", max: 65536)
+            try validate(caCertificatePem, name:"caCertificatePem", min: 1)
+            try validate(certificatePem, name:"certificatePem", max: 65536)
+            try validate(certificatePem, name:"certificatePem", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8033,6 +10062,7 @@ extension IoT {
             AWSShapeMember(label: "certificateArn", required: false, type: .string), 
             AWSShapeMember(label: "certificateId", required: false, type: .string)
         ]
+
         /// The certificate ARN.
         public let certificateArn: String?
         /// The certificate identifier.
@@ -8041,6 +10071,12 @@ extension IoT {
         public init(certificateArn: String? = nil, certificateId: String? = nil) {
             self.certificateArn = certificateArn
             self.certificateId = certificateId
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8054,6 +10090,7 @@ extension IoT {
             AWSShapeMember(label: "parameters", required: false, type: .map), 
             AWSShapeMember(label: "templateBody", required: true, type: .string)
         ]
+
         /// The parameters for provisioning a thing. See Programmatic Provisioning for more information.
         public let parameters: [String: String]?
         /// The provisioning template. See Programmatic Provisioning for more information.
@@ -8075,6 +10112,7 @@ extension IoT {
             AWSShapeMember(label: "certificatePem", required: false, type: .string), 
             AWSShapeMember(label: "resourceArns", required: false, type: .map)
         ]
+
         /// .
         public let certificatePem: String?
         /// ARNs for the generated resources.
@@ -8083,6 +10121,11 @@ extension IoT {
         public init(certificatePem: String? = nil, resourceArns: [String: String]? = nil) {
             self.certificatePem = certificatePem
             self.resourceArns = resourceArns
+        }
+
+        public func validate() throws {
+            try validate(certificatePem, name:"certificatePem", max: 65536)
+            try validate(certificatePem, name:"certificatePem", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8096,6 +10139,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: false, type: .string), 
             AWSShapeMember(label: "templateBody", required: false, type: .string)
         ]
+
         /// The ARN of the role.
         public let roleArn: String?
         /// The template body.
@@ -8104,6 +10148,11 @@ extension IoT {
         public init(roleArn: String? = nil, templateBody: String? = nil) {
             self.roleArn = roleArn
             self.templateBody = templateBody
+        }
+
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8117,6 +10166,7 @@ extension IoT {
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "certificateId"), required: true, type: .string), 
             AWSShapeMember(label: "rejectReason", required: false, type: .string)
         ]
+
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
         /// The reason the certificate transfer was rejected.
@@ -8125,6 +10175,13 @@ extension IoT {
         public init(certificateId: String, rejectReason: String? = nil) {
             self.certificateId = certificateId
             self.rejectReason = rejectReason
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(rejectReason, name:"rejectReason", max: 128)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8139,6 +10196,7 @@ extension IoT {
             AWSShapeMember(label: "resourceIdentifier", required: false, type: .structure), 
             AWSShapeMember(label: "resourceType", required: false, type: .enum)
         ]
+
         /// Additional information about the resource.
         public let additionalInfo: [String: String]?
         /// Information identifying the resource.
@@ -8150,6 +10208,10 @@ extension IoT {
             self.additionalInfo = additionalInfo
             self.resourceIdentifier = resourceIdentifier
             self.resourceType = resourceType
+        }
+
+        public func validate() throws {
+            try resourceIdentifier?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8166,6 +10228,7 @@ extension IoT {
             AWSShapeMember(label: "thingArn", required: false, type: .string), 
             AWSShapeMember(label: "thingName", required: false, type: .string)
         ]
+
         /// The ARN of the billing group.
         public let billingGroupArn: String?
         /// The name of the billing group.
@@ -8182,6 +10245,15 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case billingGroupArn = "billingGroupArn"
             case billingGroupName = "billingGroupName"
@@ -8191,6 +10263,7 @@ extension IoT {
     }
 
     public struct RemoveThingFromBillingGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -8204,6 +10277,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupName", required: false, type: .string), 
             AWSShapeMember(label: "thingName", required: false, type: .string)
         ]
+
         /// The ARN of the thing to remove from the group.
         public let thingArn: String?
         /// The group ARN.
@@ -8220,6 +10294,15 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case thingArn = "thingArn"
             case thingGroupArn = "thingGroupArn"
@@ -8229,6 +10312,7 @@ extension IoT {
     }
 
     public struct RemoveThingFromThingGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -8242,6 +10326,7 @@ extension IoT {
             AWSShapeMember(label: "ruleName", location: .uri(locationName: "ruleName"), required: true, type: .string), 
             AWSShapeMember(label: "topicRulePayload", required: true, type: .structure)
         ]
+
         /// The name of the rule.
         public let ruleName: String
         /// The rule payload.
@@ -8250,6 +10335,13 @@ extension IoT {
         public init(ruleName: String, topicRulePayload: TopicRulePayload) {
             self.ruleName = ruleName
             self.topicRulePayload = topicRulePayload
+        }
+
+        public func validate() throws {
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
+            try topicRulePayload.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8269,6 +10361,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "topic", required: true, type: .string)
         ]
+
         /// The ARN of the IAM role that grants access.
         public let roleArn: String
         /// The name of the MQTT topic.
@@ -8294,6 +10387,7 @@ extension IoT {
             AWSShapeMember(label: "deviceCertificateId", required: false, type: .string), 
             AWSShapeMember(label: "policyVersionIdentifier", required: false, type: .structure)
         ]
+
         /// The account with which the resource is associated.
         public let account: String?
         /// The ID of the CA certificate used to authorize the certificate.
@@ -8314,6 +10408,19 @@ extension IoT {
             self.cognitoIdentityPoolId = cognitoIdentityPoolId
             self.deviceCertificateId = deviceCertificateId
             self.policyVersionIdentifier = policyVersionIdentifier
+        }
+
+        public func validate() throws {
+            try validate(account, name:"account", max: 12)
+            try validate(account, name:"account", min: 12)
+            try validate(account, name:"account", pattern: "[0-9]+")
+            try validate(caCertificateId, name:"caCertificateId", max: 64)
+            try validate(caCertificateId, name:"caCertificateId", min: 64)
+            try validate(caCertificateId, name:"caCertificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(deviceCertificateId, name:"deviceCertificateId", max: 64)
+            try validate(deviceCertificateId, name:"deviceCertificateId", min: 64)
+            try validate(deviceCertificateId, name:"deviceCertificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try policyVersionIdentifier?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8346,6 +10453,7 @@ extension IoT {
             AWSShapeMember(label: "roleAliasArn", required: false, type: .string), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The UNIX timestamp of when the role alias was created.
         public let creationDate: TimeStamp?
         /// The number of seconds for which the credential is valid.
@@ -8371,6 +10479,19 @@ extension IoT {
             self.roleArn = roleArn
         }
 
+        public func validate() throws {
+            try validate(credentialDurationSeconds, name:"credentialDurationSeconds", max: 3600)
+            try validate(credentialDurationSeconds, name:"credentialDurationSeconds", min: 900)
+            try validate(owner, name:"owner", max: 12)
+            try validate(owner, name:"owner", min: 12)
+            try validate(owner, name:"owner", pattern: "[0-9]+")
+            try validate(roleAlias, name:"roleAlias", max: 128)
+            try validate(roleAlias, name:"roleAlias", min: 1)
+            try validate(roleAlias, name:"roleAlias", pattern: "[\\w=,@-]+")
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "creationDate"
             case credentialDurationSeconds = "credentialDurationSeconds"
@@ -8389,6 +10510,7 @@ extension IoT {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// The Amazon S3 bucket.
         public let bucketName: String
         /// The Amazon S3 canned ACL that controls access to the object identified by the object key. For more information, see S3 canned ACLs.
@@ -8418,6 +10540,7 @@ extension IoT {
             AWSShapeMember(label: "bucket", required: false, type: .string), 
             AWSShapeMember(label: "prefix", required: false, type: .string)
         ]
+
         /// The S3 bucket that contains the updated firmware.
         public let bucket: String?
         /// The S3 prefix.
@@ -8426,6 +10549,10 @@ extension IoT {
         public init(bucket: String? = nil, prefix: String? = nil) {
             self.bucket = bucket
             self.prefix = prefix
+        }
+
+        public func validate() throws {
+            try validate(bucket, name:"bucket", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8440,6 +10567,7 @@ extension IoT {
             AWSShapeMember(label: "key", required: false, type: .string), 
             AWSShapeMember(label: "version", required: false, type: .string)
         ]
+
         /// The S3 bucket.
         public let bucket: String?
         /// The S3 key.
@@ -8451,6 +10579,11 @@ extension IoT {
             self.bucket = bucket
             self.key = key
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(bucket, name:"bucket", min: 1)
+            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8465,6 +10598,7 @@ extension IoT {
             AWSShapeMember(label: "token", required: true, type: .string), 
             AWSShapeMember(label: "url", required: true, type: .string)
         ]
+
         /// The token used to authenticate access to the Salesforce IoT Cloud Input Stream. The token is available from the Salesforce IoT Cloud platform after creation of the Input Stream.
         public let token: String
         /// The URL exposed by the Salesforce IoT Cloud Input Stream. The URL is available from the Salesforce IoT Cloud platform after creation of the Input Stream.
@@ -8473,6 +10607,12 @@ extension IoT {
         public init(token: String, url: String) {
             self.token = token
             self.url = url
+        }
+
+        public func validate() throws {
+            try validate(token, name:"token", min: 40)
+            try validate(url, name:"url", max: 2000)
+            try validate(url, name:"url", pattern: "https://ingestion-[a-zA-Z0-9]{1,12}\\.[a-zA-Z0-9]+\\.((sfdc-matrix\\.net)|(sfdcnow\\.com))/streams/\\w{1,20}/\\w{1,20}/event")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8489,6 +10629,7 @@ extension IoT {
             AWSShapeMember(label: "scheduledAuditArn", required: false, type: .string), 
             AWSShapeMember(label: "scheduledAuditName", required: false, type: .string)
         ]
+
         /// The day of the month on which the scheduled audit is run (if the frequency is "MONTHLY"). If days 29-31 are specified, and the month does not have that many days, the audit takes place on the "LAST" day of the month.
         public let dayOfMonth: String?
         /// The day of the week on which the scheduled audit is run (if the frequency is "WEEKLY" or "BIWEEKLY").
@@ -8508,6 +10649,13 @@ extension IoT {
             self.scheduledAuditName = scheduledAuditName
         }
 
+        public func validate() throws {
+            try validate(dayOfMonth, name:"dayOfMonth", pattern: "^([1-9]|[12][0-9]|3[01])$|^LAST$")
+            try validate(scheduledAuditName, name:"scheduledAuditName", max: 128)
+            try validate(scheduledAuditName, name:"scheduledAuditName", min: 1)
+            try validate(scheduledAuditName, name:"scheduledAuditName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dayOfMonth = "dayOfMonth"
             case dayOfWeek = "dayOfWeek"
@@ -8525,6 +10673,7 @@ extension IoT {
             AWSShapeMember(label: "queryString", required: true, type: .string), 
             AWSShapeMember(label: "queryVersion", required: false, type: .string)
         ]
+
         /// The search index name.
         public let indexName: String?
         /// The maximum number of results to return at one time.
@@ -8544,6 +10693,15 @@ extension IoT {
             self.queryVersion = queryVersion
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(queryString, name:"queryString", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case indexName = "indexName"
             case maxResults = "maxResults"
@@ -8559,6 +10717,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroups", required: false, type: .list), 
             AWSShapeMember(label: "things", required: false, type: .list)
         ]
+
         /// The token used to get the next set of results, or null if there are no additional results.
         public let nextToken: String?
         /// The thing groups that match the search query.
@@ -8570,6 +10729,15 @@ extension IoT {
             self.nextToken = nextToken
             self.thingGroups = thingGroups
             self.things = things
+        }
+
+        public func validate() throws {
+            try thingGroups?.forEach {
+                try $0.validate()
+            }
+            try things?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8584,6 +10752,7 @@ extension IoT {
             AWSShapeMember(label: "arn", required: true, type: .string), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The ARN of the security profile.
         public let arn: String
         /// The name you have given to the security profile.
@@ -8592,6 +10761,12 @@ extension IoT {
         public init(arn: String, name: String) {
             self.arn = arn
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 128)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8604,6 +10779,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "arn", required: true, type: .string)
         ]
+
         /// The ARN of the security profile.
         public let arn: String
 
@@ -8621,6 +10797,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileIdentifier", required: false, type: .structure), 
             AWSShapeMember(label: "target", required: false, type: .structure)
         ]
+
         /// Information that identifies the security profile.
         public let securityProfileIdentifier: SecurityProfileIdentifier?
         /// Information about the target (thing group) associated with the security profile.
@@ -8629,6 +10806,10 @@ extension IoT {
         public init(securityProfileIdentifier: SecurityProfileIdentifier? = nil, target: SecurityProfileTarget? = nil) {
             self.securityProfileIdentifier = securityProfileIdentifier
             self.target = target
+        }
+
+        public func validate() throws {
+            try securityProfileIdentifier?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8641,11 +10822,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "authorizerName", required: true, type: .string)
         ]
+
         /// The authorizer name.
         public let authorizerName: String
 
         public init(authorizerName: String) {
             self.authorizerName = authorizerName
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8658,6 +10846,7 @@ extension IoT {
             AWSShapeMember(label: "authorizerArn", required: false, type: .string), 
             AWSShapeMember(label: "authorizerName", required: false, type: .string)
         ]
+
         /// The authorizer ARN.
         public let authorizerArn: String?
         /// The authorizer name.
@@ -8666,6 +10855,12 @@ extension IoT {
         public init(authorizerArn: String? = nil, authorizerName: String? = nil) {
             self.authorizerArn = authorizerArn
             self.authorizerName = authorizerName
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8679,6 +10874,7 @@ extension IoT {
             AWSShapeMember(label: "policyName", location: .uri(locationName: "policyName"), required: true, type: .string), 
             AWSShapeMember(label: "policyVersionId", location: .uri(locationName: "policyVersionId"), required: true, type: .string)
         ]
+
         /// The policy name.
         public let policyName: String
         /// The policy version ID.
@@ -8687,6 +10883,13 @@ extension IoT {
         public init(policyName: String, policyVersionId: String) {
             self.policyName = policyName
             self.policyVersionId = policyVersionId
+        }
+
+        public func validate() throws {
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+            try validate(policyVersionId, name:"policyVersionId", pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8701,6 +10904,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "loggingOptionsPayload", required: true, type: .structure)
         ]
+
         /// The logging options payload.
         public let loggingOptionsPayload: LoggingOptionsPayload
 
@@ -8718,6 +10922,7 @@ extension IoT {
             AWSShapeMember(label: "logLevel", required: true, type: .enum), 
             AWSShapeMember(label: "logTarget", required: true, type: .structure)
         ]
+
         /// The log level.
         public let logLevel: LogLevel
         /// The log target.
@@ -8740,6 +10945,7 @@ extension IoT {
             AWSShapeMember(label: "disableAllLogs", required: false, type: .boolean), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The default logging level.
         public let defaultLogLevel: LogLevel?
         /// If true all logs are disabled. The default is false.
@@ -8766,6 +10972,7 @@ extension IoT {
             AWSShapeMember(label: "certificatePathOnDevice", required: false, type: .string), 
             AWSShapeMember(label: "platform", required: false, type: .string)
         ]
+
         /// Certificate ARN.
         public let certificateArn: String?
         /// The location of the code-signing certificate on your device.
@@ -8792,6 +10999,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "targetArn", required: true, type: .string)
         ]
+
         /// (Optional) The message format of the message to publish. Accepted values are "JSON" and "RAW". The default value of the attribute is "RAW". SNS uses this setting to determine if the payload should be parsed and relevant platform-specific bits of the payload should be extracted. To read more about SNS message formats, see https://docs.aws.amazon.com/sns/latest/dg/json-formats.html refer to their official documentation.
         public let messageFormat: MessageFormat?
         /// The ARN of the IAM role that grants access.
@@ -8818,6 +11026,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "useBase64", required: false, type: .boolean)
         ]
+
         /// The URL of the Amazon SQS queue.
         public let queueUrl: String
         /// The ARN of the IAM role that grants access.
@@ -8842,6 +11051,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "targetCheckNames", required: true, type: .list)
         ]
+
         /// Which checks are performed during the audit. The checks you specify must be enabled for your account or an exception occurs. Use DescribeAccountAuditConfiguration to see the list of all checks including those that are enabled or UpdateAccountAuditConfiguration to select which checks are enabled.
         public let targetCheckNames: [String]
 
@@ -8858,11 +11068,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", required: false, type: .string)
         ]
+
         /// The ID of the on-demand audit you started.
         public let taskId: String?
 
         public init(taskId: String? = nil) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 40)
+            try validate(taskId, name:"taskId", min: 1)
+            try validate(taskId, name:"taskId", pattern: "[a-zA-Z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8876,6 +11093,7 @@ extension IoT {
             AWSShapeMember(label: "signingProfileName", required: false, type: .string), 
             AWSShapeMember(label: "signingProfileParameter", required: false, type: .structure)
         ]
+
         /// The location to write the code-signed file.
         public let destination: Destination?
         /// The code-signing profile name.
@@ -8887,6 +11105,10 @@ extension IoT {
             self.destination = destination
             self.signingProfileName = signingProfileName
             self.signingProfileParameter = signingProfileParameter
+        }
+
+        public func validate() throws {
+            try destination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8903,6 +11125,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "templateBody", required: true, type: .string)
         ]
+
         /// The S3 bucket that contains the input file.
         public let inputFileBucket: String
         /// The name of input file within the S3 bucket. This file contains a newline delimited JSON file. Each line contains the parameter values to provision one device (thing).
@@ -8919,6 +11142,17 @@ extension IoT {
             self.templateBody = templateBody
         }
 
+        public func validate() throws {
+            try validate(inputFileBucket, name:"inputFileBucket", max: 256)
+            try validate(inputFileBucket, name:"inputFileBucket", min: 3)
+            try validate(inputFileBucket, name:"inputFileBucket", pattern: "[a-zA-Z0-9._-]+")
+            try validate(inputFileKey, name:"inputFileKey", max: 1024)
+            try validate(inputFileKey, name:"inputFileKey", min: 1)
+            try validate(inputFileKey, name:"inputFileKey", pattern: "[a-zA-Z0-9!_.*'()-\\/]+")
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case inputFileBucket = "inputFileBucket"
             case inputFileKey = "inputFileKey"
@@ -8931,11 +11165,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", required: false, type: .string)
         ]
+
         /// The bulk thing provisioning task ID.
         public let taskId: String?
 
         public init(taskId: String? = nil) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 40)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8947,11 +11186,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "statistic", required: false, type: .string)
         ]
+
         /// The percentile which resolves to a threshold value by which compliance with a behavior is determined. Metrics are collected over the specified period (durationSeconds) from all reporting devices in your account and statistical ranks are calculated. Then, the measurements from a device are collected over the same period. If the accumulated measurements from the device fall above or below (comparisonOperator) the value associated with the percentile specified, then the device is considered to be in compliance with the behavior, otherwise a violation occurs.
         public let statistic: String?
 
         public init(statistic: String? = nil) {
             self.statistic = statistic
+        }
+
+        public func validate() throws {
+            try validate(statistic, name:"statistic", pattern: "(p0|p0\\.1|p0\\.01|p1|p10|p50|p90|p99|p99\\.9|p99\\.99|p100)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8963,6 +11207,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "count", required: false, type: .integer)
         ]
+
         /// The count of things that match the query.
         public let count: Int32?
 
@@ -8990,6 +11235,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "stateMachineName", required: true, type: .string)
         ]
+
         /// (Optional) A name will be given to the state machine execution consisting of this prefix followed by a UUID. Step Functions automatically creates a unique name for each state machine execution if one is not provided.
         public let executionNamePrefix: String?
         /// The ARN of the role that grants IoT permission to start execution of a state machine ("Action":"states:StartExecution").
@@ -9014,11 +11260,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", location: .uri(locationName: "taskId"), required: true, type: .string)
         ]
+
         /// The bulk thing provisioning task ID.
         public let taskId: String
 
         public init(taskId: String) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 40)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9027,6 +11278,7 @@ extension IoT {
     }
 
     public struct StopThingRegistrationTaskResponse: AWSShape {
+
 
         public init() {
         }
@@ -9038,6 +11290,7 @@ extension IoT {
             AWSShapeMember(label: "fileId", required: false, type: .integer), 
             AWSShapeMember(label: "streamId", required: false, type: .string)
         ]
+
         /// The ID of a file associated with a stream.
         public let fileId: Int32?
         /// The stream ID.
@@ -9046,6 +11299,14 @@ extension IoT {
         public init(fileId: Int32? = nil, streamId: String? = nil) {
             self.fileId = fileId
             self.streamId = streamId
+        }
+
+        public func validate() throws {
+            try validate(fileId, name:"fileId", max: 255)
+            try validate(fileId, name:"fileId", min: 0)
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9059,6 +11320,7 @@ extension IoT {
             AWSShapeMember(label: "fileId", required: false, type: .integer), 
             AWSShapeMember(label: "s3Location", required: false, type: .structure)
         ]
+
         /// The file ID.
         public let fileId: Int32?
         /// The location of the file in S3.
@@ -9067,6 +11329,12 @@ extension IoT {
         public init(fileId: Int32? = nil, s3Location: S3Location? = nil) {
             self.fileId = fileId
             self.s3Location = s3Location
+        }
+
+        public func validate() throws {
+            try validate(fileId, name:"fileId", max: 255)
+            try validate(fileId, name:"fileId", min: 0)
+            try s3Location?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9086,6 +11354,7 @@ extension IoT {
             AWSShapeMember(label: "streamId", required: false, type: .string), 
             AWSShapeMember(label: "streamVersion", required: false, type: .integer)
         ]
+
         /// The date when the stream was created.
         public let createdAt: TimeStamp?
         /// The description of the stream.
@@ -9114,6 +11383,23 @@ extension IoT {
             self.streamVersion = streamVersion
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try files?.forEach {
+                try $0.validate()
+            }
+            try validate(files, name:"files", max: 50)
+            try validate(files, name:"files", min: 1)
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(streamVersion, name:"streamVersion", max: 65535)
+            try validate(streamVersion, name:"streamVersion", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdAt = "createdAt"
             case description = "description"
@@ -9133,6 +11419,7 @@ extension IoT {
             AWSShapeMember(label: "streamId", required: false, type: .string), 
             AWSShapeMember(label: "streamVersion", required: false, type: .integer)
         ]
+
         /// A description of the stream.
         public let description: String?
         /// The stream ARN.
@@ -9149,6 +11436,16 @@ extension IoT {
             self.streamVersion = streamVersion
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(streamVersion, name:"streamVersion", max: 65535)
+            try validate(streamVersion, name:"streamVersion", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case streamArn = "streamArn"
@@ -9162,6 +11459,7 @@ extension IoT {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The tag's key.
         public let key: String?
         /// The tag's value.
@@ -9183,6 +11481,7 @@ extension IoT {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The ARN of the resource.
         public let resourceArn: String
         /// The new or modified tags for the resource.
@@ -9200,6 +11499,7 @@ extension IoT {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -9222,6 +11522,7 @@ extension IoT {
             AWSShapeMember(label: "totalChecks", required: false, type: .integer), 
             AWSShapeMember(label: "waitingForDataCollectionChecks", required: false, type: .integer)
         ]
+
         /// The number of checks that did not run because the audit was canceled.
         public let canceledChecks: Int32?
         /// The number of checks that found compliant resources.
@@ -9267,6 +11568,7 @@ extension IoT {
             AWSShapeMember(label: "policyNamesToSkip", required: false, type: .list), 
             AWSShapeMember(label: "principal", required: false, type: .string)
         ]
+
         /// A list of authorization info objects. Simulating authorization will create a response for each authInfo object in the list.
         public let authInfos: [AuthInfo]
         /// The MQTT client ID.
@@ -9289,6 +11591,21 @@ extension IoT {
             self.principal = principal
         }
 
+        public func validate() throws {
+            try validate(authInfos, name:"authInfos", max: 10)
+            try validate(authInfos, name:"authInfos", min: 1)
+            try policyNamesToAdd?.forEach {
+                try validate($0, name:"policyNamesToAdd[]", max: 128)
+                try validate($0, name:"policyNamesToAdd[]", min: 1)
+                try validate($0, name:"policyNamesToAdd[]", pattern: "[\\w+=,.@-]+")
+            }
+            try policyNamesToSkip?.forEach {
+                try validate($0, name:"policyNamesToSkip[]", max: 128)
+                try validate($0, name:"policyNamesToSkip[]", min: 1)
+                try validate($0, name:"policyNamesToSkip[]", pattern: "[\\w+=,.@-]+")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authInfos = "authInfos"
             case clientId = "clientId"
@@ -9303,11 +11620,18 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "authResults", required: false, type: .list)
         ]
+
         /// The authentication results.
         public let authResults: [AuthResult]?
 
         public init(authResults: [AuthResult]? = nil) {
             self.authResults = authResults
+        }
+
+        public func validate() throws {
+            try authResults?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9321,6 +11645,7 @@ extension IoT {
             AWSShapeMember(label: "token", required: true, type: .string), 
             AWSShapeMember(label: "tokenSignature", required: true, type: .string)
         ]
+
         /// The custom authorizer name.
         public let authorizerName: String
         /// The token returned by your custom authentication service.
@@ -9332,6 +11657,17 @@ extension IoT {
             self.authorizerName = authorizerName
             self.token = token
             self.tokenSignature = tokenSignature
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
+            try validate(token, name:"token", max: 6144)
+            try validate(token, name:"token", min: 1)
+            try validate(tokenSignature, name:"tokenSignature", max: 2560)
+            try validate(tokenSignature, name:"tokenSignature", min: 1)
+            try validate(tokenSignature, name:"tokenSignature", pattern: "[A-Za-z0-9+/]+={0,2}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9349,6 +11685,7 @@ extension IoT {
             AWSShapeMember(label: "principalId", required: false, type: .string), 
             AWSShapeMember(label: "refreshAfterInSeconds", required: false, type: .integer)
         ]
+
         /// The number of seconds after which the connection is terminated.
         public let disconnectAfterInSeconds: Int32?
         /// True if the token is authenticated, otherwise false.
@@ -9368,6 +11705,12 @@ extension IoT {
             self.refreshAfterInSeconds = refreshAfterInSeconds
         }
 
+        public func validate() throws {
+            try validate(principalId, name:"principalId", max: 128)
+            try validate(principalId, name:"principalId", min: 1)
+            try validate(principalId, name:"principalId", pattern: "[a-zA-Z0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case disconnectAfterInSeconds = "disconnectAfterInSeconds"
             case isAuthenticated = "isAuthenticated"
@@ -9385,6 +11728,7 @@ extension IoT {
             AWSShapeMember(label: "thingTypeName", required: false, type: .string), 
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// A list of thing attributes which are name-value pairs.
         public let attributes: [String: String]?
         /// The thing ARN.
@@ -9404,6 +11748,15 @@ extension IoT {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case thingArn = "thingArn"
@@ -9418,6 +11771,7 @@ extension IoT {
             AWSShapeMember(label: "connected", required: false, type: .boolean), 
             AWSShapeMember(label: "timestamp", required: false, type: .long)
         ]
+
         /// True if the thing is connected to the AWS IoT service; false if it is not connected.
         public let connected: Bool?
         /// The epoch time (in milliseconds) when the thing last connected or disconnected. If the thing has been disconnected for more than a few weeks, the time value might be missing.
@@ -9450,6 +11804,7 @@ extension IoT {
             AWSShapeMember(label: "thingName", required: false, type: .string), 
             AWSShapeMember(label: "thingTypeName", required: false, type: .string)
         ]
+
         /// The attributes.
         public let attributes: [String: String]?
         /// Indicates whether the thing is connected to the AWS IoT service.
@@ -9475,6 +11830,20 @@ extension IoT {
             self.thingTypeName = thingTypeName
         }
 
+        public func validate() throws {
+            try thingGroupNames?.forEach {
+                try validate($0, name:"thingGroupNames[]", max: 128)
+                try validate($0, name:"thingGroupNames[]", min: 1)
+                try validate($0, name:"thingGroupNames[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case connectivity = "connectivity"
@@ -9494,6 +11863,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupId", required: false, type: .string), 
             AWSShapeMember(label: "thingGroupName", required: false, type: .string)
         ]
+
         /// The thing group attributes.
         public let attributes: [String: String]?
         /// Parent group names.
@@ -9513,6 +11883,22 @@ extension IoT {
             self.thingGroupName = thingGroupName
         }
 
+        public func validate() throws {
+            try parentGroupNames?.forEach {
+                try validate($0, name:"parentGroupNames[]", max: 128)
+                try validate($0, name:"parentGroupNames[]", min: 1)
+                try validate($0, name:"parentGroupNames[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
+            try validate(thingGroupDescription, name:"thingGroupDescription", max: 2028)
+            try validate(thingGroupDescription, name:"thingGroupDescription", pattern: "[\\p{Graph}\\x20]*")
+            try validate(thingGroupId, name:"thingGroupId", max: 128)
+            try validate(thingGroupId, name:"thingGroupId", min: 1)
+            try validate(thingGroupId, name:"thingGroupId", pattern: "[a-zA-Z0-9\\-]+")
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case parentGroupNames = "parentGroupNames"
@@ -9526,6 +11912,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "thingGroupIndexingMode", required: true, type: .enum)
         ]
+
         /// Thing group indexing mode.
         public let thingGroupIndexingMode: ThingGroupIndexingMode
 
@@ -9550,6 +11937,7 @@ extension IoT {
             AWSShapeMember(label: "parentGroupName", required: false, type: .string), 
             AWSShapeMember(label: "rootToParentThingGroups", required: false, type: .list)
         ]
+
         /// The UNIX timestamp of when the thing group was created.
         public let creationDate: TimeStamp?
         /// The parent thing group name.
@@ -9561,6 +11949,15 @@ extension IoT {
             self.creationDate = creationDate
             self.parentGroupName = parentGroupName
             self.rootToParentThingGroups = rootToParentThingGroups
+        }
+
+        public func validate() throws {
+            try validate(parentGroupName, name:"parentGroupName", max: 128)
+            try validate(parentGroupName, name:"parentGroupName", min: 1)
+            try validate(parentGroupName, name:"parentGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try rootToParentThingGroups?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9575,6 +11972,7 @@ extension IoT {
             AWSShapeMember(label: "attributePayload", required: false, type: .structure), 
             AWSShapeMember(label: "thingGroupDescription", required: false, type: .string)
         ]
+
         /// The thing group attributes in JSON format.
         public let attributePayload: AttributePayload?
         /// The thing group description.
@@ -9583,6 +11981,11 @@ extension IoT {
         public init(attributePayload: AttributePayload? = nil, thingGroupDescription: String? = nil) {
             self.attributePayload = attributePayload
             self.thingGroupDescription = thingGroupDescription
+        }
+
+        public func validate() throws {
+            try validate(thingGroupDescription, name:"thingGroupDescription", max: 2028)
+            try validate(thingGroupDescription, name:"thingGroupDescription", pattern: "[\\p{Graph}\\x20]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9596,6 +11999,7 @@ extension IoT {
             AWSShapeMember(label: "thingConnectivityIndexingMode", required: false, type: .enum), 
             AWSShapeMember(label: "thingIndexingMode", required: true, type: .enum)
         ]
+
         /// Thing connectivity indexing mode. Valid values are:    STATUS – Your thing index contains connectivity status. To enable thing connectivity indexing, thingIndexMode must not be set to OFF.   OFF - Thing connectivity status indexing is disabled.  
         public let thingConnectivityIndexingMode: ThingConnectivityIndexingMode?
         /// Thing indexing mode. Valid values are:   REGISTRY – Your thing index contains registry data only.   REGISTRY_AND_SHADOW - Your thing index contains registry and shadow data.   OFF - Thing indexing is disabled.  
@@ -9626,6 +12030,7 @@ extension IoT {
             AWSShapeMember(label: "thingTypeName", required: false, type: .string), 
             AWSShapeMember(label: "thingTypeProperties", required: false, type: .structure)
         ]
+
         /// The thing type ARN.
         public let thingTypeArn: String?
         /// The ThingTypeMetadata contains additional information about the thing type including: creation date and time, a value indicating whether the thing type is deprecated, and a date and time when it was deprecated.
@@ -9642,6 +12047,13 @@ extension IoT {
             self.thingTypeProperties = thingTypeProperties
         }
 
+        public func validate() throws {
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingTypeProperties?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case thingTypeArn = "thingTypeArn"
             case thingTypeMetadata = "thingTypeMetadata"
@@ -9656,6 +12068,7 @@ extension IoT {
             AWSShapeMember(label: "deprecated", required: false, type: .boolean), 
             AWSShapeMember(label: "deprecationDate", required: false, type: .timestamp)
         ]
+
         /// The date and time when the thing type was created.
         public let creationDate: TimeStamp?
         /// Whether the thing type is deprecated. If true, no new things could be associated with this type.
@@ -9681,6 +12094,7 @@ extension IoT {
             AWSShapeMember(label: "searchableAttributes", required: false, type: .list), 
             AWSShapeMember(label: "thingTypeDescription", required: false, type: .string)
         ]
+
         /// A list of searchable thing attribute names.
         public let searchableAttributes: [String]?
         /// The description of the thing type.
@@ -9689,6 +12103,15 @@ extension IoT {
         public init(searchableAttributes: [String]? = nil, thingTypeDescription: String? = nil) {
             self.searchableAttributes = searchableAttributes
             self.thingTypeDescription = thingTypeDescription
+        }
+
+        public func validate() throws {
+            try searchableAttributes?.forEach {
+                try validate($0, name:"searchableAttributes[]", max: 128)
+                try validate($0, name:"searchableAttributes[]", pattern: "[a-zA-Z0-9_.,@/:#-]+")
+            }
+            try validate(thingTypeDescription, name:"thingTypeDescription", max: 2028)
+            try validate(thingTypeDescription, name:"thingTypeDescription", pattern: "[\\p{Graph}\\x20]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9701,6 +12124,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "inProgressTimeoutInMinutes", required: false, type: .long)
         ]
+
         /// Specifies the amount of time, in minutes, this device has to finish execution of this job. The timeout interval can be anywhere between 1 minute and 7 days (1 to 10080 minutes). The in progress timer can't be updated and will apply to all job executions for the job. Whenever a job execution remains in the IN_PROGRESS status for longer than this interval, the job execution will fail and switch to the terminal TIMED_OUT status.
         public let inProgressTimeoutInMinutes: Int64?
 
@@ -9724,6 +12148,7 @@ extension IoT {
             AWSShapeMember(label: "ruleName", required: false, type: .string), 
             AWSShapeMember(label: "sql", required: false, type: .string)
         ]
+
         /// The actions associated with the rule.
         public let actions: [Action]?
         /// The version of the SQL rules engine to use when evaluating the rule.
@@ -9752,6 +12177,18 @@ extension IoT {
             self.sql = sql
         }
 
+        public func validate() throws {
+            try actions?.forEach {
+                try $0.validate()
+            }
+            try validate(actions, name:"actions", max: 10)
+            try validate(actions, name:"actions", min: 0)
+            try errorAction?.validate()
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actions = "actions"
             case awsIotSqlVersion = "awsIotSqlVersion"
@@ -9772,6 +12209,7 @@ extension IoT {
             AWSShapeMember(label: "ruleName", required: false, type: .string), 
             AWSShapeMember(label: "topicPattern", required: false, type: .string)
         ]
+
         /// The date and time the rule was created.
         public let createdAt: TimeStamp?
         /// The rule ARN.
@@ -9789,6 +12227,12 @@ extension IoT {
             self.ruleDisabled = ruleDisabled
             self.ruleName = ruleName
             self.topicPattern = topicPattern
+        }
+
+        public func validate() throws {
+            try validate(ruleName, name:"ruleName", max: 128)
+            try validate(ruleName, name:"ruleName", min: 1)
+            try validate(ruleName, name:"ruleName", pattern: "^[a-zA-Z0-9_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -9809,6 +12253,7 @@ extension IoT {
             AWSShapeMember(label: "ruleDisabled", required: false, type: .boolean), 
             AWSShapeMember(label: "sql", required: true, type: .string)
         ]
+
         /// The actions associated with the rule.
         public let actions: [Action]
         /// The version of the SQL rules engine to use when evaluating the rule.
@@ -9831,6 +12276,15 @@ extension IoT {
             self.sql = sql
         }
 
+        public func validate() throws {
+            try actions.forEach {
+                try $0.validate()
+            }
+            try validate(actions, name:"actions", max: 10)
+            try validate(actions, name:"actions", min: 0)
+            try errorAction?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actions = "actions"
             case awsIotSqlVersion = "awsIotSqlVersion"
@@ -9847,6 +12301,7 @@ extension IoT {
             AWSShapeMember(label: "targetAwsAccount", location: .querystring(locationName: "targetAwsAccount"), required: true, type: .string), 
             AWSShapeMember(label: "transferMessage", required: false, type: .string)
         ]
+
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
         /// The AWS account.
@@ -9860,6 +12315,16 @@ extension IoT {
             self.transferMessage = transferMessage
         }
 
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try validate(targetAwsAccount, name:"targetAwsAccount", max: 12)
+            try validate(targetAwsAccount, name:"targetAwsAccount", min: 12)
+            try validate(targetAwsAccount, name:"targetAwsAccount", pattern: "[0-9]+")
+            try validate(transferMessage, name:"transferMessage", max: 128)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificateId = "certificateId"
             case targetAwsAccount = "targetAwsAccount"
@@ -9871,6 +12336,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "transferredCertificateArn", required: false, type: .string)
         ]
+
         /// The ARN of the certificate.
         public let transferredCertificateArn: String?
 
@@ -9891,6 +12357,7 @@ extension IoT {
             AWSShapeMember(label: "transferDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "transferMessage", required: false, type: .string)
         ]
+
         /// The date the transfer was accepted.
         public let acceptDate: TimeStamp?
         /// The date the transfer was rejected.
@@ -9910,6 +12377,11 @@ extension IoT {
             self.transferMessage = transferMessage
         }
 
+        public func validate() throws {
+            try validate(rejectReason, name:"rejectReason", max: 128)
+            try validate(transferMessage, name:"transferMessage", max: 128)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case acceptDate = "acceptDate"
             case rejectDate = "rejectDate"
@@ -9924,6 +12396,7 @@ extension IoT {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tagKeys", required: true, type: .list)
         ]
+
         /// The ARN of the resource.
         public let resourceArn: String
         /// A list of the keys of the tags to be removed from the resource.
@@ -9942,6 +12415,7 @@ extension IoT {
 
     public struct UntagResourceResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -9953,6 +12427,7 @@ extension IoT {
             AWSShapeMember(label: "auditNotificationTargetConfigurations", required: false, type: .map), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// Specifies which audit checks are enabled and disabled for this account. Use DescribeAccountAuditConfiguration to see the list of all checks including those that are currently enabled. Note that some data collection may begin immediately when certain checks are enabled. When a check is disabled, any data collected so far in relation to the check is deleted. You cannot disable a check if it is used by any scheduled audit. You must first delete the check from the scheduled audit or delete the scheduled audit itself. On the first call to UpdateAccountAuditConfiguration this parameter is required and must specify at least one enabled check.
         public let auditCheckConfigurations: [String: AuditCheckConfiguration]?
         /// Information about the targets to which audit notifications are sent.
@@ -9966,6 +12441,11 @@ extension IoT {
             self.roleArn = roleArn
         }
 
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case auditCheckConfigurations = "auditCheckConfigurations"
             case auditNotificationTargetConfigurations = "auditNotificationTargetConfigurations"
@@ -9974,6 +12454,7 @@ extension IoT {
     }
 
     public struct UpdateAccountAuditConfigurationResponse: AWSShape {
+
 
         public init() {
         }
@@ -9988,6 +12469,7 @@ extension IoT {
             AWSShapeMember(label: "tokenKeyName", required: false, type: .string), 
             AWSShapeMember(label: "tokenSigningPublicKeys", required: false, type: .map)
         ]
+
         /// The ARN of the authorizer's Lambda function.
         public let authorizerFunctionArn: String?
         /// The authorizer name.
@@ -10007,6 +12489,15 @@ extension IoT {
             self.tokenSigningPublicKeys = tokenSigningPublicKeys
         }
 
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
+            try validate(tokenKeyName, name:"tokenKeyName", max: 128)
+            try validate(tokenKeyName, name:"tokenKeyName", min: 1)
+            try validate(tokenKeyName, name:"tokenKeyName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case authorizerFunctionArn = "authorizerFunctionArn"
             case authorizerName = "authorizerName"
@@ -10021,6 +12512,7 @@ extension IoT {
             AWSShapeMember(label: "authorizerArn", required: false, type: .string), 
             AWSShapeMember(label: "authorizerName", required: false, type: .string)
         ]
+
         /// The authorizer ARN.
         public let authorizerArn: String?
         /// The authorizer name.
@@ -10029,6 +12521,12 @@ extension IoT {
         public init(authorizerArn: String? = nil, authorizerName: String? = nil) {
             self.authorizerArn = authorizerArn
             self.authorizerName = authorizerName
+        }
+
+        public func validate() throws {
+            try validate(authorizerName, name:"authorizerName", max: 128)
+            try validate(authorizerName, name:"authorizerName", min: 1)
+            try validate(authorizerName, name:"authorizerName", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10043,6 +12541,7 @@ extension IoT {
             AWSShapeMember(label: "billingGroupProperties", required: true, type: .structure), 
             AWSShapeMember(label: "expectedVersion", required: false, type: .long)
         ]
+
         /// The name of the billing group.
         public let billingGroupName: String
         /// The properties of the billing group.
@@ -10056,6 +12555,13 @@ extension IoT {
             self.expectedVersion = expectedVersion
         }
 
+        public func validate() throws {
+            try validate(billingGroupName, name:"billingGroupName", max: 128)
+            try validate(billingGroupName, name:"billingGroupName", min: 1)
+            try validate(billingGroupName, name:"billingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try billingGroupProperties.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case billingGroupName = "billingGroupName"
             case billingGroupProperties = "billingGroupProperties"
@@ -10067,6 +12573,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// The latest version of the billing group.
         public let version: Int64?
 
@@ -10087,6 +12594,7 @@ extension IoT {
             AWSShapeMember(label: "registrationConfig", required: false, type: .structure), 
             AWSShapeMember(label: "removeAutoRegistration", required: false, type: .boolean)
         ]
+
         /// The CA certificate identifier.
         public let certificateId: String
         /// The new value for the auto registration status. Valid values are: "ENABLE" or "DISABLE".
@@ -10106,6 +12614,13 @@ extension IoT {
             self.removeAutoRegistration = removeAutoRegistration
         }
 
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
+            try registrationConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificateId = "caCertificateId"
             case newAutoRegistrationStatus = "newAutoRegistrationStatus"
@@ -10120,6 +12635,7 @@ extension IoT {
             AWSShapeMember(label: "certificateId", location: .uri(locationName: "certificateId"), required: true, type: .string), 
             AWSShapeMember(label: "newStatus", location: .querystring(locationName: "newStatus"), required: true, type: .enum)
         ]
+
         /// The ID of the certificate. (The last part of the certificate ARN contains the certificate ID.)
         public let certificateId: String
         /// The new status.  Note: Setting the status to PENDING_TRANSFER will result in an exception being thrown. PENDING_TRANSFER is a status used internally by AWS IoT. It is not intended for developer use.  Note: The status value REGISTER_INACTIVE is deprecated and should not be used.
@@ -10128,6 +12644,12 @@ extension IoT {
         public init(certificateId: String, newStatus: CertificateStatus) {
             self.certificateId = certificateId
             self.newStatus = newStatus
+        }
+
+        public func validate() throws {
+            try validate(certificateId, name:"certificateId", max: 64)
+            try validate(certificateId, name:"certificateId", min: 64)
+            try validate(certificateId, name:"certificateId", pattern: "(0x)?[a-fA-F0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10145,6 +12667,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string), 
             AWSShapeMember(label: "thingGroupProperties", required: true, type: .structure)
         ]
+
         /// The expected version of the dynamic thing group to update.
         public let expectedVersion: Int64?
         /// The dynamic thing group index to update.  Currently one index is supported: 'AWS_Things'. 
@@ -10167,6 +12690,17 @@ extension IoT {
             self.thingGroupProperties = thingGroupProperties
         }
 
+        public func validate() throws {
+            try validate(indexName, name:"indexName", max: 128)
+            try validate(indexName, name:"indexName", min: 1)
+            try validate(indexName, name:"indexName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(queryString, name:"queryString", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingGroupProperties.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expectedVersion = "expectedVersion"
             case indexName = "indexName"
@@ -10181,6 +12715,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// The dynamic thing group version.
         public let version: Int64?
 
@@ -10197,6 +12732,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "eventConfigurations", required: false, type: .map)
         ]
+
         /// The new event configuration values.
         public let eventConfigurations: [EventType: Configuration]?
 
@@ -10211,6 +12747,7 @@ extension IoT {
 
     public struct UpdateEventConfigurationsResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -10221,6 +12758,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupIndexingConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "thingIndexingConfiguration", required: false, type: .structure)
         ]
+
         /// Thing group indexing configuration.
         public let thingGroupIndexingConfiguration: ThingGroupIndexingConfiguration?
         /// Thing indexing configuration.
@@ -10239,6 +12777,7 @@ extension IoT {
 
     public struct UpdateIndexingConfigurationResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -10253,6 +12792,7 @@ extension IoT {
             AWSShapeMember(label: "presignedUrlConfig", required: false, type: .structure), 
             AWSShapeMember(label: "timeoutConfig", required: false, type: .structure)
         ]
+
         /// Allows you to create criteria to abort a job.
         public let abortConfig: AbortConfig?
         /// A short text description of the job.
@@ -10275,6 +12815,17 @@ extension IoT {
             self.timeoutConfig = timeoutConfig
         }
 
+        public func validate() throws {
+            try abortConfig?.validate()
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try jobExecutionsRolloutConfig?.validate()
+            try validate(jobId, name:"jobId", max: 64)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "[a-zA-Z0-9_-]+")
+            try presignedUrlConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case abortConfig = "abortConfig"
             case description = "description"
@@ -10291,6 +12842,7 @@ extension IoT {
             AWSShapeMember(label: "roleAlias", location: .uri(locationName: "roleAlias"), required: true, type: .string), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The number of seconds the credential will be valid.
         public let credentialDurationSeconds: Int32?
         /// The role alias to update.
@@ -10302,6 +12854,16 @@ extension IoT {
             self.credentialDurationSeconds = credentialDurationSeconds
             self.roleAlias = roleAlias
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(credentialDurationSeconds, name:"credentialDurationSeconds", max: 3600)
+            try validate(credentialDurationSeconds, name:"credentialDurationSeconds", min: 900)
+            try validate(roleAlias, name:"roleAlias", max: 128)
+            try validate(roleAlias, name:"roleAlias", min: 1)
+            try validate(roleAlias, name:"roleAlias", pattern: "[\\w=,@-]+")
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10316,6 +12878,7 @@ extension IoT {
             AWSShapeMember(label: "roleAlias", required: false, type: .string), 
             AWSShapeMember(label: "roleAliasArn", required: false, type: .string)
         ]
+
         /// The role alias.
         public let roleAlias: String?
         /// The role alias ARN.
@@ -10324,6 +12887,12 @@ extension IoT {
         public init(roleAlias: String? = nil, roleAliasArn: String? = nil) {
             self.roleAlias = roleAlias
             self.roleAliasArn = roleAliasArn
+        }
+
+        public func validate() throws {
+            try validate(roleAlias, name:"roleAlias", max: 128)
+            try validate(roleAlias, name:"roleAlias", min: 1)
+            try validate(roleAlias, name:"roleAlias", pattern: "[\\w=,@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10340,6 +12909,7 @@ extension IoT {
             AWSShapeMember(label: "scheduledAuditName", location: .uri(locationName: "scheduledAuditName"), required: true, type: .string), 
             AWSShapeMember(label: "targetCheckNames", required: false, type: .list)
         ]
+
         /// The day of the month on which the scheduled audit takes place. Can be "1" through "31" or "LAST". This field is required if the "frequency" parameter is set to "MONTHLY". If days 29-31 are specified, and the month does not have that many days, the audit takes place on the "LAST" day of the month.
         public let dayOfMonth: String?
         /// The day of the week on which the scheduled audit takes place. Can be one of "SUN", "MON", "TUE", "WED", "THU", "FRI" or "SAT". This field is required if the "frequency" parameter is set to "WEEKLY" or "BIWEEKLY".
@@ -10359,6 +12929,13 @@ extension IoT {
             self.targetCheckNames = targetCheckNames
         }
 
+        public func validate() throws {
+            try validate(dayOfMonth, name:"dayOfMonth", pattern: "^([1-9]|[12][0-9]|3[01])$|^LAST$")
+            try validate(scheduledAuditName, name:"scheduledAuditName", max: 128)
+            try validate(scheduledAuditName, name:"scheduledAuditName", min: 1)
+            try validate(scheduledAuditName, name:"scheduledAuditName", pattern: "[a-zA-Z0-9_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dayOfMonth = "dayOfMonth"
             case dayOfWeek = "dayOfWeek"
@@ -10372,6 +12949,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "scheduledAuditArn", required: false, type: .string)
         ]
+
         /// The ARN of the scheduled audit.
         public let scheduledAuditArn: String?
 
@@ -10396,6 +12974,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileDescription", required: false, type: .string), 
             AWSShapeMember(label: "securityProfileName", location: .uri(locationName: "securityProfileName"), required: true, type: .string)
         ]
+
         /// A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the profile's behaviors but it is also retained for any metric specified here.
         public let additionalMetricsToRetain: [String]?
         /// Where the alerts are sent. (Alerts are always sent to the console.)
@@ -10427,6 +13006,18 @@ extension IoT {
             self.securityProfileName = securityProfileName
         }
 
+        public func validate() throws {
+            try behaviors?.forEach {
+                try $0.validate()
+            }
+            try validate(behaviors, name:"behaviors", max: 100)
+            try validate(securityProfileDescription, name:"securityProfileDescription", max: 1000)
+            try validate(securityProfileDescription, name:"securityProfileDescription", pattern: "[\\p{Graph}\\x20]*")
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case additionalMetricsToRetain = "additionalMetricsToRetain"
             case alertTargets = "alertTargets"
@@ -10452,6 +13043,7 @@ extension IoT {
             AWSShapeMember(label: "securityProfileName", required: false, type: .string), 
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// A list of metrics whose data is retained (stored). By default, data is retained for any metric used in the security profile's behaviors but it is also retained for any metric specified here.
         public let additionalMetricsToRetain: [String]?
         /// Where the alerts are sent. (Alerts are always sent to the console.)
@@ -10483,6 +13075,18 @@ extension IoT {
             self.version = version
         }
 
+        public func validate() throws {
+            try behaviors?.forEach {
+                try $0.validate()
+            }
+            try validate(behaviors, name:"behaviors", max: 100)
+            try validate(securityProfileDescription, name:"securityProfileDescription", max: 1000)
+            try validate(securityProfileDescription, name:"securityProfileDescription", pattern: "[\\p{Graph}\\x20]*")
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case additionalMetricsToRetain = "additionalMetricsToRetain"
             case alertTargets = "alertTargets"
@@ -10503,6 +13107,7 @@ extension IoT {
             AWSShapeMember(label: "roleArn", required: false, type: .string), 
             AWSShapeMember(label: "streamId", location: .uri(locationName: "streamId"), required: true, type: .string)
         ]
+
         /// The description of the stream.
         public let description: String?
         /// The files associated with the stream.
@@ -10517,6 +13122,21 @@ extension IoT {
             self.files = files
             self.roleArn = roleArn
             self.streamId = streamId
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try files?.forEach {
+                try $0.validate()
+            }
+            try validate(files, name:"files", max: 50)
+            try validate(files, name:"files", min: 1)
+            try validate(roleArn, name:"roleArn", max: 2048)
+            try validate(roleArn, name:"roleArn", min: 20)
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10534,6 +13154,7 @@ extension IoT {
             AWSShapeMember(label: "streamId", required: false, type: .string), 
             AWSShapeMember(label: "streamVersion", required: false, type: .integer)
         ]
+
         /// A description of the stream.
         public let description: String?
         /// The stream ARN.
@@ -10550,6 +13171,16 @@ extension IoT {
             self.streamVersion = streamVersion
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 2028)
+            try validate(description, name:"description", pattern: "[^\\p{C}]+")
+            try validate(streamId, name:"streamId", max: 128)
+            try validate(streamId, name:"streamId", min: 1)
+            try validate(streamId, name:"streamId", pattern: "[a-zA-Z0-9_-]+")
+            try validate(streamVersion, name:"streamVersion", max: 65535)
+            try validate(streamVersion, name:"streamVersion", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case streamArn = "streamArn"
@@ -10564,6 +13195,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupName", location: .uri(locationName: "thingGroupName"), required: true, type: .string), 
             AWSShapeMember(label: "thingGroupProperties", required: true, type: .structure)
         ]
+
         /// The expected version of the thing group. If this does not match the version of the thing group being updated, the update will fail.
         public let expectedVersion: Int64?
         /// The thing group to update.
@@ -10577,6 +13209,13 @@ extension IoT {
             self.thingGroupProperties = thingGroupProperties
         }
 
+        public func validate() throws {
+            try validate(thingGroupName, name:"thingGroupName", max: 128)
+            try validate(thingGroupName, name:"thingGroupName", min: 1)
+            try validate(thingGroupName, name:"thingGroupName", pattern: "[a-zA-Z0-9:_-]+")
+            try thingGroupProperties.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case expectedVersion = "expectedVersion"
             case thingGroupName = "thingGroupName"
@@ -10588,6 +13227,7 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "version", required: false, type: .long)
         ]
+
         /// The version of the updated thing group.
         public let version: Int64?
 
@@ -10607,6 +13247,7 @@ extension IoT {
             AWSShapeMember(label: "thingGroupsToRemove", required: false, type: .list), 
             AWSShapeMember(label: "thingName", required: false, type: .string)
         ]
+
         /// Override dynamic thing groups with static thing groups when 10-group limit is reached. If a thing belongs to 10 thing groups, and one or more of those groups are dynamic thing groups, adding a thing to a static group removes the thing from the last dynamic group.
         public let overrideDynamicGroups: Bool?
         /// The groups to which the thing will be added.
@@ -10623,6 +13264,22 @@ extension IoT {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try thingGroupsToAdd?.forEach {
+                try validate($0, name:"thingGroupsToAdd[]", max: 128)
+                try validate($0, name:"thingGroupsToAdd[]", min: 1)
+                try validate($0, name:"thingGroupsToAdd[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
+            try thingGroupsToRemove?.forEach {
+                try validate($0, name:"thingGroupsToRemove[]", max: 128)
+                try validate($0, name:"thingGroupsToRemove[]", min: 1)
+                try validate($0, name:"thingGroupsToRemove[]", pattern: "[a-zA-Z0-9:_-]+")
+            }
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case overrideDynamicGroups = "overrideDynamicGroups"
             case thingGroupsToAdd = "thingGroupsToAdd"
@@ -10632,6 +13289,7 @@ extension IoT {
     }
 
     public struct UpdateThingGroupsForThingResponse: AWSShape {
+
 
         public init() {
         }
@@ -10646,6 +13304,7 @@ extension IoT {
             AWSShapeMember(label: "thingName", location: .uri(locationName: "thingName"), required: true, type: .string), 
             AWSShapeMember(label: "thingTypeName", required: false, type: .string)
         ]
+
         /// A list of thing attributes, a JSON string containing name-value pairs. For example:  {\"attributes\":{\"name1\":\"value2\"}}  This data is used to add new attributes or update existing attributes.
         public let attributePayload: AttributePayload?
         /// The expected version of the thing record in the registry. If the version of the record in the registry does not match the expected version specified in the request, the UpdateThing request is rejected with a VersionConflictException.
@@ -10665,6 +13324,15 @@ extension IoT {
             self.thingTypeName = thingTypeName
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingTypeName, name:"thingTypeName", max: 128)
+            try validate(thingTypeName, name:"thingTypeName", min: 1)
+            try validate(thingTypeName, name:"thingTypeName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributePayload = "attributePayload"
             case expectedVersion = "expectedVersion"
@@ -10676,6 +13344,7 @@ extension IoT {
 
     public struct UpdateThingResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -10685,11 +13354,19 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "behaviors", required: true, type: .list)
         ]
+
         /// Specifies the behaviors that, when violated by a device (thing), cause an alert.
         public let behaviors: [Behavior]
 
         public init(behaviors: [Behavior]) {
             self.behaviors = behaviors
+        }
+
+        public func validate() throws {
+            try behaviors.forEach {
+                try $0.validate()
+            }
+            try validate(behaviors, name:"behaviors", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10702,6 +13379,7 @@ extension IoT {
             AWSShapeMember(label: "valid", required: false, type: .boolean), 
             AWSShapeMember(label: "validationErrors", required: false, type: .list)
         ]
+
         /// True if the behaviors were valid.
         public let valid: Bool?
         /// The list of any errors found in the behaviors.
@@ -10710,6 +13388,12 @@ extension IoT {
         public init(valid: Bool? = nil, validationErrors: [ValidationError]? = nil) {
             self.valid = valid
             self.validationErrors = validationErrors
+        }
+
+        public func validate() throws {
+            try validationErrors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10722,11 +13406,16 @@ extension IoT {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "errorMessage", required: false, type: .string)
         ]
+
         /// The description of an error found in the behaviors.
         public let errorMessage: String?
 
         public init(errorMessage: String? = nil) {
             self.errorMessage = errorMessage
+        }
+
+        public func validate() throws {
+            try validate(errorMessage, name:"errorMessage", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -10744,6 +13433,7 @@ extension IoT {
             AWSShapeMember(label: "violationEventType", required: false, type: .enum), 
             AWSShapeMember(label: "violationId", required: false, type: .string)
         ]
+
         /// The behavior which was violated.
         public let behavior: Behavior?
         /// The value of the metric (the measurement).
@@ -10767,6 +13457,20 @@ extension IoT {
             self.violationEventTime = violationEventTime
             self.violationEventType = violationEventType
             self.violationId = violationId
+        }
+
+        public func validate() throws {
+            try behavior?.validate()
+            try metricValue?.validate()
+            try validate(securityProfileName, name:"securityProfileName", max: 128)
+            try validate(securityProfileName, name:"securityProfileName", min: 1)
+            try validate(securityProfileName, name:"securityProfileName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+            try validate(violationId, name:"violationId", max: 128)
+            try validate(violationId, name:"violationId", min: 1)
+            try validate(violationId, name:"violationId", pattern: "[a-zA-Z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {

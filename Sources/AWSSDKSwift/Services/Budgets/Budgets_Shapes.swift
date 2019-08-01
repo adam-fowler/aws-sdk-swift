@@ -18,6 +18,7 @@ extension Budgets {
             AWSShapeMember(label: "TimePeriod", required: false, type: .structure), 
             AWSShapeMember(label: "TimeUnit", required: true, type: .enum)
         ]
+
         /// The total amount of cost, usage, RI utilization, or RI coverage that you want to track with your budget.  BudgetLimit is required for cost or usage budgets, but optional for RI utilization or coverage budgets. RI utilization or coverage budgets default to 100, which is the only valid value for RI utilization or coverage budgets. You can't use BudgetLimit with PlannedBudgetLimits for CreateBudget and UpdateBudget actions. 
         public let budgetLimit: Spend?
         /// The name of a budget. The name must be unique within an account. The : and \ characters aren't allowed in BudgetName.
@@ -52,6 +53,14 @@ extension Budgets {
             self.timeUnit = timeUnit
         }
 
+        public func validate() throws {
+            try budgetLimit?.validate()
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try calculatedSpend?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case budgetLimit = "BudgetLimit"
             case budgetName = "BudgetName"
@@ -75,6 +84,7 @@ extension Budgets {
             AWSShapeMember(label: "CostTypes", required: false, type: .structure), 
             AWSShapeMember(label: "TimeUnit", required: false, type: .enum)
         ]
+
         /// A list of amounts of cost or usage that you created budgets for, compared to your actual costs or usage.
         public let budgetedAndActualAmountsList: [BudgetedAndActualAmounts]?
         public let budgetName: String?
@@ -92,6 +102,15 @@ extension Budgets {
             self.costFilters = costFilters
             self.costTypes = costTypes
             self.timeUnit = timeUnit
+        }
+
+        public func validate() throws {
+            try budgetedAndActualAmountsList?.forEach {
+                try $0.validate()
+            }
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -118,6 +137,7 @@ extension Budgets {
             AWSShapeMember(label: "BudgetedAmount", required: false, type: .structure), 
             AWSShapeMember(label: "TimePeriod", required: false, type: .structure)
         ]
+
         /// Your actual costs or usage for a budget period.
         public let actualAmount: Spend?
         /// The amount of cost or usage that you created the budget for.
@@ -129,6 +149,11 @@ extension Budgets {
             self.actualAmount = actualAmount
             self.budgetedAmount = budgetedAmount
             self.timePeriod = timePeriod
+        }
+
+        public func validate() throws {
+            try actualAmount?.validate()
+            try budgetedAmount?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -143,6 +168,7 @@ extension Budgets {
             AWSShapeMember(label: "ActualSpend", required: true, type: .structure), 
             AWSShapeMember(label: "ForecastedSpend", required: false, type: .structure)
         ]
+
         /// The amount of cost, usage, or RI units that you have used.
         public let actualSpend: Spend
         /// The amount of cost, usage, or RI units that you are forecasted to use.
@@ -151,6 +177,11 @@ extension Budgets {
         public init(actualSpend: Spend, forecastedSpend: Spend? = nil) {
             self.actualSpend = actualSpend
             self.forecastedSpend = forecastedSpend
+        }
+
+        public func validate() throws {
+            try actualSpend.validate()
+            try forecastedSpend?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -180,6 +211,7 @@ extension Budgets {
             AWSShapeMember(label: "UseAmortized", required: false, type: .boolean), 
             AWSShapeMember(label: "UseBlended", required: false, type: .boolean)
         ]
+
         /// Specifies whether a budget includes credits. The default value is true.
         public let includeCredit: Bool?
         /// Specifies whether a budget includes discounts. The default value is true.
@@ -238,6 +270,7 @@ extension Budgets {
             AWSShapeMember(label: "Budget", required: true, type: .structure), 
             AWSShapeMember(label: "NotificationsWithSubscribers", required: false, type: .list)
         ]
+
         /// The accountId that is associated with the budget.
         public let accountId: String
         /// The budget object that you want to create.
@@ -251,6 +284,17 @@ extension Budgets {
             self.notificationsWithSubscribers = notificationsWithSubscribers
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try budget.validate()
+            try notificationsWithSubscribers?.forEach {
+                try $0.validate()
+            }
+            try validate(notificationsWithSubscribers, name:"notificationsWithSubscribers", max: 5)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budget = "Budget"
@@ -259,6 +303,7 @@ extension Budgets {
     }
 
     public struct CreateBudgetResponse: AWSShape {
+
 
         public init() {
         }
@@ -272,6 +317,7 @@ extension Budgets {
             AWSShapeMember(label: "Notification", required: true, type: .structure), 
             AWSShapeMember(label: "Subscribers", required: true, type: .list)
         ]
+
         /// The accountId that is associated with the budget that you want to create a notification for.
         public let accountId: String
         /// The name of the budget that you want AWS to notify you about. Budget names must be unique within an account.
@@ -288,6 +334,21 @@ extension Budgets {
             self.subscribers = subscribers
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try notification.validate()
+            try subscribers.forEach {
+                try $0.validate()
+            }
+            try validate(subscribers, name:"subscribers", max: 11)
+            try validate(subscribers, name:"subscribers", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -297,6 +358,7 @@ extension Budgets {
     }
 
     public struct CreateNotificationResponse: AWSShape {
+
 
         public init() {
         }
@@ -310,6 +372,7 @@ extension Budgets {
             AWSShapeMember(label: "Notification", required: true, type: .structure), 
             AWSShapeMember(label: "Subscriber", required: true, type: .structure)
         ]
+
         /// The accountId that is associated with the budget that you want to create a subscriber for.
         public let accountId: String
         /// The name of the budget that you want to subscribe to. Budget names must be unique within an account.
@@ -326,6 +389,17 @@ extension Budgets {
             self.subscriber = subscriber
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try notification.validate()
+            try subscriber.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -335,6 +409,7 @@ extension Budgets {
     }
 
     public struct CreateSubscriberResponse: AWSShape {
+
 
         public init() {
         }
@@ -346,6 +421,7 @@ extension Budgets {
             AWSShapeMember(label: "AccountId", required: true, type: .string), 
             AWSShapeMember(label: "BudgetName", required: true, type: .string)
         ]
+
         /// The accountId that is associated with the budget that you want to delete.
         public let accountId: String
         /// The name of the budget that you want to delete.
@@ -356,6 +432,15 @@ extension Budgets {
             self.budgetName = budgetName
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -363,6 +448,7 @@ extension Budgets {
     }
 
     public struct DeleteBudgetResponse: AWSShape {
+
 
         public init() {
         }
@@ -375,6 +461,7 @@ extension Budgets {
             AWSShapeMember(label: "BudgetName", required: true, type: .string), 
             AWSShapeMember(label: "Notification", required: true, type: .structure)
         ]
+
         /// The accountId that is associated with the budget whose notification you want to delete.
         public let accountId: String
         /// The name of the budget whose notification you want to delete.
@@ -388,6 +475,16 @@ extension Budgets {
             self.notification = notification
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try notification.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -396,6 +493,7 @@ extension Budgets {
     }
 
     public struct DeleteNotificationResponse: AWSShape {
+
 
         public init() {
         }
@@ -409,6 +507,7 @@ extension Budgets {
             AWSShapeMember(label: "Notification", required: true, type: .structure), 
             AWSShapeMember(label: "Subscriber", required: true, type: .structure)
         ]
+
         /// The accountId that is associated with the budget whose subscriber you want to delete.
         public let accountId: String
         /// The name of the budget whose subscriber you want to delete.
@@ -425,6 +524,17 @@ extension Budgets {
             self.subscriber = subscriber
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try notification.validate()
+            try subscriber.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -434,6 +544,7 @@ extension Budgets {
     }
 
     public struct DeleteSubscriberResponse: AWSShape {
+
 
         public init() {
         }
@@ -448,6 +559,7 @@ extension Budgets {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TimePeriod", required: false, type: .structure)
         ]
+
         public let accountId: String
         public let budgetName: String
         public let maxResults: Int32?
@@ -461,6 +573,20 @@ extension Budgets {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.timePeriod = timePeriod
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -477,6 +603,7 @@ extension Budgets {
             AWSShapeMember(label: "BudgetPerformanceHistory", required: false, type: .structure), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The history of how often the budget has gone into an ALARM state. For DAILY budgets, the history saves the state of the budget for the last 60 days. For MONTHLY budgets, the history saves the state of the budget for the current month plus the last 12 months. For QUARTERLY budgets, the history saves the state of the budget for the last four quarters.
         public let budgetPerformanceHistory: BudgetPerformanceHistory?
         public let nextToken: String?
@@ -484,6 +611,13 @@ extension Budgets {
         public init(budgetPerformanceHistory: BudgetPerformanceHistory? = nil, nextToken: String? = nil) {
             self.budgetPerformanceHistory = budgetPerformanceHistory
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try budgetPerformanceHistory?.validate()
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -497,6 +631,7 @@ extension Budgets {
             AWSShapeMember(label: "AccountId", required: true, type: .string), 
             AWSShapeMember(label: "BudgetName", required: true, type: .string)
         ]
+
         /// The accountId that is associated with the budget that you want a description of.
         public let accountId: String
         /// The name of the budget that you want a description of.
@@ -505,6 +640,15 @@ extension Budgets {
         public init(accountId: String, budgetName: String) {
             self.accountId = accountId
             self.budgetName = budgetName
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -517,11 +661,16 @@ extension Budgets {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Budget", required: false, type: .structure)
         ]
+
         /// The description of the budget.
         public let budget: Budget?
 
         public init(budget: Budget? = nil) {
             self.budget = budget
+        }
+
+        public func validate() throws {
+            try budget?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -535,6 +684,7 @@ extension Budgets {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The accountId that is associated with the budgets that you want descriptions of.
         public let accountId: String
         /// An optional integer that represents how many entries a paginated response contains. The maximum is 100.
@@ -546,6 +696,17 @@ extension Budgets {
             self.accountId = accountId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -560,6 +721,7 @@ extension Budgets {
             AWSShapeMember(label: "Budgets", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list of budgets.
         public let budgets: [Budget]?
         /// The pagination token in the service response that indicates the next set of results that you can retrieve.
@@ -568,6 +730,15 @@ extension Budgets {
         public init(budgets: [Budget]? = nil, nextToken: String? = nil) {
             self.budgets = budgets
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try budgets?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -583,6 +754,7 @@ extension Budgets {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The accountId that is associated with the budget whose notifications you want descriptions of.
         public let accountId: String
         /// The name of the budget whose notifications you want descriptions of.
@@ -599,6 +771,20 @@ extension Budgets {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -612,6 +798,7 @@ extension Budgets {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Notifications", required: false, type: .list)
         ]
+
         /// The pagination token in the service response that indicates the next set of results that you can retrieve.
         public let nextToken: String?
         /// A list of notifications that are associated with a budget.
@@ -620,6 +807,15 @@ extension Budgets {
         public init(nextToken: String? = nil, notifications: [Notification]? = nil) {
             self.nextToken = nextToken
             self.notifications = notifications
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
+            try notifications?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -636,6 +832,7 @@ extension Budgets {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Notification", required: true, type: .structure)
         ]
+
         /// The accountId that is associated with the budget whose subscribers you want descriptions of.
         public let accountId: String
         /// The name of the budget whose subscribers you want descriptions of.
@@ -655,6 +852,21 @@ extension Budgets {
             self.notification = notification
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
+            try notification.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -669,6 +881,7 @@ extension Budgets {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Subscribers", required: false, type: .list)
         ]
+
         /// The pagination token in the service response that indicates the next set of results that you can retrieve.
         public let nextToken: String?
         /// A list of subscribers that are associated with a notification.
@@ -677,6 +890,17 @@ extension Budgets {
         public init(nextToken: String? = nil, subscribers: [Subscriber]? = nil) {
             self.nextToken = nextToken
             self.subscribers = subscribers
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 2147483647)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(nextToken, name:"nextToken", pattern: ".*")
+            try subscribers?.forEach {
+                try $0.validate()
+            }
+            try validate(subscribers, name:"subscribers", max: 11)
+            try validate(subscribers, name:"subscribers", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -693,6 +917,7 @@ extension Budgets {
             AWSShapeMember(label: "Threshold", required: true, type: .double), 
             AWSShapeMember(label: "ThresholdType", required: false, type: .enum)
         ]
+
         /// The comparison that is used for this notification.
         public let comparisonOperator: ComparisonOperator
         /// Whether this notification is in alarm. If a budget notification is in the ALARM state, you have passed the set threshold for the budget.
@@ -710,6 +935,11 @@ extension Budgets {
             self.notificationType = notificationType
             self.threshold = threshold
             self.thresholdType = thresholdType
+        }
+
+        public func validate() throws {
+            try validate(threshold, name:"threshold", max: 1000000000)
+            try validate(threshold, name:"threshold", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -738,6 +968,7 @@ extension Budgets {
             AWSShapeMember(label: "Notification", required: true, type: .structure), 
             AWSShapeMember(label: "Subscribers", required: true, type: .list)
         ]
+
         /// The notification that is associated with a budget.
         public let notification: Notification
         /// A list of subscribers who are subscribed to this notification.
@@ -746,6 +977,15 @@ extension Budgets {
         public init(notification: Notification, subscribers: [Subscriber]) {
             self.notification = notification
             self.subscribers = subscribers
+        }
+
+        public func validate() throws {
+            try notification.validate()
+            try subscribers.forEach {
+                try $0.validate()
+            }
+            try validate(subscribers, name:"subscribers", max: 11)
+            try validate(subscribers, name:"subscribers", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -759,6 +999,7 @@ extension Budgets {
             AWSShapeMember(label: "Amount", required: true, type: .string), 
             AWSShapeMember(label: "Unit", required: true, type: .string)
         ]
+
         /// The cost or usage amount that is associated with a budget forecast, actual spend, or budget threshold.
         public let amount: String
         /// The unit of measurement that is used for the budget forecast, actual spend, or budget threshold, such as dollars or GB.
@@ -767,6 +1008,15 @@ extension Budgets {
         public init(amount: String, unit: String) {
             self.amount = amount
             self.unit = unit
+        }
+
+        public func validate() throws {
+            try validate(amount, name:"amount", max: 2147483647)
+            try validate(amount, name:"amount", min: 1)
+            try validate(amount, name:"amount", pattern: "([0-9]*\\.)?[0-9]+")
+            try validate(unit, name:"unit", max: 2147483647)
+            try validate(unit, name:"unit", min: 1)
+            try validate(unit, name:"unit", pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -780,6 +1030,7 @@ extension Budgets {
             AWSShapeMember(label: "Address", required: true, type: .string), 
             AWSShapeMember(label: "SubscriptionType", required: true, type: .enum)
         ]
+
         /// The address that AWS sends budget notifications to, either an SNS topic or an email. AWS validates the address for a CreateSubscriber request with the .* regex.
         public let address: String
         /// The type of notification that AWS sends to a subscriber.
@@ -788,6 +1039,12 @@ extension Budgets {
         public init(address: String, subscriptionType: SubscriptionType) {
             self.address = address
             self.subscriptionType = subscriptionType
+        }
+
+        public func validate() throws {
+            try validate(address, name:"address", max: 2147483647)
+            try validate(address, name:"address", min: 1)
+            try validate(address, name:"address", pattern: "(?s).*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -813,6 +1070,7 @@ extension Budgets {
             AWSShapeMember(label: "End", required: false, type: .timestamp), 
             AWSShapeMember(label: "Start", required: false, type: .timestamp)
         ]
+
         /// The end date for a budget. If you didn't specify an end date, AWS set your end date to 06/15/87 00:00 UTC. The defaults are the same for the AWS Billing and Cost Management console and the API. After the end date, AWS deletes the budget and all associated notifications and subscribers. You can change your end date with the UpdateBudget operation.
         public let end: TimeStamp?
         /// The start date for a budget. If you created your budget and didn't specify a start date, AWS defaults to the start of your chosen time period (DAILY, MONTHLY, QUARTERLY, or ANNUALLY). For example, if you created your budget on January 24, 2018, chose DAILY, and didn't set a start date, AWS set your start date to 01/24/18 00:00 UTC. If you chose MONTHLY, AWS set your start date to 01/01/18 00:00 UTC. The defaults are the same for the AWS Billing and Cost Management console and the API. You can change your start date with the UpdateBudget operation.
@@ -842,6 +1100,7 @@ extension Budgets {
             AWSShapeMember(label: "AccountId", required: true, type: .string), 
             AWSShapeMember(label: "NewBudget", required: true, type: .structure)
         ]
+
         /// The accountId that is associated with the budget that you want to update.
         public let accountId: String
         /// The budget that you want to update your budget to.
@@ -852,6 +1111,13 @@ extension Budgets {
             self.newBudget = newBudget
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try newBudget.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case newBudget = "NewBudget"
@@ -859,6 +1125,7 @@ extension Budgets {
     }
 
     public struct UpdateBudgetResponse: AWSShape {
+
 
         public init() {
         }
@@ -872,6 +1139,7 @@ extension Budgets {
             AWSShapeMember(label: "NewNotification", required: true, type: .structure), 
             AWSShapeMember(label: "OldNotification", required: true, type: .structure)
         ]
+
         /// The accountId that is associated with the budget whose notification you want to update.
         public let accountId: String
         /// The name of the budget whose notification you want to update.
@@ -888,6 +1156,17 @@ extension Budgets {
             self.oldNotification = oldNotification
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try newNotification.validate()
+            try oldNotification.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -897,6 +1176,7 @@ extension Budgets {
     }
 
     public struct UpdateNotificationResponse: AWSShape {
+
 
         public init() {
         }
@@ -911,6 +1191,7 @@ extension Budgets {
             AWSShapeMember(label: "Notification", required: true, type: .structure), 
             AWSShapeMember(label: "OldSubscriber", required: true, type: .structure)
         ]
+
         /// The accountId that is associated with the budget whose subscriber you want to update.
         public let accountId: String
         /// The name of the budget whose subscriber you want to update.
@@ -930,6 +1211,18 @@ extension Budgets {
             self.oldSubscriber = oldSubscriber
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(accountId, name:"accountId", pattern: "\\d{12}")
+            try validate(budgetName, name:"budgetName", max: 100)
+            try validate(budgetName, name:"budgetName", min: 1)
+            try validate(budgetName, name:"budgetName", pattern: "[^:\\\\]+")
+            try newSubscriber.validate()
+            try notification.validate()
+            try oldSubscriber.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case budgetName = "BudgetName"
@@ -940,6 +1233,7 @@ extension Budgets {
     }
 
     public struct UpdateSubscriberResponse: AWSShape {
+
 
         public init() {
         }

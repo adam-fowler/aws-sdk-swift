@@ -11,6 +11,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Used", required: false, type: .integer)
         ]
+
         ///  The maximum allowed value. 
         public let maximum: Int32?
         ///  The attribute name. The following are supported attribute names.     ServerLimit: The number of current servers/maximum number of servers allowed. By default, you can have a maximum of 10 servers.     ManualBackupLimit: The number of current manual backups/maximum number of backups allowed. By default, you can have a maximum of 50 manual backups saved.   
@@ -37,6 +38,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NodeName", required: true, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// Engine attributes used for associating the node.   Attributes accepted in a AssociateNode request for Chef     CHEF_ORGANIZATION: The Chef organization with which the node is associated. By default only one organization named default can exist.     CHEF_NODE_PUBLIC_KEY: A PEM-formatted public key. This key is required for the chef-client agent to access the Chef API.     Attributes accepted in a AssociateNode request for Puppet     PUPPET_NODE_CSR: A PEM-formatted certificate-signing request (CSR) that is created by the node.   
         public let engineAttributes: [EngineAttribute]
         /// The name of the node. 
@@ -50,6 +52,13 @@ extension OpsWorksCM {
             self.serverName = serverName
         }
 
+        public func validate() throws {
+            try validate(nodeName, name:"nodeName", pattern: "^[\\-\\p{Alnum}_:.]+$")
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case engineAttributes = "EngineAttributes"
             case nodeName = "NodeName"
@@ -61,6 +70,7 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NodeAssociationStatusToken", required: false, type: .string)
         ]
+
         /// Contains a token which can be passed to the DescribeNodeAssociationStatus API call to get the status of the association request. 
         public let nodeAssociationStatusToken: String?
 
@@ -98,6 +108,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "ToolsVersion", required: false, type: .string), 
             AWSShapeMember(label: "UserArn", required: false, type: .string)
         ]
+
         /// The ARN of the backup. 
         public let backupArn: String?
         ///  The generated ID of the backup. Example: myServerName-yyyyMMddHHmmssSSS 
@@ -168,6 +179,15 @@ extension OpsWorksCM {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(backupId, name:"backupId", max: 79)
+            try validate(preferredBackupWindow, name:"preferredBackupWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+            try validate(preferredMaintenanceWindow, name:"preferredMaintenanceWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case backupArn = "BackupArn"
             case backupId = "BackupId"
@@ -213,6 +233,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "Description", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         ///  A user-defined description of the backup. 
         public let description: String?
         /// The name of the server that you want to back up. 
@@ -221,6 +242,12 @@ extension OpsWorksCM {
         public init(description: String? = nil, serverName: String) {
             self.description = description
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -233,11 +260,16 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Backup", required: false, type: .structure)
         ]
+
         /// Backup created by request.
         public let backup: Backup?
 
         public init(backup: Backup? = nil) {
             self.backup = backup
+        }
+
+        public func validate() throws {
+            try backup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -265,6 +297,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "ServiceRoleArn", required: true, type: .string), 
             AWSShapeMember(label: "SubnetIds", required: false, type: .list)
         ]
+
         ///  Associate a public IP address with a server that you are launching. Valid values are true or false. The default value is true. 
         public let associatePublicIpAddress: Bool?
         ///  If you specify this field, AWS OpsWorks CM creates the server by using the backup represented by BackupId. 
@@ -320,6 +353,18 @@ extension OpsWorksCM {
             self.subnetIds = subnetIds
         }
 
+        public func validate() throws {
+            try validate(backupId, name:"backupId", max: 79)
+            try validate(backupRetentionCount, name:"backupRetentionCount", min: 1)
+            try validate(instanceProfileArn, name:"instanceProfileArn", pattern: "arn:aws:iam::[0-9]{12}:instance-profile/.*")
+            try validate(preferredBackupWindow, name:"preferredBackupWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+            try validate(preferredMaintenanceWindow, name:"preferredMaintenanceWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+            try validate(serviceRoleArn, name:"serviceRoleArn", pattern: "arn:aws:iam::[0-9]{12}:role/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associatePublicIpAddress = "AssociatePublicIpAddress"
             case backupId = "BackupId"
@@ -345,11 +390,16 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Server", required: false, type: .structure)
         ]
+
         /// The server that is created by the request. 
         public let server: Server?
 
         public init(server: Server? = nil) {
             self.server = server
+        }
+
+        public func validate() throws {
+            try server?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -361,11 +411,16 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "BackupId", required: true, type: .string)
         ]
+
         /// The ID of the backup to delete. Run the DescribeBackups command to get a list of backup IDs. Backup IDs are in the format ServerName-yyyyMMddHHmmssSSS. 
         public let backupId: String
 
         public init(backupId: String) {
             self.backupId = backupId
+        }
+
+        public func validate() throws {
+            try validate(backupId, name:"backupId", max: 79)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -374,6 +429,7 @@ extension OpsWorksCM {
     }
 
     public struct DeleteBackupResponse: AWSShape {
+
 
         public init() {
         }
@@ -384,11 +440,18 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// The ID of the server to delete.
         public let serverName: String
 
         public init(serverName: String) {
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -398,12 +461,14 @@ extension OpsWorksCM {
 
     public struct DeleteServerResponse: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct DescribeAccountAttributesRequest: AWSShape {
+
 
         public init() {
         }
@@ -414,6 +479,7 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Attributes", required: false, type: .list)
         ]
+
         ///  The attributes that are currently set for the account. 
         public let attributes: [AccountAttribute]?
 
@@ -433,6 +499,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: false, type: .string)
         ]
+
         /// Describes a single backup. 
         public let backupId: String?
         /// This is not currently implemented for DescribeBackups requests.
@@ -449,6 +516,14 @@ extension OpsWorksCM {
             self.serverName = serverName
         }
 
+        public func validate() throws {
+            try validate(backupId, name:"backupId", max: 79)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case backupId = "BackupId"
             case maxResults = "MaxResults"
@@ -462,6 +537,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "Backups", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Contains the response to a DescribeBackups request. 
         public let backups: [Backup]?
         /// This is not currently implemented for DescribeBackups requests.
@@ -470,6 +546,12 @@ extension OpsWorksCM {
         public init(backups: [Backup]? = nil, nextToken: String? = nil) {
             self.backups = backups
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try backups?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -484,6 +566,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// To receive a paginated response, use this parameter to specify the maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a NextToken value that you can assign to the NextToken request parameter to get the next set of results. 
         public let maxResults: Int32?
         /// NextToken is a string that is returned in some command responses. It indicates that not all entries have been returned, and that you must run at least one more request to get remaining items. To get remaining results, call DescribeEvents again, and assign the token from the previous results as the value of the nextToken parameter. If there are no more results, the response object's nextToken parameter value is null. Setting a nextToken value that was not returned in your previous results causes an InvalidNextTokenException to occur. 
@@ -495,6 +578,13 @@ extension OpsWorksCM {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -509,6 +599,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ServerEvents", required: false, type: .list)
         ]
+
         /// NextToken is a string that is returned in some command responses. It indicates that not all entries have been returned, and that you must run at least one more request to get remaining items. To get remaining results, call DescribeEvents again, and assign the token from the previous results as the value of the nextToken parameter. If there are no more results, the response object's nextToken parameter value is null. Setting a nextToken value that was not returned in your previous results causes an InvalidNextTokenException to occur. 
         public let nextToken: String?
         /// Contains the response to a DescribeEvents request. 
@@ -530,6 +621,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NodeAssociationStatusToken", required: true, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// The token returned in either the AssociateNodeResponse or the DisassociateNodeResponse. 
         public let nodeAssociationStatusToken: String
         /// The name of the server from which to disassociate the node. 
@@ -538,6 +630,12 @@ extension OpsWorksCM {
         public init(nodeAssociationStatusToken: String, serverName: String) {
             self.nodeAssociationStatusToken = nodeAssociationStatusToken
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -551,6 +649,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "EngineAttributes", required: false, type: .list), 
             AWSShapeMember(label: "NodeAssociationStatus", required: false, type: .enum)
         ]
+
         /// Attributes specific to the node association. In Puppet, the attibute PUPPET_NODE_CERT contains the signed certificate (the result of the CSR). 
         public let engineAttributes: [EngineAttribute]?
         /// The status of the association or disassociation request.   Possible values:     SUCCESS: The association or disassociation succeeded.     FAILED: The association or disassociation failed.     IN_PROGRESS: The association or disassociation is still in progress.   
@@ -573,6 +672,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: false, type: .string)
         ]
+
         /// This is not currently implemented for DescribeServers requests. 
         public let maxResults: Int32?
         /// This is not currently implemented for DescribeServers requests. 
@@ -584,6 +684,13 @@ extension OpsWorksCM {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -598,6 +705,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Servers", required: false, type: .list)
         ]
+
         /// This is not currently implemented for DescribeServers requests. 
         public let nextToken: String?
         /// Contains the response to a DescribeServers request.  For Puppet Server: DescribeServersResponse$Servers$EngineAttributes contains PUPPET_API_CA_CERT. This is the PEM-encoded CA certificate that is used by the Puppet API over TCP port number 8140. The CA certificate is also used to sign node certificates.
@@ -606,6 +714,12 @@ extension OpsWorksCM {
         public init(nextToken: String? = nil, servers: [Server]? = nil) {
             self.nextToken = nextToken
             self.servers = servers
+        }
+
+        public func validate() throws {
+            try servers?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -620,6 +734,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "NodeName", required: true, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// Engine attributes that are used for disassociating the node. No attributes are required for Puppet.   Attributes required in a DisassociateNode request for Chef     CHEF_ORGANIZATION: The Chef organization with which the node was associated. By default only one organization named default can exist.   
         public let engineAttributes: [EngineAttribute]?
         /// The name of the client node. 
@@ -633,6 +748,13 @@ extension OpsWorksCM {
             self.serverName = serverName
         }
 
+        public func validate() throws {
+            try validate(nodeName, name:"nodeName", pattern: "^[\\-\\p{Alnum}_:.]+$")
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case engineAttributes = "EngineAttributes"
             case nodeName = "NodeName"
@@ -644,6 +766,7 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NodeAssociationStatusToken", required: false, type: .string)
         ]
+
         /// Contains a token which can be passed to the DescribeNodeAssociationStatus API call to get the status of the disassociation request. 
         public let nodeAssociationStatusToken: String?
 
@@ -661,6 +784,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The name of the engine attribute. 
         public let name: String?
         /// The value of the engine attribute. 
@@ -683,6 +807,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "InputAttributes", required: false, type: .list), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// The name of the export attribute. Currently, the supported export attribute is Userdata. This exports a user data script that includes parameters and values provided in the InputAttributes list.
         public let exportAttributeName: String
         /// The list of engine attributes. The list type is EngineAttribute. An EngineAttribute list item is a pair that includes an attribute name and its value. For the Userdata ExportAttributeName, the following are supported engine attribute names.    RunList In Chef, a list of roles or recipes that are run in the specified order. In Puppet, this parameter is ignored.    OrganizationName In Chef, an organization name. AWS OpsWorks for Chef Automate always creates the organization default. In Puppet, this parameter is ignored.    NodeEnvironment In Chef, a node environment (for example, development, staging, or one-box). In Puppet, this parameter is ignored.    NodeClientVersion In Chef, the version of the Chef engine (three numbers separated by dots, such as 13.8.5). If this attribute is empty, OpsWorks for Chef Automate uses the most current version. In Puppet, this parameter is ignored.  
@@ -694,6 +819,12 @@ extension OpsWorksCM {
             self.exportAttributeName = exportAttributeName
             self.inputAttributes = inputAttributes
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -708,6 +839,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "EngineAttribute", required: false, type: .structure), 
             AWSShapeMember(label: "ServerName", required: false, type: .string)
         ]
+
         /// The requested engine attribute pair with attribute name and value.
         public let engineAttribute: EngineAttribute?
         /// The server name used in the request.
@@ -716,6 +848,12 @@ extension OpsWorksCM {
         public init(engineAttribute: EngineAttribute? = nil, serverName: String? = nil) {
             self.engineAttribute = engineAttribute
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -744,6 +882,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "KeyPair", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         ///  The ID of the backup that you want to use to restore a server. 
         public let backupId: String
         ///  The type of the instance to create. Valid values must be specified in the following format: ^([cm][34]|t2).* For example, m5.large. Valid values are m5.large, r5.xlarge, and r5.2xlarge. If you do not specify this parameter, RestoreServer uses the instance type from the specified backup. 
@@ -760,6 +899,13 @@ extension OpsWorksCM {
             self.serverName = serverName
         }
 
+        public func validate() throws {
+            try validate(backupId, name:"backupId", max: 79)
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case backupId = "BackupId"
             case instanceType = "InstanceType"
@@ -769,6 +915,7 @@ extension OpsWorksCM {
     }
 
     public struct RestoreServerResponse: AWSShape {
+
 
         public init() {
         }
@@ -801,6 +948,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "StatusReason", required: false, type: .string), 
             AWSShapeMember(label: "SubnetIds", required: false, type: .list)
         ]
+
         /// Associate a public IP address with a server that you are launching. 
         public let associatePublicIpAddress: Bool?
         /// The number of automated backups to keep. 
@@ -874,6 +1022,11 @@ extension OpsWorksCM {
             self.subnetIds = subnetIds
         }
 
+        public func validate() throws {
+            try validate(preferredBackupWindow, name:"preferredBackupWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+            try validate(preferredMaintenanceWindow, name:"preferredMaintenanceWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case associatePublicIpAddress = "AssociatePublicIpAddress"
             case backupRetentionCount = "BackupRetentionCount"
@@ -908,6 +1061,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "Message", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: false, type: .string)
         ]
+
         /// The time when the event occurred. 
         public let createdAt: TimeStamp?
         /// The Amazon S3 URL of the event's log file.
@@ -954,6 +1108,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "EngineAttributes", required: false, type: .list), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// Engine attributes that are specific to the server on which you want to run maintenance. 
         public let engineAttributes: [EngineAttribute]?
         /// The name of the server on which to run maintenance. 
@@ -962,6 +1117,12 @@ extension OpsWorksCM {
         public init(engineAttributes: [EngineAttribute]? = nil, serverName: String) {
             self.engineAttributes = engineAttributes
             self.serverName = serverName
+        }
+
+        public func validate() throws {
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -974,11 +1135,16 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Server", required: false, type: .structure)
         ]
+
         /// Contains the response to a StartMaintenance request. 
         public let server: Server?
 
         public init(server: Server? = nil) {
             self.server = server
+        }
+
+        public func validate() throws {
+            try server?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -992,6 +1158,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "AttributeValue", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// The name of the engine attribute to update. 
         public let attributeName: String
         /// The value to set for the attribute. 
@@ -1005,6 +1172,15 @@ extension OpsWorksCM {
             self.serverName = serverName
         }
 
+        public func validate() throws {
+            try validate(attributeName, name:"attributeName", max: 64)
+            try validate(attributeName, name:"attributeName", min: 1)
+            try validate(attributeName, name:"attributeName", pattern: "[A-Z][A-Z0-9_]*")
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributeName = "AttributeName"
             case attributeValue = "AttributeValue"
@@ -1016,11 +1192,16 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Server", required: false, type: .structure)
         ]
+
         /// Contains the response to an UpdateServerEngineAttributes request. 
         public let server: Server?
 
         public init(server: Server? = nil) {
             self.server = server
+        }
+
+        public func validate() throws {
+            try server?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1036,6 +1217,7 @@ extension OpsWorksCM {
             AWSShapeMember(label: "PreferredMaintenanceWindow", required: false, type: .string), 
             AWSShapeMember(label: "ServerName", required: true, type: .string)
         ]
+
         /// Sets the number of automated backups that you want to keep. 
         public let backupRetentionCount: Int32?
         /// Setting DisableAutomatedBackup to true disables automated or scheduled backups. Automated backups are enabled by default. 
@@ -1053,6 +1235,14 @@ extension OpsWorksCM {
             self.serverName = serverName
         }
 
+        public func validate() throws {
+            try validate(preferredBackupWindow, name:"preferredBackupWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+            try validate(preferredMaintenanceWindow, name:"preferredMaintenanceWindow", pattern: "^((Mon|Tue|Wed|Thu|Fri|Sat|Sun):)?([0-1][0-9]|2[0-3]):[0-5][0-9]$")
+            try validate(serverName, name:"serverName", max: 40)
+            try validate(serverName, name:"serverName", min: 1)
+            try validate(serverName, name:"serverName", pattern: "[a-zA-Z][a-zA-Z0-9\\-]*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case backupRetentionCount = "BackupRetentionCount"
             case disableAutomatedBackup = "DisableAutomatedBackup"
@@ -1066,11 +1256,16 @@ extension OpsWorksCM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Server", required: false, type: .structure)
         ]
+
         /// Contains the response to a UpdateServer request. 
         public let server: Server?
 
         public init(server: Server? = nil) {
             self.server = server
+        }
+
+        public func validate() throws {
+            try server?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

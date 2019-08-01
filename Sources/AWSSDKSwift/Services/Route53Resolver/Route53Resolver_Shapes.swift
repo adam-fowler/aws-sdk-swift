@@ -10,6 +10,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "IpAddress", required: true, type: .structure), 
             AWSShapeMember(label: "ResolverEndpointId", required: true, type: .string)
         ]
+
         /// Either the IPv4 address that you want to add to a resolver endpoint or a subnet ID. If you specify a subnet ID, Resolver chooses an IP address for you from the available IPs in the specified subnet.
         public let ipAddress: IpAddressUpdate
         /// The ID of the resolver endpoint that you want to associate IP addresses with.
@@ -18,6 +19,12 @@ extension Route53Resolver {
         public init(ipAddress: IpAddressUpdate, resolverEndpointId: String) {
             self.ipAddress = ipAddress
             self.resolverEndpointId = resolverEndpointId
+        }
+
+        public func validate() throws {
+            try ipAddress.validate()
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -30,11 +37,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpoint", required: false, type: .structure)
         ]
+
         /// The response to an AssociateResolverEndpointIpAddress request.
         public let resolverEndpoint: ResolverEndpoint?
 
         public init(resolverEndpoint: ResolverEndpoint? = nil) {
             self.resolverEndpoint = resolverEndpoint
+        }
+
+        public func validate() throws {
+            try resolverEndpoint?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -48,6 +60,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "ResolverRuleId", required: true, type: .string), 
             AWSShapeMember(label: "VPCId", required: true, type: .string)
         ]
+
         /// A name for the association that you're creating between a resolver rule and a VPC.
         public let name: String?
         /// The ID of the resolver rule that you want to associate with the VPC. To list the existing resolver rules, use ListResolverRules.
@@ -61,6 +74,15 @@ extension Route53Resolver {
             self.vPCId = vPCId
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try validate(resolverRuleId, name:"resolverRuleId", max: 64)
+            try validate(resolverRuleId, name:"resolverRuleId", min: 1)
+            try validate(vPCId, name:"vPCId", max: 64)
+            try validate(vPCId, name:"vPCId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case resolverRuleId = "ResolverRuleId"
@@ -72,11 +94,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRuleAssociation", required: false, type: .structure)
         ]
+
         /// Information about the AssociateResolverRule request, including the status of the request.
         public let resolverRuleAssociation: ResolverRuleAssociation?
 
         public init(resolverRuleAssociation: ResolverRuleAssociation? = nil) {
             self.resolverRuleAssociation = resolverRuleAssociation
+        }
+
+        public func validate() throws {
+            try resolverRuleAssociation?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -93,6 +120,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "SecurityGroupIds", required: true, type: .list), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// A unique string that identifies the request and that allows failed requests to be retried without the risk of executing the operation twice. CreatorRequestId can be any unique string, for example, a date/time stamp. 
         public let creatorRequestId: String
         /// Specify the applicable value:    INBOUND: Resolver forwards DNS queries to the DNS service for a VPC from your network or another VPC    OUTBOUND: Resolver forwards DNS queries from the DNS service for a VPC to your network or another VPC  
@@ -115,6 +143,22 @@ extension Route53Resolver {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(creatorRequestId, name:"creatorRequestId", max: 255)
+            try validate(creatorRequestId, name:"creatorRequestId", min: 1)
+            try ipAddresses.forEach {
+                try $0.validate()
+            }
+            try validate(ipAddresses, name:"ipAddresses", max: 10)
+            try validate(ipAddresses, name:"ipAddresses", min: 1)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try securityGroupIds.forEach {
+                try validate($0, name:"securityGroupIds[]", max: 64)
+                try validate($0, name:"securityGroupIds[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creatorRequestId = "CreatorRequestId"
             case direction = "Direction"
@@ -129,11 +173,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpoint", required: false, type: .structure)
         ]
+
         /// Information about the CreateResolverEndpoint request, including the status of the request.
         public let resolverEndpoint: ResolverEndpoint?
 
         public init(resolverEndpoint: ResolverEndpoint? = nil) {
             self.resolverEndpoint = resolverEndpoint
+        }
+
+        public func validate() throws {
+            try resolverEndpoint?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -151,6 +200,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "TargetIps", required: false, type: .list)
         ]
+
         /// A unique string that identifies the request and that allows failed requests to be retried without the risk of executing the operation twice. CreatorRequestId can be any unique string, for example, a date/time stamp. 
         public let creatorRequestId: String
         /// DNS queries for this domain name are forwarded to the IP addresses that you specify in TargetIps. If a query matches multiple resolver rules (example.com and www.example.com), outbound DNS queries are routed using the resolver rule that contains the most specific domain name (www.example.com).
@@ -176,6 +226,21 @@ extension Route53Resolver {
             self.targetIps = targetIps
         }
 
+        public func validate() throws {
+            try validate(creatorRequestId, name:"creatorRequestId", max: 255)
+            try validate(creatorRequestId, name:"creatorRequestId", min: 1)
+            try validate(domainName, name:"domainName", max: 256)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
+            try targetIps?.forEach {
+                try $0.validate()
+            }
+            try validate(targetIps, name:"targetIps", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creatorRequestId = "CreatorRequestId"
             case domainName = "DomainName"
@@ -191,11 +256,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRule", required: false, type: .structure)
         ]
+
         /// Information about the CreateResolverRule request, including the status of the request.
         public let resolverRule: ResolverRule?
 
         public init(resolverRule: ResolverRule? = nil) {
             self.resolverRule = resolverRule
+        }
+
+        public func validate() throws {
+            try resolverRule?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -207,11 +277,17 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpointId", required: true, type: .string)
         ]
+
         /// The ID of the resolver endpoint that you want to delete.
         public let resolverEndpointId: String
 
         public init(resolverEndpointId: String) {
             self.resolverEndpointId = resolverEndpointId
+        }
+
+        public func validate() throws {
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -223,11 +299,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpoint", required: false, type: .structure)
         ]
+
         /// Information about the DeleteResolverEndpoint request, including the status of the request.
         public let resolverEndpoint: ResolverEndpoint?
 
         public init(resolverEndpoint: ResolverEndpoint? = nil) {
             self.resolverEndpoint = resolverEndpoint
+        }
+
+        public func validate() throws {
+            try resolverEndpoint?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -239,11 +320,17 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRuleId", required: true, type: .string)
         ]
+
         /// The ID of the resolver rule that you want to delete.
         public let resolverRuleId: String
 
         public init(resolverRuleId: String) {
             self.resolverRuleId = resolverRuleId
+        }
+
+        public func validate() throws {
+            try validate(resolverRuleId, name:"resolverRuleId", max: 64)
+            try validate(resolverRuleId, name:"resolverRuleId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -255,11 +342,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRule", required: false, type: .structure)
         ]
+
         /// Information about the DeleteResolverRule request, including the status of the request.
         public let resolverRule: ResolverRule?
 
         public init(resolverRule: ResolverRule? = nil) {
             self.resolverRule = resolverRule
+        }
+
+        public func validate() throws {
+            try resolverRule?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -272,6 +364,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "IpAddress", required: true, type: .structure), 
             AWSShapeMember(label: "ResolverEndpointId", required: true, type: .string)
         ]
+
         /// The IPv4 address that you want to remove from a resolver endpoint.
         public let ipAddress: IpAddressUpdate
         /// The ID of the resolver endpoint that you want to disassociate an IP address from.
@@ -280,6 +373,12 @@ extension Route53Resolver {
         public init(ipAddress: IpAddressUpdate, resolverEndpointId: String) {
             self.ipAddress = ipAddress
             self.resolverEndpointId = resolverEndpointId
+        }
+
+        public func validate() throws {
+            try ipAddress.validate()
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -292,11 +391,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpoint", required: false, type: .structure)
         ]
+
         /// The response to an DisassociateResolverEndpointIpAddress request.
         public let resolverEndpoint: ResolverEndpoint?
 
         public init(resolverEndpoint: ResolverEndpoint? = nil) {
             self.resolverEndpoint = resolverEndpoint
+        }
+
+        public func validate() throws {
+            try resolverEndpoint?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -309,6 +413,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "ResolverRuleId", required: true, type: .string), 
             AWSShapeMember(label: "VPCId", required: true, type: .string)
         ]
+
         /// The ID of the resolver rule that you want to disassociate from the specified VPC.
         public let resolverRuleId: String
         /// The ID of the VPC that you want to disassociate the resolver rule from.
@@ -317,6 +422,13 @@ extension Route53Resolver {
         public init(resolverRuleId: String, vPCId: String) {
             self.resolverRuleId = resolverRuleId
             self.vPCId = vPCId
+        }
+
+        public func validate() throws {
+            try validate(resolverRuleId, name:"resolverRuleId", max: 64)
+            try validate(resolverRuleId, name:"resolverRuleId", min: 1)
+            try validate(vPCId, name:"vPCId", max: 64)
+            try validate(vPCId, name:"vPCId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -329,11 +441,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRuleAssociation", required: false, type: .structure)
         ]
+
         /// Information about the DisassociateResolverRule request, including the status of the request.
         public let resolverRuleAssociation: ResolverRuleAssociation?
 
         public init(resolverRuleAssociation: ResolverRuleAssociation? = nil) {
             self.resolverRuleAssociation = resolverRuleAssociation
+        }
+
+        public func validate() throws {
+            try resolverRuleAssociation?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -346,6 +463,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "Values", required: false, type: .list)
         ]
+
         /// When you're using a List operation and you want the operation to return a subset of objects, such as resolver endpoints or resolver rules, the name of the parameter that you want to use to filter objects. For example, to list only inbound resolver endpoints, specify Direction for the value of Name.
         public let name: String?
         /// When you're using a List operation and you want the operation to return a subset of objects, such as resolver endpoints or resolver rules, the value of the parameter that you want to use to filter objects. For example, to list only inbound resolver endpoints, specify INBOUND for the value of Values.
@@ -354,6 +472,15 @@ extension Route53Resolver {
         public init(name: String? = nil, values: [String]? = nil) {
             self.name = name
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try values?.forEach {
+                try validate($0, name:"values[]", max: 64)
+                try validate($0, name:"values[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -366,11 +493,17 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpointId", required: true, type: .string)
         ]
+
         /// The ID of the resolver endpoint that you want to get information about.
         public let resolverEndpointId: String
 
         public init(resolverEndpointId: String) {
             self.resolverEndpointId = resolverEndpointId
+        }
+
+        public func validate() throws {
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -382,11 +515,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpoint", required: false, type: .structure)
         ]
+
         /// Information about the resolver endpoint that you specified in a GetResolverEndpoint request.
         public let resolverEndpoint: ResolverEndpoint?
 
         public init(resolverEndpoint: ResolverEndpoint? = nil) {
             self.resolverEndpoint = resolverEndpoint
+        }
+
+        public func validate() throws {
+            try resolverEndpoint?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -398,11 +536,17 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRuleAssociationId", required: true, type: .string)
         ]
+
         /// The ID of the resolver rule association that you want to get information about.
         public let resolverRuleAssociationId: String
 
         public init(resolverRuleAssociationId: String) {
             self.resolverRuleAssociationId = resolverRuleAssociationId
+        }
+
+        public func validate() throws {
+            try validate(resolverRuleAssociationId, name:"resolverRuleAssociationId", max: 64)
+            try validate(resolverRuleAssociationId, name:"resolverRuleAssociationId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -414,11 +558,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRuleAssociation", required: false, type: .structure)
         ]
+
         /// Information about the resolver rule association that you specified in a GetResolverRuleAssociation request.
         public let resolverRuleAssociation: ResolverRuleAssociation?
 
         public init(resolverRuleAssociation: ResolverRuleAssociation? = nil) {
             self.resolverRuleAssociation = resolverRuleAssociation
+        }
+
+        public func validate() throws {
+            try resolverRuleAssociation?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -430,11 +579,17 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", required: true, type: .string)
         ]
+
         /// The ID of the resolver rule policy that you want to get information about.
         public let arn: String
 
         public init(arn: String) {
             self.arn = arn
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 255)
+            try validate(arn, name:"arn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -446,11 +601,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRulePolicy", required: false, type: .string)
         ]
+
         /// Information about the resolver rule policy that you specified in a GetResolverRulePolicy request.
         public let resolverRulePolicy: String?
 
         public init(resolverRulePolicy: String? = nil) {
             self.resolverRulePolicy = resolverRulePolicy
+        }
+
+        public func validate() throws {
+            try validate(resolverRulePolicy, name:"resolverRulePolicy", max: 5000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -462,11 +622,17 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRuleId", required: true, type: .string)
         ]
+
         /// The ID of the resolver rule that you want to get information about.
         public let resolverRuleId: String
 
         public init(resolverRuleId: String) {
             self.resolverRuleId = resolverRuleId
+        }
+
+        public func validate() throws {
+            try validate(resolverRuleId, name:"resolverRuleId", max: 64)
+            try validate(resolverRuleId, name:"resolverRuleId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -478,11 +644,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRule", required: false, type: .structure)
         ]
+
         /// Information about the resolver rule that you specified in a GetResolverRule request.
         public let resolverRule: ResolverRule?
 
         public init(resolverRule: ResolverRule? = nil) {
             self.resolverRule = resolverRule
+        }
+
+        public func validate() throws {
+            try resolverRule?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -495,6 +666,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Ip", required: false, type: .string), 
             AWSShapeMember(label: "SubnetId", required: true, type: .string)
         ]
+
         /// The IP address that you want to use for DNS queries.
         public let ip: String?
         /// The subnet that contains the IP address.
@@ -503,6 +675,13 @@ extension Route53Resolver {
         public init(ip: String? = nil, subnetId: String) {
             self.ip = ip
             self.subnetId = subnetId
+        }
+
+        public func validate() throws {
+            try validate(ip, name:"ip", max: 36)
+            try validate(ip, name:"ip", min: 7)
+            try validate(subnetId, name:"subnetId", max: 32)
+            try validate(subnetId, name:"subnetId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -521,6 +700,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "StatusMessage", required: false, type: .string), 
             AWSShapeMember(label: "SubnetId", required: false, type: .string)
         ]
+
         /// The date and time that the IP address was created, in Unix time format and Coordinated Universal Time (UTC).
         public let creationTime: String?
         /// One IP address that the resolver endpoint uses for DNS queries.
@@ -544,6 +724,20 @@ extension Route53Resolver {
             self.status = status
             self.statusMessage = statusMessage
             self.subnetId = subnetId
+        }
+
+        public func validate() throws {
+            try validate(creationTime, name:"creationTime", max: 40)
+            try validate(creationTime, name:"creationTime", min: 20)
+            try validate(ip, name:"ip", max: 36)
+            try validate(ip, name:"ip", min: 7)
+            try validate(ipId, name:"ipId", max: 64)
+            try validate(ipId, name:"ipId", min: 1)
+            try validate(modificationTime, name:"modificationTime", max: 40)
+            try validate(modificationTime, name:"modificationTime", min: 20)
+            try validate(statusMessage, name:"statusMessage", max: 255)
+            try validate(subnetId, name:"subnetId", max: 32)
+            try validate(subnetId, name:"subnetId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -577,6 +771,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "IpId", required: false, type: .string), 
             AWSShapeMember(label: "SubnetId", required: false, type: .string)
         ]
+
         /// The new IP address.
         public let ip: String?
         ///  Only when removing an IP address from a resolver endpoint: The ID of the IP address that you want to remove. To get this ID, use GetResolverEndpoint.
@@ -588,6 +783,15 @@ extension Route53Resolver {
             self.ip = ip
             self.ipId = ipId
             self.subnetId = subnetId
+        }
+
+        public func validate() throws {
+            try validate(ip, name:"ip", max: 36)
+            try validate(ip, name:"ip", min: 7)
+            try validate(ipId, name:"ipId", max: 64)
+            try validate(ipId, name:"ipId", min: 1)
+            try validate(subnetId, name:"subnetId", max: 32)
+            try validate(subnetId, name:"subnetId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -603,6 +807,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResolverEndpointId", required: true, type: .string)
         ]
+
         /// The maximum number of IP addresses that you want to return in the response to a ListResolverEndpointIpAddresses request. If you don't specify a value for MaxResults, Resolver returns up to 100 IP addresses. 
         public let maxResults: Int32?
         /// For the first ListResolverEndpointIpAddresses request, omit this value. If the specified resolver endpoint has more than MaxResults IP addresses, you can submit another ListResolverEndpointIpAddresses request to get the next group of IP addresses. In the next request, specify the value of NextToken from the previous response. 
@@ -614,6 +819,13 @@ extension Route53Resolver {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resolverEndpointId = resolverEndpointId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -629,6 +841,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The IP addresses that DNS queries pass through on their way to your network (outbound endpoint) or on the way to Resolver (inbound endpoint).
         public let ipAddresses: [IpAddressResponse]?
         /// The value that you specified for MaxResults in the request.
@@ -640,6 +853,14 @@ extension Route53Resolver {
             self.ipAddresses = ipAddresses
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try ipAddresses?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -655,6 +876,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An optional specification to return a subset of resolver endpoints, such as all inbound resolver endpoints.  If you submit a second or subsequent ListResolverEndpoints request and specify the NextToken parameter, you must use the same values for Filters, if any, as in the previous request. 
         public let filters: [Filter]?
         /// The maximum number of resolver endpoints that you want to return in the response to a ListResolverEndpoints request. If you don't specify a value for MaxResults, Resolver returns up to 100 resolver endpoints. 
@@ -666,6 +888,14 @@ extension Route53Resolver {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -681,6 +911,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResolverEndpoints", required: false, type: .list)
         ]
+
         /// The value that you specified for MaxResults in the request.
         public let maxResults: Int32?
         /// If more than MaxResults IP addresses match the specified criteria, you can submit another ListResolverEndpoint request to get the next group of results. In the next request, specify the value of NextToken from the previous response. 
@@ -692,6 +923,14 @@ extension Route53Resolver {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resolverEndpoints = resolverEndpoints
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try resolverEndpoints?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -707,6 +946,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An optional specification to return a subset of resolver rules, such as resolver rules that are associated with the same VPC ID.  If you submit a second or subsequent ListResolverRuleAssociations request and specify the NextToken parameter, you must use the same values for Filters, if any, as in the previous request. 
         public let filters: [Filter]?
         /// The maximum number of rule associations that you want to return in the response to a ListResolverRuleAssociations request. If you don't specify a value for MaxResults, Resolver returns up to 100 rule associations. 
@@ -718,6 +958,14 @@ extension Route53Resolver {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -733,6 +981,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResolverRuleAssociations", required: false, type: .list)
         ]
+
         /// The value that you specified for MaxResults in the request.
         public let maxResults: Int32?
         /// If more than MaxResults rule associations match the specified criteria, you can submit another ListResolverRuleAssociation request to get the next group of results. In the next request, specify the value of NextToken from the previous response. 
@@ -744,6 +993,14 @@ extension Route53Resolver {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resolverRuleAssociations = resolverRuleAssociations
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try resolverRuleAssociations?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -759,6 +1016,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An optional specification to return a subset of resolver rules, such as all resolver rules that are associated with the same resolver endpoint.  If you submit a second or subsequent ListResolverRules request and specify the NextToken parameter, you must use the same values for Filters, if any, as in the previous request. 
         public let filters: [Filter]?
         /// The maximum number of resolver rules that you want to return in the response to a ListResolverRules request. If you don't specify a value for MaxResults, Resolver returns up to 100 resolver rules.
@@ -770,6 +1028,14 @@ extension Route53Resolver {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -785,6 +1051,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResolverRules", required: false, type: .list)
         ]
+
         /// The value that you specified for MaxResults in the request.
         public let maxResults: Int32?
         /// If more than MaxResults resolver rules match the specified criteria, you can submit another ListResolverRules request to get the next group of results. In the next request, specify the value of NextToken from the previous response. 
@@ -796,6 +1063,14 @@ extension Route53Resolver {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resolverRules = resolverRules
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try resolverRules?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -811,6 +1086,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The maximum number of tags that you want to return in the response to a ListTagsForResource request. If you don't specify a value for MaxResults, Resolver returns up to 100 tags.
         public let maxResults: Int32?
         /// For the first ListTagsForResource request, omit this value. If you have more than MaxResults tags, you can submit another ListTagsForResource request to get the next group of tags for the resource. In the next request, specify the value of NextToken from the previous response. 
@@ -822,6 +1098,13 @@ extension Route53Resolver {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(resourceArn, name:"resourceArn", max: 255)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -836,6 +1119,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// If more than MaxResults tags match the specified criteria, you can submit another ListTagsForResource request to get the next group of results. In the next request, specify the value of NextToken from the previous response. 
         public let nextToken: String?
         /// The tags that are associated with the resource that you specified in the ListTagsForResource request.
@@ -857,6 +1141,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Arn", required: true, type: .string), 
             AWSShapeMember(label: "ResolverRulePolicy", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the account that you want to grant permissions to.
         public let arn: String
         /// An AWS Identity and Access Management policy statement that lists the permissions that you want to grant to another AWS account.
@@ -865,6 +1150,12 @@ extension Route53Resolver {
         public init(arn: String, resolverRulePolicy: String) {
             self.arn = arn
             self.resolverRulePolicy = resolverRulePolicy
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 255)
+            try validate(arn, name:"arn", min: 1)
+            try validate(resolverRulePolicy, name:"resolverRulePolicy", max: 5000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -877,6 +1168,7 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ReturnValue", required: false, type: .boolean)
         ]
+
         /// Whether the PutResolverRulePolicy request was successful.
         public let returnValue: Bool?
 
@@ -904,6 +1196,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "StatusMessage", required: false, type: .string)
         ]
+
         /// The ARN (Amazon Resource Name) for the resolver endpoint.
         public let arn: String?
         /// The date and time that the endpoint was created, in Unix time format and Coordinated Universal Time (UTC).
@@ -942,6 +1235,28 @@ extension Route53Resolver {
             self.securityGroupIds = securityGroupIds
             self.status = status
             self.statusMessage = statusMessage
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 255)
+            try validate(arn, name:"arn", min: 1)
+            try validate(creationTime, name:"creationTime", max: 40)
+            try validate(creationTime, name:"creationTime", min: 20)
+            try validate(creatorRequestId, name:"creatorRequestId", max: 255)
+            try validate(creatorRequestId, name:"creatorRequestId", min: 1)
+            try validate(hostVPCId, name:"hostVPCId", max: 64)
+            try validate(hostVPCId, name:"hostVPCId", min: 1)
+            try validate(id, name:"id", max: 64)
+            try validate(id, name:"id", min: 1)
+            try validate(modificationTime, name:"modificationTime", max: 40)
+            try validate(modificationTime, name:"modificationTime", min: 20)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try securityGroupIds?.forEach {
+                try validate($0, name:"securityGroupIds[]", max: 64)
+                try validate($0, name:"securityGroupIds[]", min: 1)
+            }
+            try validate(statusMessage, name:"statusMessage", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -991,6 +1306,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "StatusMessage", required: false, type: .string), 
             AWSShapeMember(label: "TargetIps", required: false, type: .list)
         ]
+
         /// The ARN (Amazon Resource Name) for the resolver rule specified by Id.
         public let arn: String?
         /// A unique string that you specified when you created the resolver rule. CreatorRequestIdidentifies the request and allows failed requests to be retried without the risk of executing the operation twice. 
@@ -1031,6 +1347,28 @@ extension Route53Resolver {
             self.targetIps = targetIps
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 255)
+            try validate(arn, name:"arn", min: 1)
+            try validate(creatorRequestId, name:"creatorRequestId", max: 255)
+            try validate(creatorRequestId, name:"creatorRequestId", min: 1)
+            try validate(domainName, name:"domainName", max: 256)
+            try validate(domainName, name:"domainName", min: 1)
+            try validate(id, name:"id", max: 64)
+            try validate(id, name:"id", min: 1)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try validate(ownerId, name:"ownerId", max: 32)
+            try validate(ownerId, name:"ownerId", min: 12)
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
+            try validate(statusMessage, name:"statusMessage", max: 255)
+            try targetIps?.forEach {
+                try $0.validate()
+            }
+            try validate(targetIps, name:"targetIps", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case creatorRequestId = "CreatorRequestId"
@@ -1056,6 +1394,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "StatusMessage", required: false, type: .string), 
             AWSShapeMember(label: "VPCId", required: false, type: .string)
         ]
+
         /// The ID of the association between a resolver rule and a VPC. Resolver assigns this value when you submit an AssociateResolverRule request.
         public let id: String?
         /// The name of an association between a resolver rule and a VPC.
@@ -1076,6 +1415,18 @@ extension Route53Resolver {
             self.status = status
             self.statusMessage = statusMessage
             self.vPCId = vPCId
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 64)
+            try validate(id, name:"id", min: 1)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try validate(resolverRuleId, name:"resolverRuleId", max: 64)
+            try validate(resolverRuleId, name:"resolverRuleId", min: 1)
+            try validate(statusMessage, name:"statusMessage", max: 255)
+            try validate(vPCId, name:"vPCId", max: 64)
+            try validate(vPCId, name:"vPCId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1103,6 +1454,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "ResolverEndpointId", required: false, type: .string), 
             AWSShapeMember(label: "TargetIps", required: false, type: .list)
         ]
+
         /// The new name for the resolver rule. The name that you specify appears in the Resolver dashboard in the Route 53 console. 
         public let name: String?
         /// The ID of the new outbound resolver endpoint that you want to use to route DNS queries to the IP addresses that you specify in TargetIps.
@@ -1114,6 +1466,17 @@ extension Route53Resolver {
             self.name = name
             self.resolverEndpointId = resolverEndpointId
             self.targetIps = targetIps
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
+            try targetIps?.forEach {
+                try $0.validate()
+            }
+            try validate(targetIps, name:"targetIps", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1150,6 +1513,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Key", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The name for the tag. For example, if you want to associate Resolver resources with the account IDs of your customers for billing purposes, the value of Key might be account-id.
         public let key: String?
         /// The value for the tag. For example, if Key is account-id, then Value might be the ID of the customer account that you're creating the resource for.
@@ -1171,6 +1535,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the resource that you want to add tags to. To get the ARN for a resource, use the applicable Get or List command:     GetResolverEndpoint     GetResolverRule     GetResolverRuleAssociation     ListResolverEndpoints     ListResolverRuleAssociations     ListResolverRules   
         public let resourceArn: String
         /// The tags that you want to add to the specified resource.
@@ -1181,6 +1546,11 @@ extension Route53Resolver {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 255)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tags = "Tags"
@@ -1188,6 +1558,7 @@ extension Route53Resolver {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1199,6 +1570,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Ip", required: true, type: .string), 
             AWSShapeMember(label: "Port", required: false, type: .integer)
         ]
+
         /// One IP address that you want to forward DNS queries to. You can specify only IPv4 addresses.
         public let ip: String
         /// The port at Ip that you want to forward DNS queries to.
@@ -1207,6 +1579,13 @@ extension Route53Resolver {
         public init(ip: String, port: Int32? = nil) {
             self.ip = ip
             self.port = port
+        }
+
+        public func validate() throws {
+            try validate(ip, name:"ip", max: 36)
+            try validate(ip, name:"ip", min: 7)
+            try validate(port, name:"port", max: 65535)
+            try validate(port, name:"port", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1220,6 +1599,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the resource that you want to remove tags from. To get the ARN for a resource, use the applicable Get or List command:     GetResolverEndpoint     GetResolverRule     GetResolverRuleAssociation     ListResolverEndpoints     ListResolverRuleAssociations     ListResolverRules   
         public let resourceArn: String
         /// The tags that you want to remove to the specified resource.
@@ -1230,6 +1610,11 @@ extension Route53Resolver {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 255)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tagKeys = "TagKeys"
@@ -1237,6 +1622,7 @@ extension Route53Resolver {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1248,6 +1634,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "ResolverEndpointId", required: true, type: .string)
         ]
+
         /// The name of the resolver endpoint that you want to update.
         public let name: String?
         /// The ID of the resolver endpoint that you want to update.
@@ -1256,6 +1643,13 @@ extension Route53Resolver {
         public init(name: String? = nil, resolverEndpointId: String) {
             self.name = name
             self.resolverEndpointId = resolverEndpointId
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", pattern: "(?!^[0-9]+$)([a-zA-Z0-9-_' ']+)")
+            try validate(resolverEndpointId, name:"resolverEndpointId", max: 64)
+            try validate(resolverEndpointId, name:"resolverEndpointId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1268,11 +1662,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverEndpoint", required: false, type: .structure)
         ]
+
         /// The response to an UpdateResolverEndpoint request.
         public let resolverEndpoint: ResolverEndpoint?
 
         public init(resolverEndpoint: ResolverEndpoint? = nil) {
             self.resolverEndpoint = resolverEndpoint
+        }
+
+        public func validate() throws {
+            try resolverEndpoint?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1285,6 +1684,7 @@ extension Route53Resolver {
             AWSShapeMember(label: "Config", required: true, type: .structure), 
             AWSShapeMember(label: "ResolverRuleId", required: true, type: .string)
         ]
+
         /// The new settings for the resolver rule.
         public let config: ResolverRuleConfig
         /// The ID of the resolver rule that you want to update.
@@ -1293,6 +1693,12 @@ extension Route53Resolver {
         public init(config: ResolverRuleConfig, resolverRuleId: String) {
             self.config = config
             self.resolverRuleId = resolverRuleId
+        }
+
+        public func validate() throws {
+            try config.validate()
+            try validate(resolverRuleId, name:"resolverRuleId", max: 64)
+            try validate(resolverRuleId, name:"resolverRuleId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1305,11 +1711,16 @@ extension Route53Resolver {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResolverRule", required: false, type: .structure)
         ]
+
         /// The response to an UpdateResolverRule request.
         public let resolverRule: ResolverRule?
 
         public init(resolverRule: ResolverRule? = nil) {
             self.resolverRule = resolverRule
+        }
+
+        public func validate() throws {
+            try resolverRule?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

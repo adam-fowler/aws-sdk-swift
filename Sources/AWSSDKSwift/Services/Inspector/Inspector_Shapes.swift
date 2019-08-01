@@ -22,6 +22,7 @@ extension Inspector {
             AWSShapeMember(label: "attributes", required: true, type: .list), 
             AWSShapeMember(label: "findingArns", required: true, type: .list)
         ]
+
         /// The array of attributes that you want to assign to specified findings.
         public let attributes: [Attribute]
         /// The ARNs that specify the findings that you want to assign attributes to.
@@ -30,6 +31,20 @@ extension Inspector {
         public init(attributes: [Attribute], findingArns: [String]) {
             self.attributes = attributes
             self.findingArns = findingArns
+        }
+
+        public func validate() throws {
+            try attributes.forEach {
+                try $0.validate()
+            }
+            try validate(attributes, name:"attributes", max: 10)
+            try validate(attributes, name:"attributes", min: 0)
+            try findingArns.forEach {
+                try validate($0, name:"findingArns[]", max: 300)
+                try validate($0, name:"findingArns[]", min: 1)
+            }
+            try validate(findingArns, name:"findingArns", max: 10)
+            try validate(findingArns, name:"findingArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -42,6 +57,7 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "failedItems", required: true, type: .map)
         ]
+
         /// Attribute details that cannot be described. An error code is provided for each failed item.
         public let failedItems: [String: FailedItemDetails]
 
@@ -59,6 +75,7 @@ extension Inspector {
             AWSShapeMember(label: "agentId", required: true, type: .string), 
             AWSShapeMember(label: "assessmentRunArn", required: true, type: .string)
         ]
+
         /// ID of the agent that is running on an EC2 instance that is already participating in another started assessment run.
         public let agentId: String
         /// The ARN of the assessment run that has already been started.
@@ -67,6 +84,13 @@ extension Inspector {
         public init(agentId: String, assessmentRunArn: String) {
             self.agentId = agentId
             self.assessmentRunArn = assessmentRunArn
+        }
+
+        public func validate() throws {
+            try validate(agentId, name:"agentId", max: 128)
+            try validate(agentId, name:"agentId", min: 1)
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -80,6 +104,7 @@ extension Inspector {
             AWSShapeMember(label: "agentHealthCodes", required: true, type: .list), 
             AWSShapeMember(label: "agentHealths", required: true, type: .list)
         ]
+
         /// The detailed health state of the agent. Values can be set to IDLE, RUNNING, SHUTDOWN, UNHEALTHY, THROTTLED, and UNKNOWN. 
         public let agentHealthCodes: [AgentHealthCode]
         /// The current health state of the agent. Values can be set to HEALTHY or UNHEALTHY.
@@ -88,6 +113,13 @@ extension Inspector {
         public init(agentHealthCodes: [AgentHealthCode], agentHealths: [AgentHealth]) {
             self.agentHealthCodes = agentHealthCodes
             self.agentHealths = agentHealths
+        }
+
+        public func validate() throws {
+            try validate(agentHealthCodes, name:"agentHealthCodes", max: 10)
+            try validate(agentHealthCodes, name:"agentHealthCodes", min: 0)
+            try validate(agentHealths, name:"agentHealths", max: 10)
+            try validate(agentHealths, name:"agentHealths", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -124,6 +156,7 @@ extension Inspector {
             AWSShapeMember(label: "kernelVersion", required: false, type: .string), 
             AWSShapeMember(label: "operatingSystem", required: false, type: .string)
         ]
+
         /// The health status of the Amazon Inspector Agent.
         public let agentHealth: AgentHealth?
         /// The ID of the EC2 instance where the agent is installed.
@@ -150,6 +183,23 @@ extension Inspector {
             self.ipv4Address = ipv4Address
             self.kernelVersion = kernelVersion
             self.operatingSystem = operatingSystem
+        }
+
+        public func validate() throws {
+            try validate(agentId, name:"agentId", max: 128)
+            try validate(agentId, name:"agentId", min: 1)
+            try validate(agentVersion, name:"agentVersion", max: 128)
+            try validate(agentVersion, name:"agentVersion", min: 1)
+            try validate(autoScalingGroup, name:"autoScalingGroup", max: 256)
+            try validate(autoScalingGroup, name:"autoScalingGroup", min: 1)
+            try validate(hostname, name:"hostname", max: 256)
+            try validate(hostname, name:"hostname", min: 0)
+            try validate(ipv4Address, name:"ipv4Address", max: 15)
+            try validate(ipv4Address, name:"ipv4Address", min: 7)
+            try validate(kernelVersion, name:"kernelVersion", max: 128)
+            try validate(kernelVersion, name:"kernelVersion", min: 1)
+            try validate(operatingSystem, name:"operatingSystem", max: 256)
+            try validate(operatingSystem, name:"operatingSystem", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -182,6 +232,7 @@ extension Inspector {
             AWSShapeMember(label: "stateChanges", required: true, type: .list), 
             AWSShapeMember(label: "userAttributesForFindings", required: true, type: .list)
         ]
+
         /// The ARN of the assessment run.
         public let arn: String
         /// The ARN of the assessment template that is associated with the assessment run.
@@ -231,6 +282,35 @@ extension Inspector {
             self.userAttributesForFindings = userAttributesForFindings
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 300)
+            try validate(arn, name:"arn", min: 1)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
+            try validate(durationInSeconds, name:"durationInSeconds", max: 86400)
+            try validate(durationInSeconds, name:"durationInSeconds", min: 180)
+            try validate(name, name:"name", max: 140)
+            try validate(name, name:"name", min: 1)
+            try notifications.forEach {
+                try $0.validate()
+            }
+            try validate(notifications, name:"notifications", max: 50)
+            try validate(notifications, name:"notifications", min: 0)
+            try rulesPackageArns.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 1)
+            try validate(stateChanges, name:"stateChanges", max: 50)
+            try validate(stateChanges, name:"stateChanges", min: 0)
+            try userAttributesForFindings.forEach {
+                try $0.validate()
+            }
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", max: 10)
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case assessmentTemplateArn = "assessmentTemplateArn"
@@ -260,6 +340,7 @@ extension Inspector {
             AWSShapeMember(label: "autoScalingGroup", required: false, type: .string), 
             AWSShapeMember(label: "telemetryMetadata", required: true, type: .list)
         ]
+
         /// The current health state of the agent.
         public let agentHealth: AgentHealth
         /// The detailed health state of the agent.
@@ -285,6 +366,22 @@ extension Inspector {
             self.telemetryMetadata = telemetryMetadata
         }
 
+        public func validate() throws {
+            try validate(agentHealthDetails, name:"agentHealthDetails", max: 1000)
+            try validate(agentHealthDetails, name:"agentHealthDetails", min: 0)
+            try validate(agentId, name:"agentId", max: 128)
+            try validate(agentId, name:"agentId", min: 1)
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+            try validate(autoScalingGroup, name:"autoScalingGroup", max: 256)
+            try validate(autoScalingGroup, name:"autoScalingGroup", min: 1)
+            try telemetryMetadata.forEach {
+                try $0.validate()
+            }
+            try validate(telemetryMetadata, name:"telemetryMetadata", max: 5000)
+            try validate(telemetryMetadata, name:"telemetryMetadata", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case agentHealth = "agentHealth"
             case agentHealthCode = "agentHealthCode"
@@ -306,6 +403,7 @@ extension Inspector {
             AWSShapeMember(label: "stateChangeTimeRange", required: false, type: .structure), 
             AWSShapeMember(label: "states", required: false, type: .list)
         ]
+
         /// For a record to match a filter, the value that is specified for this data type property must inclusively match any value between the specified minimum and maximum values of the completedAt property of the AssessmentRun data type.
         public let completionTimeRange: TimestampRange?
         /// For a record to match a filter, the value that is specified for this data type property must inclusively match any value between the specified minimum and maximum values of the durationInSeconds property of the AssessmentRun data type.
@@ -331,6 +429,20 @@ extension Inspector {
             self.states = states
         }
 
+        public func validate() throws {
+            try durationRange?.validate()
+            try validate(namePattern, name:"namePattern", max: 140)
+            try validate(namePattern, name:"namePattern", min: 1)
+            try rulesPackageArns?.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
+            try validate(states, name:"states", max: 50)
+            try validate(states, name:"states", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case completionTimeRange = "completionTimeRange"
             case durationRange = "durationRange"
@@ -351,6 +463,7 @@ extension Inspector {
             AWSShapeMember(label: "snsPublishStatusCode", required: false, type: .enum), 
             AWSShapeMember(label: "snsTopicArn", required: false, type: .string)
         ]
+
         /// The date of the notification.
         public let date: TimeStamp
         /// The Boolean value that specifies whether the notification represents an error.
@@ -371,6 +484,13 @@ extension Inspector {
             self.message = message
             self.snsPublishStatusCode = snsPublishStatusCode
             self.snsTopicArn = snsTopicArn
+        }
+
+        public func validate() throws {
+            try validate(message, name:"message", max: 1000)
+            try validate(message, name:"message", min: 0)
+            try validate(snsTopicArn, name:"snsTopicArn", max: 300)
+            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -413,6 +533,7 @@ extension Inspector {
             AWSShapeMember(label: "state", required: true, type: .enum), 
             AWSShapeMember(label: "stateChangedAt", required: true, type: .timestamp)
         ]
+
         /// The assessment run state.
         public let state: AssessmentRunState
         /// The last time the assessment run state changed.
@@ -437,6 +558,7 @@ extension Inspector {
             AWSShapeMember(label: "resourceGroupArn", required: false, type: .string), 
             AWSShapeMember(label: "updatedAt", required: true, type: .timestamp)
         ]
+
         /// The ARN that specifies the Amazon Inspector assessment target.
         public let arn: String
         /// The time at which the assessment target is created.
@@ -456,6 +578,15 @@ extension Inspector {
             self.updatedAt = updatedAt
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 300)
+            try validate(arn, name:"arn", min: 1)
+            try validate(name, name:"name", max: 140)
+            try validate(name, name:"name", min: 1)
+            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
+            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdAt = "createdAt"
@@ -469,11 +600,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTargetNamePattern", required: false, type: .string)
         ]
+
         /// For a record to match a filter, an explicit value or a string that contains a wildcard that is specified for this data type property must match the value of the assessmentTargetName property of the AssessmentTarget data type.
         public let assessmentTargetNamePattern: String?
 
         public init(assessmentTargetNamePattern: String? = nil) {
             self.assessmentTargetNamePattern = assessmentTargetNamePattern
+        }
+
+        public func validate() throws {
+            try validate(assessmentTargetNamePattern, name:"assessmentTargetNamePattern", max: 140)
+            try validate(assessmentTargetNamePattern, name:"assessmentTargetNamePattern", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -493,6 +630,7 @@ extension Inspector {
             AWSShapeMember(label: "rulesPackageArns", required: true, type: .list), 
             AWSShapeMember(label: "userAttributesForFindings", required: true, type: .list)
         ]
+
         /// The ARN of the assessment template.
         public let arn: String
         /// The number of existing assessment runs associated with this assessment template. This value can be zero or a positive integer.
@@ -524,6 +662,30 @@ extension Inspector {
             self.userAttributesForFindings = userAttributesForFindings
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 300)
+            try validate(arn, name:"arn", min: 1)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
+            try validate(durationInSeconds, name:"durationInSeconds", max: 86400)
+            try validate(durationInSeconds, name:"durationInSeconds", min: 180)
+            try validate(lastAssessmentRunArn, name:"lastAssessmentRunArn", max: 300)
+            try validate(lastAssessmentRunArn, name:"lastAssessmentRunArn", min: 1)
+            try validate(name, name:"name", max: 140)
+            try validate(name, name:"name", min: 1)
+            try rulesPackageArns.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
+            try userAttributesForFindings.forEach {
+                try $0.validate()
+            }
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", max: 10)
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case assessmentRunCount = "assessmentRunCount"
@@ -543,6 +705,7 @@ extension Inspector {
             AWSShapeMember(label: "namePattern", required: false, type: .string), 
             AWSShapeMember(label: "rulesPackageArns", required: false, type: .list)
         ]
+
         /// For a record to match a filter, the value specified for this data type property must inclusively match any value between the specified minimum and maximum values of the durationInSeconds property of the AssessmentTemplate data type.
         public let durationRange: DurationRange?
         /// For a record to match a filter, an explicit value or a string that contains a wildcard that is specified for this data type property must match the value of the assessmentTemplateName property of the AssessmentTemplate data type.
@@ -554,6 +717,18 @@ extension Inspector {
             self.durationRange = durationRange
             self.namePattern = namePattern
             self.rulesPackageArns = rulesPackageArns
+        }
+
+        public func validate() throws {
+            try durationRange?.validate()
+            try validate(namePattern, name:"namePattern", max: 140)
+            try validate(namePattern, name:"namePattern", min: 1)
+            try rulesPackageArns?.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -574,6 +749,7 @@ extension Inspector {
             AWSShapeMember(label: "schemaVersion", required: true, type: .integer), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// The ID of the agent that is installed on the EC2 instance where the finding is generated.
         public let agentId: String?
         /// The ID of the Amazon Machine Image (AMI) that is installed on the EC2 instance where the finding is generated.
@@ -602,6 +778,30 @@ extension Inspector {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(agentId, name:"agentId", max: 128)
+            try validate(agentId, name:"agentId", min: 1)
+            try validate(amiId, name:"amiId", max: 256)
+            try validate(amiId, name:"amiId", min: 0)
+            try validate(autoScalingGroup, name:"autoScalingGroup", max: 256)
+            try validate(autoScalingGroup, name:"autoScalingGroup", min: 1)
+            try validate(hostname, name:"hostname", max: 256)
+            try validate(hostname, name:"hostname", min: 0)
+            try ipv4Addresses?.forEach {
+                try validate($0, name:"ipv4Addresses[]", max: 15)
+                try validate($0, name:"ipv4Addresses[]", min: 7)
+            }
+            try validate(ipv4Addresses, name:"ipv4Addresses", max: 50)
+            try validate(ipv4Addresses, name:"ipv4Addresses", min: 0)
+            try networkInterfaces?.forEach {
+                try $0.validate()
+            }
+            try validate(schemaVersion, name:"schemaVersion", min: 0)
+            try tags?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case agentId = "agentId"
             case amiId = "amiId"
@@ -624,6 +824,7 @@ extension Inspector {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "value", required: false, type: .string)
         ]
+
         /// The attribute key.
         public let key: String
         /// The value assigned to the attribute key.
@@ -632,6 +833,13 @@ extension Inspector {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -645,6 +853,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentTargetName", required: true, type: .string), 
             AWSShapeMember(label: "resourceGroupArn", required: false, type: .string)
         ]
+
         /// The user-defined name that identifies the assessment target that you want to create. The name must be unique within the AWS account.
         public let assessmentTargetName: String
         /// The ARN that specifies the resource group that is used to create the assessment target. If resourceGroupArn is not specified, all EC2 instances in the current AWS account and region are included in the assessment target.
@@ -653,6 +862,13 @@ extension Inspector {
         public init(assessmentTargetName: String, resourceGroupArn: String? = nil) {
             self.assessmentTargetName = assessmentTargetName
             self.resourceGroupArn = resourceGroupArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentTargetName, name:"assessmentTargetName", max: 140)
+            try validate(assessmentTargetName, name:"assessmentTargetName", min: 1)
+            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
+            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -665,11 +881,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTargetArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment target that is created.
         public let assessmentTargetArn: String
 
         public init(assessmentTargetArn: String) {
             self.assessmentTargetArn = assessmentTargetArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -685,6 +907,7 @@ extension Inspector {
             AWSShapeMember(label: "rulesPackageArns", required: true, type: .list), 
             AWSShapeMember(label: "userAttributesForFindings", required: false, type: .list)
         ]
+
         /// The ARN that specifies the assessment target for which you want to create the assessment template.
         public let assessmentTargetArn: String
         /// The user-defined name that identifies the assessment template that you want to create. You can create several assessment templates for an assessment target. The names of the assessment templates that correspond to a particular assessment target must be unique.
@@ -704,6 +927,26 @@ extension Inspector {
             self.userAttributesForFindings = userAttributesForFindings
         }
 
+        public func validate() throws {
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
+            try validate(assessmentTemplateName, name:"assessmentTemplateName", max: 140)
+            try validate(assessmentTemplateName, name:"assessmentTemplateName", min: 1)
+            try validate(durationInSeconds, name:"durationInSeconds", max: 86400)
+            try validate(durationInSeconds, name:"durationInSeconds", min: 180)
+            try rulesPackageArns.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
+            try userAttributesForFindings?.forEach {
+                try $0.validate()
+            }
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", max: 10)
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assessmentTargetArn = "assessmentTargetArn"
             case assessmentTemplateName = "assessmentTemplateName"
@@ -717,11 +960,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTemplateArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment template that is created.
         public let assessmentTemplateArn: String
 
         public init(assessmentTemplateArn: String) {
             self.assessmentTemplateArn = assessmentTemplateArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -733,11 +982,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTemplateArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment template for which you want to create an exclusions preview.
         public let assessmentTemplateArn: String
 
         public init(assessmentTemplateArn: String) {
             self.assessmentTemplateArn = assessmentTemplateArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -749,11 +1004,16 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "previewToken", required: true, type: .string)
         ]
+
         /// Specifies the unique identifier of the requested exclusions preview. You can use the unique identifier to retrieve the exclusions preview when running the GetExclusionsPreview API.
         public let previewToken: String
 
         public init(previewToken: String) {
             self.previewToken = previewToken
+        }
+
+        public func validate() throws {
+            try validate(previewToken, name:"previewToken", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -765,11 +1025,20 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceGroupTags", required: true, type: .list)
         ]
+
         /// A collection of keys and an array of possible values, '[{"key":"key1","values":["Value1","Value2"]},{"key":"Key2","values":["Value3"]}]'. For example,'[{"key":"Name","values":["TestEC2Instance"]}]'.
         public let resourceGroupTags: [ResourceGroupTag]
 
         public init(resourceGroupTags: [ResourceGroupTag]) {
             self.resourceGroupTags = resourceGroupTags
+        }
+
+        public func validate() throws {
+            try resourceGroupTags.forEach {
+                try $0.validate()
+            }
+            try validate(resourceGroupTags, name:"resourceGroupTags", max: 10)
+            try validate(resourceGroupTags, name:"resourceGroupTags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -781,11 +1050,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceGroupArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the resource group that is created.
         public let resourceGroupArn: String
 
         public init(resourceGroupArn: String) {
             self.resourceGroupArn = resourceGroupArn
+        }
+
+        public func validate() throws {
+            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
+            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -797,11 +1072,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentRunArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment run that you want to delete.
         public let assessmentRunArn: String
 
         public init(assessmentRunArn: String) {
             self.assessmentRunArn = assessmentRunArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -813,11 +1094,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTargetArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment target that you want to delete.
         public let assessmentTargetArn: String
 
         public init(assessmentTargetArn: String) {
             self.assessmentTargetArn = assessmentTargetArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -829,11 +1116,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTemplateArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment template that you want to delete.
         public let assessmentTemplateArn: String
 
         public init(assessmentTemplateArn: String) {
             self.assessmentTemplateArn = assessmentTemplateArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -845,11 +1138,21 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentRunArns", required: true, type: .list)
         ]
+
         /// The ARN that specifies the assessment run that you want to describe.
         public let assessmentRunArns: [String]
 
         public init(assessmentRunArns: [String]) {
             self.assessmentRunArns = assessmentRunArns
+        }
+
+        public func validate() throws {
+            try assessmentRunArns.forEach {
+                try validate($0, name:"assessmentRunArns[]", max: 300)
+                try validate($0, name:"assessmentRunArns[]", min: 1)
+            }
+            try validate(assessmentRunArns, name:"assessmentRunArns", max: 10)
+            try validate(assessmentRunArns, name:"assessmentRunArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -862,6 +1165,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentRuns", required: true, type: .list), 
             AWSShapeMember(label: "failedItems", required: true, type: .map)
         ]
+
         /// Information about the assessment run.
         public let assessmentRuns: [AssessmentRun]
         /// Assessment run details that cannot be described. An error code is provided for each failed item.
@@ -870,6 +1174,14 @@ extension Inspector {
         public init(assessmentRuns: [AssessmentRun], failedItems: [String: FailedItemDetails]) {
             self.assessmentRuns = assessmentRuns
             self.failedItems = failedItems
+        }
+
+        public func validate() throws {
+            try assessmentRuns.forEach {
+                try $0.validate()
+            }
+            try validate(assessmentRuns, name:"assessmentRuns", max: 10)
+            try validate(assessmentRuns, name:"assessmentRuns", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -882,11 +1194,21 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTargetArns", required: true, type: .list)
         ]
+
         /// The ARNs that specifies the assessment targets that you want to describe.
         public let assessmentTargetArns: [String]
 
         public init(assessmentTargetArns: [String]) {
             self.assessmentTargetArns = assessmentTargetArns
+        }
+
+        public func validate() throws {
+            try assessmentTargetArns.forEach {
+                try validate($0, name:"assessmentTargetArns[]", max: 300)
+                try validate($0, name:"assessmentTargetArns[]", min: 1)
+            }
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", max: 10)
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -899,6 +1221,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentTargets", required: true, type: .list), 
             AWSShapeMember(label: "failedItems", required: true, type: .map)
         ]
+
         /// Information about the assessment targets.
         public let assessmentTargets: [AssessmentTarget]
         /// Assessment target details that cannot be described. An error code is provided for each failed item.
@@ -907,6 +1230,14 @@ extension Inspector {
         public init(assessmentTargets: [AssessmentTarget], failedItems: [String: FailedItemDetails]) {
             self.assessmentTargets = assessmentTargets
             self.failedItems = failedItems
+        }
+
+        public func validate() throws {
+            try assessmentTargets.forEach {
+                try $0.validate()
+            }
+            try validate(assessmentTargets, name:"assessmentTargets", max: 10)
+            try validate(assessmentTargets, name:"assessmentTargets", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -919,10 +1250,20 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentTemplateArns", required: true, type: .list)
         ]
+
         public let assessmentTemplateArns: [String]
 
         public init(assessmentTemplateArns: [String]) {
             self.assessmentTemplateArns = assessmentTemplateArns
+        }
+
+        public func validate() throws {
+            try assessmentTemplateArns.forEach {
+                try validate($0, name:"assessmentTemplateArns[]", max: 300)
+                try validate($0, name:"assessmentTemplateArns[]", min: 1)
+            }
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", max: 10)
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -935,6 +1276,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentTemplates", required: true, type: .list), 
             AWSShapeMember(label: "failedItems", required: true, type: .map)
         ]
+
         /// Information about the assessment templates.
         public let assessmentTemplates: [AssessmentTemplate]
         /// Assessment template details that cannot be described. An error code is provided for each failed item.
@@ -943,6 +1285,14 @@ extension Inspector {
         public init(assessmentTemplates: [AssessmentTemplate], failedItems: [String: FailedItemDetails]) {
             self.assessmentTemplates = assessmentTemplates
             self.failedItems = failedItems
+        }
+
+        public func validate() throws {
+            try assessmentTemplates.forEach {
+                try $0.validate()
+            }
+            try validate(assessmentTemplates, name:"assessmentTemplates", max: 10)
+            try validate(assessmentTemplates, name:"assessmentTemplates", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -957,6 +1307,7 @@ extension Inspector {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "valid", required: true, type: .boolean)
         ]
+
         /// The date when the cross-account access role was registered.
         public let registeredAt: TimeStamp
         /// The ARN that specifies the IAM role that Amazon Inspector uses to access your AWS account.
@@ -968,6 +1319,11 @@ extension Inspector {
             self.registeredAt = registeredAt
             self.roleArn = roleArn
             self.valid = valid
+        }
+
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 300)
+            try validate(roleArn, name:"roleArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -982,6 +1338,7 @@ extension Inspector {
             AWSShapeMember(label: "exclusionArns", required: true, type: .list), 
             AWSShapeMember(label: "locale", required: false, type: .enum)
         ]
+
         /// The list of ARNs that specify the exclusions that you want to describe.
         public let exclusionArns: [String]
         /// The locale into which you want to translate the exclusion's title, description, and recommendation.
@@ -990,6 +1347,15 @@ extension Inspector {
         public init(exclusionArns: [String], locale: Locale? = nil) {
             self.exclusionArns = exclusionArns
             self.locale = locale
+        }
+
+        public func validate() throws {
+            try exclusionArns.forEach {
+                try validate($0, name:"exclusionArns[]", max: 300)
+                try validate($0, name:"exclusionArns[]", min: 1)
+            }
+            try validate(exclusionArns, name:"exclusionArns", max: 100)
+            try validate(exclusionArns, name:"exclusionArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1003,6 +1369,7 @@ extension Inspector {
             AWSShapeMember(label: "exclusions", required: true, type: .map), 
             AWSShapeMember(label: "failedItems", required: true, type: .map)
         ]
+
         /// Information about the exclusions.
         public let exclusions: [String: Exclusion]
         /// Exclusion details that cannot be described. An error code is provided for each failed item.
@@ -1024,6 +1391,7 @@ extension Inspector {
             AWSShapeMember(label: "findingArns", required: true, type: .list), 
             AWSShapeMember(label: "locale", required: false, type: .enum)
         ]
+
         /// The ARN that specifies the finding that you want to describe.
         public let findingArns: [String]
         /// The locale into which you want to translate a finding description, recommendation, and the short description that identifies the finding.
@@ -1032,6 +1400,15 @@ extension Inspector {
         public init(findingArns: [String], locale: Locale? = nil) {
             self.findingArns = findingArns
             self.locale = locale
+        }
+
+        public func validate() throws {
+            try findingArns.forEach {
+                try validate($0, name:"findingArns[]", max: 300)
+                try validate($0, name:"findingArns[]", min: 1)
+            }
+            try validate(findingArns, name:"findingArns", max: 10)
+            try validate(findingArns, name:"findingArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1045,6 +1422,7 @@ extension Inspector {
             AWSShapeMember(label: "failedItems", required: true, type: .map), 
             AWSShapeMember(label: "findings", required: true, type: .list)
         ]
+
         /// Finding details that cannot be described. An error code is provided for each failed item.
         public let failedItems: [String: FailedItemDetails]
         /// Information about the finding.
@@ -1053,6 +1431,14 @@ extension Inspector {
         public init(failedItems: [String: FailedItemDetails], findings: [Finding]) {
             self.failedItems = failedItems
             self.findings = findings
+        }
+
+        public func validate() throws {
+            try findings.forEach {
+                try $0.validate()
+            }
+            try validate(findings, name:"findings", max: 100)
+            try validate(findings, name:"findings", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1065,11 +1451,21 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceGroupArns", required: true, type: .list)
         ]
+
         /// The ARN that specifies the resource group that you want to describe.
         public let resourceGroupArns: [String]
 
         public init(resourceGroupArns: [String]) {
             self.resourceGroupArns = resourceGroupArns
+        }
+
+        public func validate() throws {
+            try resourceGroupArns.forEach {
+                try validate($0, name:"resourceGroupArns[]", max: 300)
+                try validate($0, name:"resourceGroupArns[]", min: 1)
+            }
+            try validate(resourceGroupArns, name:"resourceGroupArns", max: 10)
+            try validate(resourceGroupArns, name:"resourceGroupArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1082,6 +1478,7 @@ extension Inspector {
             AWSShapeMember(label: "failedItems", required: true, type: .map), 
             AWSShapeMember(label: "resourceGroups", required: true, type: .list)
         ]
+
         /// Resource group details that cannot be described. An error code is provided for each failed item.
         public let failedItems: [String: FailedItemDetails]
         /// Information about a resource group.
@@ -1090,6 +1487,14 @@ extension Inspector {
         public init(failedItems: [String: FailedItemDetails], resourceGroups: [ResourceGroup]) {
             self.failedItems = failedItems
             self.resourceGroups = resourceGroups
+        }
+
+        public func validate() throws {
+            try resourceGroups.forEach {
+                try $0.validate()
+            }
+            try validate(resourceGroups, name:"resourceGroups", max: 10)
+            try validate(resourceGroups, name:"resourceGroups", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1103,6 +1508,7 @@ extension Inspector {
             AWSShapeMember(label: "locale", required: false, type: .enum), 
             AWSShapeMember(label: "rulesPackageArns", required: true, type: .list)
         ]
+
         /// The locale that you want to translate a rules package description into.
         public let locale: Locale?
         /// The ARN that specifies the rules package that you want to describe.
@@ -1111,6 +1517,15 @@ extension Inspector {
         public init(locale: Locale? = nil, rulesPackageArns: [String]) {
             self.locale = locale
             self.rulesPackageArns = rulesPackageArns
+        }
+
+        public func validate() throws {
+            try rulesPackageArns.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 10)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1124,6 +1539,7 @@ extension Inspector {
             AWSShapeMember(label: "failedItems", required: true, type: .map), 
             AWSShapeMember(label: "rulesPackages", required: true, type: .list)
         ]
+
         /// Rules package details that cannot be described. An error code is provided for each failed item.
         public let failedItems: [String: FailedItemDetails]
         /// Information about the rules package.
@@ -1132,6 +1548,14 @@ extension Inspector {
         public init(failedItems: [String: FailedItemDetails], rulesPackages: [RulesPackage]) {
             self.failedItems = failedItems
             self.rulesPackages = rulesPackages
+        }
+
+        public func validate() throws {
+            try rulesPackages.forEach {
+                try $0.validate()
+            }
+            try validate(rulesPackages, name:"rulesPackages", max: 10)
+            try validate(rulesPackages, name:"rulesPackages", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1145,6 +1569,7 @@ extension Inspector {
             AWSShapeMember(label: "maxSeconds", required: false, type: .integer), 
             AWSShapeMember(label: "minSeconds", required: false, type: .integer)
         ]
+
         /// The maximum value of the duration range. Must be less than or equal to 604800 seconds (1 week).
         public let maxSeconds: Int32?
         /// The minimum value of the duration range. Must be greater than zero.
@@ -1153,6 +1578,13 @@ extension Inspector {
         public init(maxSeconds: Int32? = nil, minSeconds: Int32? = nil) {
             self.maxSeconds = maxSeconds
             self.minSeconds = minSeconds
+        }
+
+        public func validate() throws {
+            try validate(maxSeconds, name:"maxSeconds", max: 86400)
+            try validate(maxSeconds, name:"maxSeconds", min: 180)
+            try validate(minSeconds, name:"minSeconds", max: 86400)
+            try validate(minSeconds, name:"minSeconds", min: 180)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1166,6 +1598,7 @@ extension Inspector {
             AWSShapeMember(label: "event", required: true, type: .enum), 
             AWSShapeMember(label: "subscribedAt", required: true, type: .timestamp)
         ]
+
         /// The event for which Amazon Simple Notification Service (SNS) notifications are sent.
         public let event: InspectorEvent
         /// The time at which SubscribeToEvent is called.
@@ -1191,6 +1624,7 @@ extension Inspector {
             AWSShapeMember(label: "scopes", required: true, type: .list), 
             AWSShapeMember(label: "title", required: true, type: .string)
         ]
+
         /// The ARN that specifies the exclusion.
         public let arn: String
         /// The system-defined attributes for the exclusion.
@@ -1213,6 +1647,23 @@ extension Inspector {
             self.title = title
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 300)
+            try validate(arn, name:"arn", min: 1)
+            try attributes?.forEach {
+                try $0.validate()
+            }
+            try validate(attributes, name:"attributes", max: 50)
+            try validate(attributes, name:"attributes", min: 0)
+            try validate(description, name:"description", max: 20000)
+            try validate(description, name:"description", min: 0)
+            try validate(recommendation, name:"recommendation", max: 20000)
+            try validate(recommendation, name:"recommendation", min: 0)
+            try validate(scopes, name:"scopes", min: 1)
+            try validate(title, name:"title", max: 20000)
+            try validate(title, name:"title", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case attributes = "attributes"
@@ -1231,6 +1682,7 @@ extension Inspector {
             AWSShapeMember(label: "scopes", required: true, type: .list), 
             AWSShapeMember(label: "title", required: true, type: .string)
         ]
+
         /// The system-defined attributes for the exclusion preview.
         public let attributes: [Attribute]?
         /// The description of the exclusion preview.
@@ -1250,6 +1702,21 @@ extension Inspector {
             self.title = title
         }
 
+        public func validate() throws {
+            try attributes?.forEach {
+                try $0.validate()
+            }
+            try validate(attributes, name:"attributes", max: 50)
+            try validate(attributes, name:"attributes", min: 0)
+            try validate(description, name:"description", max: 20000)
+            try validate(description, name:"description", min: 0)
+            try validate(recommendation, name:"recommendation", max: 20000)
+            try validate(recommendation, name:"recommendation", min: 0)
+            try validate(scopes, name:"scopes", min: 1)
+            try validate(title, name:"title", max: 20000)
+            try validate(title, name:"title", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case description = "description"
@@ -1264,6 +1731,7 @@ extension Inspector {
             AWSShapeMember(label: "failureCode", required: true, type: .enum), 
             AWSShapeMember(label: "retryable", required: true, type: .boolean)
         ]
+
         /// The status code of a failed item.
         public let failureCode: FailedItemErrorCode
         /// Indicates whether you can immediately retry a request for this item for a specified resource.
@@ -1311,6 +1779,7 @@ extension Inspector {
             AWSShapeMember(label: "updatedAt", required: true, type: .timestamp), 
             AWSShapeMember(label: "userAttributes", required: true, type: .list)
         ]
+
         /// The ARN that specifies the finding.
         public let arn: String
         /// A collection of attributes of the host from which the finding is generated.
@@ -1369,6 +1838,38 @@ extension Inspector {
             self.userAttributes = userAttributes
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 300)
+            try validate(arn, name:"arn", min: 1)
+            try assetAttributes?.validate()
+            try attributes.forEach {
+                try $0.validate()
+            }
+            try validate(attributes, name:"attributes", max: 50)
+            try validate(attributes, name:"attributes", min: 0)
+            try validate(confidence, name:"confidence", max: 10)
+            try validate(confidence, name:"confidence", min: 0)
+            try validate(description, name:"description", max: 20000)
+            try validate(description, name:"description", min: 0)
+            try validate(id, name:"id", max: 128)
+            try validate(id, name:"id", min: 0)
+            try validate(numericSeverity, name:"numericSeverity", max: 10)
+            try validate(numericSeverity, name:"numericSeverity", min: 0)
+            try validate(recommendation, name:"recommendation", max: 20000)
+            try validate(recommendation, name:"recommendation", min: 0)
+            try validate(schemaVersion, name:"schemaVersion", min: 0)
+            try validate(service, name:"service", max: 128)
+            try validate(service, name:"service", min: 0)
+            try serviceAttributes?.validate()
+            try validate(title, name:"title", max: 20000)
+            try validate(title, name:"title", min: 0)
+            try userAttributes.forEach {
+                try $0.validate()
+            }
+            try validate(userAttributes, name:"userAttributes", max: 10)
+            try validate(userAttributes, name:"userAttributes", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case assetAttributes = "assetAttributes"
@@ -1402,6 +1903,7 @@ extension Inspector {
             AWSShapeMember(label: "severities", required: false, type: .list), 
             AWSShapeMember(label: "userAttributes", required: false, type: .list)
         ]
+
         /// For a record to match a filter, one of the values that is specified for this data type property must be the exact match of the value of the agentId property of the Finding data type.
         public let agentIds: [String]?
         /// For a record to match a filter, the list of values that are specified for this data type property must be contained in the list of values of the attributes property of the Finding data type.
@@ -1430,6 +1932,44 @@ extension Inspector {
             self.userAttributes = userAttributes
         }
 
+        public func validate() throws {
+            try agentIds?.forEach {
+                try validate($0, name:"agentIds[]", max: 128)
+                try validate($0, name:"agentIds[]", min: 1)
+            }
+            try validate(agentIds, name:"agentIds", max: 99)
+            try validate(agentIds, name:"agentIds", min: 0)
+            try attributes?.forEach {
+                try $0.validate()
+            }
+            try validate(attributes, name:"attributes", max: 50)
+            try validate(attributes, name:"attributes", min: 0)
+            try autoScalingGroups?.forEach {
+                try validate($0, name:"autoScalingGroups[]", max: 256)
+                try validate($0, name:"autoScalingGroups[]", min: 1)
+            }
+            try validate(autoScalingGroups, name:"autoScalingGroups", max: 20)
+            try validate(autoScalingGroups, name:"autoScalingGroups", min: 0)
+            try ruleNames?.forEach {
+                try validate($0, name:"ruleNames[]", max: 1000)
+            }
+            try validate(ruleNames, name:"ruleNames", max: 50)
+            try validate(ruleNames, name:"ruleNames", min: 0)
+            try rulesPackageArns?.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
+            try validate(severities, name:"severities", max: 50)
+            try validate(severities, name:"severities", min: 0)
+            try userAttributes?.forEach {
+                try $0.validate()
+            }
+            try validate(userAttributes, name:"userAttributes", max: 50)
+            try validate(userAttributes, name:"userAttributes", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case agentIds = "agentIds"
             case attributes = "attributes"
@@ -1448,6 +1988,7 @@ extension Inspector {
             AWSShapeMember(label: "reportFileFormat", required: true, type: .enum), 
             AWSShapeMember(label: "reportType", required: true, type: .enum)
         ]
+
         /// The ARN that specifies the assessment run for which you want to generate a report.
         public let assessmentRunArn: String
         /// Specifies the file format (html or pdf) of the assessment report that you want to generate.
@@ -1459,6 +2000,11 @@ extension Inspector {
             self.assessmentRunArn = assessmentRunArn
             self.reportFileFormat = reportFileFormat
             self.reportType = reportType
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1473,6 +2019,7 @@ extension Inspector {
             AWSShapeMember(label: "status", required: true, type: .enum), 
             AWSShapeMember(label: "url", required: false, type: .string)
         ]
+
         /// Specifies the status of the request to generate an assessment report. 
         public let status: ReportStatus
         /// Specifies the URL where you can find the generated assessment report. This parameter is only returned if the report is successfully generated.
@@ -1481,6 +2028,10 @@ extension Inspector {
         public init(status: ReportStatus, url: String? = nil) {
             self.status = status
             self.url = url
+        }
+
+        public func validate() throws {
+            try validate(url, name:"url", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1497,6 +2048,7 @@ extension Inspector {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "previewToken", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment template for which the exclusions preview was requested.
         public let assessmentTemplateArn: String
         /// The locale into which you want to translate the exclusion's title, description, and recommendation.
@@ -1516,6 +2068,14 @@ extension Inspector {
             self.previewToken = previewToken
         }
 
+        public func validate() throws {
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(previewToken, name:"previewToken", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assessmentTemplateArn = "assessmentTemplateArn"
             case locale = "locale"
@@ -1531,6 +2091,7 @@ extension Inspector {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "previewStatus", required: true, type: .enum)
         ]
+
         /// Information about the exclusions included in the preview.
         public let exclusionPreviews: [ExclusionPreview]?
         /// When a response is generated, if there is more data to be listed, this parameters is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -1544,6 +2105,16 @@ extension Inspector {
             self.previewStatus = previewStatus
         }
 
+        public func validate() throws {
+            try exclusionPreviews?.forEach {
+                try $0.validate()
+            }
+            try validate(exclusionPreviews, name:"exclusionPreviews", max: 100)
+            try validate(exclusionPreviews, name:"exclusionPreviews", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case exclusionPreviews = "exclusionPreviews"
             case nextToken = "nextToken"
@@ -1555,11 +2126,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentRunArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment run that has the telemetry data that you want to obtain.
         public let assessmentRunArn: String
 
         public init(assessmentRunArn: String) {
             self.assessmentRunArn = assessmentRunArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1571,11 +2148,20 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "telemetryMetadata", required: true, type: .list)
         ]
+
         /// Telemetry details.
         public let telemetryMetadata: [TelemetryMetadata]
 
         public init(telemetryMetadata: [TelemetryMetadata]) {
             self.telemetryMetadata = telemetryMetadata
+        }
+
+        public func validate() throws {
+            try telemetryMetadata.forEach {
+                try $0.validate()
+            }
+            try validate(telemetryMetadata, name:"telemetryMetadata", max: 5000)
+            try validate(telemetryMetadata, name:"telemetryMetadata", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1598,6 +2184,7 @@ extension Inspector {
             AWSShapeMember(label: "rulesPackageArn", required: false, type: .string), 
             AWSShapeMember(label: "schemaVersion", required: true, type: .integer)
         ]
+
         /// The ARN of the assessment run during which the finding is generated.
         public let assessmentRunArn: String?
         /// The ARN of the rules package that is used to generate the finding.
@@ -1609,6 +2196,14 @@ extension Inspector {
             self.assessmentRunArn = assessmentRunArn
             self.rulesPackageArn = rulesPackageArn
             self.schemaVersion = schemaVersion
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+            try validate(rulesPackageArn, name:"rulesPackageArn", max: 300)
+            try validate(rulesPackageArn, name:"rulesPackageArn", min: 1)
+            try validate(schemaVersion, name:"schemaVersion", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1698,6 +2293,7 @@ extension Inspector {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ARN that specifies the assessment run whose agents you want to list.
         public let assessmentRunArn: String
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
@@ -1714,6 +2310,14 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+            try filter?.validate()
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assessmentRunArn = "assessmentRunArn"
             case filter = "filter"
@@ -1727,6 +2331,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentRunAgents", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of ARNs that specifies the agents returned by the action.
         public let assessmentRunAgents: [AssessmentRunAgent]
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -1735,6 +2340,16 @@ extension Inspector {
         public init(assessmentRunAgents: [AssessmentRunAgent], nextToken: String? = nil) {
             self.assessmentRunAgents = assessmentRunAgents
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try assessmentRunAgents.forEach {
+                try $0.validate()
+            }
+            try validate(assessmentRunAgents, name:"assessmentRunAgents", max: 500)
+            try validate(assessmentRunAgents, name:"assessmentRunAgents", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1750,6 +2365,7 @@ extension Inspector {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ARNs that specify the assessment templates whose assessment runs you want to list.
         public let assessmentTemplateArns: [String]?
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
@@ -1766,6 +2382,18 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try assessmentTemplateArns?.forEach {
+                try validate($0, name:"assessmentTemplateArns[]", max: 300)
+                try validate($0, name:"assessmentTemplateArns[]", min: 1)
+            }
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", max: 50)
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", min: 0)
+            try filter?.validate()
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assessmentTemplateArns = "assessmentTemplateArns"
             case filter = "filter"
@@ -1779,6 +2407,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentRunArns", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of ARNs that specifies the assessment runs that are returned by the action.
         public let assessmentRunArns: [String]
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -1787,6 +2416,17 @@ extension Inspector {
         public init(assessmentRunArns: [String], nextToken: String? = nil) {
             self.assessmentRunArns = assessmentRunArns
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try assessmentRunArns.forEach {
+                try validate($0, name:"assessmentRunArns[]", max: 300)
+                try validate($0, name:"assessmentRunArns[]", min: 1)
+            }
+            try validate(assessmentRunArns, name:"assessmentRunArns", max: 100)
+            try validate(assessmentRunArns, name:"assessmentRunArns", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1801,6 +2441,7 @@ extension Inspector {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
         public let filter: AssessmentTargetFilter?
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
@@ -1812,6 +2453,12 @@ extension Inspector {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filter?.validate()
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1826,6 +2473,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentTargetArns", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of ARNs that specifies the assessment targets that are returned by the action.
         public let assessmentTargetArns: [String]
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -1834,6 +2482,17 @@ extension Inspector {
         public init(assessmentTargetArns: [String], nextToken: String? = nil) {
             self.assessmentTargetArns = assessmentTargetArns
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try assessmentTargetArns.forEach {
+                try validate($0, name:"assessmentTargetArns[]", max: 300)
+                try validate($0, name:"assessmentTargetArns[]", min: 1)
+            }
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", max: 100)
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1849,6 +2508,7 @@ extension Inspector {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of ARNs that specifies the assessment targets whose assessment templates you want to list.
         public let assessmentTargetArns: [String]?
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
@@ -1865,6 +2525,18 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try assessmentTargetArns?.forEach {
+                try validate($0, name:"assessmentTargetArns[]", max: 300)
+                try validate($0, name:"assessmentTargetArns[]", min: 1)
+            }
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", max: 50)
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", min: 0)
+            try filter?.validate()
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assessmentTargetArns = "assessmentTargetArns"
             case filter = "filter"
@@ -1878,6 +2550,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentTemplateArns", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of ARNs that specifies the assessment templates returned by the action.
         public let assessmentTemplateArns: [String]
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -1886,6 +2559,17 @@ extension Inspector {
         public init(assessmentTemplateArns: [String], nextToken: String? = nil) {
             self.assessmentTemplateArns = assessmentTemplateArns
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try assessmentTemplateArns.forEach {
+                try validate($0, name:"assessmentTemplateArns[]", max: 300)
+                try validate($0, name:"assessmentTemplateArns[]", min: 1)
+            }
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", max: 100)
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1900,6 +2584,7 @@ extension Inspector {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "resourceArn", required: false, type: .string)
         ]
+
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
         public let maxResults: Int32?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListEventSubscriptions action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
@@ -1911,6 +2596,13 @@ extension Inspector {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(resourceArn, name:"resourceArn", max: 300)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1925,6 +2617,7 @@ extension Inspector {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "subscriptions", required: true, type: .list)
         ]
+
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
         public let nextToken: String?
         /// Details of the returned event subscriptions.
@@ -1933,6 +2626,16 @@ extension Inspector {
         public init(nextToken: String? = nil, subscriptions: [Subscription]) {
             self.nextToken = nextToken
             self.subscriptions = subscriptions
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try subscriptions.forEach {
+                try $0.validate()
+            }
+            try validate(subscriptions, name:"subscriptions", max: 50)
+            try validate(subscriptions, name:"subscriptions", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1947,6 +2650,7 @@ extension Inspector {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ARN of the assessment run that generated the exclusions that you want to list.
         public let assessmentRunArn: String
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 100. The maximum value is 500.
@@ -1958,6 +2662,13 @@ extension Inspector {
             self.assessmentRunArn = assessmentRunArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1972,6 +2683,7 @@ extension Inspector {
             AWSShapeMember(label: "exclusionArns", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of exclusions' ARNs returned by the action.
         public let exclusionArns: [String]
         /// When a response is generated, if there is more data to be listed, this parameters is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -1980,6 +2692,17 @@ extension Inspector {
         public init(exclusionArns: [String], nextToken: String? = nil) {
             self.exclusionArns = exclusionArns
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try exclusionArns.forEach {
+                try validate($0, name:"exclusionArns[]", max: 300)
+                try validate($0, name:"exclusionArns[]", min: 1)
+            }
+            try validate(exclusionArns, name:"exclusionArns", max: 100)
+            try validate(exclusionArns, name:"exclusionArns", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1995,6 +2718,7 @@ extension Inspector {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ARNs of the assessment runs that generate the findings that you want to list.
         public let assessmentRunArns: [String]?
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
@@ -2011,6 +2735,18 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try assessmentRunArns?.forEach {
+                try validate($0, name:"assessmentRunArns[]", max: 300)
+                try validate($0, name:"assessmentRunArns[]", min: 1)
+            }
+            try validate(assessmentRunArns, name:"assessmentRunArns", max: 50)
+            try validate(assessmentRunArns, name:"assessmentRunArns", min: 0)
+            try filter?.validate()
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case assessmentRunArns = "assessmentRunArns"
             case filter = "filter"
@@ -2024,6 +2760,7 @@ extension Inspector {
             AWSShapeMember(label: "findingArns", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of ARNs that specifies the findings returned by the action.
         public let findingArns: [String]
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -2032,6 +2769,17 @@ extension Inspector {
         public init(findingArns: [String], nextToken: String? = nil) {
             self.findingArns = findingArns
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try findingArns.forEach {
+                try validate($0, name:"findingArns[]", max: 300)
+                try validate($0, name:"findingArns[]", min: 1)
+            }
+            try validate(findingArns, name:"findingArns", max: 100)
+            try validate(findingArns, name:"findingArns", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2045,6 +2793,7 @@ extension Inspector {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
         public let maxResults: Int32?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListRulesPackages action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
@@ -2053,6 +2802,11 @@ extension Inspector {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2066,6 +2820,7 @@ extension Inspector {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "rulesPackageArns", required: true, type: .list)
         ]
+
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
         public let nextToken: String?
         /// The list of ARNs that specifies the rules packages returned by the action.
@@ -2074,6 +2829,17 @@ extension Inspector {
         public init(nextToken: String? = nil, rulesPackageArns: [String]) {
             self.nextToken = nextToken
             self.rulesPackageArns = rulesPackageArns
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try rulesPackageArns.forEach {
+                try validate($0, name:"rulesPackageArns[]", max: 300)
+                try validate($0, name:"rulesPackageArns[]", min: 1)
+            }
+            try validate(rulesPackageArns, name:"rulesPackageArns", max: 100)
+            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2086,11 +2852,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceArn", required: true, type: .string)
         ]
+
         /// The ARN that specifies the assessment template whose tags you want to list.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 300)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2102,11 +2874,20 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// A collection of key and value pairs.
         public let tags: [Tag]
 
         public init(tags: [Tag]) {
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 10)
+            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2132,6 +2913,7 @@ extension Inspector {
             AWSShapeMember(label: "subnetId", required: false, type: .string), 
             AWSShapeMember(label: "vpcId", required: false, type: .string)
         ]
+
         /// The IP addresses associated with the network interface.
         public let ipv6Addresses: [String]?
         /// The ID of the network interface.
@@ -2166,6 +2948,33 @@ extension Inspector {
             self.vpcId = vpcId
         }
 
+        public func validate() throws {
+            try ipv6Addresses?.forEach {
+                try validate($0, name:"ipv6Addresses[]", max: 20000)
+                try validate($0, name:"ipv6Addresses[]", min: 0)
+            }
+            try validate(networkInterfaceId, name:"networkInterfaceId", max: 20000)
+            try validate(networkInterfaceId, name:"networkInterfaceId", min: 0)
+            try validate(privateDnsName, name:"privateDnsName", max: 20000)
+            try validate(privateDnsName, name:"privateDnsName", min: 0)
+            try validate(privateIpAddress, name:"privateIpAddress", max: 20000)
+            try validate(privateIpAddress, name:"privateIpAddress", min: 0)
+            try privateIpAddresses?.forEach {
+                try $0.validate()
+            }
+            try validate(publicDnsName, name:"publicDnsName", max: 20000)
+            try validate(publicDnsName, name:"publicDnsName", min: 0)
+            try validate(publicIp, name:"publicIp", max: 20000)
+            try validate(publicIp, name:"publicIp", min: 0)
+            try securityGroups?.forEach {
+                try $0.validate()
+            }
+            try validate(subnetId, name:"subnetId", max: 20000)
+            try validate(subnetId, name:"subnetId", min: 0)
+            try validate(vpcId, name:"vpcId", max: 20000)
+            try validate(vpcId, name:"vpcId", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case ipv6Addresses = "ipv6Addresses"
             case networkInterfaceId = "networkInterfaceId"
@@ -2198,6 +3007,7 @@ extension Inspector {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "previewAgentsArn", required: true, type: .string)
         ]
+
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
         public let maxResults: Int32?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the PreviewAgents action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
@@ -2209,6 +3019,13 @@ extension Inspector {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.previewAgentsArn = previewAgentsArn
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(previewAgentsArn, name:"previewAgentsArn", max: 300)
+            try validate(previewAgentsArn, name:"previewAgentsArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2223,6 +3040,7 @@ extension Inspector {
             AWSShapeMember(label: "agentPreviews", required: true, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The resulting list of agents.
         public let agentPreviews: [AgentPreview]
         ///  When a response is generated, if there is more data to be listed, this parameter is present in the response and contains the value to use for the nextToken parameter in a subsequent pagination request. If there is no more data to be listed, this parameter is set to null.
@@ -2231,6 +3049,16 @@ extension Inspector {
         public init(agentPreviews: [AgentPreview], nextToken: String? = nil) {
             self.agentPreviews = agentPreviews
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try agentPreviews.forEach {
+                try $0.validate()
+            }
+            try validate(agentPreviews, name:"agentPreviews", max: 100)
+            try validate(agentPreviews, name:"agentPreviews", min: 0)
+            try validate(nextToken, name:"nextToken", max: 300)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2250,6 +3078,7 @@ extension Inspector {
             AWSShapeMember(label: "privateDnsName", required: false, type: .string), 
             AWSShapeMember(label: "privateIpAddress", required: false, type: .string)
         ]
+
         /// The DNS name of the private IP address.
         public let privateDnsName: String?
         /// The full IP address of the network inteface.
@@ -2258,6 +3087,13 @@ extension Inspector {
         public init(privateDnsName: String? = nil, privateIpAddress: String? = nil) {
             self.privateDnsName = privateDnsName
             self.privateIpAddress = privateIpAddress
+        }
+
+        public func validate() throws {
+            try validate(privateDnsName, name:"privateDnsName", max: 20000)
+            try validate(privateDnsName, name:"privateDnsName", min: 0)
+            try validate(privateIpAddress, name:"privateIpAddress", max: 20000)
+            try validate(privateIpAddress, name:"privateIpAddress", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2270,11 +3106,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "roleArn", required: true, type: .string)
         ]
+
         /// The ARN of the IAM role that grants Amazon Inspector access to AWS Services needed to perform security assessments. 
         public let roleArn: String
 
         public init(roleArn: String) {
             self.roleArn = roleArn
+        }
+
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 300)
+            try validate(roleArn, name:"roleArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2287,6 +3129,7 @@ extension Inspector {
             AWSShapeMember(label: "attributeKeys", required: true, type: .list), 
             AWSShapeMember(label: "findingArns", required: true, type: .list)
         ]
+
         /// The array of attribute keys that you want to remove from specified findings.
         public let attributeKeys: [String]
         /// The ARNs that specify the findings that you want to remove attributes from.
@@ -2295,6 +3138,21 @@ extension Inspector {
         public init(attributeKeys: [String], findingArns: [String]) {
             self.attributeKeys = attributeKeys
             self.findingArns = findingArns
+        }
+
+        public func validate() throws {
+            try attributeKeys.forEach {
+                try validate($0, name:"attributeKeys[]", max: 128)
+                try validate($0, name:"attributeKeys[]", min: 1)
+            }
+            try validate(attributeKeys, name:"attributeKeys", max: 10)
+            try validate(attributeKeys, name:"attributeKeys", min: 0)
+            try findingArns.forEach {
+                try validate($0, name:"findingArns[]", max: 300)
+                try validate($0, name:"findingArns[]", min: 1)
+            }
+            try validate(findingArns, name:"findingArns", max: 10)
+            try validate(findingArns, name:"findingArns", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2307,6 +3165,7 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "failedItems", required: true, type: .map)
         ]
+
         /// Attributes details that cannot be described. An error code is provided for each failed item.
         public let failedItems: [String: FailedItemDetails]
 
@@ -2344,6 +3203,7 @@ extension Inspector {
             AWSShapeMember(label: "createdAt", required: true, type: .timestamp), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The ARN of the resource group.
         public let arn: String
         /// The time at which resource group is created.
@@ -2355,6 +3215,16 @@ extension Inspector {
             self.arn = arn
             self.createdAt = createdAt
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 300)
+            try validate(arn, name:"arn", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 10)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2369,6 +3239,7 @@ extension Inspector {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "value", required: false, type: .string)
         ]
+
         /// A tag key.
         public let key: String
         /// The value assigned to a tag key.
@@ -2377,6 +3248,13 @@ extension Inspector {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2393,6 +3271,7 @@ extension Inspector {
             AWSShapeMember(label: "provider", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// The ARN of the rules package.
         public let arn: String
         /// The description of the rules package.
@@ -2412,6 +3291,19 @@ extension Inspector {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 300)
+            try validate(arn, name:"arn", min: 1)
+            try validate(description, name:"description", max: 20000)
+            try validate(description, name:"description", min: 0)
+            try validate(name, name:"name", max: 1000)
+            try validate(name, name:"name", min: 0)
+            try validate(provider, name:"provider", max: 1000)
+            try validate(provider, name:"provider", min: 0)
+            try validate(version, name:"version", max: 1000)
+            try validate(version, name:"version", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case description = "description"
@@ -2426,6 +3318,7 @@ extension Inspector {
             AWSShapeMember(label: "key", required: false, type: .enum), 
             AWSShapeMember(label: "value", required: false, type: .string)
         ]
+
         /// The type of the scope.
         public let key: ScopeType?
         /// The resource identifier for the specified scope type.
@@ -2453,6 +3346,7 @@ extension Inspector {
             AWSShapeMember(label: "groupId", required: false, type: .string), 
             AWSShapeMember(label: "groupName", required: false, type: .string)
         ]
+
         /// The ID of the security group.
         public let groupId: String?
         /// The name of the security group.
@@ -2461,6 +3355,13 @@ extension Inspector {
         public init(groupId: String? = nil, groupName: String? = nil) {
             self.groupId = groupId
             self.groupName = groupName
+        }
+
+        public func validate() throws {
+            try validate(groupId, name:"groupId", max: 20000)
+            try validate(groupId, name:"groupId", min: 0)
+            try validate(groupName, name:"groupName", max: 20000)
+            try validate(groupName, name:"groupName", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2474,6 +3375,7 @@ extension Inspector {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// The ARN of the assessment template that you want to set tags to.
         public let resourceArn: String
         /// A collection of key and value pairs that you want to set to the assessment template.
@@ -2482,6 +3384,16 @@ extension Inspector {
         public init(resourceArn: String, tags: [Tag]? = nil) {
             self.resourceArn = resourceArn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 300)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 10)
+            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2504,6 +3416,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentRunName", required: false, type: .string), 
             AWSShapeMember(label: "assessmentTemplateArn", required: true, type: .string)
         ]
+
         /// You can specify the name for the assessment run. The name must be unique for the assessment template whose ARN is used to start the assessment run.
         public let assessmentRunName: String?
         /// The ARN of the assessment template of the assessment run that you want to start.
@@ -2512,6 +3425,13 @@ extension Inspector {
         public init(assessmentRunName: String? = nil, assessmentTemplateArn: String) {
             self.assessmentRunName = assessmentRunName
             self.assessmentTemplateArn = assessmentTemplateArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunName, name:"assessmentRunName", max: 140)
+            try validate(assessmentRunName, name:"assessmentRunName", min: 1)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2524,11 +3444,17 @@ extension Inspector {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "assessmentRunArn", required: true, type: .string)
         ]
+
         /// The ARN of the assessment run that has been started.
         public let assessmentRunArn: String
 
         public init(assessmentRunArn: String) {
             self.assessmentRunArn = assessmentRunArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2547,6 +3473,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentRunArn", required: true, type: .string), 
             AWSShapeMember(label: "stopAction", required: false, type: .enum)
         ]
+
         /// The ARN of the assessment run that you want to stop.
         public let assessmentRunArn: String
         /// An input option that can be set to either START_EVALUATION or SKIP_EVALUATION. START_EVALUATION (the default value), stops the AWS agent from collecting data and begins the results evaluation and the findings generation process. SKIP_EVALUATION cancels the assessment run immediately, after which no findings are generated.
@@ -2555,6 +3482,11 @@ extension Inspector {
         public init(assessmentRunArn: String, stopAction: StopAction? = nil) {
             self.assessmentRunArn = assessmentRunArn
             self.stopAction = stopAction
+        }
+
+        public func validate() throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2569,6 +3501,7 @@ extension Inspector {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "topicArn", required: true, type: .string)
         ]
+
         /// The event for which you want to receive SNS notifications.
         public let event: InspectorEvent
         /// The ARN of the assessment template that is used during the event for which you want to receive SNS notifications.
@@ -2580,6 +3513,13 @@ extension Inspector {
             self.event = event
             self.resourceArn = resourceArn
             self.topicArn = topicArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 300)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try validate(topicArn, name:"topicArn", max: 300)
+            try validate(topicArn, name:"topicArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2595,6 +3535,7 @@ extension Inspector {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "topicArn", required: true, type: .string)
         ]
+
         /// The list of existing event subscriptions.
         public let eventSubscriptions: [EventSubscription]
         /// The ARN of the assessment template that is used during the event for which the SNS notification is sent.
@@ -2606,6 +3547,15 @@ extension Inspector {
             self.eventSubscriptions = eventSubscriptions
             self.resourceArn = resourceArn
             self.topicArn = topicArn
+        }
+
+        public func validate() throws {
+            try validate(eventSubscriptions, name:"eventSubscriptions", max: 50)
+            try validate(eventSubscriptions, name:"eventSubscriptions", min: 1)
+            try validate(resourceArn, name:"resourceArn", max: 300)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try validate(topicArn, name:"topicArn", max: 300)
+            try validate(topicArn, name:"topicArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2620,6 +3570,7 @@ extension Inspector {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "value", required: false, type: .string)
         ]
+
         /// A tag key.
         public let key: String
         /// A value assigned to a tag key.
@@ -2628,6 +3579,13 @@ extension Inspector {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2642,6 +3600,7 @@ extension Inspector {
             AWSShapeMember(label: "dataSize", required: false, type: .long), 
             AWSShapeMember(label: "messageType", required: true, type: .string)
         ]
+
         /// The count of messages that the agent sends to the Amazon Inspector service.
         public let count: Int64
         /// The data size of messages that the agent sends to the Amazon Inspector service.
@@ -2653,6 +3612,11 @@ extension Inspector {
             self.count = count
             self.dataSize = dataSize
             self.messageType = messageType
+        }
+
+        public func validate() throws {
+            try validate(messageType, name:"messageType", max: 300)
+            try validate(messageType, name:"messageType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2667,6 +3631,7 @@ extension Inspector {
             AWSShapeMember(label: "beginDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "endDate", required: false, type: .timestamp)
         ]
+
         /// The minimum value of the timestamp range.
         public let beginDate: TimeStamp?
         /// The maximum value of the timestamp range.
@@ -2689,6 +3654,7 @@ extension Inspector {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "topicArn", required: true, type: .string)
         ]
+
         /// The event for which you want to stop receiving SNS notifications.
         public let event: InspectorEvent
         /// The ARN of the assessment template that is used during the event for which you want to stop receiving SNS notifications.
@@ -2700,6 +3666,13 @@ extension Inspector {
             self.event = event
             self.resourceArn = resourceArn
             self.topicArn = topicArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 300)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try validate(topicArn, name:"topicArn", max: 300)
+            try validate(topicArn, name:"topicArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2715,6 +3688,7 @@ extension Inspector {
             AWSShapeMember(label: "assessmentTargetName", required: true, type: .string), 
             AWSShapeMember(label: "resourceGroupArn", required: false, type: .string)
         ]
+
         /// The ARN of the assessment target that you want to update.
         public let assessmentTargetArn: String
         /// The name of the assessment target that you want to update.
@@ -2726,6 +3700,15 @@ extension Inspector {
             self.assessmentTargetArn = assessmentTargetArn
             self.assessmentTargetName = assessmentTargetName
             self.resourceGroupArn = resourceGroupArn
+        }
+
+        public func validate() throws {
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
+            try validate(assessmentTargetName, name:"assessmentTargetName", max: 140)
+            try validate(assessmentTargetName, name:"assessmentTargetName", min: 1)
+            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
+            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

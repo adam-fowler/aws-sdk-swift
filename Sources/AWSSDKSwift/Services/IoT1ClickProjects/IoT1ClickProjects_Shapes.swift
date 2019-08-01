@@ -12,6 +12,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementName", location: .uri(locationName: "placementName"), required: true, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The ID of the physical device to be associated with the given placement in the project. Note that a mandatory 4 character prefix is required for all deviceId values.
         public let deviceId: String
         /// The device template name to associate with the device ID.
@@ -28,6 +29,20 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
+        public func validate() throws {
+            try validate(deviceId, name:"deviceId", max: 32)
+            try validate(deviceId, name:"deviceId", min: 1)
+            try validate(deviceTemplateName, name:"deviceTemplateName", max: 128)
+            try validate(deviceTemplateName, name:"deviceTemplateName", min: 1)
+            try validate(deviceTemplateName, name:"deviceTemplateName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceId = "deviceId"
             case deviceTemplateName = "deviceTemplateName"
@@ -37,6 +52,7 @@ extension IoT1ClickProjects {
     }
 
     public struct AssociateDeviceWithPlacementResponse: AWSShape {
+
 
         public init() {
         }
@@ -49,6 +65,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementName", required: true, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// Optional user-defined key/value pairs providing contextual data (such as location or function) for the placement.
         public let attributes: [String: String]?
         /// The name of the placement to be created.
@@ -62,6 +79,15 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
+        public func validate() throws {
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case placementName = "placementName"
@@ -70,6 +96,7 @@ extension IoT1ClickProjects {
     }
 
     public struct CreatePlacementResponse: AWSShape {
+
 
         public init() {
         }
@@ -83,6 +110,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "projectName", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .map)
         ]
+
         /// An optional description for the project.
         public let description: String?
         /// The schema defining the placement to be created. A placement template defines placement default attributes and device templates. You cannot add or remove device templates after the project has been created. However, you can update callbackOverrides for the device templates using the UpdateProject API.
@@ -99,6 +127,14 @@ extension IoT1ClickProjects {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 500)
+            try validate(description, name:"description", min: 0)
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case placementTemplate = "placementTemplate"
@@ -108,6 +144,7 @@ extension IoT1ClickProjects {
     }
 
     public struct CreateProjectResponse: AWSShape {
+
 
         public init() {
         }
@@ -119,6 +156,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementName", location: .uri(locationName: "placementName"), required: true, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The name of the empty placement to delete.
         public let placementName: String
         /// The project containing the empty placement to delete.
@@ -129,6 +167,15 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
+        public func validate() throws {
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case placementName = "placementName"
             case projectName = "projectName"
@@ -136,6 +183,7 @@ extension IoT1ClickProjects {
     }
 
     public struct DeletePlacementResponse: AWSShape {
+
 
         public init() {
         }
@@ -146,11 +194,18 @@ extension IoT1ClickProjects {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The name of the empty project to delete.
         public let projectName: String
 
         public init(projectName: String) {
             self.projectName = projectName
+        }
+
+        public func validate() throws {
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -159,6 +214,7 @@ extension IoT1ClickProjects {
     }
 
     public struct DeleteProjectResponse: AWSShape {
+
 
         public init() {
         }
@@ -170,6 +226,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementName", location: .uri(locationName: "placementName"), required: true, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The name of the placement within a project.
         public let placementName: String
         /// The project containing the placement to be described.
@@ -178,6 +235,15 @@ extension IoT1ClickProjects {
         public init(placementName: String, projectName: String) {
             self.placementName = placementName
             self.projectName = projectName
+        }
+
+        public func validate() throws {
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -190,11 +256,16 @@ extension IoT1ClickProjects {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "placement", required: true, type: .structure)
         ]
+
         /// An object describing the placement.
         public let placement: PlacementDescription
 
         public init(placement: PlacementDescription) {
             self.placement = placement
+        }
+
+        public func validate() throws {
+            try placement.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -206,11 +277,18 @@ extension IoT1ClickProjects {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The name of the project to be described.
         public let projectName: String
 
         public init(projectName: String) {
             self.projectName = projectName
+        }
+
+        public func validate() throws {
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -222,11 +300,16 @@ extension IoT1ClickProjects {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "project", required: true, type: .structure)
         ]
+
         /// An object describing the project.
         public let project: ProjectDescription
 
         public init(project: ProjectDescription) {
             self.project = project
+        }
+
+        public func validate() throws {
+            try project.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -239,6 +322,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "callbackOverrides", required: false, type: .map), 
             AWSShapeMember(label: "deviceType", required: false, type: .string)
         ]
+
         /// An optional Lambda function to invoke instead of the default Lambda function provided by the placement template.
         public let callbackOverrides: [String: String]?
         /// The device type, which currently must be "button".
@@ -247,6 +331,10 @@ extension IoT1ClickProjects {
         public init(callbackOverrides: [String: String]? = nil, deviceType: String? = nil) {
             self.callbackOverrides = callbackOverrides
             self.deviceType = deviceType
+        }
+
+        public func validate() throws {
+            try validate(deviceType, name:"deviceType", max: 128)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -261,6 +349,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementName", location: .uri(locationName: "placementName"), required: true, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The device ID that should be removed from the placement.
         public let deviceTemplateName: String
         /// The name of the placement that the device should be removed from.
@@ -274,6 +363,18 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
+        public func validate() throws {
+            try validate(deviceTemplateName, name:"deviceTemplateName", max: 128)
+            try validate(deviceTemplateName, name:"deviceTemplateName", min: 1)
+            try validate(deviceTemplateName, name:"deviceTemplateName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deviceTemplateName = "deviceTemplateName"
             case placementName = "placementName"
@@ -282,6 +383,7 @@ extension IoT1ClickProjects {
     }
 
     public struct DisassociateDeviceFromPlacementResponse: AWSShape {
+
 
         public init() {
         }
@@ -293,6 +395,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementName", location: .uri(locationName: "placementName"), required: true, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The name of the placement to get the devices from.
         public let placementName: String
         /// The name of the project containing the placement.
@@ -301,6 +404,15 @@ extension IoT1ClickProjects {
         public init(placementName: String, projectName: String) {
             self.placementName = placementName
             self.projectName = projectName
+        }
+
+        public func validate() throws {
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -313,6 +425,7 @@ extension IoT1ClickProjects {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "devices", required: true, type: .map)
         ]
+
         /// An object containing the devices (zero or more) within the placement.
         public let devices: [String: String]
 
@@ -331,6 +444,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The maximum number of results to return per request. If not set, a default value of 100 is used.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -342,6 +456,16 @@ extension IoT1ClickProjects {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.projectName = projectName
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -356,6 +480,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "placements", required: true, type: .list)
         ]
+
         /// The token used to retrieve the next set of results - will be effectively empty if there are no further results.
         public let nextToken: String?
         /// An object listing the requested placements.
@@ -364,6 +489,14 @@ extension IoT1ClickProjects {
         public init(nextToken: String? = nil, placements: [PlacementSummary]) {
             self.nextToken = nextToken
             self.placements = placements
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try placements.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -377,6 +510,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "maxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The maximum number of results to return per request. If not set, a default value of 100 is used.
         public let maxResults: Int32?
         /// The token to retrieve the next set of results.
@@ -385,6 +519,13 @@ extension IoT1ClickProjects {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -398,6 +539,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "projects", required: true, type: .list)
         ]
+
         /// The token used to retrieve the next set of results - will be effectively empty if there are no further results.
         public let nextToken: String?
         /// An object containing the list of projects.
@@ -406,6 +548,14 @@ extension IoT1ClickProjects {
         public init(nextToken: String? = nil, projects: [ProjectSummary]) {
             self.nextToken = nextToken
             self.projects = projects
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try projects.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -418,11 +568,16 @@ extension IoT1ClickProjects {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceArn", location: .uri(locationName: "resourceArn"), required: true, type: .string)
         ]
+
         /// The ARN of the resource whose tags you want to list.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -434,6 +589,7 @@ extension IoT1ClickProjects {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tags", required: false, type: .map)
         ]
+
         /// The tags (metadata key/value pairs) which you have assigned to the resource.
         public let tags: [String: String]?
 
@@ -454,6 +610,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "projectName", required: true, type: .string), 
             AWSShapeMember(label: "updatedDate", required: true, type: .timestamp)
         ]
+
         /// The user-defined attributes associated with the placement.
         public let attributes: [String: String]
         /// The date when the placement was initially created, in UNIX epoch time format.
@@ -473,6 +630,15 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
+        public func validate() throws {
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case createdDate = "createdDate"
@@ -489,6 +655,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "projectName", required: true, type: .string), 
             AWSShapeMember(label: "updatedDate", required: true, type: .timestamp)
         ]
+
         /// The date when the placement was originally created, in UNIX epoch time format.
         public let createdDate: TimeStamp
         /// The name of the placement being summarized.
@@ -505,6 +672,15 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
+        public func validate() throws {
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdDate = "createdDate"
             case placementName = "placementName"
@@ -518,6 +694,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "defaultAttributes", required: false, type: .map), 
             AWSShapeMember(label: "deviceTemplates", required: false, type: .map)
         ]
+
         /// The default attributes (key/value pairs) to be applied to all placements using this template.
         public let defaultAttributes: [String: String]?
         /// An object specifying the DeviceTemplate for all placements using this (PlacementTemplate) template.
@@ -544,6 +721,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "tags", required: false, type: .map), 
             AWSShapeMember(label: "updatedDate", required: true, type: .timestamp)
         ]
+
         /// The ARN of the project.
         public let arn: String?
         /// The date when the project was originally created, in UNIX epoch time format.
@@ -569,6 +747,15 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+            try validate(description, name:"description", max: 500)
+            try validate(description, name:"description", min: 0)
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdDate = "createdDate"
@@ -588,6 +775,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "tags", required: false, type: .map), 
             AWSShapeMember(label: "updatedDate", required: true, type: .timestamp)
         ]
+
         /// The ARN of the project.
         public let arn: String?
         /// The date when the project was originally created, in UNIX epoch time format.
@@ -607,6 +795,13 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdDate = "createdDate"
@@ -621,6 +816,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "resourceArn", location: .uri(locationName: "resourceArn"), required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .map)
         ]
+
         /// The ARN of the resouce for which tag(s) should be added or modified.
         public let resourceArn: String
         /// The new or modifying tag(s) for the resource. See AWS IoT 1-Click Service Limits for the maximum number of tags allowed per resource.
@@ -631,6 +827,10 @@ extension IoT1ClickProjects {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tags = "tags"
@@ -638,6 +838,7 @@ extension IoT1ClickProjects {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -649,6 +850,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "resourceArn", location: .uri(locationName: "resourceArn"), required: true, type: .string), 
             AWSShapeMember(label: "tagKeys", location: .querystring(locationName: "tagKeys"), required: true, type: .list)
         ]
+
         /// The ARN of the resource whose tag you want to remove.
         public let resourceArn: String
         /// The keys of those tags which you want to remove.
@@ -659,6 +861,17 @@ extension IoT1ClickProjects {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name:"tagKeys[]", pattern: "^(?!aws:)[a-zA-Z+-=._:/]+$")
+            }
+            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tagKeys = "tagKeys"
@@ -666,6 +879,7 @@ extension IoT1ClickProjects {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -678,6 +892,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementName", location: .uri(locationName: "placementName"), required: true, type: .string), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// The user-defined object of attributes used to update the placement. The maximum number of key/value pairs is 50.
         public let attributes: [String: String]?
         /// The name of the placement to update.
@@ -691,6 +906,15 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
+        public func validate() throws {
+            try validate(placementName, name:"placementName", max: 128)
+            try validate(placementName, name:"placementName", min: 1)
+            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case placementName = "placementName"
@@ -699,6 +923,7 @@ extension IoT1ClickProjects {
     }
 
     public struct UpdatePlacementResponse: AWSShape {
+
 
         public init() {
         }
@@ -711,6 +936,7 @@ extension IoT1ClickProjects {
             AWSShapeMember(label: "placementTemplate", required: false, type: .structure), 
             AWSShapeMember(label: "projectName", location: .uri(locationName: "projectName"), required: true, type: .string)
         ]
+
         /// An optional user-defined description for the project.
         public let description: String?
         /// An object defining the project update. Once a project has been created, you cannot add device template names to the project. However, for a given placementTemplate, you can update the associated callbackOverrides for the device definition using this API.
@@ -724,6 +950,14 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 500)
+            try validate(description, name:"description", min: 0)
+            try validate(projectName, name:"projectName", max: 128)
+            try validate(projectName, name:"projectName", min: 1)
+            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case placementTemplate = "placementTemplate"
@@ -732,6 +966,7 @@ extension IoT1ClickProjects {
     }
 
     public struct UpdateProjectResponse: AWSShape {
+
 
         public init() {
         }

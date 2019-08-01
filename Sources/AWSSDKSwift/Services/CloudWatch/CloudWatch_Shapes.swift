@@ -13,6 +13,7 @@ extension CloudWatch {
             AWSShapeMember(label: "HistorySummary", required: false, type: .string), 
             AWSShapeMember(label: "Timestamp", required: false, type: .timestamp)
         ]
+
         /// The descriptive name for the alarm.
         public let alarmName: String?
         /// Data about the alarm, in JSON format.
@@ -32,6 +33,15 @@ extension CloudWatch {
             self.timestamp = timestamp
         }
 
+        public func validate() throws {
+            try validate(alarmName, name:"alarmName", max: 255)
+            try validate(alarmName, name:"alarmName", min: 1)
+            try validate(historyData, name:"historyData", max: 4095)
+            try validate(historyData, name:"historyData", min: 1)
+            try validate(historySummary, name:"historySummary", max: 255)
+            try validate(historySummary, name:"historySummary", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case alarmName = "AlarmName"
             case historyData = "HistoryData"
@@ -49,6 +59,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Namespace", required: false, type: .string), 
             AWSShapeMember(label: "Stat", required: false, type: .string)
         ]
+
         /// The configuration specifies details about how the anomaly detection model is to be trained, including time ranges to exclude from use for training the model, and the time zone to use for the metric.
         public let configuration: AnomalyDetectorConfiguration?
         /// The metric dimensions associated with the anomaly detection model.
@@ -68,6 +79,18 @@ extension CloudWatch {
             self.stat = stat
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configuration = "Configuration"
             case dimensions = "Dimensions"
@@ -82,6 +105,7 @@ extension CloudWatch {
             AWSShapeMember(label: "ExcludedTimeRanges", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "MetricTimezone", required: false, type: .string)
         ]
+
         /// An array of time ranges to exclude from use when the anomaly detection model is trained. Use this to make sure that events that could cause unusual values for the metric, such as deployments, aren't used when CloudWatch creates the model.
         public let excludedTimeRanges: [Range]?
         /// The time zone to use for the metric. This is useful to enable the model to automatically account for daylight savings time changes if the metric is sensitive to such time changes. To specify a time zone, use the name of the time zone as specified in the standard tz database. For more information, see tz database.
@@ -116,6 +140,7 @@ extension CloudWatch {
             AWSShapeMember(label: "LastModified", required: false, type: .timestamp), 
             AWSShapeMember(label: "Size", required: false, type: .long)
         ]
+
         /// The Amazon Resource Name (ARN) of the dashboard.
         public let dashboardArn: String?
         /// The name of the dashboard.
@@ -145,6 +170,7 @@ extension CloudWatch {
             AWSShapeMember(label: "DataPath", required: false, type: .string), 
             AWSShapeMember(label: "Message", required: false, type: .string)
         ]
+
         /// The data path related to the message.
         public let dataPath: String?
         /// A message describing the error or warning.
@@ -172,6 +198,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Timestamp", required: false, type: .timestamp), 
             AWSShapeMember(label: "Unit", required: false, type: .enum)
         ]
+
         /// The average of the metric values that correspond to the data point.
         public let average: Double?
         /// The percentile statistic for the data point.
@@ -216,11 +243,20 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AlarmNames", required: true, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The alarms to be deleted.
         public let alarmNames: [String]
 
         public init(alarmNames: [String]) {
             self.alarmNames = alarmNames
+        }
+
+        public func validate() throws {
+            try alarmNames.forEach {
+                try validate($0, name:"alarmNames[]", max: 255)
+                try validate($0, name:"alarmNames[]", min: 1)
+            }
+            try validate(alarmNames, name:"alarmNames", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -235,6 +271,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Namespace", required: true, type: .string), 
             AWSShapeMember(label: "Stat", required: true, type: .string)
         ]
+
         /// The metric dimensions associated with the anomaly detection model to delete.
         public let dimensions: [Dimension]?
         /// The metric name associated with the anomaly detection model to delete.
@@ -251,6 +288,18 @@ extension CloudWatch {
             self.stat = stat
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dimensions = "Dimensions"
             case metricName = "MetricName"
@@ -261,6 +310,7 @@ extension CloudWatch {
 
     public struct DeleteAnomalyDetectorOutput: AWSShape {
 
+
         public init() {
         }
 
@@ -270,6 +320,7 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DashboardNames", required: true, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The dashboards to be deleted. This parameter is required.
         public let dashboardNames: [String]
 
@@ -283,6 +334,7 @@ extension CloudWatch {
     }
 
     public struct DeleteDashboardsOutput: AWSShape {
+
 
         public init() {
         }
@@ -298,6 +350,7 @@ extension CloudWatch {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "StartDate", required: false, type: .timestamp)
         ]
+
         /// The name of the alarm.
         public let alarmName: String?
         /// The ending date to retrieve alarm history.
@@ -320,6 +373,13 @@ extension CloudWatch {
             self.startDate = startDate
         }
 
+        public func validate() throws {
+            try validate(alarmName, name:"alarmName", max: 255)
+            try validate(alarmName, name:"alarmName", min: 1)
+            try validate(maxRecords, name:"maxRecords", max: 100)
+            try validate(maxRecords, name:"maxRecords", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case alarmName = "AlarmName"
             case endDate = "EndDate"
@@ -335,6 +395,7 @@ extension CloudWatch {
             AWSShapeMember(label: "AlarmHistoryItems", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The alarm histories, in JSON format.
         public let alarmHistoryItems: [AlarmHistoryItem]?
         /// The token that marks the start of the next batch of returned results.
@@ -343,6 +404,12 @@ extension CloudWatch {
         public init(alarmHistoryItems: [AlarmHistoryItem]? = nil, nextToken: String? = nil) {
             self.alarmHistoryItems = alarmHistoryItems
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try alarmHistoryItems?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -361,6 +428,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Statistic", required: false, type: .enum), 
             AWSShapeMember(label: "Unit", required: false, type: .enum)
         ]
+
         /// The dimensions associated with the metric. If the metric has any associated dimensions, you must specify them in order for the call to succeed.
         public let dimensions: [Dimension]?
         /// The percentile statistic for the metric. Specify a value between p0.0 and p100.
@@ -386,6 +454,20 @@ extension CloudWatch {
             self.unit = unit
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(extendedStatistic, name:"extendedStatistic", pattern: "p(\\d{1,2}(\\.\\d{0,2})?|100)")
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+            try validate(period, name:"period", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dimensions = "Dimensions"
             case extendedStatistic = "ExtendedStatistic"
@@ -401,11 +483,18 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "MetricAlarms", required: false, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The information for each alarm with the specified metric.
         public let metricAlarms: [MetricAlarm]?
 
         public init(metricAlarms: [MetricAlarm]? = nil) {
             self.metricAlarms = metricAlarms
+        }
+
+        public func validate() throws {
+            try metricAlarms?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -422,6 +511,7 @@ extension CloudWatch {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "StateValue", required: false, type: .enum)
         ]
+
         /// The action name prefix.
         public let actionPrefix: String?
         /// The alarm name prefix. If this parameter is specified, you cannot specify AlarmNames.
@@ -444,6 +534,20 @@ extension CloudWatch {
             self.stateValue = stateValue
         }
 
+        public func validate() throws {
+            try validate(actionPrefix, name:"actionPrefix", max: 1024)
+            try validate(actionPrefix, name:"actionPrefix", min: 1)
+            try validate(alarmNamePrefix, name:"alarmNamePrefix", max: 255)
+            try validate(alarmNamePrefix, name:"alarmNamePrefix", min: 1)
+            try alarmNames?.forEach {
+                try validate($0, name:"alarmNames[]", max: 255)
+                try validate($0, name:"alarmNames[]", min: 1)
+            }
+            try validate(alarmNames, name:"alarmNames", max: 100)
+            try validate(maxRecords, name:"maxRecords", max: 100)
+            try validate(maxRecords, name:"maxRecords", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionPrefix = "ActionPrefix"
             case alarmNamePrefix = "AlarmNamePrefix"
@@ -459,6 +563,7 @@ extension CloudWatch {
             AWSShapeMember(label: "MetricAlarms", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The information for the specified alarms.
         public let metricAlarms: [MetricAlarm]?
         /// The token that marks the start of the next batch of returned results.
@@ -467,6 +572,12 @@ extension CloudWatch {
         public init(metricAlarms: [MetricAlarm]? = nil, nextToken: String? = nil) {
             self.metricAlarms = metricAlarms
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try metricAlarms?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -483,6 +594,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Namespace", required: false, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Limits the results to only the anomaly detection models that are associated with the specified metric dimensions. If there are multiple metrics that have these dimensions and have anomaly detection models associated, they're all returned.
         public let dimensions: [Dimension]?
         /// The maximum number of results to return in one operation. The maximum value you can specify is 10. To retrieve the remaining results, make another call with the returned NextToken value. 
@@ -502,6 +614,19 @@ extension CloudWatch {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dimensions = "Dimensions"
             case maxResults = "MaxResults"
@@ -516,6 +641,7 @@ extension CloudWatch {
             AWSShapeMember(label: "AnomalyDetectors", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of anomaly detection models returned by the operation.
         public let anomalyDetectors: [AnomalyDetector]?
         /// A token that you can use in a subsequent operation to retrieve the next set of results.
@@ -524,6 +650,12 @@ extension CloudWatch {
         public init(anomalyDetectors: [AnomalyDetector]? = nil, nextToken: String? = nil) {
             self.anomalyDetectors = anomalyDetectors
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try anomalyDetectors?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -537,6 +669,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The name of the dimension.
         public let name: String
         /// The value representing the dimension measurement.
@@ -545,6 +678,13 @@ extension CloudWatch {
         public init(name: String, value: String) {
             self.name = name
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(value, name:"value", max: 255)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -558,6 +698,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The dimension name to be matched.
         public let name: String
         /// The value of the dimension to be matched.
@@ -566,6 +707,13 @@ extension CloudWatch {
         public init(name: String, value: String? = nil) {
             self.name = name
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 255)
+            try validate(name, name:"name", min: 1)
+            try validate(value, name:"value", max: 255)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -578,11 +726,20 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AlarmNames", required: true, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The names of the alarms.
         public let alarmNames: [String]
 
         public init(alarmNames: [String]) {
             self.alarmNames = alarmNames
+        }
+
+        public func validate() throws {
+            try alarmNames.forEach {
+                try validate($0, name:"alarmNames[]", max: 255)
+                try validate($0, name:"alarmNames[]", min: 1)
+            }
+            try validate(alarmNames, name:"alarmNames", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -594,11 +751,20 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AlarmNames", required: true, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The names of the alarms.
         public let alarmNames: [String]
 
         public init(alarmNames: [String]) {
             self.alarmNames = alarmNames
+        }
+
+        public func validate() throws {
+            try alarmNames.forEach {
+                try validate($0, name:"alarmNames[]", max: 255)
+                try validate($0, name:"alarmNames[]", min: 1)
+            }
+            try validate(alarmNames, name:"alarmNames", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -610,6 +776,7 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DashboardName", required: true, type: .string)
         ]
+
         /// The name of the dashboard to be described.
         public let dashboardName: String
 
@@ -628,6 +795,7 @@ extension CloudWatch {
             AWSShapeMember(label: "DashboardBody", required: false, type: .string), 
             AWSShapeMember(label: "DashboardName", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the dashboard.
         public let dashboardArn: String?
         /// The detailed information about the dashboard, including what widgets are included and their location on the dashboard. For more information about the DashboardBody syntax, see CloudWatch-Dashboard-Body-Structure. 
@@ -657,6 +825,7 @@ extension CloudWatch {
             AWSShapeMember(label: "ScanBy", required: false, type: .enum), 
             AWSShapeMember(label: "StartTime", required: true, type: .timestamp)
         ]
+
         /// The time stamp indicating the latest data to be returned. For better performance, specify StartTime and EndTime values that align with the value of the metric's Period and sync up with the beginning and end of an hour. For example, if the Period of a metric is 5 minutes, specifying 12:05 or 12:30 as EndTime can get a faster response from CloudWatch than setting 12:07 or 12:29 as the EndTime.
         public let endTime: TimeStamp
         /// The maximum number of data points the request should return before paginating. If you omit this, the default of 100,800 is used.
@@ -679,6 +848,12 @@ extension CloudWatch {
             self.startTime = startTime
         }
 
+        public func validate() throws {
+            try metricDataQueries.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "EndTime"
             case maxDatapoints = "MaxDatapoints"
@@ -695,6 +870,7 @@ extension CloudWatch {
             AWSShapeMember(label: "MetricDataResults", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Contains a message about this GetMetricData operation, if the operation results in such a message. An example of a message that may be returned is Maximum number of allowed metrics exceeded. If there is a message, as much of the operation as possible is still executed. A message appears here only if it is related to the global GetMetricData operation. Any message about a specific metric returned by the operation appears in the MetricDataResult object returned for that metric.
         public let messages: [MessageData]?
         /// The metrics that are returned, including the metric name, namespace, and dimensions.
@@ -706,6 +882,12 @@ extension CloudWatch {
             self.messages = messages
             self.metricDataResults = metricDataResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try metricDataResults?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -727,6 +909,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Statistics", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "Unit", required: false, type: .enum)
         ]
+
         /// The dimensions. If the metric contains multiple dimensions, you must include a value for each dimension. CloudWatch treats each unique combination of dimensions as a separate metric. If a specific combination of dimensions was not published, you can't retrieve statistics for it. You must specify the same dimensions that were used when the metrics were created. For an example, see Dimension Combinations in the Amazon CloudWatch User Guide. For more information about specifying dimensions, see Publishing Metrics in the Amazon CloudWatch User Guide.
         public let dimensions: [Dimension]?
         /// The time stamp that determines the last data point to return. The value specified is exclusive; results include data points up to the specified time stamp. The time stamp must be in ISO 8601 UTC format (for example, 2016-10-10T23:00:00Z).
@@ -758,6 +941,26 @@ extension CloudWatch {
             self.unit = unit
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try extendedStatistics?.forEach {
+                try validate($0, name:"extendedStatistics[]", pattern: "p(\\d{1,2}(\\.\\d{0,2})?|100)")
+            }
+            try validate(extendedStatistics, name:"extendedStatistics", max: 10)
+            try validate(extendedStatistics, name:"extendedStatistics", min: 1)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+            try validate(period, name:"period", min: 1)
+            try validate(statistics, name:"statistics", max: 5)
+            try validate(statistics, name:"statistics", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dimensions = "Dimensions"
             case endTime = "EndTime"
@@ -776,6 +979,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Datapoints", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "Label", required: false, type: .string)
         ]
+
         /// The data points for the specified metric.
         public let datapoints: [Datapoint]?
         /// A label for the specified metric.
@@ -797,6 +1001,7 @@ extension CloudWatch {
             AWSShapeMember(label: "MetricWidget", required: true, type: .string), 
             AWSShapeMember(label: "OutputFormat", required: false, type: .string)
         ]
+
         /// A JSON string that defines the bitmap graph to be retrieved. The string includes the metrics to include in the graph, statistics, annotations, title, axis limits, and so on. You can include only one MetricWidget parameter in each GetMetricWidgetImage call. For more information about the syntax of MetricWidget see CloudWatch-Metric-Widget-Structure. If any metric on the graph could not load all the requested data points, an orange triangle with an exclamation point appears next to the graph legend.
         public let metricWidget: String
         /// The format of the resulting image. Only PNG images are supported. The default is png. If you specify png, the API returns an HTTP response with the content-type set to text/xml. The image data is in a MetricWidgetImage field. For example:   &lt;GetMetricWidgetImageResponse xmlns=&lt;URLstring&gt;&gt;    &lt;GetMetricWidgetImageResult&gt;    &lt;MetricWidgetImage&gt;    iVBORw0KGgoAAAANSUhEUgAAAlgAAAGQEAYAAAAip...    &lt;/MetricWidgetImage&gt;    &lt;/GetMetricWidgetImageResult&gt;    &lt;ResponseMetadata&gt;    &lt;RequestId&gt;6f0d4192-4d42-11e8-82c1-f539a07e0e3b&lt;/RequestId&gt;    &lt;/ResponseMetadata&gt;   &lt;/GetMetricWidgetImageResponse&gt;  The image/png setting is intended only for custom HTTP requests. For most use cases, and all actions using an AWS SDK, you should use png. If you specify image/png, the HTTP response has a content-type set to image/png, and the body of the response is a PNG image. 
@@ -817,6 +1022,7 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "MetricWidgetImage", required: false, type: .blob)
         ]
+
         /// The image of the graph, in the output format specified.
         public let metricWidgetImage: Data?
 
@@ -841,6 +1047,7 @@ extension CloudWatch {
             AWSShapeMember(label: "DashboardNamePrefix", required: false, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// If you specify this parameter, only the dashboards with names starting with the specified string are listed. The maximum length is 255, and valid characters are A-Z, a-z, 0-9, ".", "-", and "_". 
         public let dashboardNamePrefix: String?
         /// The token returned by a previous call to indicate that there is more data available.
@@ -862,6 +1069,7 @@ extension CloudWatch {
             AWSShapeMember(label: "DashboardEntries", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of matching dashboards.
         public let dashboardEntries: [DashboardEntry]?
         /// The token that marks the start of the next batch of returned results.
@@ -885,6 +1093,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Namespace", required: false, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The dimensions to filter against.
         public let dimensions: [DimensionFilter]?
         /// The name of the metric to filter against.
@@ -901,6 +1110,18 @@ extension CloudWatch {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dimensions = "Dimensions"
             case metricName = "MetricName"
@@ -914,6 +1135,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Metrics", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The metrics.
         public let metrics: [Metric]?
         /// The token that marks the start of the next batch of returned results.
@@ -922,6 +1144,12 @@ extension CloudWatch {
         public init(metrics: [Metric]? = nil, nextToken: String? = nil) {
             self.metrics = metrics
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try metrics?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -934,11 +1162,17 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceARN", required: true, type: .string)
         ]
+
         /// The ARN of the CloudWatch resource that you want to view tags for. For more information on ARN format, see Example ARNs in the Amazon Web Services General Reference.
         public let resourceARN: String
 
         public init(resourceARN: String) {
             self.resourceARN = resourceARN
+        }
+
+        public func validate() throws {
+            try validate(resourceARN, name:"resourceARN", max: 1024)
+            try validate(resourceARN, name:"resourceARN", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -950,11 +1184,18 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", required: false, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The list of tag keys and values associated with the resource you specified.
         public let tags: [Tag]?
 
         public init(tags: [Tag]? = nil) {
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -967,6 +1208,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Code", required: false, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The error code or status code associated with the message.
         public let code: String?
         /// The message text.
@@ -989,6 +1231,7 @@ extension CloudWatch {
             AWSShapeMember(label: "MetricName", required: false, type: .string), 
             AWSShapeMember(label: "Namespace", required: false, type: .string)
         ]
+
         /// The dimensions for the metric.
         public let dimensions: [Dimension]?
         /// The name of the metric. This is a required field.
@@ -1000,6 +1243,18 @@ extension CloudWatch {
             self.dimensions = dimensions
             self.metricName = metricName
             self.namespace = namespace
+        }
+
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1039,6 +1294,7 @@ extension CloudWatch {
             AWSShapeMember(label: "TreatMissingData", required: false, type: .string), 
             AWSShapeMember(label: "Unit", required: false, type: .enum)
         ]
+
         /// Indicates whether actions should be executed during any changes to the alarm state.
         public let actionsEnabled: Bool?
         /// The actions to execute when this alarm transitions to the ALARM state from any other state. Each action is specified as an Amazon Resource Name (ARN).
@@ -1124,6 +1380,56 @@ extension CloudWatch {
             self.unit = unit
         }
 
+        public func validate() throws {
+            try alarmActions?.forEach {
+                try validate($0, name:"alarmActions[]", max: 1024)
+                try validate($0, name:"alarmActions[]", min: 1)
+            }
+            try validate(alarmActions, name:"alarmActions", max: 5)
+            try validate(alarmArn, name:"alarmArn", max: 1600)
+            try validate(alarmArn, name:"alarmArn", min: 1)
+            try validate(alarmDescription, name:"alarmDescription", max: 1024)
+            try validate(alarmDescription, name:"alarmDescription", min: 0)
+            try validate(alarmName, name:"alarmName", max: 255)
+            try validate(alarmName, name:"alarmName", min: 1)
+            try validate(datapointsToAlarm, name:"datapointsToAlarm", min: 1)
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(evaluateLowSampleCountPercentile, name:"evaluateLowSampleCountPercentile", max: 255)
+            try validate(evaluateLowSampleCountPercentile, name:"evaluateLowSampleCountPercentile", min: 1)
+            try validate(evaluationPeriods, name:"evaluationPeriods", min: 1)
+            try validate(extendedStatistic, name:"extendedStatistic", pattern: "p(\\d{1,2}(\\.\\d{0,2})?|100)")
+            try insufficientDataActions?.forEach {
+                try validate($0, name:"insufficientDataActions[]", max: 1024)
+                try validate($0, name:"insufficientDataActions[]", min: 1)
+            }
+            try validate(insufficientDataActions, name:"insufficientDataActions", max: 5)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try metrics?.forEach {
+                try $0.validate()
+            }
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+            try oKActions?.forEach {
+                try validate($0, name:"oKActions[]", max: 1024)
+                try validate($0, name:"oKActions[]", min: 1)
+            }
+            try validate(oKActions, name:"oKActions", max: 5)
+            try validate(period, name:"period", min: 1)
+            try validate(stateReason, name:"stateReason", max: 1023)
+            try validate(stateReason, name:"stateReason", min: 0)
+            try validate(stateReasonData, name:"stateReasonData", max: 4000)
+            try validate(stateReasonData, name:"stateReasonData", min: 0)
+            try validate(thresholdMetricId, name:"thresholdMetricId", max: 255)
+            try validate(thresholdMetricId, name:"thresholdMetricId", min: 1)
+            try validate(treatMissingData, name:"treatMissingData", max: 255)
+            try validate(treatMissingData, name:"treatMissingData", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionsEnabled = "ActionsEnabled"
             case alarmActions = "AlarmActions"
@@ -1163,6 +1469,7 @@ extension CloudWatch {
             AWSShapeMember(label: "MetricStat", required: false, type: .structure), 
             AWSShapeMember(label: "ReturnData", required: false, type: .boolean)
         ]
+
         /// The math expression to be performed on the returned data, if this object is performing a math expression. This expression can use the Id of the other metrics to refer to those metrics, and can also use the Id of other expressions to use the result of those expressions. For more information about metric math expressions, see Metric Math Syntax and Functions in the Amazon CloudWatch User Guide. Within each MetricDataQuery object, you must specify either Expression or MetricStat but not both.
         public let expression: String?
         /// A short name used to tie this object to the results in the response. This name must be unique within a single call to GetMetricData. If you are performing math expressions on this set of data, this name represents that data and can serve as a variable in the mathematical expression. The valid characters are letters, numbers, and underscore. The first character must be a lowercase letter.
@@ -1180,6 +1487,14 @@ extension CloudWatch {
             self.label = label
             self.metricStat = metricStat
             self.returnData = returnData
+        }
+
+        public func validate() throws {
+            try validate(expression, name:"expression", max: 1024)
+            try validate(expression, name:"expression", min: 1)
+            try validate(id, name:"id", max: 255)
+            try validate(id, name:"id", min: 1)
+            try metricStat?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1200,6 +1515,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Timestamps", required: false, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "Values", required: false, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The short name you specified to represent this metric.
         public let id: String?
         /// The human-readable label associated with the data.
@@ -1220,6 +1536,11 @@ extension CloudWatch {
             self.statusCode = statusCode
             self.timestamps = timestamps
             self.values = values
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 255)
+            try validate(id, name:"id", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1244,6 +1565,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Value", required: false, type: .double), 
             AWSShapeMember(label: "Values", required: false, type: .list, encoding: .list(member:"member"))
         ]
+
         /// Array of numbers that is used along with the Values array. Each number in the Count array is the number of times the corresponding value in the Values array occurred during the period.  If you omit the Counts array, the default of 1 is used as the value for each count. If you include a Counts array, it must include the same amount of values as the Values array.
         public let counts: [Double]?
         /// The dimensions associated with the metric.
@@ -1275,6 +1597,16 @@ extension CloudWatch {
             self.values = values
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(storageResolution, name:"storageResolution", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case counts = "Counts"
             case dimensions = "Dimensions"
@@ -1295,6 +1627,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Stat", required: true, type: .string), 
             AWSShapeMember(label: "Unit", required: false, type: .enum)
         ]
+
         /// The metric to return, including the metric name, namespace, and dimensions.
         public let metric: Metric
         /// The period, in seconds, to use when retrieving the metric.
@@ -1309,6 +1642,11 @@ extension CloudWatch {
             self.period = period
             self.stat = stat
             self.unit = unit
+        }
+
+        public func validate() throws {
+            try metric.validate()
+            try validate(period, name:"period", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1327,6 +1665,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Namespace", required: true, type: .string), 
             AWSShapeMember(label: "Stat", required: true, type: .string)
         ]
+
         /// The configuration specifies details about how the anomaly detection model is to be trained, including time ranges to exclude when training and updating the model. You can specify as many as 10 time ranges. The configuration can also include the time zone to use for the metric. You can in
         public let configuration: AnomalyDetectorConfiguration?
         /// The metric dimensions to create the anomaly detection model for.
@@ -1346,6 +1685,18 @@ extension CloudWatch {
             self.stat = stat
         }
 
+        public func validate() throws {
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case configuration = "Configuration"
             case dimensions = "Dimensions"
@@ -1357,6 +1708,7 @@ extension CloudWatch {
 
     public struct PutAnomalyDetectorOutput: AWSShape {
 
+
         public init() {
         }
 
@@ -1367,6 +1719,7 @@ extension CloudWatch {
             AWSShapeMember(label: "DashboardBody", required: true, type: .string), 
             AWSShapeMember(label: "DashboardName", required: true, type: .string)
         ]
+
         /// The detailed information about the dashboard in JSON format, including the widgets to include and their location on the dashboard. This parameter is required. For more information about the syntax, see CloudWatch-Dashboard-Body-Structure.
         public let dashboardBody: String
         /// The name of the dashboard. If a dashboard with this name already exists, this call modifies that dashboard, replacing its current contents. Otherwise, a new dashboard is created. The maximum length is 255, and valid characters are A-Z, a-z, 0-9, "-", and "_". This parameter is required.
@@ -1387,6 +1740,7 @@ extension CloudWatch {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DashboardValidationMessages", required: false, type: .list, encoding: .list(member:"member"))
         ]
+
         /// If the input for PutDashboard was correct and the dashboard was successfully created or modified, this result is empty. If this result includes only warning messages, then the input was valid enough for the dashboard to be created or modified, but some elements of the dashboard may not render. If this result includes error messages, the input was not valid and the operation failed.
         public let dashboardValidationMessages: [DashboardValidationMessage]?
 
@@ -1424,6 +1778,7 @@ extension CloudWatch {
             AWSShapeMember(label: "TreatMissingData", required: false, type: .string), 
             AWSShapeMember(label: "Unit", required: false, type: .enum)
         ]
+
         /// Indicates whether actions should be executed during any changes to the alarm state. The default is TRUE.
         public let actionsEnabled: Bool?
         /// The actions to execute when this alarm transitions to the ALARM state from any other state. Each action is specified as an Amazon Resource Name (ARN). Valid Values: arn:aws:automate:region:ec2:stop | arn:aws:automate:region:ec2:terminate | arn:aws:automate:region:ec2:recover | arn:aws:automate:region:ec2:reboot | arn:aws:sns:region:account-id:sns-topic-name  | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name   Valid Values (for use with IAM roles): arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Stop/1.0 | arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Terminate/1.0 | arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Reboot/1.0 
@@ -1494,6 +1849,53 @@ extension CloudWatch {
             self.unit = unit
         }
 
+        public func validate() throws {
+            try alarmActions?.forEach {
+                try validate($0, name:"alarmActions[]", max: 1024)
+                try validate($0, name:"alarmActions[]", min: 1)
+            }
+            try validate(alarmActions, name:"alarmActions", max: 5)
+            try validate(alarmDescription, name:"alarmDescription", max: 1024)
+            try validate(alarmDescription, name:"alarmDescription", min: 0)
+            try validate(alarmName, name:"alarmName", max: 255)
+            try validate(alarmName, name:"alarmName", min: 1)
+            try validate(datapointsToAlarm, name:"datapointsToAlarm", min: 1)
+            try dimensions?.forEach {
+                try $0.validate()
+            }
+            try validate(dimensions, name:"dimensions", max: 10)
+            try validate(evaluateLowSampleCountPercentile, name:"evaluateLowSampleCountPercentile", max: 255)
+            try validate(evaluateLowSampleCountPercentile, name:"evaluateLowSampleCountPercentile", min: 1)
+            try validate(evaluationPeriods, name:"evaluationPeriods", min: 1)
+            try validate(extendedStatistic, name:"extendedStatistic", pattern: "p(\\d{1,2}(\\.\\d{0,2})?|100)")
+            try insufficientDataActions?.forEach {
+                try validate($0, name:"insufficientDataActions[]", max: 1024)
+                try validate($0, name:"insufficientDataActions[]", min: 1)
+            }
+            try validate(insufficientDataActions, name:"insufficientDataActions", max: 5)
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", min: 1)
+            try metrics?.forEach {
+                try $0.validate()
+            }
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
+            try oKActions?.forEach {
+                try validate($0, name:"oKActions[]", max: 1024)
+                try validate($0, name:"oKActions[]", min: 1)
+            }
+            try validate(oKActions, name:"oKActions", max: 5)
+            try validate(period, name:"period", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(thresholdMetricId, name:"thresholdMetricId", max: 255)
+            try validate(thresholdMetricId, name:"thresholdMetricId", min: 1)
+            try validate(treatMissingData, name:"treatMissingData", max: 255)
+            try validate(treatMissingData, name:"treatMissingData", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actionsEnabled = "ActionsEnabled"
             case alarmActions = "AlarmActions"
@@ -1525,6 +1927,7 @@ extension CloudWatch {
             AWSShapeMember(label: "MetricData", required: true, type: .list, encoding: .list(member:"member")), 
             AWSShapeMember(label: "Namespace", required: true, type: .string)
         ]
+
         /// The data for the metric. The array can include no more than 20 metrics per call.
         public let metricData: [MetricDatum]
         /// The namespace for the metric data. You cannot specify a namespace that begins with "AWS/". Namespaces that begin with "AWS/" are reserved for use by Amazon Web Services products.
@@ -1533,6 +1936,15 @@ extension CloudWatch {
         public init(metricData: [MetricDatum], namespace: String) {
             self.metricData = metricData
             self.namespace = namespace
+        }
+
+        public func validate() throws {
+            try metricData.forEach {
+                try $0.validate()
+            }
+            try validate(namespace, name:"namespace", max: 255)
+            try validate(namespace, name:"namespace", min: 1)
+            try validate(namespace, name:"namespace", pattern: "[^:].*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1546,6 +1958,7 @@ extension CloudWatch {
             AWSShapeMember(label: "EndTime", required: true, type: .timestamp), 
             AWSShapeMember(label: "StartTime", required: true, type: .timestamp)
         ]
+
         /// The end time of the range to exclude. The format is yyyy-MM-dd'T'HH:mm:ss. For example, 2019-07-01T23:59:59.
         public let endTime: TimeStamp
         /// The start time of the range to exclude. The format is yyyy-MM-dd'T'HH:mm:ss. For example, 2019-07-01T23:59:59.
@@ -1575,6 +1988,7 @@ extension CloudWatch {
             AWSShapeMember(label: "StateReasonData", required: false, type: .string), 
             AWSShapeMember(label: "StateValue", required: true, type: .enum)
         ]
+
         /// The name for the alarm. This name must be unique within the AWS account. The maximum length is 255 characters.
         public let alarmName: String
         /// The reason that this alarm is set to this specific state, in text format.
@@ -1589,6 +2003,15 @@ extension CloudWatch {
             self.stateReason = stateReason
             self.stateReasonData = stateReasonData
             self.stateValue = stateValue
+        }
+
+        public func validate() throws {
+            try validate(alarmName, name:"alarmName", max: 255)
+            try validate(alarmName, name:"alarmName", min: 1)
+            try validate(stateReason, name:"stateReason", max: 1023)
+            try validate(stateReason, name:"stateReason", min: 0)
+            try validate(stateReasonData, name:"stateReasonData", max: 4000)
+            try validate(stateReasonData, name:"stateReasonData", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1653,6 +2076,7 @@ extension CloudWatch {
             AWSShapeMember(label: "SampleCount", required: true, type: .double), 
             AWSShapeMember(label: "Sum", required: true, type: .double)
         ]
+
         /// The maximum value of the sample set.
         public let maximum: Double
         /// The minimum value of the sample set.
@@ -1689,6 +2113,7 @@ extension CloudWatch {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// A string that you can use to assign a value. The combination of tag keys and values can help you organize and categorize your resources.
         public let key: String
         /// The value for the specified tag key.
@@ -1697,6 +2122,13 @@ extension CloudWatch {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1710,6 +2142,7 @@ extension CloudWatch {
             AWSShapeMember(label: "ResourceARN", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The ARN of the CloudWatch resource that you're adding tags to. For more information on ARN format, see Example ARNs in the Amazon Web Services General Reference.
         public let resourceARN: String
         /// The list of key-value pairs to associate with the resource.
@@ -1720,6 +2153,14 @@ extension CloudWatch {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceARN, name:"resourceARN", max: 1024)
+            try validate(resourceARN, name:"resourceARN", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceARN = "ResourceARN"
             case tags = "Tags"
@@ -1727,6 +2168,7 @@ extension CloudWatch {
     }
 
     public struct TagResourceOutput: AWSShape {
+
 
         public init() {
         }
@@ -1738,6 +2180,7 @@ extension CloudWatch {
             AWSShapeMember(label: "ResourceARN", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list, encoding: .list(member:"member"))
         ]
+
         /// The ARN of the CloudWatch resource that you're removing tags from. For more information on ARN format, see Example ARNs in the Amazon Web Services General Reference.
         public let resourceARN: String
         /// The list of tag keys to remove from the resource.
@@ -1748,6 +2191,15 @@ extension CloudWatch {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceARN, name:"resourceARN", max: 1024)
+            try validate(resourceARN, name:"resourceARN", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceARN = "ResourceARN"
             case tagKeys = "TagKeys"
@@ -1755,6 +2207,7 @@ extension CloudWatch {
     }
 
     public struct UntagResourceOutput: AWSShape {
+
 
         public init() {
         }

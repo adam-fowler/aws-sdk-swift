@@ -51,6 +51,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Specification", location: .body(locationName: "specification"), required: false, type: .enum), 
             AWSShapeMember(label: "VbrQuality", location: .body(locationName: "vbrQuality"), required: false, type: .enum)
         ]
+
         /// Choose BROADCASTER_MIXED_AD when the input contains pre-mixed main audio + audio description (AD) as a stereo pair. The value for AudioType will be set to 3, which signals to downstream systems that this stream contains "broadcaster mixed AD". Note that the input received by the encoder must contain pre-mixed audio; the encoder does not perform the mixing. When you choose BROADCASTER_MIXED_AD, the encoder ignores any values you provide in AudioType and  FollowInputAudioType. Choose NORMAL when the input does not contain pre-mixed audio + audio description (AD). In this case, the encoder will use any values you provide for AudioType and FollowInputAudioType.
         public let audioDescriptionBroadcasterMix: AacAudioDescriptionBroadcasterMix?
         /// Average bitrate in bits/second. The set of valid values for this setting is: 6000, 8000, 10000, 12000, 14000, 16000, 20000, 24000, 28000, 32000, 40000, 48000, 56000, 64000, 80000, 96000, 112000, 128000, 160000, 192000, 224000, 256000, 288000, 320000, 384000, 448000, 512000, 576000, 640000, 768000, 896000, 1024000. The value you set is also constrained by the values you choose for Profile (codecProfile), Bitrate control mode (codingMode), and Sample rate (sampleRate). Default values depend on Bitrate control mode and Profile.
@@ -80,6 +81,13 @@ extension MediaConvert {
             self.sampleRate = sampleRate
             self.specification = specification
             self.vbrQuality = vbrQuality
+        }
+
+        public func validate() throws {
+            try validate(bitrate, name:"bitrate", max: 1024000)
+            try validate(bitrate, name:"bitrate", min: 6000)
+            try validate(sampleRate, name:"sampleRate", max: 96000)
+            try validate(sampleRate, name:"sampleRate", min: 8000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -158,6 +166,7 @@ extension MediaConvert {
             AWSShapeMember(label: "MetadataControl", location: .body(locationName: "metadataControl"), required: false, type: .enum), 
             AWSShapeMember(label: "SampleRate", location: .body(locationName: "sampleRate"), required: false, type: .integer)
         ]
+
         /// Average bitrate in bits/second. Valid bitrates depend on the coding mode.
         public let bitrate: Int32?
         /// Specifies the "Bitstream Mode" (bsmod) for the emitted AC-3 stream. See ATSC A/52-2012 for background on these values.
@@ -186,6 +195,15 @@ extension MediaConvert {
             self.sampleRate = sampleRate
         }
 
+        public func validate() throws {
+            try validate(bitrate, name:"bitrate", max: 640000)
+            try validate(bitrate, name:"bitrate", min: 64000)
+            try validate(dialnorm, name:"dialnorm", max: 31)
+            try validate(dialnorm, name:"dialnorm", min: 1)
+            try validate(sampleRate, name:"sampleRate", max: 48000)
+            try validate(sampleRate, name:"sampleRate", min: 48000)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bitrate = "bitrate"
             case bitstreamMode = "bitstreamMode"
@@ -208,6 +226,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Mode", location: .body(locationName: "mode"), required: true, type: .enum)
         ]
+
         /// Acceleration configuration for the job.
         public let mode: AccelerationMode
 
@@ -233,6 +252,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Channels", location: .body(locationName: "channels"), required: false, type: .integer), 
             AWSShapeMember(label: "SampleRate", location: .body(locationName: "sampleRate"), required: false, type: .integer)
         ]
+
         /// Specify Bit depth (BitDepth), in bits per sample, to choose the encoding quality for this audio track.
         public let bitDepth: Int32?
         /// Set Channels to specify the number of channels in this output audio track. Choosing Mono in the console will give you 1 output channel; choosing Stereo will give you 2. In the API, valid values are 1 and 2.
@@ -246,6 +266,15 @@ extension MediaConvert {
             self.sampleRate = sampleRate
         }
 
+        public func validate() throws {
+            try validate(bitDepth, name:"bitDepth", max: 24)
+            try validate(bitDepth, name:"bitDepth", min: 16)
+            try validate(channels, name:"channels", max: 2)
+            try validate(channels, name:"channels", min: 1)
+            try validate(sampleRate, name:"sampleRate", max: 192000)
+            try validate(sampleRate, name:"sampleRate", min: 8000)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bitDepth = "bitDepth"
             case channels = "channels"
@@ -257,11 +286,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SourceAncillaryChannelNumber", location: .body(locationName: "sourceAncillaryChannelNumber"), required: false, type: .integer)
         ]
+
         /// Specifies the 608 channel number in the ancillary data track from which to extract captions. Unused for passthrough.
         public let sourceAncillaryChannelNumber: Int32?
 
         public init(sourceAncillaryChannelNumber: Int32? = nil) {
             self.sourceAncillaryChannelNumber = sourceAncillaryChannelNumber
+        }
+
+        public func validate() throws {
+            try validate(sourceAncillaryChannelNumber, name:"sourceAncillaryChannelNumber", max: 4)
+            try validate(sourceAncillaryChannelNumber, name:"sourceAncillaryChannelNumber", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -279,6 +314,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", location: .body(locationName: "arn"), required: true, type: .string)
         ]
+
         /// The ARN of the ACM certificate that you want to associate with your MediaConvert resource.
         public let arn: String
 
@@ -292,6 +328,7 @@ extension MediaConvert {
     }
 
     public struct AssociateCertificateResponse: AWSShape {
+
 
         public init() {
         }
@@ -319,6 +356,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Mp2Settings", location: .body(locationName: "mp2Settings"), required: false, type: .structure), 
             AWSShapeMember(label: "WavSettings", location: .body(locationName: "wavSettings"), required: false, type: .structure)
         ]
+
         /// Required when you set (Codec) under (AudioDescriptions)>(CodecSettings) to the value AAC. The service accepts one of two mutually exclusive groups of AAC settings--VBR and CBR. To select one of these modes, set the value of Bitrate control mode (rateControlMode) to "VBR" or "CBR".  In VBR mode, you control the audio quality with the setting VBR quality (vbrQuality). In CBR mode, you use the setting Bitrate (bitrate). Defaults and valid values depend on the rate control mode.
         public let aacSettings: AacSettings?
         /// Required when you set (Codec) under (AudioDescriptions)>(CodecSettings) to the value AC3.
@@ -342,6 +380,15 @@ extension MediaConvert {
             self.eac3Settings = eac3Settings
             self.mp2Settings = mp2Settings
             self.wavSettings = wavSettings
+        }
+
+        public func validate() throws {
+            try aacSettings?.validate()
+            try ac3Settings?.validate()
+            try aiffSettings?.validate()
+            try eac3Settings?.validate()
+            try mp2Settings?.validate()
+            try wavSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -374,6 +421,7 @@ extension MediaConvert {
             AWSShapeMember(label: "RemixSettings", location: .body(locationName: "remixSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "StreamName", location: .body(locationName: "streamName"), required: false, type: .string)
         ]
+
         /// Advanced audio normalization settings.
         public let audioNormalizationSettings: AudioNormalizationSettings?
         /// Specifies which audio data to use from each input. In the simplest case, specify an "Audio Selector":#inputs-audio_selector by name based on its order within each input. For example if you specify "Audio Selector 3", then the third audio selector will be used from each input. If an input does not have an "Audio Selector 3", then the audio selector marked as "default" in that input will be used. If there is no audio selector marked as "default", silence will be inserted for the duration of that input. Alternatively, an "Audio Selector Group":#inputs-audio_selector_group name may be specified, with similar default/silence behavior. If no audio_source_name is specified, then "Audio Selector 1" will be chosen automatically.
@@ -406,6 +454,18 @@ extension MediaConvert {
             self.languageCodeControl = languageCodeControl
             self.remixSettings = remixSettings
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try audioNormalizationSettings?.validate()
+            try validate(audioType, name:"audioType", max: 255)
+            try validate(audioType, name:"audioType", min: 0)
+            try codecSettings?.validate()
+            try validate(customLanguageCode, name:"customLanguageCode", max: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", min: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", pattern: "^[A-Za-z]{3}$")
+            try remixSettings?.validate()
+            try validate(streamName, name:"streamName", pattern: "^[\\w\\s]*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -461,6 +521,7 @@ extension MediaConvert {
             AWSShapeMember(label: "PeakCalculation", location: .body(locationName: "peakCalculation"), required: false, type: .enum), 
             AWSShapeMember(label: "TargetLkfs", location: .body(locationName: "targetLkfs"), required: false, type: .double)
         ]
+
         /// Audio normalization algorithm to use. 1770-1 conforms to the CALM Act specification, 1770-2 conforms to the EBU R-128 specification.
         public let algorithm: AudioNormalizationAlgorithm?
         /// When enabled the output audio is corrected using the chosen algorithm. If disabled, the audio will be measured but not adjusted.
@@ -481,6 +542,11 @@ extension MediaConvert {
             self.loudnessLogging = loudnessLogging
             self.peakCalculation = peakCalculation
             self.targetLkfs = targetLkfs
+        }
+
+        public func validate() throws {
+            try validate(correctionGateLevel, name:"correctionGateLevel", max: 0)
+            try validate(correctionGateLevel, name:"correctionGateLevel", min: -70)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -506,6 +572,7 @@ extension MediaConvert {
             AWSShapeMember(label: "SelectorType", location: .body(locationName: "selectorType"), required: false, type: .enum), 
             AWSShapeMember(label: "Tracks", location: .body(locationName: "tracks"), required: false, type: .list)
         ]
+
         /// Selects a specific language code from within an audio source, using the ISO 639-2 or ISO 639-3 three-letter language code
         public let customLanguageCode: String?
         /// Enable this setting on one audio selector to set it as the default for the job. The service uses this default for outputs where it can't find the specified input audio. If you don't set a default, those outputs have no audio.
@@ -540,6 +607,26 @@ extension MediaConvert {
             self.tracks = tracks
         }
 
+        public func validate() throws {
+            try validate(customLanguageCode, name:"customLanguageCode", max: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", min: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", pattern: "^[A-Za-z]{3}$")
+            try validate(externalAudioFileInput, name:"externalAudioFileInput", pattern: "^(s3:\\/\\/)([^\\/]+\\/)+([^\\/\\.]+|(([^\\/]*)\\.([mM]2[vV]|[mM][pP][eE][gG]|[aA][vV][iI]|[mM][pP]4|[fF][lL][vV]|[mM][pP][tT]|[mM][pP][gG]|[mM]4[vV]|[tT][rR][pP]|[fF]4[vV]|[mM]2[tT][sS]|[tT][sS]|264|[hH]264|[mM][kK][vV]|[mM][oO][vV]|[mM][tT][sS]|[mM]2[tT]|[wW][mM][vV]|[aA][sS][fF]|[vV][oO][bB]|3[gG][pP]|3[gG][pP][pP]|[mM][xX][fF]|[dD][iI][vV][xX]|[xX][vV][iI][dD]|[rR][aA][wW]|[dD][vV]|[gG][xX][fF]|[mM]1[vV]|3[gG]2|[vV][mM][fF]|[mM]3[uU]8|[lL][cC][hH]|[gG][xX][fF]_[mM][pP][eE][gG]2|[mM][xX][fF]_[mM][pP][eE][gG]2|[mM][xX][fF][hH][dD]|[wW][aA][vV]|[yY]4[mM]|[aA][aA][cC]|[aA][iI][fF][fF]|[mM][pP]2|[aA][cC]3|[eE][cC]3|[dD][tT][sS][eE])))$")
+            try validate(offset, name:"offset", max: 2147483647)
+            try validate(offset, name:"offset", min: -2147483648)
+            try pids?.forEach {
+                try validate($0, name:"pids[]", max: 2147483647)
+                try validate($0, name:"pids[]", min: 1)
+            }
+            try validate(programSelection, name:"programSelection", max: 8)
+            try validate(programSelection, name:"programSelection", min: 0)
+            try remixSettings?.validate()
+            try tracks?.forEach {
+                try validate($0, name:"tracks[]", max: 2147483647)
+                try validate($0, name:"tracks[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case customLanguageCode = "customLanguageCode"
             case defaultSelection = "defaultSelection"
@@ -558,11 +645,18 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AudioSelectorNames", location: .body(locationName: "audioSelectorNames"), required: false, type: .list)
         ]
+
         /// Name of an Audio Selector within the same input to include in the group.  Audio selector names are standardized, based on their order within the input (e.g., "Audio Selector 1"). The audio selector name parameter can be repeated to add any number of audio selectors to the group.
         public let audioSelectorNames: [String]?
 
         public init(audioSelectorNames: [String]? = nil) {
             self.audioSelectorNames = audioSelectorNames
+        }
+
+        public func validate() throws {
+            try audioSelectorNames?.forEach {
+                try validate($0, name:"audioSelectorNames[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -587,11 +681,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AvailBlankingImage", location: .body(locationName: "availBlankingImage"), required: false, type: .string)
         ]
+
         /// Blanking image to be used. Leave empty for solid black. Only bmp and png images are supported.
         public let availBlankingImage: String?
 
         public init(availBlankingImage: String? = nil) {
             self.availBlankingImage = availBlankingImage
+        }
+
+        public func validate() throws {
+            try validate(availBlankingImage, name:"availBlankingImage", min: 14)
+            try validate(availBlankingImage, name:"availBlankingImage", pattern: "^(s3:\\/\\/)(.*?)\\.(bmp|BMP|png|PNG)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -626,6 +726,7 @@ extension MediaConvert {
             AWSShapeMember(label: "XPosition", location: .body(locationName: "xPosition"), required: false, type: .integer), 
             AWSShapeMember(label: "YPosition", location: .body(locationName: "yPosition"), required: false, type: .integer)
         ]
+
         /// If no explicit x_position or y_position is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
         public let alignment: BurninSubtitleAlignment?
         /// Specifies the color of the rectangle behind the captions.
@@ -683,6 +784,29 @@ extension MediaConvert {
             self.teletextSpacing = teletextSpacing
             self.xPosition = xPosition
             self.yPosition = yPosition
+        }
+
+        public func validate() throws {
+            try validate(backgroundOpacity, name:"backgroundOpacity", max: 255)
+            try validate(backgroundOpacity, name:"backgroundOpacity", min: 0)
+            try validate(fontOpacity, name:"fontOpacity", max: 255)
+            try validate(fontOpacity, name:"fontOpacity", min: 0)
+            try validate(fontResolution, name:"fontResolution", max: 600)
+            try validate(fontResolution, name:"fontResolution", min: 96)
+            try validate(fontSize, name:"fontSize", max: 96)
+            try validate(fontSize, name:"fontSize", min: 0)
+            try validate(outlineSize, name:"outlineSize", max: 10)
+            try validate(outlineSize, name:"outlineSize", min: 0)
+            try validate(shadowOpacity, name:"shadowOpacity", max: 255)
+            try validate(shadowOpacity, name:"shadowOpacity", min: 0)
+            try validate(shadowXOffset, name:"shadowXOffset", max: 2147483647)
+            try validate(shadowXOffset, name:"shadowXOffset", min: -2147483648)
+            try validate(shadowYOffset, name:"shadowYOffset", max: 2147483647)
+            try validate(shadowYOffset, name:"shadowYOffset", min: -2147483648)
+            try validate(xPosition, name:"xPosition", max: 2147483647)
+            try validate(xPosition, name:"xPosition", min: 0)
+            try validate(yPosition, name:"yPosition", max: 2147483647)
+            try validate(yPosition, name:"yPosition", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -756,6 +880,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         /// The Job ID of the job to be cancelled.
         public let id: String
 
@@ -770,6 +895,7 @@ extension MediaConvert {
 
     public struct CancelJobResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -783,6 +909,7 @@ extension MediaConvert {
             AWSShapeMember(label: "LanguageCode", location: .body(locationName: "languageCode"), required: false, type: .enum), 
             AWSShapeMember(label: "LanguageDescription", location: .body(locationName: "languageDescription"), required: false, type: .string)
         ]
+
         /// Specifies which "Caption Selector":#inputs-caption_selector to use from each input when generating captions. The name should be of the format "Caption Selector ", which denotes that the Nth Caption Selector will be used from each input.
         public let captionSelectorName: String?
         /// Indicates the language of the caption output track, using the ISO 639-2 or ISO 639-3 three-letter language code. For most captions output formats, the encoder puts this language information in the output captions metadata. If your output captions format is DVB-Sub or Burn in, the encoder uses this language information to choose the font language for rendering the captions text.
@@ -802,6 +929,14 @@ extension MediaConvert {
             self.languageDescription = languageDescription
         }
 
+        public func validate() throws {
+            try validate(captionSelectorName, name:"captionSelectorName", min: 1)
+            try validate(customLanguageCode, name:"customLanguageCode", max: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", min: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", pattern: "^[A-Za-z]{3}$")
+            try destinationSettings?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case captionSelectorName = "captionSelectorName"
             case customLanguageCode = "customLanguageCode"
@@ -818,6 +953,7 @@ extension MediaConvert {
             AWSShapeMember(label: "LanguageCode", location: .body(locationName: "languageCode"), required: false, type: .enum), 
             AWSShapeMember(label: "LanguageDescription", location: .body(locationName: "languageDescription"), required: false, type: .string)
         ]
+
         /// Indicates the language of the caption output track, using the ISO 639-2 or ISO 639-3 three-letter language code. For most captions output formats, the encoder puts this language information in the output captions metadata. If your output captions format is DVB-Sub or Burn in, the encoder uses this language information to choose the font language for rendering the captions text.
         public let customLanguageCode: String?
         /// Specific settings required by destination type. Note that burnin_destination_settings are not available if the source of the caption data is Embedded or Teletext.
@@ -832,6 +968,13 @@ extension MediaConvert {
             self.destinationSettings = destinationSettings
             self.languageCode = languageCode
             self.languageDescription = languageDescription
+        }
+
+        public func validate() throws {
+            try validate(customLanguageCode, name:"customLanguageCode", max: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", min: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", pattern: "^[A-Za-z]{3}$")
+            try destinationSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -852,6 +995,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TeletextDestinationSettings", location: .body(locationName: "teletextDestinationSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "TtmlDestinationSettings", location: .body(locationName: "ttmlDestinationSettings"), required: false, type: .structure)
         ]
+
         /// Burn-In Destination Settings.
         public let burninDestinationSettings: BurninDestinationSettings?
         /// Specify the format for this set of captions on this output. The default format is embedded without SCTE-20. Other options are embedded with SCTE-20, burn-in, DVB-sub, SCC, SRT, teletext, TTML, and web-VTT. If you are using SCTE-20, choose SCTE-20 plus embedded (SCTE20_PLUS_EMBEDDED) to create an output that complies with the SCTE-43 spec. To create a non-compliant output where the embedded captions come first, choose Embedded plus SCTE-20 (EMBEDDED_PLUS_SCTE20).
@@ -875,6 +1019,13 @@ extension MediaConvert {
             self.sccDestinationSettings = sccDestinationSettings
             self.teletextDestinationSettings = teletextDestinationSettings
             self.ttmlDestinationSettings = ttmlDestinationSettings
+        }
+
+        public func validate() throws {
+            try burninDestinationSettings?.validate()
+            try dvbSubDestinationSettings?.validate()
+            try embeddedDestinationSettings?.validate()
+            try teletextDestinationSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -909,6 +1060,7 @@ extension MediaConvert {
             AWSShapeMember(label: "LanguageCode", location: .body(locationName: "languageCode"), required: false, type: .enum), 
             AWSShapeMember(label: "SourceSettings", location: .body(locationName: "sourceSettings"), required: false, type: .structure)
         ]
+
         /// The specific language to extract from source, using the ISO 639-2 or ISO 639-3 three-letter language code. If input is SCTE-27, complete this field and/or PID to select the caption language to extract. If input is DVB-Sub and output is Burn-in or SMPTE-TT, complete this field and/or PID to select the caption language to extract. If input is DVB-Sub that is being passed through, omit this field (and PID field); there is no way to extract a specific language with pass-through captions.
         public let customLanguageCode: String?
         /// The specific language to extract from source. If input is SCTE-27, complete this field and/or PID to select the caption language to extract. If input is DVB-Sub and output is Burn-in or SMPTE-TT, complete this field and/or PID to select the caption language to extract. If input is DVB-Sub that is being passed through, omit this field (and PID field); there is no way to extract a specific language with pass-through captions.
@@ -920,6 +1072,13 @@ extension MediaConvert {
             self.customLanguageCode = customLanguageCode
             self.languageCode = languageCode
             self.sourceSettings = sourceSettings
+        }
+
+        public func validate() throws {
+            try validate(customLanguageCode, name:"customLanguageCode", max: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", min: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", pattern: "^[A-Za-z]{3}$")
+            try sourceSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -939,6 +1098,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TeletextSourceSettings", location: .body(locationName: "teletextSourceSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "TrackSourceSettings", location: .body(locationName: "trackSourceSettings"), required: false, type: .structure)
         ]
+
         /// Settings for ancillary captions source.
         public let ancillarySourceSettings: AncillarySourceSettings?
         /// DVB Sub Source Settings
@@ -962,6 +1122,15 @@ extension MediaConvert {
             self.sourceType = sourceType
             self.teletextSourceSettings = teletextSourceSettings
             self.trackSourceSettings = trackSourceSettings
+        }
+
+        public func validate() throws {
+            try ancillarySourceSettings?.validate()
+            try dvbSubSourceSettings?.validate()
+            try embeddedSourceSettings?.validate()
+            try fileSourceSettings?.validate()
+            try teletextSourceSettings?.validate()
+            try trackSourceSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -995,11 +1164,18 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OutputChannels", location: .body(locationName: "outputChannels"), required: false, type: .list)
         ]
+
         /// List of output channels
         public let outputChannels: [OutputChannelMapping]?
 
         public init(outputChannels: [OutputChannelMapping]? = nil) {
             self.outputChannels = outputChannels
+        }
+
+        public func validate() throws {
+            try outputChannels?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1027,6 +1203,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StaticKeyProvider", location: .body(locationName: "staticKeyProvider"), required: false, type: .structure), 
             AWSShapeMember(label: "Type", location: .body(locationName: "type"), required: false, type: .enum)
         ]
+
         /// This is a 128-bit, 16-byte hex value represented by a 32-character text string. If this parameter is not set then the Initialization Vector will follow the segment number by default.
         public let constantInitializationVector: String?
         /// Encrypts the segments with the given encryption scheme. Leave blank to disable. Selecting 'Disabled' in the web interface also disables encryption.
@@ -1044,6 +1221,13 @@ extension MediaConvert {
             self.initializationVectorInManifest = initializationVectorInManifest
             self.staticKeyProvider = staticKeyProvider
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(constantInitializationVector, name:"constantInitializationVector", max: 32)
+            try validate(constantInitializationVector, name:"constantInitializationVector", min: 32)
+            try validate(constantInitializationVector, name:"constantInitializationVector", pattern: "^[0-9a-fA-F]{32}$")
+            try staticKeyProvider?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1079,6 +1263,7 @@ extension MediaConvert {
             AWSShapeMember(label: "WriteDashManifest", location: .body(locationName: "writeDashManifest"), required: false, type: .enum), 
             AWSShapeMember(label: "WriteHlsManifest", location: .body(locationName: "writeHlsManifest"), required: false, type: .enum)
         ]
+
         /// A partial URI prefix that will be put in the manifest file at the top level BaseURL element. Can be used if streams are delivered from a different URL than the manifest file.
         public let baseUrl: String?
         /// When set to ENABLED, sets #EXT-X-ALLOW-CACHE:no tag, which prevents client from saving media segments for later replay.
@@ -1129,6 +1314,18 @@ extension MediaConvert {
             self.streamInfResolution = streamInfResolution
             self.writeDashManifest = writeDashManifest
             self.writeHlsManifest = writeHlsManifest
+        }
+
+        public func validate() throws {
+            try validate(destination, name:"destination", pattern: "^s3:\\/\\/")
+            try destinationSettings?.validate()
+            try encryption?.validate()
+            try validate(fragmentLength, name:"fragmentLength", max: 2147483647)
+            try validate(fragmentLength, name:"fragmentLength", min: 1)
+            try validate(minBufferTime, name:"minBufferTime", max: 2147483647)
+            try validate(minBufferTime, name:"minBufferTime", min: 0)
+            try validate(segmentLength, name:"segmentLength", max: 2147483647)
+            try validate(segmentLength, name:"segmentLength", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1207,6 +1404,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Hue", location: .body(locationName: "hue"), required: false, type: .integer), 
             AWSShapeMember(label: "Saturation", location: .body(locationName: "saturation"), required: false, type: .integer)
         ]
+
         /// Brightness level.
         public let brightness: Int32?
         /// Determines if colorspace conversion will be performed. If set to _None_, no conversion will be performed. If _Force 601_ or _Force 709_ are selected, conversion will be performed for inputs with differing colorspaces. An input's colorspace can be specified explicitly in the "Video Selector":#inputs-video_selector if necessary.
@@ -1227,6 +1425,18 @@ extension MediaConvert {
             self.hdr10Metadata = hdr10Metadata
             self.hue = hue
             self.saturation = saturation
+        }
+
+        public func validate() throws {
+            try validate(brightness, name:"brightness", max: 100)
+            try validate(brightness, name:"brightness", min: 1)
+            try validate(contrast, name:"contrast", max: 100)
+            try validate(contrast, name:"contrast", min: 1)
+            try hdr10Metadata?.validate()
+            try validate(hue, name:"hue", max: 180)
+            try validate(hue, name:"hue", min: -180)
+            try validate(saturation, name:"saturation", max: 100)
+            try validate(saturation, name:"saturation", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1283,6 +1493,7 @@ extension MediaConvert {
             AWSShapeMember(label: "MovSettings", location: .body(locationName: "movSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "Mp4Settings", location: .body(locationName: "mp4Settings"), required: false, type: .structure)
         ]
+
         /// Container for this output. Some containers require a container settings object. If not specified, the default object will be created.
         public let container: ContainerType?
         /// Settings for F4v container
@@ -1303,6 +1514,11 @@ extension MediaConvert {
             self.m3u8Settings = m3u8Settings
             self.movSettings = movSettings
             self.mp4Settings = mp4Settings
+        }
+
+        public func validate() throws {
+            try m2tsSettings?.validate()
+            try m3u8Settings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1341,6 +1557,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StatusUpdateInterval", location: .body(locationName: "statusUpdateInterval"), required: false, type: .enum), 
             AWSShapeMember(label: "UserMetadata", location: .body(locationName: "userMetadata"), required: false, type: .map)
         ]
+
         /// Accelerated transcoding can significantly speed up jobs with long, visually complex content. Outputs that use this feature incur pro-tier pricing. For information about feature limitations, see the AWS Elemental MediaConvert User Guide.
         public let accelerationSettings: AccelerationSettings?
         /// Optional. Choose a tag type that AWS Billing and Cost Management will use to sort your AWS Elemental MediaConvert costs on any billing report that you set up. Any transcoding outputs that don't have an associated tag will appear in your billing report unsorted. If you don't choose a valid value for this field, your job outputs will appear on the billing report unsorted.
@@ -1360,7 +1577,7 @@ extension MediaConvert {
         /// User-defined metadata that you want to associate with an MediaConvert job. You specify metadata in key/value pairs.
         public let userMetadata: [String: String]?
 
-        public init(accelerationSettings: AccelerationSettings? = nil, billingTagsSource: BillingTagsSource? = nil, clientRequestToken: String? = nil, jobTemplate: String? = nil, queue: String? = nil, role: String, settings: JobSettings, statusUpdateInterval: StatusUpdateInterval? = nil, userMetadata: [String: String]? = nil) {
+        public init(accelerationSettings: AccelerationSettings? = nil, billingTagsSource: BillingTagsSource? = nil, clientRequestToken: String? = CreateJobRequest.idempotencyToken(), jobTemplate: String? = nil, queue: String? = nil, role: String, settings: JobSettings, statusUpdateInterval: StatusUpdateInterval? = nil, userMetadata: [String: String]? = nil) {
             self.accelerationSettings = accelerationSettings
             self.billingTagsSource = billingTagsSource
             self.clientRequestToken = clientRequestToken
@@ -1370,6 +1587,10 @@ extension MediaConvert {
             self.settings = settings
             self.statusUpdateInterval = statusUpdateInterval
             self.userMetadata = userMetadata
+        }
+
+        public func validate() throws {
+            try settings.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1389,11 +1610,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Job", location: .body(locationName: "job"), required: false, type: .structure)
         ]
+
         /// Each job converts an input file into an output file or files. For more information, see the User Guide at http://docs.aws.amazon.com/mediaconvert/latest/ug/what-is.html
         public let job: Job?
 
         public init(job: Job? = nil) {
             self.job = job
+        }
+
+        public func validate() throws {
+            try job?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1412,6 +1638,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StatusUpdateInterval", location: .body(locationName: "statusUpdateInterval"), required: false, type: .enum), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// Accelerated transcoding can significantly speed up jobs with long, visually complex content. Outputs that use this feature incur pro-tier pricing. For information about feature limitations, see the AWS Elemental MediaConvert User Guide.
         public let accelerationSettings: AccelerationSettings?
         /// Optional. A category for the job template you are creating
@@ -1440,6 +1667,10 @@ extension MediaConvert {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try settings.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accelerationSettings = "accelerationSettings"
             case category = "category"
@@ -1456,11 +1687,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobTemplate", location: .body(locationName: "jobTemplate"), required: false, type: .structure)
         ]
+
         /// A job template is a pre-made set of encoding instructions that you can use to quickly create a job.
         public let jobTemplate: JobTemplate?
 
         public init(jobTemplate: JobTemplate? = nil) {
             self.jobTemplate = jobTemplate
+        }
+
+        public func validate() throws {
+            try jobTemplate?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1476,6 +1712,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Settings", location: .body(locationName: "settings"), required: true, type: .structure), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// Optional. A category for the preset you are creating.
         public let category: String?
         /// Optional. A description of the preset you are creating.
@@ -1495,6 +1732,10 @@ extension MediaConvert {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try settings.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case category = "category"
             case description = "description"
@@ -1508,11 +1749,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Preset", location: .body(locationName: "preset"), required: false, type: .structure)
         ]
+
         /// A preset is a collection of preconfigured media conversion settings that you want MediaConvert to apply to the output during the conversion process.
         public let preset: Preset?
 
         public init(preset: Preset? = nil) {
             self.preset = preset
+        }
+
+        public func validate() throws {
+            try preset?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1528,6 +1774,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ReservationPlanSettings", location: .body(locationName: "reservationPlanSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// Optional. A description of the queue that you are creating.
         public let description: String?
         /// The name of the queue that you are creating.
@@ -1560,6 +1807,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Queue", location: .body(locationName: "queue"), required: false, type: .structure)
         ]
+
         /// You can use queues to manage the resources that are available to your AWS account for running multiple transcoding jobs at the same time. If you don't specify a queue, the service sends all jobs through the default queue. For more information, see https://docs.aws.amazon.com/mediaconvert/latest/ug/working-with-queues.html.
         public let queue: Queue?
 
@@ -1577,6 +1825,7 @@ extension MediaConvert {
             AWSShapeMember(label: "PlaybackDeviceCompatibility", location: .body(locationName: "playbackDeviceCompatibility"), required: false, type: .enum), 
             AWSShapeMember(label: "SpekeKeyProvider", location: .body(locationName: "spekeKeyProvider"), required: false, type: .structure)
         ]
+
         /// This setting can improve the compatibility of your output with video players on obsolete devices. It applies only to DASH H.264 outputs with DRM encryption. Choose Unencrypted SEI (UNENCRYPTED_SEI) only to correct problems with playback on older devices. Otherwise, keep the default setting CENC v1 (CENC_V1). If you choose Unencrypted SEI, for that output, the service will exclude the access unit delimiter and will leave the SEI NAL units unencrypted.
         public let playbackDeviceCompatibility: DashIsoPlaybackDeviceCompatibility?
         /// Settings for use with a SPEKE key provider
@@ -1585,6 +1834,10 @@ extension MediaConvert {
         public init(playbackDeviceCompatibility: DashIsoPlaybackDeviceCompatibility? = nil, spekeKeyProvider: SpekeKeyProvider? = nil) {
             self.playbackDeviceCompatibility = playbackDeviceCompatibility
             self.spekeKeyProvider = spekeKeyProvider
+        }
+
+        public func validate() throws {
+            try spekeKeyProvider?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1606,6 +1859,7 @@ extension MediaConvert {
             AWSShapeMember(label: "SegmentLength", location: .body(locationName: "segmentLength"), required: false, type: .integer), 
             AWSShapeMember(label: "WriteSegmentTimelineInRepresentation", location: .body(locationName: "writeSegmentTimelineInRepresentation"), required: false, type: .enum)
         ]
+
         /// A partial URI prefix that will be put in the manifest (.mpd) file at the top level BaseURL element. Can be used if streams are delivered from a different URL than the manifest file.
         public let baseUrl: String?
         /// Use Destination (Destination) to specify the S3 output location and the output filename base. Destination accepts format identifiers. If you do not specify the base filename in the URI, the service will use the filename of the input file. If your job has multiple inputs, the service uses the filename of the first input file.
@@ -1638,6 +1892,18 @@ extension MediaConvert {
             self.segmentControl = segmentControl
             self.segmentLength = segmentLength
             self.writeSegmentTimelineInRepresentation = writeSegmentTimelineInRepresentation
+        }
+
+        public func validate() throws {
+            try validate(destination, name:"destination", pattern: "^s3:\\/\\/")
+            try destinationSettings?.validate()
+            try encryption?.validate()
+            try validate(fragmentLength, name:"fragmentLength", max: 2147483647)
+            try validate(fragmentLength, name:"fragmentLength", min: 1)
+            try validate(minBufferTime, name:"minBufferTime", max: 2147483647)
+            try validate(minBufferTime, name:"minBufferTime", min: 0)
+            try validate(segmentLength, name:"segmentLength", max: 2147483647)
+            try validate(segmentLength, name:"segmentLength", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1699,6 +1965,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Control", location: .body(locationName: "control"), required: false, type: .enum), 
             AWSShapeMember(label: "Mode", location: .body(locationName: "mode"), required: false, type: .enum)
         ]
+
         /// Only applies when you set Deinterlacer (DeinterlaceMode) to Deinterlace (DEINTERLACE) or Adaptive (ADAPTIVE). Motion adaptive interpolate (INTERPOLATE) produces sharper pictures, while blend (BLEND) produces smoother motion. Use (INTERPOLATE_TICKER) OR (BLEND_TICKER) if your source file includes a ticker, such as a scrolling headline at the bottom of the frame.
         public let algorithm: DeinterlaceAlgorithm?
         /// - When set to NORMAL (default), the deinterlacer does not convert frames that are tagged  in metadata as progressive. It will only convert those that are tagged as some other type. - When set to FORCE_ALL_FRAMES, the deinterlacer converts every frame to progressive - even those that are already tagged as progressive. Turn Force mode on only if there is  a good chance that the metadata has tagged frames as progressive when they are not  progressive. Do not turn on otherwise; processing frames that are already progressive  into progressive will probably result in lower quality video.
@@ -1736,6 +2003,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .uri(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the job template to be deleted.
         public let name: String
 
@@ -1750,6 +2018,7 @@ extension MediaConvert {
 
     public struct DeleteJobTemplateResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -1759,6 +2028,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .uri(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the preset to be deleted.
         public let name: String
 
@@ -1773,6 +2043,7 @@ extension MediaConvert {
 
     public struct DeletePresetResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -1782,6 +2053,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .uri(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the queue that you want to delete.
         public let name: String
 
@@ -1795,6 +2067,7 @@ extension MediaConvert {
     }
 
     public struct DeleteQueueResponse: AWSShape {
+
 
         public init() {
         }
@@ -1813,6 +2086,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Mode", location: .body(locationName: "mode"), required: false, type: .enum), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// Optional. Max number of endpoints, up to twenty, that will be returned at one time.
         public let maxResults: Int32?
         /// Optional field, defaults to DEFAULT. Specify DEFAULT for this operation to return your endpoints if any exist, or to create an endpoint for you and return it if one doesn't already exist. Specify GET_ONLY to return your endpoints if any exist, or an empty list if none exist.
@@ -1838,6 +2112,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Endpoints", location: .body(locationName: "endpoints"), required: false, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// List of endpoints
         public let endpoints: [Endpoint]?
         /// Use this string to request the next batch of endpoints.
@@ -1858,11 +2133,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3Settings", location: .body(locationName: "s3Settings"), required: false, type: .structure)
         ]
+
         /// Settings associated with S3 destination
         public let s3Settings: S3DestinationSettings?
 
         public init(s3Settings: S3DestinationSettings? = nil) {
             self.s3Settings = s3Settings
+        }
+
+        public func validate() throws {
+            try s3Settings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1874,6 +2154,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", location: .uri(locationName: "arn"), required: true, type: .string)
         ]
+
         /// The ARN of the ACM certificate that you want to disassociate from your MediaConvert resource.
         public let arn: String
 
@@ -1887,6 +2168,7 @@ extension MediaConvert {
     }
 
     public struct DisassociateCertificateResponse: AWSShape {
+
 
         public init() {
         }
@@ -1905,6 +2187,7 @@ extension MediaConvert {
             AWSShapeMember(label: "NetworkName", location: .body(locationName: "networkName"), required: false, type: .string), 
             AWSShapeMember(label: "NitInterval", location: .body(locationName: "nitInterval"), required: false, type: .integer)
         ]
+
         /// The numeric value placed in the Network Information Table (NIT).
         public let networkId: Int32?
         /// The network name text placed in the network_name_descriptor inside the Network Information Table. Maximum length is 256 characters.
@@ -1916,6 +2199,15 @@ extension MediaConvert {
             self.networkId = networkId
             self.networkName = networkName
             self.nitInterval = nitInterval
+        }
+
+        public func validate() throws {
+            try validate(networkId, name:"networkId", max: 65535)
+            try validate(networkId, name:"networkId", min: 0)
+            try validate(networkName, name:"networkName", max: 256)
+            try validate(networkName, name:"networkName", min: 1)
+            try validate(nitInterval, name:"nitInterval", max: 10000)
+            try validate(nitInterval, name:"nitInterval", min: 25)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1932,6 +2224,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ServiceName", location: .body(locationName: "serviceName"), required: false, type: .string), 
             AWSShapeMember(label: "ServiceProviderName", location: .body(locationName: "serviceProviderName"), required: false, type: .string)
         ]
+
         /// Selects method of inserting SDT information into output stream.  "Follow input SDT" copies SDT information from input stream to  output stream. "Follow input SDT if present" copies SDT information from  input stream to output stream if SDT information is present in the input, otherwise it will fall back on the user-defined values. Enter "SDT  Manually" means user will enter the SDT information. "No SDT" means output  stream will not contain SDT information.
         public let outputSdt: OutputSdt?
         /// The number of milliseconds between instances of this table in the output transport stream.
@@ -1946,6 +2239,15 @@ extension MediaConvert {
             self.sdtInterval = sdtInterval
             self.serviceName = serviceName
             self.serviceProviderName = serviceProviderName
+        }
+
+        public func validate() throws {
+            try validate(sdtInterval, name:"sdtInterval", max: 2000)
+            try validate(sdtInterval, name:"sdtInterval", min: 25)
+            try validate(serviceName, name:"serviceName", max: 256)
+            try validate(serviceName, name:"serviceName", min: 1)
+            try validate(serviceProviderName, name:"serviceProviderName", max: 256)
+            try validate(serviceProviderName, name:"serviceProviderName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1976,6 +2278,7 @@ extension MediaConvert {
             AWSShapeMember(label: "XPosition", location: .body(locationName: "xPosition"), required: false, type: .integer), 
             AWSShapeMember(label: "YPosition", location: .body(locationName: "yPosition"), required: false, type: .integer)
         ]
+
         /// If no explicit x_position or y_position is provided, setting alignment to centered will place the captions at the bottom center of the output. Similarly, setting a left alignment will align captions to the bottom left of the output. If x and y positions are given in conjunction with the alignment parameter, the font will be justified (either left or centered) relative to those coordinates. This option is not valid for source captions that are STL, 608/embedded or teletext. These source settings are already pre-defined by the caption stream. All burn-in and DVB-Sub font settings must match.
         public let alignment: DvbSubtitleAlignment?
         /// Specifies the color of the rectangle behind the captions.
@@ -2035,6 +2338,29 @@ extension MediaConvert {
             self.yPosition = yPosition
         }
 
+        public func validate() throws {
+            try validate(backgroundOpacity, name:"backgroundOpacity", max: 255)
+            try validate(backgroundOpacity, name:"backgroundOpacity", min: 0)
+            try validate(fontOpacity, name:"fontOpacity", max: 255)
+            try validate(fontOpacity, name:"fontOpacity", min: 0)
+            try validate(fontResolution, name:"fontResolution", max: 600)
+            try validate(fontResolution, name:"fontResolution", min: 96)
+            try validate(fontSize, name:"fontSize", max: 96)
+            try validate(fontSize, name:"fontSize", min: 0)
+            try validate(outlineSize, name:"outlineSize", max: 10)
+            try validate(outlineSize, name:"outlineSize", min: 0)
+            try validate(shadowOpacity, name:"shadowOpacity", max: 255)
+            try validate(shadowOpacity, name:"shadowOpacity", min: 0)
+            try validate(shadowXOffset, name:"shadowXOffset", max: 2147483647)
+            try validate(shadowXOffset, name:"shadowXOffset", min: -2147483648)
+            try validate(shadowYOffset, name:"shadowYOffset", max: 2147483647)
+            try validate(shadowYOffset, name:"shadowYOffset", min: -2147483648)
+            try validate(xPosition, name:"xPosition", max: 2147483647)
+            try validate(xPosition, name:"xPosition", min: 0)
+            try validate(yPosition, name:"yPosition", max: 2147483647)
+            try validate(yPosition, name:"yPosition", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case alignment = "alignment"
             case backgroundColor = "backgroundColor"
@@ -2060,11 +2386,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Pid", location: .body(locationName: "pid"), required: false, type: .integer)
         ]
+
         /// When using DVB-Sub with Burn-In or SMPTE-TT, use this PID for the source content. Unused for DVB-Sub passthrough. All DVB-Sub content is passed through, regardless of selectors.
         public let pid: Int32?
 
         public init(pid: Int32? = nil) {
             self.pid = pid
+        }
+
+        public func validate() throws {
+            try validate(pid, name:"pid", max: 2147483647)
+            try validate(pid, name:"pid", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2122,11 +2454,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TdtInterval", location: .body(locationName: "tdtInterval"), required: false, type: .integer)
         ]
+
         /// The number of milliseconds between instances of this table in the output transport stream.
         public let tdtInterval: Int32?
 
         public init(tdtInterval: Int32? = nil) {
             self.tdtInterval = tdtInterval
+        }
+
+        public func validate() throws {
+            try validate(tdtInterval, name:"tdtInterval", max: 30000)
+            try validate(tdtInterval, name:"tdtInterval", min: 1000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2236,6 +2574,7 @@ extension MediaConvert {
             AWSShapeMember(label: "SurroundExMode", location: .body(locationName: "surroundExMode"), required: false, type: .enum), 
             AWSShapeMember(label: "SurroundMode", location: .body(locationName: "surroundMode"), required: false, type: .enum)
         ]
+
         /// If set to ATTENUATE_3_DB, applies a 3 dB attenuation to the surround channels. Only used for 3/2 coding mode.
         public let attenuationControl: Eac3AttenuationControl?
         /// Average bitrate in bits/second. Valid bitrates depend on the coding mode.
@@ -2307,6 +2646,15 @@ extension MediaConvert {
             self.surroundMode = surroundMode
         }
 
+        public func validate() throws {
+            try validate(bitrate, name:"bitrate", max: 640000)
+            try validate(bitrate, name:"bitrate", min: 64000)
+            try validate(dialnorm, name:"dialnorm", max: 31)
+            try validate(dialnorm, name:"dialnorm", min: 1)
+            try validate(sampleRate, name:"sampleRate", max: 48000)
+            try validate(sampleRate, name:"sampleRate", min: 48000)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case attenuationControl = "attenuationControl"
             case bitrate = "bitrate"
@@ -2364,11 +2712,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Destination608ChannelNumber", location: .body(locationName: "destination608ChannelNumber"), required: false, type: .integer)
         ]
+
         /// Ignore this setting unless your input captions are SCC format and your output container is MXF. With this combination of input captions format and output container, you can optionally use this setting to replace the input channel number with the track number that you specify. Specify a different number for each output captions track. If you don't specify an output track number, the system uses the input channel number for the output channel number. This setting applies to each output individually. You can optionally combine two captions channels in your output. The two output channel numbers can be one of the following pairs: 1,3; 2,4; 1,4; or 2,3.
         public let destination608ChannelNumber: Int32?
 
         public init(destination608ChannelNumber: Int32? = nil) {
             self.destination608ChannelNumber = destination608ChannelNumber
+        }
+
+        public func validate() throws {
+            try validate(destination608ChannelNumber, name:"destination608ChannelNumber", max: 4)
+            try validate(destination608ChannelNumber, name:"destination608ChannelNumber", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2382,6 +2736,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Source608ChannelNumber", location: .body(locationName: "source608ChannelNumber"), required: false, type: .integer), 
             AWSShapeMember(label: "Source608TrackNumber", location: .body(locationName: "source608TrackNumber"), required: false, type: .integer)
         ]
+
         /// When set to UPCONVERT, 608 data is both passed through via the "608 compatibility bytes" fields of the 708 wrapper as well as translated into 708. 708 data present in the source content will be discarded.
         public let convert608To708: EmbeddedConvert608To708?
         /// Specifies the 608/708 channel number within the video track from which to extract captions. Unused for passthrough.
@@ -2395,6 +2750,13 @@ extension MediaConvert {
             self.source608TrackNumber = source608TrackNumber
         }
 
+        public func validate() throws {
+            try validate(source608ChannelNumber, name:"source608ChannelNumber", max: 4)
+            try validate(source608ChannelNumber, name:"source608ChannelNumber", min: 1)
+            try validate(source608TrackNumber, name:"source608TrackNumber", max: 1)
+            try validate(source608TrackNumber, name:"source608TrackNumber", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case convert608To708 = "convert608To708"
             case source608ChannelNumber = "source608ChannelNumber"
@@ -2406,6 +2768,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string)
         ]
+
         /// URL of endpoint
         public let url: String?
 
@@ -2422,11 +2785,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "MccXml", location: .body(locationName: "mccXml"), required: false, type: .string)
         ]
+
         /// Provide your ESAM ManifestConfirmConditionNotification XML document inside your JSON job settings. Form the XML document as per OC-SP-ESAM-API-I03-131025. The transcoder will use the Manifest Conditioning instructions in the message that you supply.
         public let mccXml: String?
 
         public init(mccXml: String? = nil) {
             self.mccXml = mccXml
+        }
+
+        public func validate() throws {
+            try validate(mccXml, name:"mccXml", pattern: "^\\s*<(.|\\n)*ManifestConfirmConditionNotification(.|\\n)*>\\s*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2440,6 +2808,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ResponseSignalPreroll", location: .body(locationName: "responseSignalPreroll"), required: false, type: .integer), 
             AWSShapeMember(label: "SignalProcessingNotification", location: .body(locationName: "signalProcessingNotification"), required: false, type: .structure)
         ]
+
         /// Specifies an ESAM ManifestConfirmConditionNotification XML as per OC-SP-ESAM-API-I03-131025. The transcoder uses the manifest conditioning instructions that you provide in the setting MCC XML (mccXml).
         public let manifestConfirmConditionNotification: EsamManifestConfirmConditionNotification?
         /// Specifies the stream distance, in milliseconds, between the SCTE 35 messages that the transcoder places and the splice points that they refer to. If the time between the start of the asset and the SCTE-35 message is less than this value, then the transcoder places the SCTE-35 marker at the beginning of the stream.
@@ -2453,6 +2822,13 @@ extension MediaConvert {
             self.signalProcessingNotification = signalProcessingNotification
         }
 
+        public func validate() throws {
+            try manifestConfirmConditionNotification?.validate()
+            try validate(responseSignalPreroll, name:"responseSignalPreroll", max: 30000)
+            try validate(responseSignalPreroll, name:"responseSignalPreroll", min: 0)
+            try signalProcessingNotification?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case manifestConfirmConditionNotification = "manifestConfirmConditionNotification"
             case responseSignalPreroll = "responseSignalPreroll"
@@ -2464,11 +2840,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SccXml", location: .body(locationName: "sccXml"), required: false, type: .string)
         ]
+
         /// Provide your ESAM SignalProcessingNotification XML document inside your JSON job settings. Form the XML document as per OC-SP-ESAM-API-I03-131025. The transcoder will use the signal processing instructions in the message that you supply. Provide your ESAM SignalProcessingNotification XML document inside your JSON job settings. If you want the service to place SCTE-35 markers at the insertion points you specify in the XML document, you must also enable SCTE-35 ESAM (scte35Esam). Note that you can either specify an ESAM XML document or enable SCTE-35 passthrough. You can't do both.
         public let sccXml: String?
 
         public init(sccXml: String? = nil) {
             self.sccXml = sccXml
+        }
+
+        public func validate() throws {
+            try validate(sccXml, name:"sccXml", pattern: "^\\s*<(.|\\n)*SignalProcessingNotification(.|\\n)*>\\s*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2480,6 +2861,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Message", location: .body(locationName: "message"), required: false, type: .string)
         ]
+
         public let message: String?
 
         public init(message: String? = nil) {
@@ -2501,6 +2883,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "MoovPlacement", location: .body(locationName: "moovPlacement"), required: false, type: .enum)
         ]
+
         /// If set to PROGRESSIVE_DOWNLOAD, the MOOV atom is relocated to the beginning of the archive as required for progressive downloading. Otherwise it is placed normally at the end.
         public let moovPlacement: F4vMoovPlacement?
 
@@ -2518,6 +2901,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Destination", location: .body(locationName: "destination"), required: false, type: .string), 
             AWSShapeMember(label: "DestinationSettings", location: .body(locationName: "destinationSettings"), required: false, type: .structure)
         ]
+
         /// Use Destination (Destination) to specify the S3 output location and the output filename base. Destination accepts format identifiers. If you do not specify the base filename in the URI, the service will use the filename of the input file. If your job has multiple inputs, the service uses the filename of the first input file.
         public let destination: String?
         /// Settings associated with the destination. Will vary based on the type of destination
@@ -2526,6 +2910,11 @@ extension MediaConvert {
         public init(destination: String? = nil, destinationSettings: DestinationSettings? = nil) {
             self.destination = destination
             self.destinationSettings = destinationSettings
+        }
+
+        public func validate() throws {
+            try validate(destination, name:"destination", pattern: "^s3:\\/\\/")
+            try destinationSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2546,6 +2935,7 @@ extension MediaConvert {
             AWSShapeMember(label: "SourceFile", location: .body(locationName: "sourceFile"), required: false, type: .string), 
             AWSShapeMember(label: "TimeDelta", location: .body(locationName: "timeDelta"), required: false, type: .integer)
         ]
+
         /// If set to UPCONVERT, 608 caption data is both passed through via the "608 compatibility bytes" fields of the 708 wrapper as well as translated into 708. 708 data present in the source content will be discarded.
         public let convert608To708: FileSourceConvert608To708?
         /// External caption file used for loading captions. Accepted file extensions are 'scc', 'ttml', 'dfxp', 'stl', 'srt', and 'smi'.
@@ -2557,6 +2947,13 @@ extension MediaConvert {
             self.convert608To708 = convert608To708
             self.sourceFile = sourceFile
             self.timeDelta = timeDelta
+        }
+
+        public func validate() throws {
+            try validate(sourceFile, name:"sourceFile", min: 14)
+            try validate(sourceFile, name:"sourceFile", pattern: "^(s3:\\/\\/)(.*?)\\.(scc|SCC|ttml|TTML|dfxp|DFXP|stl|STL|srt|SRT|smi|SMI)$")
+            try validate(timeDelta, name:"timeDelta", max: 2147483647)
+            try validate(timeDelta, name:"timeDelta", min: -2147483648)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2580,6 +2977,7 @@ extension MediaConvert {
             AWSShapeMember(label: "MaxCaptures", location: .body(locationName: "maxCaptures"), required: false, type: .integer), 
             AWSShapeMember(label: "Quality", location: .body(locationName: "quality"), required: false, type: .integer)
         ]
+
         /// Frame capture will encode the first frame of the output stream, then one frame every framerateDenominator/framerateNumerator seconds. For example, settings of framerateNumerator = 1 and framerateDenominator = 3 (a rate of 1/3 frame per second) will capture the first frame, then 1 frame every 3s. Files will be named as filename.n.jpg where n is the 0-based sequence number of each Capture.
         public let framerateDenominator: Int32?
         /// Frame capture will encode the first frame of the output stream, then one frame every framerateDenominator/framerateNumerator seconds. For example, settings of framerateNumerator = 1 and framerateDenominator = 3 (a rate of 1/3 frame per second) will capture the first frame, then 1 frame every 3s. Files will be named as filename.NNNNNNN.jpg where N is the 0-based frame sequence number zero padded to 7 decimal places.
@@ -2596,6 +2994,17 @@ extension MediaConvert {
             self.quality = quality
         }
 
+        public func validate() throws {
+            try validate(framerateDenominator, name:"framerateDenominator", max: 2147483647)
+            try validate(framerateDenominator, name:"framerateDenominator", min: 1)
+            try validate(framerateNumerator, name:"framerateNumerator", max: 2147483647)
+            try validate(framerateNumerator, name:"framerateNumerator", min: 1)
+            try validate(maxCaptures, name:"maxCaptures", max: 10000000)
+            try validate(maxCaptures, name:"maxCaptures", min: 1)
+            try validate(quality, name:"quality", max: 100)
+            try validate(quality, name:"quality", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case framerateDenominator = "framerateDenominator"
             case framerateNumerator = "framerateNumerator"
@@ -2608,6 +3017,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         /// the job ID of the job.
         public let id: String
 
@@ -2624,11 +3034,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Job", location: .body(locationName: "job"), required: false, type: .structure)
         ]
+
         /// Each job converts an input file into an output file or files. For more information, see the User Guide at http://docs.aws.amazon.com/mediaconvert/latest/ug/what-is.html
         public let job: Job?
 
         public init(job: Job? = nil) {
             self.job = job
+        }
+
+        public func validate() throws {
+            try job?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2640,6 +3055,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .uri(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the job template.
         public let name: String
 
@@ -2656,11 +3072,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobTemplate", location: .body(locationName: "jobTemplate"), required: false, type: .structure)
         ]
+
         /// A job template is a pre-made set of encoding instructions that you can use to quickly create a job.
         public let jobTemplate: JobTemplate?
 
         public init(jobTemplate: JobTemplate? = nil) {
             self.jobTemplate = jobTemplate
+        }
+
+        public func validate() throws {
+            try jobTemplate?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2672,6 +3093,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .uri(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the preset.
         public let name: String
 
@@ -2688,11 +3110,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Preset", location: .body(locationName: "preset"), required: false, type: .structure)
         ]
+
         /// A preset is a collection of preconfigured media conversion settings that you want MediaConvert to apply to the output during the conversion process.
         public let preset: Preset?
 
         public init(preset: Preset? = nil) {
             self.preset = preset
+        }
+
+        public func validate() throws {
+            try preset?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2704,6 +3131,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .uri(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the queue that you want information about.
         public let name: String
 
@@ -2720,6 +3148,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Queue", location: .body(locationName: "queue"), required: false, type: .structure)
         ]
+
         /// You can use queues to manage the resources that are available to your AWS account for running multiple transcoding jobs at the same time. If you don't specify a queue, the service sends all jobs through the default queue. For more information, see https://docs.aws.amazon.com/mediaconvert/latest/ug/working-with-queues.html.
         public let queue: Queue?
 
@@ -2848,6 +3277,7 @@ extension MediaConvert {
             AWSShapeMember(label: "MaxAverageBitrate", location: .body(locationName: "maxAverageBitrate"), required: false, type: .integer), 
             AWSShapeMember(label: "QvbrQualityLevel", location: .body(locationName: "qvbrQualityLevel"), required: false, type: .integer)
         ]
+
         /// Use this setting only when Rate control mode is QVBR and Quality tuning level is Multi-pass HQ. For Max average bitrate values suited to the complexity of your input video, the service limits the average bitrate of the video part of this output to the value you choose. That is, the total size of the video element is less than or equal to the value you set multiplied by the number of seconds of encoded output.
         public let maxAverageBitrate: Int32?
         /// Required when you use QVBR rate control mode. That is, when you specify qvbrSettings within h264Settings. Specify the target quality level for this output, from 1 to 10. Use higher numbers for greater quality. Level 10 results in nearly lossless compression. The quality level for most broadcast-quality transcodes is between 6 and 9.
@@ -2856,6 +3286,13 @@ extension MediaConvert {
         public init(maxAverageBitrate: Int32? = nil, qvbrQualityLevel: Int32? = nil) {
             self.maxAverageBitrate = maxAverageBitrate
             self.qvbrQualityLevel = qvbrQualityLevel
+        }
+
+        public func validate() throws {
+            try validate(maxAverageBitrate, name:"maxAverageBitrate", max: 1152000000)
+            try validate(maxAverageBitrate, name:"maxAverageBitrate", min: 1000)
+            try validate(qvbrQualityLevel, name:"qvbrQualityLevel", max: 10)
+            try validate(qvbrQualityLevel, name:"qvbrQualityLevel", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2925,6 +3362,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TemporalAdaptiveQuantization", location: .body(locationName: "temporalAdaptiveQuantization"), required: false, type: .enum), 
             AWSShapeMember(label: "UnregisteredSeiTimecode", location: .body(locationName: "unregisteredSeiTimecode"), required: false, type: .enum)
         ]
+
         /// Adaptive quantization. Allows intra-frame quantizers to vary to improve visual quality.
         public let adaptiveQuantization: H264AdaptiveQuantization?
         /// Average bitrate in bits/second. Required for VBR and CBR. For MS Smooth outputs, bitrates must be unique when rounded down to the nearest multiple of 1000.
@@ -3046,6 +3484,38 @@ extension MediaConvert {
             self.telecine = telecine
             self.temporalAdaptiveQuantization = temporalAdaptiveQuantization
             self.unregisteredSeiTimecode = unregisteredSeiTimecode
+        }
+
+        public func validate() throws {
+            try validate(bitrate, name:"bitrate", max: 1152000000)
+            try validate(bitrate, name:"bitrate", min: 1000)
+            try validate(framerateDenominator, name:"framerateDenominator", max: 2147483647)
+            try validate(framerateDenominator, name:"framerateDenominator", min: 1)
+            try validate(framerateNumerator, name:"framerateNumerator", max: 2147483647)
+            try validate(framerateNumerator, name:"framerateNumerator", min: 1)
+            try validate(gopClosedCadence, name:"gopClosedCadence", max: 2147483647)
+            try validate(gopClosedCadence, name:"gopClosedCadence", min: 0)
+            try validate(hrdBufferInitialFillPercentage, name:"hrdBufferInitialFillPercentage", max: 100)
+            try validate(hrdBufferInitialFillPercentage, name:"hrdBufferInitialFillPercentage", min: 0)
+            try validate(hrdBufferSize, name:"hrdBufferSize", max: 1152000000)
+            try validate(hrdBufferSize, name:"hrdBufferSize", min: 0)
+            try validate(maxBitrate, name:"maxBitrate", max: 1152000000)
+            try validate(maxBitrate, name:"maxBitrate", min: 1000)
+            try validate(minIInterval, name:"minIInterval", max: 30)
+            try validate(minIInterval, name:"minIInterval", min: 0)
+            try validate(numberBFramesBetweenReferenceFrames, name:"numberBFramesBetweenReferenceFrames", max: 7)
+            try validate(numberBFramesBetweenReferenceFrames, name:"numberBFramesBetweenReferenceFrames", min: 0)
+            try validate(numberReferenceFrames, name:"numberReferenceFrames", max: 6)
+            try validate(numberReferenceFrames, name:"numberReferenceFrames", min: 1)
+            try validate(parDenominator, name:"parDenominator", max: 2147483647)
+            try validate(parDenominator, name:"parDenominator", min: 1)
+            try validate(parNumerator, name:"parNumerator", max: 2147483647)
+            try validate(parNumerator, name:"parNumerator", min: 1)
+            try qvbrSettings?.validate()
+            try validate(slices, name:"slices", max: 32)
+            try validate(slices, name:"slices", min: 1)
+            try validate(softness, name:"softness", max: 128)
+            try validate(softness, name:"softness", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3237,6 +3707,7 @@ extension MediaConvert {
             AWSShapeMember(label: "MaxAverageBitrate", location: .body(locationName: "maxAverageBitrate"), required: false, type: .integer), 
             AWSShapeMember(label: "QvbrQualityLevel", location: .body(locationName: "qvbrQualityLevel"), required: false, type: .integer)
         ]
+
         /// Use this setting only when Rate control mode is QVBR and Quality tuning level is Multi-pass HQ. For Max average bitrate values suited to the complexity of your input video, the service limits the average bitrate of the video part of this output to the value you choose. That is, the total size of the video element is less than or equal to the value you set multiplied by the number of seconds of encoded output.
         public let maxAverageBitrate: Int32?
         /// Required when you use QVBR rate control mode. That is, when you specify qvbrSettings within h265Settings. Specify the target quality level for this output, from 1 to 10. Use higher numbers for greater quality. Level 10 results in nearly lossless compression. The quality level for most broadcast-quality transcodes is between 6 and 9.
@@ -3245,6 +3716,13 @@ extension MediaConvert {
         public init(maxAverageBitrate: Int32? = nil, qvbrQualityLevel: Int32? = nil) {
             self.maxAverageBitrate = maxAverageBitrate
             self.qvbrQualityLevel = qvbrQualityLevel
+        }
+
+        public func validate() throws {
+            try validate(maxAverageBitrate, name:"maxAverageBitrate", max: 1466400000)
+            try validate(maxAverageBitrate, name:"maxAverageBitrate", min: 1000)
+            try validate(qvbrQualityLevel, name:"qvbrQualityLevel", max: 10)
+            try validate(qvbrQualityLevel, name:"qvbrQualityLevel", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3315,6 +3793,7 @@ extension MediaConvert {
             AWSShapeMember(label: "UnregisteredSeiTimecode", location: .body(locationName: "unregisteredSeiTimecode"), required: false, type: .enum), 
             AWSShapeMember(label: "WriteMp4PackagingType", location: .body(locationName: "writeMp4PackagingType"), required: false, type: .enum)
         ]
+
         /// Adaptive quantization. Allows intra-frame quantizers to vary to improve visual quality.
         public let adaptiveQuantization: H265AdaptiveQuantization?
         /// Enables Alternate Transfer Function SEI message for outputs using Hybrid Log Gamma (HLG) Electro-Optical Transfer Function (EOTF).
@@ -3438,6 +3917,36 @@ extension MediaConvert {
             self.writeMp4PackagingType = writeMp4PackagingType
         }
 
+        public func validate() throws {
+            try validate(bitrate, name:"bitrate", max: 1466400000)
+            try validate(bitrate, name:"bitrate", min: 1000)
+            try validate(framerateDenominator, name:"framerateDenominator", max: 2147483647)
+            try validate(framerateDenominator, name:"framerateDenominator", min: 1)
+            try validate(framerateNumerator, name:"framerateNumerator", max: 2147483647)
+            try validate(framerateNumerator, name:"framerateNumerator", min: 1)
+            try validate(gopClosedCadence, name:"gopClosedCadence", max: 2147483647)
+            try validate(gopClosedCadence, name:"gopClosedCadence", min: 0)
+            try validate(hrdBufferInitialFillPercentage, name:"hrdBufferInitialFillPercentage", max: 100)
+            try validate(hrdBufferInitialFillPercentage, name:"hrdBufferInitialFillPercentage", min: 0)
+            try validate(hrdBufferSize, name:"hrdBufferSize", max: 1466400000)
+            try validate(hrdBufferSize, name:"hrdBufferSize", min: 0)
+            try validate(maxBitrate, name:"maxBitrate", max: 1466400000)
+            try validate(maxBitrate, name:"maxBitrate", min: 1000)
+            try validate(minIInterval, name:"minIInterval", max: 30)
+            try validate(minIInterval, name:"minIInterval", min: 0)
+            try validate(numberBFramesBetweenReferenceFrames, name:"numberBFramesBetweenReferenceFrames", max: 7)
+            try validate(numberBFramesBetweenReferenceFrames, name:"numberBFramesBetweenReferenceFrames", min: 0)
+            try validate(numberReferenceFrames, name:"numberReferenceFrames", max: 6)
+            try validate(numberReferenceFrames, name:"numberReferenceFrames", min: 1)
+            try validate(parDenominator, name:"parDenominator", max: 2147483647)
+            try validate(parDenominator, name:"parDenominator", min: 1)
+            try validate(parNumerator, name:"parNumerator", max: 2147483647)
+            try validate(parNumerator, name:"parNumerator", min: 1)
+            try qvbrSettings?.validate()
+            try validate(slices, name:"slices", max: 32)
+            try validate(slices, name:"slices", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case adaptiveQuantization = "adaptiveQuantization"
             case alternateTransferFunctionSei = "alternateTransferFunctionSei"
@@ -3545,6 +4054,7 @@ extension MediaConvert {
             AWSShapeMember(label: "WhitePointX", location: .body(locationName: "whitePointX"), required: false, type: .integer), 
             AWSShapeMember(label: "WhitePointY", location: .body(locationName: "whitePointY"), required: false, type: .integer)
         ]
+
         /// HDR Master Display Information must be provided by a color grader, using color grading tools. Range is 0 to 50,000, each increment represents 0.00002 in CIE1931 color coordinate. Note that this setting is not for color correction.
         public let bluePrimaryX: Int32?
         /// HDR Master Display Information must be provided by a color grader, using color grading tools. Range is 0 to 50,000, each increment represents 0.00002 in CIE1931 color coordinate. Note that this setting is not for color correction.
@@ -3585,6 +4095,33 @@ extension MediaConvert {
             self.whitePointY = whitePointY
         }
 
+        public func validate() throws {
+            try validate(bluePrimaryX, name:"bluePrimaryX", max: 50000)
+            try validate(bluePrimaryX, name:"bluePrimaryX", min: 0)
+            try validate(bluePrimaryY, name:"bluePrimaryY", max: 50000)
+            try validate(bluePrimaryY, name:"bluePrimaryY", min: 0)
+            try validate(greenPrimaryX, name:"greenPrimaryX", max: 50000)
+            try validate(greenPrimaryX, name:"greenPrimaryX", min: 0)
+            try validate(greenPrimaryY, name:"greenPrimaryY", max: 50000)
+            try validate(greenPrimaryY, name:"greenPrimaryY", min: 0)
+            try validate(maxContentLightLevel, name:"maxContentLightLevel", max: 65535)
+            try validate(maxContentLightLevel, name:"maxContentLightLevel", min: 0)
+            try validate(maxFrameAverageLightLevel, name:"maxFrameAverageLightLevel", max: 65535)
+            try validate(maxFrameAverageLightLevel, name:"maxFrameAverageLightLevel", min: 0)
+            try validate(maxLuminance, name:"maxLuminance", max: 2147483647)
+            try validate(maxLuminance, name:"maxLuminance", min: 0)
+            try validate(minLuminance, name:"minLuminance", max: 2147483647)
+            try validate(minLuminance, name:"minLuminance", min: 0)
+            try validate(redPrimaryX, name:"redPrimaryX", max: 50000)
+            try validate(redPrimaryX, name:"redPrimaryX", min: 0)
+            try validate(redPrimaryY, name:"redPrimaryY", max: 50000)
+            try validate(redPrimaryY, name:"redPrimaryY", min: 0)
+            try validate(whitePointX, name:"whitePointX", max: 50000)
+            try validate(whitePointX, name:"whitePointX", min: 0)
+            try validate(whitePointY, name:"whitePointY", max: 50000)
+            try validate(whitePointY, name:"whitePointY", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bluePrimaryX = "bluePrimaryX"
             case bluePrimaryY = "bluePrimaryY"
@@ -3622,6 +4159,7 @@ extension MediaConvert {
             AWSShapeMember(label: "LanguageCode", location: .body(locationName: "languageCode"), required: false, type: .enum), 
             AWSShapeMember(label: "LanguageDescription", location: .body(locationName: "languageDescription"), required: false, type: .string)
         ]
+
         /// Caption channel.
         public let captionChannel: Int32?
         /// Specify the language for this caption channel, using the ISO 639-2 or ISO 639-3 three-letter language code
@@ -3636,6 +4174,14 @@ extension MediaConvert {
             self.customLanguageCode = customLanguageCode
             self.languageCode = languageCode
             self.languageDescription = languageDescription
+        }
+
+        public func validate() throws {
+            try validate(captionChannel, name:"captionChannel", max: 2147483647)
+            try validate(captionChannel, name:"captionChannel", min: -2147483648)
+            try validate(customLanguageCode, name:"customLanguageCode", max: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", min: 3)
+            try validate(customLanguageCode, name:"customLanguageCode", pattern: "^[A-Za-z]{3}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3681,6 +4227,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StaticKeyProvider", location: .body(locationName: "staticKeyProvider"), required: false, type: .structure), 
             AWSShapeMember(label: "Type", location: .body(locationName: "type"), required: false, type: .enum)
         ]
+
         /// This is a 128-bit, 16-byte hex value represented by a 32-character text string. If this parameter is not set then the Initialization Vector will follow the segment number by default.
         public let constantInitializationVector: String?
         /// Encrypts the segments with the given encryption scheme. Leave blank to disable. Selecting 'Disabled' in the web interface also disables encryption.
@@ -3704,6 +4251,14 @@ extension MediaConvert {
             self.spekeKeyProvider = spekeKeyProvider
             self.staticKeyProvider = staticKeyProvider
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(constantInitializationVector, name:"constantInitializationVector", max: 32)
+            try validate(constantInitializationVector, name:"constantInitializationVector", min: 32)
+            try validate(constantInitializationVector, name:"constantInitializationVector", pattern: "^[0-9a-fA-F]{32}$")
+            try spekeKeyProvider?.validate()
+            try staticKeyProvider?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3750,6 +4305,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TimedMetadataId3Period", location: .body(locationName: "timedMetadataId3Period"), required: false, type: .integer), 
             AWSShapeMember(label: "TimestampDeltaMilliseconds", location: .body(locationName: "timestampDeltaMilliseconds"), required: false, type: .integer)
         ]
+
         /// Choose one or more ad marker types to pass SCTE35 signals through to this group of Apple HLS outputs.
         public let adMarkers: [HlsAdMarkers]?
         /// A partial URI prefix that will be prepended to each output in the media .m3u8 file. Can be used if base manifest is delivered from a different URL than the main .m3u8 file.
@@ -3824,6 +4380,27 @@ extension MediaConvert {
             self.timedMetadataId3Frame = timedMetadataId3Frame
             self.timedMetadataId3Period = timedMetadataId3Period
             self.timestampDeltaMilliseconds = timestampDeltaMilliseconds
+        }
+
+        public func validate() throws {
+            try captionLanguageMappings?.forEach {
+                try $0.validate()
+            }
+            try validate(destination, name:"destination", pattern: "^s3:\\/\\/")
+            try destinationSettings?.validate()
+            try encryption?.validate()
+            try validate(minSegmentLength, name:"minSegmentLength", max: 2147483647)
+            try validate(minSegmentLength, name:"minSegmentLength", min: 0)
+            try validate(programDateTimePeriod, name:"programDateTimePeriod", max: 3600)
+            try validate(programDateTimePeriod, name:"programDateTimePeriod", min: 0)
+            try validate(segmentLength, name:"segmentLength", max: 2147483647)
+            try validate(segmentLength, name:"segmentLength", min: 1)
+            try validate(segmentsPerSubdirectory, name:"segmentsPerSubdirectory", max: 2147483647)
+            try validate(segmentsPerSubdirectory, name:"segmentsPerSubdirectory", min: 1)
+            try validate(timedMetadataId3Period, name:"timedMetadataId3Period", max: 2147483647)
+            try validate(timedMetadataId3Period, name:"timedMetadataId3Period", min: -2147483648)
+            try validate(timestampDeltaMilliseconds, name:"timestampDeltaMilliseconds", max: 2147483647)
+            try validate(timestampDeltaMilliseconds, name:"timestampDeltaMilliseconds", min: -2147483648)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3916,6 +4493,7 @@ extension MediaConvert {
             AWSShapeMember(label: "IFrameOnlyManifest", location: .body(locationName: "iFrameOnlyManifest"), required: false, type: .enum), 
             AWSShapeMember(label: "SegmentModifier", location: .body(locationName: "segmentModifier"), required: false, type: .string)
         ]
+
         /// Specifies the group to which the audio Rendition belongs.
         public let audioGroupId: String?
         /// List all the audio groups that are used with the video output stream. Input all the audio GROUP-IDs that are associated to the video, separate by ','.
@@ -3962,6 +4540,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Id3", location: .body(locationName: "id3"), required: false, type: .string), 
             AWSShapeMember(label: "Timecode", location: .body(locationName: "timecode"), required: false, type: .string)
         ]
+
         /// Use ID3 tag (Id3) to provide a tag value in base64-encode format.
         public let id3: String?
         /// Provide a Timecode (TimeCode) in HH:MM:SS:FF or HH:MM:SS;FF format.
@@ -3970,6 +4549,11 @@ extension MediaConvert {
         public init(id3: String? = nil, timecode: String? = nil) {
             self.id3 = id3
             self.timecode = timecode
+        }
+
+        public func validate() throws {
+            try validate(id3, name:"id3", pattern: "^[A-Za-z0-9+\\/]+={0,2}$")
+            try validate(timecode, name:"timecode", pattern: "^([01][0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9][:;][0-9]{2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3982,11 +4566,18 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "InsertableImages", location: .body(locationName: "insertableImages"), required: false, type: .list)
         ]
+
         /// Specify the images that you want to overlay on your video. The images must be PNG or TGA files.
         public let insertableImages: [InsertableImage]?
 
         public init(insertableImages: [InsertableImage]? = nil) {
             self.insertableImages = insertableImages
+        }
+
+        public func validate() throws {
+            try insertableImages?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4013,6 +4604,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TimecodeSource", location: .body(locationName: "timecodeSource"), required: false, type: .enum), 
             AWSShapeMember(label: "VideoSelector", location: .body(locationName: "videoSelector"), required: false, type: .structure)
         ]
+
         /// Specifies set of audio selectors within an input to combine. An input may have multiple audio selector groups. See "Audio Selector Group":#inputs-audio_selector_group for more information.
         public let audioSelectorGroups: [String: AudioSelectorGroup]?
         /// Use Audio selectors (AudioSelectors) to specify a track or set of tracks from the input that you will use in your outputs. You can use mutiple Audio selectors per input.
@@ -4065,6 +4657,23 @@ extension MediaConvert {
             self.videoSelector = videoSelector
         }
 
+        public func validate() throws {
+            try decryptionSettings?.validate()
+            try validate(fileInput, name:"fileInput", pattern: "^(s3:\\/\\/)([^\\/]+\\/)+([^\\/\\.]+|(([^\\/]*)\\.([mM]2[vV]|[mM][pP][eE][gG]|[aA][vV][iI]|[mM][pP]4|[fF][lL][vV]|[mM][pP][tT]|[mM][pP][gG]|[mM]4[vV]|[tT][rR][pP]|[fF]4[vV]|[mM]2[tT][sS]|[tT][sS]|264|[hH]264|[mM][kK][vV]|[mM][oO][vV]|[mM][tT][sS]|[mM]2[tT]|[wW][mM][vV]|[aA][sS][fF]|[vV][oO][bB]|3[gG][pP]|3[gG][pP][pP]|[mM][xX][fF]|[dD][iI][vV][xX]|[xX][vV][iI][dD]|[rR][aA][wW]|[dD][vV]|[gG][xX][fF]|[mM]1[vV]|3[gG]2|[vV][mM][fF]|[mM]3[uU]8|[lL][cC][hH]|[gG][xX][fF]_[mM][pP][eE][gG]2|[mM][xX][fF]_[mM][pP][eE][gG]2|[mM][xX][fF][hH][dD]|[wW][aA][vV]|[yY]4[mM]|[xX][mM][lL])))$")
+            try validate(filterStrength, name:"filterStrength", max: 5)
+            try validate(filterStrength, name:"filterStrength", min: -5)
+            try imageInserter?.validate()
+            try inputClippings?.forEach {
+                try $0.validate()
+            }
+            try validate(programNumber, name:"programNumber", max: 2147483647)
+            try validate(programNumber, name:"programNumber", min: 1)
+            try supplementalImps?.forEach {
+                try validate($0, name:"supplementalImps[]", pattern: "^s3:\\/\\/.*\\/(ASSETMAP.xml)?$")
+            }
+            try videoSelector?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case audioSelectorGroups = "audioSelectorGroups"
             case audioSelectors = "audioSelectors"
@@ -4090,6 +4699,7 @@ extension MediaConvert {
             AWSShapeMember(label: "EndTimecode", location: .body(locationName: "endTimecode"), required: false, type: .string), 
             AWSShapeMember(label: "StartTimecode", location: .body(locationName: "startTimecode"), required: false, type: .string)
         ]
+
         /// Set End timecode (EndTimecode) to the end of the portion of the input you are clipping. The frame corresponding to the End timecode value is included in the clip. Start timecode or End timecode may be left blank, but not both. Use the format HH:MM:SS:FF or HH:MM:SS;FF, where HH is the hour, MM is the minute, SS is the second, and FF is the frame number. When choosing this value, take into account your setting for timecode source under input settings (InputTimecodeSource). For example, if you have embedded timecodes that start at 01:00:00:00 and you want your clip to end six minutes into the video, use 01:06:00:00.
         public let endTimecode: String?
         /// Set Start timecode (StartTimecode) to the beginning of the portion of the input you are clipping. The frame corresponding to the Start timecode value is included in the clip. Start timecode or End timecode may be left blank, but not both. Use the format HH:MM:SS:FF or HH:MM:SS;FF, where HH is the hour, MM is the minute, SS is the second, and FF is the frame number. When choosing this value, take into account your setting for Input timecode source. For example, if you have embedded timecodes that start at 01:00:00:00 and you want your clip to begin five minutes into the video, use 01:05:00:00.
@@ -4098,6 +4708,11 @@ extension MediaConvert {
         public init(endTimecode: String? = nil, startTimecode: String? = nil) {
             self.endTimecode = endTimecode
             self.startTimecode = startTimecode
+        }
+
+        public func validate() throws {
+            try validate(endTimecode, name:"endTimecode", pattern: "^([01][0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9][:;][0-9]{2}$")
+            try validate(startTimecode, name:"startTimecode", pattern: "^([01][0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9][:;][0-9]{2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4119,6 +4734,7 @@ extension MediaConvert {
             AWSShapeMember(label: "InitializationVector", location: .body(locationName: "initializationVector"), required: false, type: .string), 
             AWSShapeMember(label: "KmsKeyRegion", location: .body(locationName: "kmsKeyRegion"), required: false, type: .string)
         ]
+
         /// Specify the encryption mode that you used to encrypt your input files.
         public let decryptionMode: DecryptionMode?
         /// Warning! Don't provide your encryption key in plaintext. Your job settings could be intercepted, making your encrypted content vulnerable. Specify the encrypted version of the data key that you used to encrypt your content. The data key must be encrypted by AWS Key Management Service (KMS). The key can be 128, 192, or 256 bits.
@@ -4133,6 +4749,18 @@ extension MediaConvert {
             self.encryptedDecryptionKey = encryptedDecryptionKey
             self.initializationVector = initializationVector
             self.kmsKeyRegion = kmsKeyRegion
+        }
+
+        public func validate() throws {
+            try validate(encryptedDecryptionKey, name:"encryptedDecryptionKey", max: 512)
+            try validate(encryptedDecryptionKey, name:"encryptedDecryptionKey", min: 24)
+            try validate(encryptedDecryptionKey, name:"encryptedDecryptionKey", pattern: "^[A-Za-z0-9+\\/]+={0,2}$")
+            try validate(initializationVector, name:"initializationVector", max: 24)
+            try validate(initializationVector, name:"initializationVector", min: 16)
+            try validate(initializationVector, name:"initializationVector", pattern: "^[A-Za-z0-9+\\/]{22}==$|^[A-Za-z0-9+\\/]{16}$")
+            try validate(kmsKeyRegion, name:"kmsKeyRegion", max: 19)
+            try validate(kmsKeyRegion, name:"kmsKeyRegion", min: 9)
+            try validate(kmsKeyRegion, name:"kmsKeyRegion", pattern: "^[a-z-]{2,6}-(east|west|central|((north|south)(east|west)?))-[1-9]{1,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4187,6 +4815,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TimecodeSource", location: .body(locationName: "timecodeSource"), required: false, type: .enum), 
             AWSShapeMember(label: "VideoSelector", location: .body(locationName: "videoSelector"), required: false, type: .structure)
         ]
+
         /// Specifies set of audio selectors within an input to combine. An input may have multiple audio selector groups. See "Audio Selector Group":#inputs-audio_selector_group for more information.
         public let audioSelectorGroups: [String: AudioSelectorGroup]?
         /// Use Audio selectors (AudioSelectors) to specify a track or set of tracks from the input that you will use in your outputs. You can use mutiple Audio selectors per input.
@@ -4230,6 +4859,18 @@ extension MediaConvert {
             self.videoSelector = videoSelector
         }
 
+        public func validate() throws {
+            try validate(filterStrength, name:"filterStrength", max: 5)
+            try validate(filterStrength, name:"filterStrength", min: -5)
+            try imageInserter?.validate()
+            try inputClippings?.forEach {
+                try $0.validate()
+            }
+            try validate(programNumber, name:"programNumber", max: 2147483647)
+            try validate(programNumber, name:"programNumber", min: 1)
+            try videoSelector?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case audioSelectorGroups = "audioSelectorGroups"
             case audioSelectors = "audioSelectors"
@@ -4268,6 +4909,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StartTime", location: .body(locationName: "startTime"), required: false, type: .string), 
             AWSShapeMember(label: "Width", location: .body(locationName: "width"), required: false, type: .integer)
         ]
+
         /// Specify the time, in milliseconds, for the image to remain on the output video. This duration includes fade-in time but not fade-out time.
         public let duration: Int32?
         /// Specify the length of time, in milliseconds, between the Start time that you specify for the image insertion and the time that the image appears at full opacity. Full opacity is the level that you specify for the opacity setting. If you don't specify a value for Fade-in, the image will appear abruptly at the overlay start time.
@@ -4303,6 +4945,30 @@ extension MediaConvert {
             self.opacity = opacity
             self.startTime = startTime
             self.width = width
+        }
+
+        public func validate() throws {
+            try validate(duration, name:"duration", max: 2147483647)
+            try validate(duration, name:"duration", min: 0)
+            try validate(fadeIn, name:"fadeIn", max: 2147483647)
+            try validate(fadeIn, name:"fadeIn", min: 0)
+            try validate(fadeOut, name:"fadeOut", max: 2147483647)
+            try validate(fadeOut, name:"fadeOut", min: 0)
+            try validate(height, name:"height", max: 2147483647)
+            try validate(height, name:"height", min: 0)
+            try validate(imageInserterInput, name:"imageInserterInput", min: 14)
+            try validate(imageInserterInput, name:"imageInserterInput", pattern: "^(s3:\\/\\/)(.*?)\\.(bmp|BMP|png|PNG|tga|TGA)$")
+            try validate(imageX, name:"imageX", max: 2147483647)
+            try validate(imageX, name:"imageX", min: 0)
+            try validate(imageY, name:"imageY", max: 2147483647)
+            try validate(imageY, name:"imageY", min: 0)
+            try validate(layer, name:"layer", max: 99)
+            try validate(layer, name:"layer", min: 0)
+            try validate(opacity, name:"opacity", max: 100)
+            try validate(opacity, name:"opacity", min: 0)
+            try validate(startTime, name:"startTime", pattern: "^((([0-1]\\d)|(2[0-3]))(:[0-5]\\d){2}([:;][0-5]\\d))$")
+            try validate(width, name:"width", max: 2147483647)
+            try validate(width, name:"width", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4342,6 +5008,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Timing", location: .body(locationName: "timing"), required: false, type: .structure), 
             AWSShapeMember(label: "UserMetadata", location: .body(locationName: "userMetadata"), required: false, type: .map)
         ]
+
         /// Accelerated transcoding can significantly speed up jobs with long, visually complex content.
         public let accelerationSettings: AccelerationSettings?
         /// An identifier for this resource that is unique within all of AWS.
@@ -4403,6 +5070,10 @@ extension MediaConvert {
             self.userMetadata = userMetadata
         }
 
+        public func validate() throws {
+            try settings.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accelerationSettings = "accelerationSettings"
             case arn = "arn"
@@ -4445,6 +5116,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TimecodeConfig", location: .body(locationName: "timecodeConfig"), required: false, type: .structure), 
             AWSShapeMember(label: "TimedMetadataInsertion", location: .body(locationName: "timedMetadataInsertion"), required: false, type: .structure)
         ]
+
         /// When specified, this offset (in milliseconds) is added to the input Ad Avail PTS time.
         public let adAvailOffset: Int32?
         /// Settings for ad avail blanking.  Video can be blanked or overlaid with an image, and audio muted during SCTE-35 triggered ad avails.
@@ -4474,6 +5146,23 @@ extension MediaConvert {
             self.outputGroups = outputGroups
             self.timecodeConfig = timecodeConfig
             self.timedMetadataInsertion = timedMetadataInsertion
+        }
+
+        public func validate() throws {
+            try validate(adAvailOffset, name:"adAvailOffset", max: 1000)
+            try validate(adAvailOffset, name:"adAvailOffset", min: -1000)
+            try availBlanking?.validate()
+            try esam?.validate()
+            try inputs?.forEach {
+                try $0.validate()
+            }
+            try motionImageInserter?.validate()
+            try nielsenConfiguration?.validate()
+            try outputGroups?.forEach {
+                try $0.validate()
+            }
+            try timecodeConfig?.validate()
+            try timedMetadataInsertion?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4512,6 +5201,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StatusUpdateInterval", location: .body(locationName: "statusUpdateInterval"), required: false, type: .enum), 
             AWSShapeMember(label: "Type", location: .body(locationName: "type"), required: false, type: .enum)
         ]
+
         /// Accelerated transcoding is currently in private preview. Contact AWS for more information.
         public let accelerationSettings: AccelerationSettings?
         /// An identifier for this resource that is unique within all of AWS.
@@ -4549,6 +5239,10 @@ extension MediaConvert {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try settings.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accelerationSettings = "accelerationSettings"
             case arn = "arn"
@@ -4583,6 +5277,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TimecodeConfig", location: .body(locationName: "timecodeConfig"), required: false, type: .structure), 
             AWSShapeMember(label: "TimedMetadataInsertion", location: .body(locationName: "timedMetadataInsertion"), required: false, type: .structure)
         ]
+
         /// When specified, this offset (in milliseconds) is added to the input Ad Avail PTS time.
         public let adAvailOffset: Int32?
         /// Settings for ad avail blanking.  Video can be blanked or overlaid with an image, and audio muted during SCTE-35 triggered ad avails.
@@ -4612,6 +5307,23 @@ extension MediaConvert {
             self.outputGroups = outputGroups
             self.timecodeConfig = timecodeConfig
             self.timedMetadataInsertion = timedMetadataInsertion
+        }
+
+        public func validate() throws {
+            try validate(adAvailOffset, name:"adAvailOffset", max: 1000)
+            try validate(adAvailOffset, name:"adAvailOffset", min: -1000)
+            try availBlanking?.validate()
+            try esam?.validate()
+            try inputs?.forEach {
+                try $0.validate()
+            }
+            try motionImageInserter?.validate()
+            try nielsenConfiguration?.validate()
+            try outputGroups?.forEach {
+                try $0.validate()
+            }
+            try timecodeConfig?.validate()
+            try timedMetadataInsertion?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4830,6 +5542,7 @@ extension MediaConvert {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "Order", location: .querystring(locationName: "order"), required: false, type: .enum)
         ]
+
         /// Optionally, specify a job template category to limit responses to only job templates from that category.
         public let category: String?
         /// Optional. When you request a list of job templates, you can choose to list them alphabetically by NAME or chronologically by CREATION_DATE. If you don't specify, the service will list them by name.
@@ -4849,6 +5562,11 @@ extension MediaConvert {
             self.order = order
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case category = "category"
             case listBy = "listBy"
@@ -4863,6 +5581,7 @@ extension MediaConvert {
             AWSShapeMember(label: "JobTemplates", location: .body(locationName: "jobTemplates"), required: false, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// List of Job templates.
         public let jobTemplates: [JobTemplate]?
         /// Use this string to request the next batch of job templates.
@@ -4871,6 +5590,12 @@ extension MediaConvert {
         public init(jobTemplates: [JobTemplate]? = nil, nextToken: String? = nil) {
             self.jobTemplates = jobTemplates
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobTemplates?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4887,6 +5612,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Queue", location: .querystring(locationName: "queue"), required: false, type: .string), 
             AWSShapeMember(label: "Status", location: .querystring(locationName: "status"), required: false, type: .enum)
         ]
+
         /// Optional. Number of jobs, up to twenty, that will be returned at one time.
         public let maxResults: Int32?
         /// Use this string, provided with the response to a previous request, to request the next batch of jobs.
@@ -4906,6 +5632,11 @@ extension MediaConvert {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -4920,6 +5651,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Jobs", location: .body(locationName: "jobs"), required: false, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// List of jobs
         public let jobs: [Job]?
         /// Use this string to request the next batch of jobs.
@@ -4928,6 +5660,12 @@ extension MediaConvert {
         public init(jobs: [Job]? = nil, nextToken: String? = nil) {
             self.jobs = jobs
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try jobs?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4944,6 +5682,7 @@ extension MediaConvert {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "Order", location: .querystring(locationName: "order"), required: false, type: .enum)
         ]
+
         /// Optionally, specify a preset category to limit responses to only presets from that category.
         public let category: String?
         /// Optional. When you request a list of presets, you can choose to list them alphabetically by NAME or chronologically by CREATION_DATE. If you don't specify, the service will list them by name.
@@ -4963,6 +5702,11 @@ extension MediaConvert {
             self.order = order
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case category = "category"
             case listBy = "listBy"
@@ -4977,6 +5721,7 @@ extension MediaConvert {
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "Presets", location: .body(locationName: "presets"), required: false, type: .list)
         ]
+
         /// Use this string to request the next batch of presets.
         public let nextToken: String?
         /// List of presets
@@ -4985,6 +5730,12 @@ extension MediaConvert {
         public init(nextToken: String? = nil, presets: [Preset]? = nil) {
             self.nextToken = nextToken
             self.presets = presets
+        }
+
+        public func validate() throws {
+            try presets?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5000,6 +5751,7 @@ extension MediaConvert {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "Order", location: .querystring(locationName: "order"), required: false, type: .enum)
         ]
+
         /// Optional. When you request a list of queues, you can choose to list them alphabetically by NAME or chronologically by CREATION_DATE. If you don't specify, the service will list them by creation date.
         public let listBy: QueueListBy?
         /// Optional. Number of queues, up to twenty, that will be returned at one time.
@@ -5016,6 +5768,11 @@ extension MediaConvert {
             self.order = order
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 20)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case listBy = "listBy"
             case maxResults = "maxResults"
@@ -5029,6 +5786,7 @@ extension MediaConvert {
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "Queues", location: .body(locationName: "queues"), required: false, type: .list)
         ]
+
         /// Use this string to request the next batch of queues.
         public let nextToken: String?
         /// List of queues.
@@ -5049,6 +5807,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", location: .uri(locationName: "arn"), required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource that you want to list tags for. To get the ARN, send a GET request with the resource name.
         public let arn: String
 
@@ -5065,6 +5824,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceTags", location: .body(locationName: "resourceTags"), required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) and tags for an AWS Elemental MediaConvert resource.
         public let resourceTags: ResourceTags?
 
@@ -5135,11 +5895,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Scte35EsamPid", location: .body(locationName: "scte35EsamPid"), required: false, type: .integer)
         ]
+
         /// Packet Identifier (PID) of the SCTE-35 stream in the transport stream generated by ESAM.
         public let scte35EsamPid: Int32?
 
         public init(scte35EsamPid: Int32? = nil) {
             self.scte35EsamPid = scte35EsamPid
+        }
+
+        public func validate() throws {
+            try validate(scte35EsamPid, name:"scte35EsamPid", max: 8182)
+            try validate(scte35EsamPid, name:"scte35EsamPid", min: 32)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5208,6 +5974,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TransportStreamId", location: .body(locationName: "transportStreamId"), required: false, type: .integer), 
             AWSShapeMember(label: "VideoPid", location: .body(locationName: "videoPid"), required: false, type: .integer)
         ]
+
         /// Selects between the DVB and ATSC buffer models for Dolby Digital audio.
         public let audioBufferModel: M2tsAudioBufferModel?
         /// The number of audio frames to insert for each PES packet.
@@ -5320,6 +6087,51 @@ extension MediaConvert {
             self.videoPid = videoPid
         }
 
+        public func validate() throws {
+            try validate(audioFramesPerPes, name:"audioFramesPerPes", max: 2147483647)
+            try validate(audioFramesPerPes, name:"audioFramesPerPes", min: 0)
+            try audioPids?.forEach {
+                try validate($0, name:"audioPids[]", max: 8182)
+                try validate($0, name:"audioPids[]", min: 32)
+            }
+            try validate(bitrate, name:"bitrate", max: 2147483647)
+            try validate(bitrate, name:"bitrate", min: 0)
+            try dvbNitSettings?.validate()
+            try dvbSdtSettings?.validate()
+            try dvbSubPids?.forEach {
+                try validate($0, name:"dvbSubPids[]", max: 8182)
+                try validate($0, name:"dvbSubPids[]", min: 32)
+            }
+            try dvbTdtSettings?.validate()
+            try validate(dvbTeletextPid, name:"dvbTeletextPid", max: 8182)
+            try validate(dvbTeletextPid, name:"dvbTeletextPid", min: 32)
+            try validate(maxPcrInterval, name:"maxPcrInterval", max: 500)
+            try validate(maxPcrInterval, name:"maxPcrInterval", min: 0)
+            try validate(minEbpInterval, name:"minEbpInterval", max: 10000)
+            try validate(minEbpInterval, name:"minEbpInterval", min: 0)
+            try validate(patInterval, name:"patInterval", max: 1000)
+            try validate(patInterval, name:"patInterval", min: 0)
+            try validate(pcrPid, name:"pcrPid", max: 8182)
+            try validate(pcrPid, name:"pcrPid", min: 32)
+            try validate(pmtInterval, name:"pmtInterval", max: 1000)
+            try validate(pmtInterval, name:"pmtInterval", min: 0)
+            try validate(pmtPid, name:"pmtPid", max: 8182)
+            try validate(pmtPid, name:"pmtPid", min: 32)
+            try validate(privateMetadataPid, name:"privateMetadataPid", max: 8182)
+            try validate(privateMetadataPid, name:"privateMetadataPid", min: 32)
+            try validate(programNumber, name:"programNumber", max: 65535)
+            try validate(programNumber, name:"programNumber", min: 0)
+            try scte35Esam?.validate()
+            try validate(scte35Pid, name:"scte35Pid", max: 8182)
+            try validate(scte35Pid, name:"scte35Pid", min: 32)
+            try validate(timedMetadataPid, name:"timedMetadataPid", max: 8182)
+            try validate(timedMetadataPid, name:"timedMetadataPid", min: 32)
+            try validate(transportStreamId, name:"transportStreamId", max: 65535)
+            try validate(transportStreamId, name:"transportStreamId", min: 0)
+            try validate(videoPid, name:"videoPid", max: 8182)
+            try validate(videoPid, name:"videoPid", min: 32)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case audioBufferModel = "audioBufferModel"
             case audioFramesPerPes = "audioFramesPerPes"
@@ -5397,6 +6209,7 @@ extension MediaConvert {
             AWSShapeMember(label: "TransportStreamId", location: .body(locationName: "transportStreamId"), required: false, type: .integer), 
             AWSShapeMember(label: "VideoPid", location: .body(locationName: "videoPid"), required: false, type: .integer)
         ]
+
         /// The number of audio frames to insert for each PES packet.
         public let audioFramesPerPes: Int32?
         /// Packet Identifier (PID) of the elementary audio stream(s) in the transport stream. Multiple values are accepted, and can be entered in ranges and/or by comma separation.
@@ -5449,6 +6262,35 @@ extension MediaConvert {
             self.videoPid = videoPid
         }
 
+        public func validate() throws {
+            try validate(audioFramesPerPes, name:"audioFramesPerPes", max: 2147483647)
+            try validate(audioFramesPerPes, name:"audioFramesPerPes", min: 0)
+            try audioPids?.forEach {
+                try validate($0, name:"audioPids[]", max: 8182)
+                try validate($0, name:"audioPids[]", min: 32)
+            }
+            try validate(patInterval, name:"patInterval", max: 1000)
+            try validate(patInterval, name:"patInterval", min: 0)
+            try validate(pcrPid, name:"pcrPid", max: 8182)
+            try validate(pcrPid, name:"pcrPid", min: 32)
+            try validate(pmtInterval, name:"pmtInterval", max: 1000)
+            try validate(pmtInterval, name:"pmtInterval", min: 0)
+            try validate(pmtPid, name:"pmtPid", max: 8182)
+            try validate(pmtPid, name:"pmtPid", min: 32)
+            try validate(privateMetadataPid, name:"privateMetadataPid", max: 8182)
+            try validate(privateMetadataPid, name:"privateMetadataPid", min: 32)
+            try validate(programNumber, name:"programNumber", max: 65535)
+            try validate(programNumber, name:"programNumber", min: 0)
+            try validate(scte35Pid, name:"scte35Pid", max: 8182)
+            try validate(scte35Pid, name:"scte35Pid", min: 32)
+            try validate(timedMetadataPid, name:"timedMetadataPid", max: 8182)
+            try validate(timedMetadataPid, name:"timedMetadataPid", min: 32)
+            try validate(transportStreamId, name:"transportStreamId", max: 65535)
+            try validate(transportStreamId, name:"transportStreamId", min: 0)
+            try validate(videoPid, name:"videoPid", max: 8182)
+            try validate(videoPid, name:"videoPid", min: 32)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case audioFramesPerPes = "audioFramesPerPes"
             case audioPids = "audioPids"
@@ -5478,6 +6320,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Playback", location: .body(locationName: "playback"), required: false, type: .enum), 
             AWSShapeMember(label: "StartTime", location: .body(locationName: "startTime"), required: false, type: .string)
         ]
+
         /// If your motion graphic asset is a .mov file, keep this setting unspecified. If your motion graphic asset is a series of .png files, specify the frame rate of the overlay in frames per second, as a fraction. For example, specify 24 fps as 24/1. Make sure that the number of images in your series matches the frame rate and your intended overlay duration. For example, if you want a 30-second overlay at 30 fps, you should have 900 .png images. This overlay frame rate doesn't need to match the frame rate of the underlying video.
         public let framerate: MotionImageInsertionFramerate?
         /// Specify the .mov file or series of .png files that you want to overlay on your video. For .png files, provide the file name of the first file in the series. Make sure that the names of the .png files end with sequential numbers that specify the order that they are played in. For example, overlay_000.png, overlay_001.png, overlay_002.png, and so on. The sequence must start at zero, and each image file name must have the same number of digits. Pad your initial file names with enough zeros to complete the sequence. For example, if the first image is overlay_0.png, there can be only 10 images in the sequence, with the last image being overlay_9.png. But if the first image is overlay_00.png, there can be 100 images in the sequence.
@@ -5500,6 +6343,17 @@ extension MediaConvert {
             self.startTime = startTime
         }
 
+        public func validate() throws {
+            try framerate?.validate()
+            try validate(input, name:"input", max: 1285)
+            try validate(input, name:"input", min: 14)
+            try validate(input, name:"input", pattern: "^(s3:\\/\\/)(.*)(\\.mov|[0-9]+\\.png)$")
+            try offset?.validate()
+            try validate(startTime, name:"startTime", max: 11)
+            try validate(startTime, name:"startTime", min: 11)
+            try validate(startTime, name:"startTime", pattern: "^((([0-1]\\d)|(2[0-3]))(:[0-5]\\d){2}([:;][0-5]\\d))$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case framerate = "framerate"
             case input = "input"
@@ -5515,6 +6369,7 @@ extension MediaConvert {
             AWSShapeMember(label: "FramerateDenominator", location: .body(locationName: "framerateDenominator"), required: false, type: .integer), 
             AWSShapeMember(label: "FramerateNumerator", location: .body(locationName: "framerateNumerator"), required: false, type: .integer)
         ]
+
         /// The bottom of the fraction that expresses your overlay frame rate. For example, if your frame rate is 24 fps, set this value to 1.
         public let framerateDenominator: Int32?
         /// The top of the fraction that expresses your overlay frame rate. For example, if your frame rate is 24 fps, set this value to 24.
@@ -5523,6 +6378,13 @@ extension MediaConvert {
         public init(framerateDenominator: Int32? = nil, framerateNumerator: Int32? = nil) {
             self.framerateDenominator = framerateDenominator
             self.framerateNumerator = framerateNumerator
+        }
+
+        public func validate() throws {
+            try validate(framerateDenominator, name:"framerateDenominator", max: 17895697)
+            try validate(framerateDenominator, name:"framerateDenominator", min: 1)
+            try validate(framerateNumerator, name:"framerateNumerator", max: 2147483640)
+            try validate(framerateNumerator, name:"framerateNumerator", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5542,6 +6404,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ImageX", location: .body(locationName: "imageX"), required: false, type: .integer), 
             AWSShapeMember(label: "ImageY", location: .body(locationName: "imageY"), required: false, type: .integer)
         ]
+
         /// Set the distance, in pixels, between the overlay and the left edge of the video frame.
         public let imageX: Int32?
         /// Set the distance, in pixels, between the overlay and the top edge of the video frame.
@@ -5550,6 +6413,13 @@ extension MediaConvert {
         public init(imageX: Int32? = nil, imageY: Int32? = nil) {
             self.imageX = imageX
             self.imageY = imageY
+        }
+
+        public func validate() throws {
+            try validate(imageX, name:"imageX", max: 2147483647)
+            try validate(imageX, name:"imageX", min: 0)
+            try validate(imageY, name:"imageY", max: 2147483647)
+            try validate(imageY, name:"imageY", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5602,6 +6472,7 @@ extension MediaConvert {
             AWSShapeMember(label: "PaddingControl", location: .body(locationName: "paddingControl"), required: false, type: .enum), 
             AWSShapeMember(label: "Reference", location: .body(locationName: "reference"), required: false, type: .enum)
         ]
+
         /// When enabled, include 'clap' atom if appropriate for the video output settings.
         public let clapAtom: MovClapAtom?
         /// When enabled, file composition times will start at zero, composition times in the 'ctts' (composition time to sample) box for B-frames will be negative, and a 'cslg' (composition shift least greatest) box will be included per 14496-1 amendment 1. This improves compatibility with Apple players and tools.
@@ -5636,6 +6507,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Channels", location: .body(locationName: "channels"), required: false, type: .integer), 
             AWSShapeMember(label: "SampleRate", location: .body(locationName: "sampleRate"), required: false, type: .integer)
         ]
+
         /// Average bitrate in bits/second.
         public let bitrate: Int32?
         /// Set Channels to specify the number of channels in this output audio track. Choosing Mono in the console will give you 1 output channel; choosing Stereo will give you 2. In the API, valid values are 1 and 2.
@@ -5647,6 +6519,15 @@ extension MediaConvert {
             self.bitrate = bitrate
             self.channels = channels
             self.sampleRate = sampleRate
+        }
+
+        public func validate() throws {
+            try validate(bitrate, name:"bitrate", max: 384000)
+            try validate(bitrate, name:"bitrate", min: 32000)
+            try validate(channels, name:"channels", max: 2)
+            try validate(channels, name:"channels", min: 1)
+            try validate(sampleRate, name:"sampleRate", max: 48000)
+            try validate(sampleRate, name:"sampleRate", min: 32000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5681,6 +6562,7 @@ extension MediaConvert {
             AWSShapeMember(label: "MoovPlacement", location: .body(locationName: "moovPlacement"), required: false, type: .enum), 
             AWSShapeMember(label: "Mp4MajorBrand", location: .body(locationName: "mp4MajorBrand"), required: false, type: .string)
         ]
+
         /// When enabled, file composition times will start at zero, composition times in the 'ctts' (composition time to sample) box for B-frames will be negative, and a 'cslg' (composition shift least greatest) box will be included per 14496-1 amendment 1. This improves compatibility with Apple players and tools.
         public let cslgAtom: Mp4CslgAtom?
         /// Inserts a free-space box immediately after the moov box.
@@ -5828,6 +6710,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Telecine", location: .body(locationName: "telecine"), required: false, type: .enum), 
             AWSShapeMember(label: "TemporalAdaptiveQuantization", location: .body(locationName: "temporalAdaptiveQuantization"), required: false, type: .enum)
         ]
+
         /// Adaptive quantization. Allows intra-frame quantizers to vary to improve visual quality.
         public let adaptiveQuantization: Mpeg2AdaptiveQuantization?
         /// Average bitrate in bits/second. Required for VBR and CBR. For MS Smooth outputs, bitrates must be unique when rounded down to the nearest multiple of 1000.
@@ -5927,6 +6810,33 @@ extension MediaConvert {
             self.temporalAdaptiveQuantization = temporalAdaptiveQuantization
         }
 
+        public func validate() throws {
+            try validate(bitrate, name:"bitrate", max: 288000000)
+            try validate(bitrate, name:"bitrate", min: 1000)
+            try validate(framerateDenominator, name:"framerateDenominator", max: 1001)
+            try validate(framerateDenominator, name:"framerateDenominator", min: 1)
+            try validate(framerateNumerator, name:"framerateNumerator", max: 60000)
+            try validate(framerateNumerator, name:"framerateNumerator", min: 24)
+            try validate(gopClosedCadence, name:"gopClosedCadence", max: 2147483647)
+            try validate(gopClosedCadence, name:"gopClosedCadence", min: 0)
+            try validate(hrdBufferInitialFillPercentage, name:"hrdBufferInitialFillPercentage", max: 100)
+            try validate(hrdBufferInitialFillPercentage, name:"hrdBufferInitialFillPercentage", min: 0)
+            try validate(hrdBufferSize, name:"hrdBufferSize", max: 47185920)
+            try validate(hrdBufferSize, name:"hrdBufferSize", min: 0)
+            try validate(maxBitrate, name:"maxBitrate", max: 300000000)
+            try validate(maxBitrate, name:"maxBitrate", min: 1000)
+            try validate(minIInterval, name:"minIInterval", max: 30)
+            try validate(minIInterval, name:"minIInterval", min: 0)
+            try validate(numberBFramesBetweenReferenceFrames, name:"numberBFramesBetweenReferenceFrames", max: 7)
+            try validate(numberBFramesBetweenReferenceFrames, name:"numberBFramesBetweenReferenceFrames", min: 0)
+            try validate(parDenominator, name:"parDenominator", max: 2147483647)
+            try validate(parDenominator, name:"parDenominator", min: 1)
+            try validate(parNumerator, name:"parNumerator", max: 2147483647)
+            try validate(parNumerator, name:"parNumerator", min: 1)
+            try validate(softness, name:"softness", max: 128)
+            try validate(softness, name:"softness", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case adaptiveQuantization = "adaptiveQuantization"
             case bitrate = "bitrate"
@@ -6003,11 +6913,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SpekeKeyProvider", location: .body(locationName: "spekeKeyProvider"), required: false, type: .structure)
         ]
+
         /// Settings for use with a SPEKE key provider
         public let spekeKeyProvider: SpekeKeyProvider?
 
         public init(spekeKeyProvider: SpekeKeyProvider? = nil) {
             self.spekeKeyProvider = spekeKeyProvider
+        }
+
+        public func validate() throws {
+            try spekeKeyProvider?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6024,6 +6939,7 @@ extension MediaConvert {
             AWSShapeMember(label: "FragmentLength", location: .body(locationName: "fragmentLength"), required: false, type: .integer), 
             AWSShapeMember(label: "ManifestEncoding", location: .body(locationName: "manifestEncoding"), required: false, type: .enum)
         ]
+
         /// COMBINE_DUPLICATE_STREAMS combines identical audio encoding settings across a Microsoft Smooth output group into a single audio stream.
         public let audioDeduplication: MsSmoothAudioDeduplication?
         /// Use Destination (Destination) to specify the S3 output location and the output filename base. Destination accepts format identifiers. If you do not specify the base filename in the URI, the service will use the filename of the input file. If your job has multiple inputs, the service uses the filename of the first input file.
@@ -6044,6 +6960,14 @@ extension MediaConvert {
             self.encryption = encryption
             self.fragmentLength = fragmentLength
             self.manifestEncoding = manifestEncoding
+        }
+
+        public func validate() throws {
+            try validate(destination, name:"destination", pattern: "^s3:\\/\\/")
+            try destinationSettings?.validate()
+            try encryption?.validate()
+            try validate(fragmentLength, name:"fragmentLength", max: 2147483647)
+            try validate(fragmentLength, name:"fragmentLength", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6067,6 +6991,7 @@ extension MediaConvert {
             AWSShapeMember(label: "BreakoutCode", location: .body(locationName: "breakoutCode"), required: false, type: .integer), 
             AWSShapeMember(label: "DistributorId", location: .body(locationName: "distributorId"), required: false, type: .string)
         ]
+
         /// Use Nielsen Configuration (NielsenConfiguration) to set the Nielsen measurement system breakout code. Supported values are 0, 3, 7, and 9.
         public let breakoutCode: Int32?
         /// Use Distributor ID (DistributorID) to specify the distributor ID that is assigned to your organization by Neilsen.
@@ -6075,6 +7000,11 @@ extension MediaConvert {
         public init(breakoutCode: Int32? = nil, distributorId: String? = nil) {
             self.breakoutCode = breakoutCode
             self.distributorId = distributorId
+        }
+
+        public func validate() throws {
+            try validate(breakoutCode, name:"breakoutCode", max: 9)
+            try validate(breakoutCode, name:"breakoutCode", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6089,6 +7019,7 @@ extension MediaConvert {
             AWSShapeMember(label: "FilterSettings", location: .body(locationName: "filterSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "SpatialFilterSettings", location: .body(locationName: "spatialFilterSettings"), required: false, type: .structure)
         ]
+
         /// Use Noise reducer filter (NoiseReducerFilter) to select one of the following spatial image filtering functions. To use this setting, you must also enable Noise reducer (NoiseReducer). * Bilateral is an edge preserving noise reduction filter. * Mean (softest), Gaussian, Lanczos, and Sharpen (sharpest) are convolution filters. * Conserve is a min/max noise reduction filter. * Spatial is a frequency-domain filter based on JND principles.
         public let filter: NoiseReducerFilter?
         /// Settings for a noise reducer filter
@@ -6100,6 +7031,11 @@ extension MediaConvert {
             self.filter = filter
             self.filterSettings = filterSettings
             self.spatialFilterSettings = spatialFilterSettings
+        }
+
+        public func validate() throws {
+            try filterSettings?.validate()
+            try spatialFilterSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6124,11 +7060,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Strength", location: .body(locationName: "strength"), required: false, type: .integer)
         ]
+
         /// Relative strength of noise reducing filter. Higher values produce stronger filtering.
         public let strength: Int32?
 
         public init(strength: Int32? = nil) {
             self.strength = strength
+        }
+
+        public func validate() throws {
+            try validate(strength, name:"strength", max: 3)
+            try validate(strength, name:"strength", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6142,6 +7084,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Speed", location: .body(locationName: "speed"), required: false, type: .integer), 
             AWSShapeMember(label: "Strength", location: .body(locationName: "strength"), required: false, type: .integer)
         ]
+
         /// Specify strength of post noise reduction sharpening filter, with 0 disabling the filter and 3 enabling it at maximum strength.
         public let postFilterSharpenStrength: Int32?
         /// The speed of the filter, from -2 (lower speed) to 3 (higher speed), with 0 being the nominal value.
@@ -6153,6 +7096,15 @@ extension MediaConvert {
             self.postFilterSharpenStrength = postFilterSharpenStrength
             self.speed = speed
             self.strength = strength
+        }
+
+        public func validate() throws {
+            try validate(postFilterSharpenStrength, name:"postFilterSharpenStrength", max: 3)
+            try validate(postFilterSharpenStrength, name:"postFilterSharpenStrength", min: 0)
+            try validate(speed, name:"speed", max: 3)
+            try validate(speed, name:"speed", min: -2)
+            try validate(strength, name:"strength", max: 16)
+            try validate(strength, name:"strength", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6179,6 +7131,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Preset", location: .body(locationName: "preset"), required: false, type: .string), 
             AWSShapeMember(label: "VideoDescription", location: .body(locationName: "videoDescription"), required: false, type: .structure)
         ]
+
         /// (AudioDescriptions) contains groups of audio encoding settings organized by audio codec. Include one instance of (AudioDescriptions) per output. (AudioDescriptions) can contain multiple groups of encoding settings.
         public let audioDescriptions: [AudioDescription]?
         /// (CaptionDescriptions) contains groups of captions settings. For each output that has captions, include one instance of (CaptionDescriptions). (CaptionDescriptions) can contain multiple groups of captions settings.
@@ -6207,6 +7160,19 @@ extension MediaConvert {
             self.videoDescription = videoDescription
         }
 
+        public func validate() throws {
+            try audioDescriptions?.forEach {
+                try $0.validate()
+            }
+            try captionDescriptions?.forEach {
+                try $0.validate()
+            }
+            try containerSettings?.validate()
+            try validate(nameModifier, name:"nameModifier", min: 1)
+            try validate(preset, name:"preset", min: 0)
+            try videoDescription?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case audioDescriptions = "audioDescriptions"
             case captionDescriptions = "captionDescriptions"
@@ -6223,11 +7189,19 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "InputChannels", location: .body(locationName: "inputChannels"), required: false, type: .list)
         ]
+
         /// List of input channels
         public let inputChannels: [Int32]?
 
         public init(inputChannels: [Int32]? = nil) {
             self.inputChannels = inputChannels
+        }
+
+        public func validate() throws {
+            try inputChannels?.forEach {
+                try validate($0, name:"inputChannels[]", max: 6)
+                try validate($0, name:"inputChannels[]", min: -60)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6240,6 +7214,7 @@ extension MediaConvert {
             AWSShapeMember(label: "DurationInMs", location: .body(locationName: "durationInMs"), required: false, type: .integer), 
             AWSShapeMember(label: "VideoDetails", location: .body(locationName: "videoDetails"), required: false, type: .structure)
         ]
+
         /// Duration in milliseconds
         public let durationInMs: Int32?
         /// Contains details about the output's video stream
@@ -6263,6 +7238,7 @@ extension MediaConvert {
             AWSShapeMember(label: "OutputGroupSettings", location: .body(locationName: "outputGroupSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "Outputs", location: .body(locationName: "outputs"), required: false, type: .list)
         ]
+
         /// Use Custom Group Name (CustomName) to specify a name for the output group. This value is displayed on the console and can make your job settings JSON more human-readable. It does not affect your outputs. Use up to twelve characters that are either letters, numbers, spaces, or underscores.
         public let customName: String?
         /// Name of the output group
@@ -6279,6 +7255,13 @@ extension MediaConvert {
             self.outputs = outputs
         }
 
+        public func validate() throws {
+            try outputGroupSettings?.validate()
+            try outputs?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case customName = "customName"
             case name = "name"
@@ -6291,6 +7274,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OutputDetails", location: .body(locationName: "outputDetails"), required: false, type: .list)
         ]
+
         /// Details about the output
         public let outputDetails: [OutputDetail]?
 
@@ -6312,6 +7296,7 @@ extension MediaConvert {
             AWSShapeMember(label: "MsSmoothGroupSettings", location: .body(locationName: "msSmoothGroupSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "Type", location: .body(locationName: "type"), required: false, type: .enum)
         ]
+
         /// Required when you set (Type) under (OutputGroups)>(OutputGroupSettings) to CMAF_GROUP_SETTINGS. Each output in a CMAF Output Group may only contain a single video, audio, or caption output.
         public let cmafGroupSettings: CmafGroupSettings?
         /// Required when you set (Type) under (OutputGroups)>(OutputGroupSettings) to DASH_ISO_GROUP_SETTINGS.
@@ -6332,6 +7317,14 @@ extension MediaConvert {
             self.hlsGroupSettings = hlsGroupSettings
             self.msSmoothGroupSettings = msSmoothGroupSettings
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try cmafGroupSettings?.validate()
+            try dashIsoGroupSettings?.validate()
+            try fileGroupSettings?.validate()
+            try hlsGroupSettings?.validate()
+            try msSmoothGroupSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6365,6 +7358,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HlsSettings", location: .body(locationName: "hlsSettings"), required: false, type: .structure)
         ]
+
         /// Settings for HLS output groups
         public let hlsSettings: HlsSettings?
 
@@ -6388,6 +7382,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Settings", location: .body(locationName: "settings"), required: true, type: .structure), 
             AWSShapeMember(label: "Type", location: .body(locationName: "type"), required: false, type: .enum)
         ]
+
         /// An identifier for this resource that is unique within all of AWS.
         public let arn: String?
         /// An optional category you create to organize your presets.
@@ -6416,6 +7411,10 @@ extension MediaConvert {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try settings.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case category = "category"
@@ -6442,6 +7441,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ContainerSettings", location: .body(locationName: "containerSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "VideoDescription", location: .body(locationName: "videoDescription"), required: false, type: .structure)
         ]
+
         /// (AudioDescriptions) contains groups of audio encoding settings organized by audio codec. Include one instance of (AudioDescriptions) per output. (AudioDescriptions) can contain multiple groups of encoding settings.
         public let audioDescriptions: [AudioDescription]?
         /// Caption settings for this preset. There can be multiple caption settings in a single output.
@@ -6456,6 +7456,17 @@ extension MediaConvert {
             self.captionDescriptions = captionDescriptions
             self.containerSettings = containerSettings
             self.videoDescription = videoDescription
+        }
+
+        public func validate() throws {
+            try audioDescriptions?.forEach {
+                try $0.validate()
+            }
+            try captionDescriptions?.forEach {
+                try $0.validate()
+            }
+            try containerSettings?.validate()
+            try videoDescription?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6521,6 +7532,7 @@ extension MediaConvert {
             AWSShapeMember(label: "SlowPal", location: .body(locationName: "slowPal"), required: false, type: .enum), 
             AWSShapeMember(label: "Telecine", location: .body(locationName: "telecine"), required: false, type: .enum)
         ]
+
         /// Use Profile (ProResCodecProfile) to specifiy the type of Apple ProRes codec to use for this output.
         public let codecProfile: ProresCodecProfile?
         /// If you are using the console, use the Framerate setting to specify the frame rate for this output. If you want to keep the same frame rate as the input video, choose Follow source. If you want to do frame rate conversion, choose a frame rate from the dropdown list or choose Custom. The framerates shown in the dropdown list are decimal approximations of fractions. If you choose Custom, specify your frame rate as a fraction. If you are creating your transcoding job sepecification as a JSON file without the console, use FramerateControl to specify which value the service uses for the frame rate for this output. Choose INITIALIZE_FROM_SOURCE if you want the service to use the frame rate from the input. Choose SPECIFIED if you want the service to use the frame rate you specify in the settings FramerateNumerator and FramerateDenominator.
@@ -6558,6 +7570,17 @@ extension MediaConvert {
             self.parNumerator = parNumerator
             self.slowPal = slowPal
             self.telecine = telecine
+        }
+
+        public func validate() throws {
+            try validate(framerateDenominator, name:"framerateDenominator", max: 2147483647)
+            try validate(framerateDenominator, name:"framerateDenominator", min: 1)
+            try validate(framerateNumerator, name:"framerateNumerator", max: 2147483647)
+            try validate(framerateNumerator, name:"framerateNumerator", min: 1)
+            try validate(parDenominator, name:"parDenominator", max: 2147483647)
+            try validate(parDenominator, name:"parDenominator", min: 1)
+            try validate(parNumerator, name:"parNumerator", max: 2147483647)
+            try validate(parNumerator, name:"parNumerator", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6601,6 +7624,7 @@ extension MediaConvert {
             AWSShapeMember(label: "SubmittedJobsCount", location: .body(locationName: "submittedJobsCount"), required: false, type: .integer), 
             AWSShapeMember(label: "Type", location: .body(locationName: "type"), required: false, type: .enum)
         ]
+
         /// An identifier for this resource that is unique within all of AWS.
         public let arn: String?
         /// The timestamp in epoch seconds for when you created the queue.
@@ -6672,6 +7696,7 @@ extension MediaConvert {
             AWSShapeMember(label: "X", location: .body(locationName: "x"), required: false, type: .integer), 
             AWSShapeMember(label: "Y", location: .body(locationName: "y"), required: false, type: .integer)
         ]
+
         /// Height of rectangle in pixels. Specify only even numbers.
         public let height: Int32?
         /// Width of rectangle in pixels. Specify only even numbers.
@@ -6688,6 +7713,17 @@ extension MediaConvert {
             self.y = y
         }
 
+        public func validate() throws {
+            try validate(height, name:"height", max: 2147483647)
+            try validate(height, name:"height", min: 2)
+            try validate(width, name:"width", max: 2147483647)
+            try validate(width, name:"width", min: 2)
+            try validate(x, name:"x", max: 2147483647)
+            try validate(x, name:"x", min: 0)
+            try validate(y, name:"y", max: 2147483647)
+            try validate(y, name:"y", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case height = "height"
             case width = "width"
@@ -6702,6 +7738,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ChannelsIn", location: .body(locationName: "channelsIn"), required: false, type: .integer), 
             AWSShapeMember(label: "ChannelsOut", location: .body(locationName: "channelsOut"), required: false, type: .integer)
         ]
+
         /// Channel mapping (ChannelMapping) contains the group of fields that hold the remixing value for each channel. Units are in dB. Acceptable values are within the range from -60 (mute) through 6. A setting of 0 passes the input channel unchanged to the output channel (no attenuation or amplification).
         public let channelMapping: ChannelMapping?
         /// Specify the number of audio channels from your input that you want to use in your output. With remixing, you might combine or split the data in these channels, so the number of channels in your final output might be different.
@@ -6713,6 +7750,14 @@ extension MediaConvert {
             self.channelMapping = channelMapping
             self.channelsIn = channelsIn
             self.channelsOut = channelsOut
+        }
+
+        public func validate() throws {
+            try channelMapping?.validate()
+            try validate(channelsIn, name:"channelsIn", max: 16)
+            try validate(channelsIn, name:"channelsIn", min: 1)
+            try validate(channelsOut, name:"channelsOut", max: 8)
+            try validate(channelsOut, name:"channelsOut", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6737,6 +7782,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ReservedSlots", location: .body(locationName: "reservedSlots"), required: false, type: .integer), 
             AWSShapeMember(label: "Status", location: .body(locationName: "status"), required: false, type: .enum)
         ]
+
         /// The length of the term of your reserved queue pricing plan commitment.
         public let commitment: Commitment?
         /// The timestamp in epoch seconds for when the current pricing plan term for this reserved queue expires.
@@ -6775,6 +7821,7 @@ extension MediaConvert {
             AWSShapeMember(label: "RenewalType", location: .body(locationName: "renewalType"), required: true, type: .enum), 
             AWSShapeMember(label: "ReservedSlots", location: .body(locationName: "reservedSlots"), required: true, type: .integer)
         ]
+
         /// The length of the term of your reserved queue pricing plan commitment.
         public let commitment: Commitment
         /// Specifies whether the term of your reserved queue pricing plan is automatically extended (AUTO_RENEW) or expires (EXPIRE) at the end of the term. When your term is auto renewed, you extend your commitment by 12 months from the auto renew date. You can cancel this commitment.
@@ -6806,6 +7853,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Arn", location: .body(locationName: "arn"), required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource.
         public let arn: String?
         /// The tags for the resource.
@@ -6833,11 +7881,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Encryption", location: .body(locationName: "encryption"), required: false, type: .structure)
         ]
+
         /// Settings for how your job outputs are encrypted as they are uploaded to Amazon S3.
         public let encryption: S3EncryptionSettings?
 
         public init(encryption: S3EncryptionSettings? = nil) {
             self.encryption = encryption
+        }
+
+        public func validate() throws {
+            try encryption?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6850,6 +7903,7 @@ extension MediaConvert {
             AWSShapeMember(label: "EncryptionType", location: .body(locationName: "encryptionType"), required: false, type: .enum), 
             AWSShapeMember(label: "KmsKeyArn", location: .body(locationName: "kmsKeyArn"), required: false, type: .string)
         ]
+
         /// Specify how you want your data keys managed. AWS uses data keys to encrypt your content. AWS also encrypts the data keys themselves, using a customer master key (CMK), and then stores the encrypted data keys alongside your encrypted content. Use this setting to specify which AWS service manages the CMK. For simplest set up, choose Amazon S3 (SERVER_SIDE_ENCRYPTION_S3). If you want your master key to be managed by AWS Key Management Service (KMS), choose AWS KMS (SERVER_SIDE_ENCRYPTION_KMS). By default, when you choose AWS KMS, KMS uses the AWS managed customer master key (CMK) associated with Amazon S3 to encrypt your data keys. You can optionally choose to specify a different, customer managed CMK. Do so by specifying the Amazon Resource Name (ARN) of the key for the setting  KMS ARN (kmsKeyArn).
         public let encryptionType: S3ServerSideEncryptionType?
         /// Optionally, specify the customer master key (CMK) that you want to use to encrypt the data key that AWS uses to encrypt your output content. Enter the Amazon Resource Name (ARN) of the CMK. To use this setting, you must also set Server-side encryption (S3ServerSideEncryptionType) to AWS KMS (SERVER_SIDE_ENCRYPTION_KMS). If you set Server-side encryption to AWS KMS but don't specify a CMK here, AWS uses the AWS managed CMK associated with Amazon S3.
@@ -6858,6 +7912,10 @@ extension MediaConvert {
         public init(encryptionType: S3ServerSideEncryptionType? = nil, kmsKeyArn: String? = nil) {
             self.encryptionType = encryptionType
             self.kmsKeyArn = kmsKeyArn
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyArn, name:"kmsKeyArn", pattern: "^arn:aws(-us-gov)?:kms:[a-z-]{2,6}-(east|west|central|((north|south)(east|west)?))-[1-9]{1,2}:\\d{12}:key/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6890,6 +7948,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Framerate", location: .body(locationName: "framerate"), required: false, type: .enum)
         ]
+
         /// Set Framerate (SccDestinationFramerate) to make sure that the captions and the video are synchronized in the output. Specify a frame rate that matches the frame rate of the associated video. If the video frame rate is 29.97, choose 29.97 dropframe (FRAMERATE_29_97_DROPFRAME) only if the video has video_insertion=true and drop_frame_timecode=true; otherwise, choose 29.97 non-dropframe (FRAMERATE_29_97_NON_DROPFRAME).
         public let framerate: SccDestinationFramerate?
 
@@ -6909,6 +7968,7 @@ extension MediaConvert {
             AWSShapeMember(label: "SystemIds", location: .body(locationName: "systemIds"), required: false, type: .list), 
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string)
         ]
+
         /// Optional AWS Certificate Manager ARN for a certificate to send to the keyprovider. The certificate holds a key used by the keyprovider to encrypt the keys in its response.
         public let certificateArn: String?
         /// The SPEKE-compliant server uses Resource ID (ResourceId) to identify content.
@@ -6923,6 +7983,14 @@ extension MediaConvert {
             self.resourceId = resourceId
             self.systemIds = systemIds
             self.url = url
+        }
+
+        public func validate() throws {
+            try validate(certificateArn, name:"certificateArn", pattern: "^arn:aws(-us-gov)?:acm:")
+            try systemIds?.forEach {
+                try validate($0, name:"systemIds[]", pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+            }
+            try validate(url, name:"url", pattern: "^https:\\/\\/")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6940,6 +8008,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StaticKeyValue", location: .body(locationName: "staticKeyValue"), required: false, type: .string), 
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string)
         ]
+
         /// Relates to DRM implementation. Sets the value of the KEYFORMAT attribute. Must be 'identity' or a reverse DNS string. May be omitted to indicate an implicit value of 'identity'.
         public let keyFormat: String?
         /// Relates to DRM implementation. Either a single positive integer version value or a slash delimited list of version values (1/2/3).
@@ -6954,6 +8023,12 @@ extension MediaConvert {
             self.keyFormatVersions = keyFormatVersions
             self.staticKeyValue = staticKeyValue
             self.url = url
+        }
+
+        public func validate() throws {
+            try validate(keyFormat, name:"keyFormat", pattern: "^(identity|[A-Za-z]{2,6}(\\.[A-Za-z0-9-]{1,63})+)$")
+            try validate(keyFormatVersions, name:"keyFormatVersions", pattern: "^(\\d+(\\/\\d+)*)$")
+            try validate(staticKeyValue, name:"staticKeyValue", pattern: "^[A-Za-z0-9]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6988,6 +8063,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Arn", location: .body(locationName: "arn"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: true, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource that you want to tag. To get the ARN, send a GET request with the resource name.
         public let arn: String
         /// The tags that you want to add to the resource. You can tag resources with a key-value pair or with only a key.
@@ -7006,6 +8082,7 @@ extension MediaConvert {
 
     public struct TagResourceResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -7015,11 +8092,18 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PageNumber", location: .body(locationName: "pageNumber"), required: false, type: .string)
         ]
+
         /// Set pageNumber to the Teletext page number for the destination captions for this output. This value must be a three-digit hexadecimal string; strings ending in -FF are invalid. If you are passing through the entire set of Teletext data, do not use this field.
         public let pageNumber: String?
 
         public init(pageNumber: String? = nil) {
             self.pageNumber = pageNumber
+        }
+
+        public func validate() throws {
+            try validate(pageNumber, name:"pageNumber", max: 3)
+            try validate(pageNumber, name:"pageNumber", min: 3)
+            try validate(pageNumber, name:"pageNumber", pattern: "^[1-8][0-9a-fA-F][0-9a-eA-E]$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7031,11 +8115,18 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PageNumber", location: .body(locationName: "pageNumber"), required: false, type: .string)
         ]
+
         /// Use Page Number (PageNumber) to specify the three-digit hexadecimal page number that will be used for Teletext captions. Do not use this setting if you are passing through teletext from the input source to output.
         public let pageNumber: String?
 
         public init(pageNumber: String? = nil) {
             self.pageNumber = pageNumber
+        }
+
+        public func validate() throws {
+            try validate(pageNumber, name:"pageNumber", max: 3)
+            try validate(pageNumber, name:"pageNumber", min: 3)
+            try validate(pageNumber, name:"pageNumber", pattern: "^[1-8][0-9a-fA-F][0-9a-eA-E]$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7049,6 +8140,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Position", location: .body(locationName: "position"), required: false, type: .enum), 
             AWSShapeMember(label: "Prefix", location: .body(locationName: "prefix"), required: false, type: .string)
         ]
+
         /// Use Font Size (FontSize) to set the font size of any burned-in timecode. Valid values are 10, 16, 32, 48.
         public let fontSize: Int32?
         /// Use Position (Position) under under Timecode burn-in (TimecodeBurnIn) to specify the location the burned-in timecode on output video.
@@ -7060,6 +8152,12 @@ extension MediaConvert {
             self.fontSize = fontSize
             self.position = position
             self.prefix = prefix
+        }
+
+        public func validate() throws {
+            try validate(fontSize, name:"fontSize", max: 48)
+            try validate(fontSize, name:"fontSize", min: 10)
+            try validate(prefix, name:"prefix", pattern: "^[ -~]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7089,6 +8187,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Start", location: .body(locationName: "start"), required: false, type: .string), 
             AWSShapeMember(label: "TimestampOffset", location: .body(locationName: "timestampOffset"), required: false, type: .string)
         ]
+
         /// If you use an editing platform that relies on an anchor timecode, use Anchor Timecode (Anchor) to specify a timecode that will match the input video frame to the output video frame. Use 24-hour format with frame number, (HH:MM:SS:FF) or (HH:MM:SS;FF). This setting ignores frame rate conversion. System behavior for Anchor Timecode varies depending on your setting for Source (TimecodeSource). * If Source (TimecodeSource) is set to Specified Start (SPECIFIEDSTART), the first input frame is the specified value in Start Timecode (Start). Anchor Timecode (Anchor) and Start Timecode (Start) are used calculate output timecode. * If Source (TimecodeSource) is set to Start at 0 (ZEROBASED)  the  first frame is 00:00:00:00. * If Source (TimecodeSource) is set to Embedded (EMBEDDED), the  first frame is the timecode value on the first input frame of the input.
         public let anchor: String?
         /// Use Source (TimecodeSource) to set how timecodes are handled within this job. To make sure that your video, audio, captions, and markers are synchronized and that time-based features, such as image inserter, work correctly, choose the Timecode source option that matches your assets. All timecodes are in a 24-hour format with frame number (HH:MM:SS:FF). * Embedded (EMBEDDED) - Use the timecode that is in the input video. If no embedded timecode is in the source, the service will use Start at 0 (ZEROBASED) instead. * Start at 0 (ZEROBASED) - Set the timecode of the initial frame to 00:00:00:00. * Specified Start (SPECIFIEDSTART) - Set the timecode of the initial frame to a value other than zero. You use Start timecode (Start) to provide this value.
@@ -7103,6 +8202,12 @@ extension MediaConvert {
             self.source = source
             self.start = start
             self.timestampOffset = timestampOffset
+        }
+
+        public func validate() throws {
+            try validate(anchor, name:"anchor", pattern: "^([01][0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9][:;][0-9]{2}$")
+            try validate(start, name:"start", pattern: "^([01][0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9][:;][0-9]{2}$")
+            try validate(timestampOffset, name:"timestampOffset", pattern: "^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7130,11 +8235,18 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id3Insertions", location: .body(locationName: "id3Insertions"), required: false, type: .list)
         ]
+
         /// Id3Insertions contains the array of Id3Insertion instances.
         public let id3Insertions: [Id3Insertion]?
 
         public init(id3Insertions: [Id3Insertion]? = nil) {
             self.id3Insertions = id3Insertions
+        }
+
+        public func validate() throws {
+            try id3Insertions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7148,6 +8260,7 @@ extension MediaConvert {
             AWSShapeMember(label: "StartTime", location: .body(locationName: "startTime"), required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTime", location: .body(locationName: "submitTime"), required: false, type: .timestamp)
         ]
+
         /// The time, in Unix epoch format, that the transcoding job finished
         public let finishTime: TimeStamp?
         /// The time, in Unix epoch format, that transcoding for the job began.
@@ -7172,11 +8285,17 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TrackNumber", location: .body(locationName: "trackNumber"), required: false, type: .integer)
         ]
+
         /// Use this setting to select a single captions track from a source. Track numbers correspond to the order in the captions source file. For IMF sources, track numbering is based on the order that the captions appear in the CPL. For example, use 1 to select the captions asset that is listed first in the CPL. To include more than one captions track in your job outputs, create multiple input captions selectors. Specify one track per selector.
         public let trackNumber: Int32?
 
         public init(trackNumber: Int32? = nil) {
             self.trackNumber = trackNumber
+        }
+
+        public func validate() throws {
+            try validate(trackNumber, name:"trackNumber", max: 2147483647)
+            try validate(trackNumber, name:"trackNumber", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7188,6 +8307,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StylePassthrough", location: .body(locationName: "stylePassthrough"), required: false, type: .enum)
         ]
+
         /// Pass through style and position information from a TTML-like input source (TTML, SMPTE-TT, CFF-TT) to the CFF-TT output or TTML output.
         public let stylePassthrough: TtmlStylePassthrough?
 
@@ -7217,6 +8337,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Arn", location: .uri(locationName: "arn"), required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", location: .body(locationName: "tagKeys"), required: false, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource that you want to remove tags from. To get the ARN, send a GET request with the resource name.
         public let arn: String
         /// The keys of the tags that you want to remove from the resource.
@@ -7235,6 +8356,7 @@ extension MediaConvert {
 
     public struct UntagResourceResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -7250,6 +8372,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Settings", location: .body(locationName: "settings"), required: false, type: .structure), 
             AWSShapeMember(label: "StatusUpdateInterval", location: .body(locationName: "statusUpdateInterval"), required: false, type: .enum)
         ]
+
         /// Accelerated transcoding can significantly speed up jobs with long, visually complex content. Outputs that use this feature incur pro-tier pricing. For information about feature limitations, see the AWS Elemental MediaConvert User Guide.
         public let accelerationSettings: AccelerationSettings?
         /// The new category for the job template, if you are changing it.
@@ -7275,6 +8398,10 @@ extension MediaConvert {
             self.statusUpdateInterval = statusUpdateInterval
         }
 
+        public func validate() throws {
+            try settings?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accelerationSettings = "accelerationSettings"
             case category = "category"
@@ -7290,11 +8417,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobTemplate", location: .body(locationName: "jobTemplate"), required: false, type: .structure)
         ]
+
         /// A job template is a pre-made set of encoding instructions that you can use to quickly create a job.
         public let jobTemplate: JobTemplate?
 
         public init(jobTemplate: JobTemplate? = nil) {
             self.jobTemplate = jobTemplate
+        }
+
+        public func validate() throws {
+            try jobTemplate?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7309,6 +8441,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Name", location: .uri(locationName: "name"), required: true, type: .string), 
             AWSShapeMember(label: "Settings", location: .body(locationName: "settings"), required: false, type: .structure)
         ]
+
         /// The new category for the preset, if you are changing it.
         public let category: String?
         /// The new description for the preset, if you are changing it.
@@ -7325,6 +8458,10 @@ extension MediaConvert {
             self.settings = settings
         }
 
+        public func validate() throws {
+            try settings?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case category = "category"
             case description = "description"
@@ -7337,11 +8474,16 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Preset", location: .body(locationName: "preset"), required: false, type: .structure)
         ]
+
         /// A preset is a collection of preconfigured media conversion settings that you want MediaConvert to apply to the output during the conversion process.
         public let preset: Preset?
 
         public init(preset: Preset? = nil) {
             self.preset = preset
+        }
+
+        public func validate() throws {
+            try preset?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7356,6 +8498,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ReservationPlanSettings", location: .body(locationName: "reservationPlanSettings"), required: false, type: .structure), 
             AWSShapeMember(label: "Status", location: .body(locationName: "status"), required: false, type: .enum)
         ]
+
         /// The new description for the queue, if you are changing it.
         public let description: String?
         /// The name of the queue that you are modifying.
@@ -7384,6 +8527,7 @@ extension MediaConvert {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Queue", location: .body(locationName: "queue"), required: false, type: .structure)
         ]
+
         /// You can use queues to manage the resources that are available to your AWS account for running multiple transcoding jobs at the same time. If you don't specify a queue, the service sends all jobs through the default queue. For more information, see https://docs.aws.amazon.com/mediaconvert/latest/ug/working-with-queues.html.
         public let queue: Queue?
 
@@ -7414,6 +8558,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Mpeg2Settings", location: .body(locationName: "mpeg2Settings"), required: false, type: .structure), 
             AWSShapeMember(label: "ProresSettings", location: .body(locationName: "proresSettings"), required: false, type: .structure)
         ]
+
         /// Specifies the video codec. This must be equal to one of the enum values defined by the object  VideoCodec.
         public let codec: VideoCodec?
         /// Required when you set (Codec) under (VideoDescription)>(CodecSettings) to the value FRAME_CAPTURE.
@@ -7434,6 +8579,14 @@ extension MediaConvert {
             self.h265Settings = h265Settings
             self.mpeg2Settings = mpeg2Settings
             self.proresSettings = proresSettings
+        }
+
+        public func validate() throws {
+            try frameCaptureSettings?.validate()
+            try h264Settings?.validate()
+            try h265Settings?.validate()
+            try mpeg2Settings?.validate()
+            try proresSettings?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7464,6 +8617,7 @@ extension MediaConvert {
             AWSShapeMember(label: "VideoPreprocessors", location: .body(locationName: "videoPreprocessors"), required: false, type: .structure), 
             AWSShapeMember(label: "Width", location: .body(locationName: "width"), required: false, type: .integer)
         ]
+
         /// This setting only applies to H.264, H.265, and MPEG2 outputs. Use Insert AFD signaling (AfdSignaling) to specify whether the service includes AFD values in the output video data and what those values are. * Choose None to remove all AFD values from this output. * Choose Fixed to ignore input AFD values and instead encode the value specified in the job. * Choose Auto to calculate output AFD values based on the input AFD scaler data.
         public let afdSignaling: AfdSignaling?
         /// The service automatically applies the anti-alias filter to all outputs. The service no longer accepts the value DISABLED for AntiAlias. If you specify that in your job, the service will ignore the setting.
@@ -7513,6 +8667,21 @@ extension MediaConvert {
             self.width = width
         }
 
+        public func validate() throws {
+            try codecSettings?.validate()
+            try crop?.validate()
+            try validate(fixedAfd, name:"fixedAfd", max: 15)
+            try validate(fixedAfd, name:"fixedAfd", min: 0)
+            try validate(height, name:"height", max: 2160)
+            try validate(height, name:"height", min: 32)
+            try position?.validate()
+            try validate(sharpness, name:"sharpness", max: 100)
+            try validate(sharpness, name:"sharpness", min: 0)
+            try videoPreprocessors?.validate()
+            try validate(width, name:"width", max: 4096)
+            try validate(width, name:"width", min: 32)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case afdSignaling = "afdSignaling"
             case antiAlias = "antiAlias"
@@ -7537,6 +8706,7 @@ extension MediaConvert {
             AWSShapeMember(label: "HeightInPx", location: .body(locationName: "heightInPx"), required: false, type: .integer), 
             AWSShapeMember(label: "WidthInPx", location: .body(locationName: "widthInPx"), required: false, type: .integer)
         ]
+
         /// Height in pixels for the output
         public let heightInPx: Int32?
         /// Width in pixels for the output
@@ -7561,6 +8731,7 @@ extension MediaConvert {
             AWSShapeMember(label: "NoiseReducer", location: .body(locationName: "noiseReducer"), required: false, type: .structure), 
             AWSShapeMember(label: "TimecodeBurnin", location: .body(locationName: "timecodeBurnin"), required: false, type: .structure)
         ]
+
         /// Enable the Color corrector (ColorCorrector) feature if necessary. Enable or disable this feature for each output individually. This setting is disabled by default.
         public let colorCorrector: ColorCorrector?
         /// Use Deinterlacer (Deinterlacer) to produce smoother motion and a clearer picture.
@@ -7578,6 +8749,13 @@ extension MediaConvert {
             self.imageInserter = imageInserter
             self.noiseReducer = noiseReducer
             self.timecodeBurnin = timecodeBurnin
+        }
+
+        public func validate() throws {
+            try colorCorrector?.validate()
+            try imageInserter?.validate()
+            try noiseReducer?.validate()
+            try timecodeBurnin?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7598,6 +8776,7 @@ extension MediaConvert {
             AWSShapeMember(label: "ProgramNumber", location: .body(locationName: "programNumber"), required: false, type: .integer), 
             AWSShapeMember(label: "Rotate", location: .body(locationName: "rotate"), required: false, type: .enum)
         ]
+
         /// If your input video has accurate color space metadata, or if you don't know about color space, leave this set to the default value FOLLOW. The service will automatically detect your input color space. If your input video has metadata indicating the wrong color space, or if your input video is missing color space metadata that should be there, specify the accurate color space here. If you choose HDR10, you can also correct inaccurate color space coefficients, using the HDR master display information controls. You must also set Color space usage (ColorSpaceUsage) to FORCE for the service to use these values.
         public let colorSpace: ColorSpace?
         /// There are two sources for color metadata, the input file and the job configuration (in the Color space and HDR master display informaiton settings). The Color space usage setting controls which takes precedence. FORCE: The system will use color metadata supplied by user, if any. If the user does not supply color metadata, the system will use data from the source. FALLBACK: The system will use color metadata from the source. If source has no color metadata, the system will use user-supplied color metadata values if available.
@@ -7618,6 +8797,14 @@ extension MediaConvert {
             self.pid = pid
             self.programNumber = programNumber
             self.rotate = rotate
+        }
+
+        public func validate() throws {
+            try hdr10Metadata?.validate()
+            try validate(pid, name:"pid", max: 2147483647)
+            try validate(pid, name:"pid", min: 1)
+            try validate(programNumber, name:"programNumber", max: 2147483647)
+            try validate(programNumber, name:"programNumber", min: -2147483648)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7649,6 +8836,7 @@ extension MediaConvert {
             AWSShapeMember(label: "Format", location: .body(locationName: "format"), required: false, type: .enum), 
             AWSShapeMember(label: "SampleRate", location: .body(locationName: "sampleRate"), required: false, type: .integer)
         ]
+
         /// Specify Bit depth (BitDepth), in bits per sample, to choose the encoding quality for this audio track.
         public let bitDepth: Int32?
         /// Set Channels to specify the number of channels in this output audio track. With WAV, valid values 1, 2, 4, and 8. In the console, these values are Mono, Stereo, 4-Channel, and 8-Channel, respectively.
@@ -7663,6 +8851,15 @@ extension MediaConvert {
             self.channels = channels
             self.format = format
             self.sampleRate = sampleRate
+        }
+
+        public func validate() throws {
+            try validate(bitDepth, name:"bitDepth", max: 24)
+            try validate(bitDepth, name:"bitDepth", min: 16)
+            try validate(channels, name:"channels", max: 8)
+            try validate(channels, name:"channels", min: 1)
+            try validate(sampleRate, name:"sampleRate", max: 192000)
+            try validate(sampleRate, name:"sampleRate", min: 8000)
         }
 
         private enum CodingKeys: String, CodingKey {

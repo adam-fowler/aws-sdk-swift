@@ -10,6 +10,7 @@ extension CloudHSM {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagList", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS CloudHSM resource to tag.
         public let resourceArn: String
         /// One or more tags.
@@ -18,6 +19,13 @@ extension CloudHSM {
         public init(resourceArn: String, tagList: [Tag]) {
             self.resourceArn = resourceArn
             self.tagList = tagList
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "[\\w :+=./\\\\-]*")
+            try tagList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -30,11 +38,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: true, type: .string)
         ]
+
         /// The status of the operation.
         public let status: String
 
         public init(status: String) {
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(status, name:"status", pattern: "[\\w :+=./\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -59,11 +72,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Label", required: true, type: .string)
         ]
+
         /// The label of the new high-availability partition group.
         public let label: String
 
         public init(label: String) {
             self.label = label
+        }
+
+        public func validate() throws {
+            try validate(label, name:"label", pattern: "[a-zA-Z0-9_.-]{1,64}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -75,11 +93,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HapgArn", required: false, type: .string)
         ]
+
         /// The ARN of the high-availability partition group.
         public let hapgArn: String?
 
         public init(hapgArn: String? = nil) {
             self.hapgArn = hapgArn
+        }
+
+        public func validate() throws {
+            try validate(hapgArn, name:"hapgArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -98,6 +121,7 @@ extension CloudHSM {
             AWSShapeMember(label: "SubscriptionType", location: .body(locationName: "SubscriptionType"), required: true, type: .enum), 
             AWSShapeMember(label: "SyslogIp", location: .body(locationName: "SyslogIp"), required: false, type: .string)
         ]
+
         /// A user-defined token to ensure idempotence. Subsequent calls to this operation with the same token will be ignored.
         public let clientToken: String?
         /// The IP address to assign to the HSM's ENI. If an IP address is not specified, an IP address will be randomly chosen from the CIDR range of the subnet.
@@ -125,6 +149,16 @@ extension CloudHSM {
             self.syslogIp = syslogIp
         }
 
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", pattern: "[a-zA-Z0-9]{1,64}")
+            try validate(eniIp, name:"eniIp", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
+            try validate(externalId, name:"externalId", pattern: "[\\w :+=./-]*")
+            try validate(iamRoleArn, name:"iamRoleArn", pattern: "arn:aws(-iso)?:iam::[0-9]{12}:role/[a-zA-Z0-9_\\+=,\\.\\-@]{1,64}")
+            try validate(sshKey, name:"sshKey", pattern: "[a-zA-Z0-9+/= ._:\\\\@-]*")
+            try validate(subnetId, name:"subnetId", pattern: "subnet-[0-9a-f]{8}")
+            try validate(syslogIp, name:"syslogIp", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientToken = "ClientToken"
             case eniIp = "EniIp"
@@ -141,11 +175,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HsmArn", required: false, type: .string)
         ]
+
         /// The ARN of the HSM.
         public let hsmArn: String?
 
         public init(hsmArn: String? = nil) {
             self.hsmArn = hsmArn
+        }
+
+        public func validate() throws {
+            try validate(hsmArn, name:"hsmArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -158,6 +197,7 @@ extension CloudHSM {
             AWSShapeMember(label: "Certificate", required: true, type: .string), 
             AWSShapeMember(label: "Label", required: false, type: .string)
         ]
+
         /// The contents of a Base64-Encoded X.509 v3 certificate to be installed on the HSMs used by this client.
         public let certificate: String
         /// The label for the client.
@@ -166,6 +206,13 @@ extension CloudHSM {
         public init(certificate: String, label: String? = nil) {
             self.certificate = certificate
             self.label = label
+        }
+
+        public func validate() throws {
+            try validate(certificate, name:"certificate", max: 2400)
+            try validate(certificate, name:"certificate", min: 600)
+            try validate(certificate, name:"certificate", pattern: "[\\w :+=./\\n-]*")
+            try validate(label, name:"label", pattern: "[a-zA-Z0-9_.-]{2,64}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -178,11 +225,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClientArn", required: false, type: .string)
         ]
+
         /// The ARN of the client.
         public let clientArn: String?
 
         public init(clientArn: String? = nil) {
             self.clientArn = clientArn
+        }
+
+        public func validate() throws {
+            try validate(clientArn, name:"clientArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -194,11 +246,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HapgArn", required: true, type: .string)
         ]
+
         /// The ARN of the high-availability partition group to delete.
         public let hapgArn: String
 
         public init(hapgArn: String) {
             self.hapgArn = hapgArn
+        }
+
+        public func validate() throws {
+            try validate(hapgArn, name:"hapgArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -210,11 +267,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: true, type: .string)
         ]
+
         /// The status of the action.
         public let status: String
 
         public init(status: String) {
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(status, name:"status", pattern: "[\\w :+=./\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -226,11 +288,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HsmArn", location: .body(locationName: "HsmArn"), required: true, type: .string)
         ]
+
         /// The ARN of the HSM to delete.
         public let hsmArn: String
 
         public init(hsmArn: String) {
             self.hsmArn = hsmArn
+        }
+
+        public func validate() throws {
+            try validate(hsmArn, name:"hsmArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -242,11 +309,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: true, type: .string)
         ]
+
         /// The status of the operation.
         public let status: String
 
         public init(status: String) {
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(status, name:"status", pattern: "[\\w :+=./\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -258,11 +330,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClientArn", required: true, type: .string)
         ]
+
         /// The ARN of the client to delete.
         public let clientArn: String
 
         public init(clientArn: String) {
             self.clientArn = clientArn
+        }
+
+        public func validate() throws {
+            try validate(clientArn, name:"clientArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -274,11 +351,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: true, type: .string)
         ]
+
         /// The status of the action.
         public let status: String
 
         public init(status: String) {
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(status, name:"status", pattern: "[\\w :+=./\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -290,11 +372,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HapgArn", required: true, type: .string)
         ]
+
         /// The ARN of the high-availability partition group to describe.
         public let hapgArn: String
 
         public init(hapgArn: String) {
             self.hapgArn = hapgArn
+        }
+
+        public func validate() throws {
+            try validate(hapgArn, name:"hapgArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -314,6 +401,7 @@ extension CloudHSM {
             AWSShapeMember(label: "PartitionSerialList", required: false, type: .list), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The ARN of the high-availability partition group.
         public let hapgArn: String?
         /// The serial number of the high-availability partition group.
@@ -342,6 +430,25 @@ extension CloudHSM {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(hapgArn, name:"hapgArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
+            try validate(hapgSerial, name:"hapgSerial", pattern: "[\\w :+=./\\\\-]*")
+            try hsmsLastActionFailed?.forEach {
+                try validate($0, name:"hsmsLastActionFailed[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
+            }
+            try hsmsPendingDeletion?.forEach {
+                try validate($0, name:"hsmsPendingDeletion[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
+            }
+            try hsmsPendingRegistration?.forEach {
+                try validate($0, name:"hsmsPendingRegistration[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
+            }
+            try validate(label, name:"label", pattern: "[a-zA-Z0-9_.-]{1,64}")
+            try validate(lastModifiedTimestamp, name:"lastModifiedTimestamp", pattern: "\\d*")
+            try partitionSerialList?.forEach {
+                try validate($0, name:"partitionSerialList[]", pattern: "\\d{6,12}")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hapgArn = "HapgArn"
             case hapgSerial = "HapgSerial"
@@ -360,6 +467,7 @@ extension CloudHSM {
             AWSShapeMember(label: "HsmArn", required: false, type: .string), 
             AWSShapeMember(label: "HsmSerialNumber", required: false, type: .string)
         ]
+
         /// The ARN of the HSM. Either the HsmArn or the SerialNumber parameter must be specified.
         public let hsmArn: String?
         /// The serial number of the HSM. Either the HsmArn or the HsmSerialNumber parameter must be specified.
@@ -368,6 +476,11 @@ extension CloudHSM {
         public init(hsmArn: String? = nil, hsmSerialNumber: String? = nil) {
             self.hsmArn = hsmArn
             self.hsmSerialNumber = hsmSerialNumber
+        }
+
+        public func validate() throws {
+            try validate(hsmArn, name:"hsmArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
+            try validate(hsmSerialNumber, name:"hsmSerialNumber", pattern: "\\d{1,16}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -400,6 +513,7 @@ extension CloudHSM {
             AWSShapeMember(label: "VendorName", required: false, type: .string), 
             AWSShapeMember(label: "VpcId", required: false, type: .string)
         ]
+
         /// The Availability Zone that the HSM is in.
         public let availabilityZone: String?
         /// The identifier of the elastic network interface (ENI) attached to the HSM.
@@ -466,6 +580,30 @@ extension CloudHSM {
             self.vpcId = vpcId
         }
 
+        public func validate() throws {
+            try validate(availabilityZone, name:"availabilityZone", pattern: "[a-zA-Z0-9\\-]*")
+            try validate(eniId, name:"eniId", pattern: "eni-[0-9a-f]{8}")
+            try validate(eniIp, name:"eniIp", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
+            try validate(hsmArn, name:"hsmArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
+            try validate(hsmType, name:"hsmType", pattern: "[\\w :+=./\\\\-]*")
+            try validate(iamRoleArn, name:"iamRoleArn", pattern: "arn:aws(-iso)?:iam::[0-9]{12}:role/[a-zA-Z0-9_\\+=,\\.\\-@]{1,64}")
+            try partitions?.forEach {
+                try validate($0, name:"partitions[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}/partition-[0-9]{6,12}")
+            }
+            try validate(serialNumber, name:"serialNumber", pattern: "\\d{1,16}")
+            try validate(serverCertLastUpdated, name:"serverCertLastUpdated", pattern: "\\d*")
+            try validate(serverCertUri, name:"serverCertUri", pattern: "[\\w :+=./\\\\-]*")
+            try validate(softwareVersion, name:"softwareVersion", pattern: "[\\w :+=./\\\\-]*")
+            try validate(sshKeyLastUpdated, name:"sshKeyLastUpdated", pattern: "\\d*")
+            try validate(sshPublicKey, name:"sshPublicKey", pattern: "[a-zA-Z0-9+/= ._:\\\\@-]*")
+            try validate(statusDetails, name:"statusDetails", pattern: "[\\w :+=./\\\\-]*")
+            try validate(subnetId, name:"subnetId", pattern: "subnet-[0-9a-f]{8}")
+            try validate(subscriptionEndDate, name:"subscriptionEndDate", pattern: "\\d*")
+            try validate(subscriptionStartDate, name:"subscriptionStartDate", pattern: "\\d*")
+            try validate(vendorName, name:"vendorName", pattern: "[\\w :+=./\\\\-]*")
+            try validate(vpcId, name:"vpcId", pattern: "vpc-[0-9a-f]{8}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case availabilityZone = "AvailabilityZone"
             case eniId = "EniId"
@@ -496,6 +634,7 @@ extension CloudHSM {
             AWSShapeMember(label: "CertificateFingerprint", required: false, type: .string), 
             AWSShapeMember(label: "ClientArn", required: false, type: .string)
         ]
+
         /// The certificate fingerprint.
         public let certificateFingerprint: String?
         /// The ARN of the client.
@@ -504,6 +643,11 @@ extension CloudHSM {
         public init(certificateFingerprint: String? = nil, clientArn: String? = nil) {
             self.certificateFingerprint = certificateFingerprint
             self.clientArn = clientArn
+        }
+
+        public func validate() throws {
+            try validate(certificateFingerprint, name:"certificateFingerprint", pattern: "([0-9a-fA-F][0-9a-fA-F]:){15}[0-9a-fA-F][0-9a-fA-F]")
+            try validate(clientArn, name:"clientArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -520,6 +664,7 @@ extension CloudHSM {
             AWSShapeMember(label: "Label", required: false, type: .string), 
             AWSShapeMember(label: "LastModifiedTimestamp", required: false, type: .string)
         ]
+
         /// The certificate installed on the HSMs used by this client.
         public let certificate: String?
         /// The certificate fingerprint.
@@ -539,6 +684,16 @@ extension CloudHSM {
             self.lastModifiedTimestamp = lastModifiedTimestamp
         }
 
+        public func validate() throws {
+            try validate(certificate, name:"certificate", max: 2400)
+            try validate(certificate, name:"certificate", min: 600)
+            try validate(certificate, name:"certificate", pattern: "[\\w :+=./\\n-]*")
+            try validate(certificateFingerprint, name:"certificateFingerprint", pattern: "([0-9a-fA-F][0-9a-fA-F]:){15}[0-9a-fA-F][0-9a-fA-F]")
+            try validate(clientArn, name:"clientArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
+            try validate(label, name:"label", pattern: "[a-zA-Z0-9_.-]{1,64}")
+            try validate(lastModifiedTimestamp, name:"lastModifiedTimestamp", pattern: "\\d*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificate = "Certificate"
             case certificateFingerprint = "CertificateFingerprint"
@@ -554,6 +709,7 @@ extension CloudHSM {
             AWSShapeMember(label: "ClientVersion", required: true, type: .enum), 
             AWSShapeMember(label: "HapgList", required: true, type: .list)
         ]
+
         /// The ARN of the client.
         public let clientArn: String
         /// The client version.
@@ -565,6 +721,13 @@ extension CloudHSM {
             self.clientArn = clientArn
             self.clientVersion = clientVersion
             self.hapgList = hapgList
+        }
+
+        public func validate() throws {
+            try validate(clientArn, name:"clientArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
+            try hapgList.forEach {
+                try validate($0, name:"hapgList[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -580,6 +743,7 @@ extension CloudHSM {
             AWSShapeMember(label: "ConfigFile", required: false, type: .string), 
             AWSShapeMember(label: "ConfigType", required: false, type: .string)
         ]
+
         /// The certificate file containing the server.pem files of the HSMs.
         public let configCred: String?
         /// The chrystoki.conf configuration file.
@@ -591,6 +755,12 @@ extension CloudHSM {
             self.configCred = configCred
             self.configFile = configFile
             self.configType = configType
+        }
+
+        public func validate() throws {
+            try validate(configCred, name:"configCred", pattern: "[\\w :+=./\\\\-]*")
+            try validate(configFile, name:"configFile", pattern: "[\\w :+=./\\\\-]*")
+            try validate(configType, name:"configType", pattern: "[\\w :+=./\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -613,6 +783,7 @@ extension CloudHSM {
 
     public struct ListAvailableZonesRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -622,11 +793,18 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AZList", required: false, type: .list)
         ]
+
         /// The list of Availability Zones that have available AWS CloudHSM capacity.
         public let aZList: [String]?
 
         public init(aZList: [String]? = nil) {
             self.aZList = aZList
+        }
+
+        public func validate() throws {
+            try aZList?.forEach {
+                try validate($0, name:"aZList[]", pattern: "[a-zA-Z0-9\\-]*")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -638,11 +816,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The NextToken value from a previous call to ListHapgs. Pass null if this is the first call.
         public let nextToken: String?
 
         public init(nextToken: String? = nil) {
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9+/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -655,6 +838,7 @@ extension CloudHSM {
             AWSShapeMember(label: "HapgList", required: true, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of high-availability partition groups.
         public let hapgList: [String]
         /// If not null, more results are available. Pass this value to ListHapgs to retrieve the next set of items.
@@ -663,6 +847,13 @@ extension CloudHSM {
         public init(hapgList: [String], nextToken: String? = nil) {
             self.hapgList = hapgList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try hapgList.forEach {
+                try validate($0, name:"hapgList[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
+            }
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9+/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -675,11 +866,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The NextToken value from a previous call to ListHsms. Pass null if this is the first call.
         public let nextToken: String?
 
         public init(nextToken: String? = nil) {
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9+/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -692,6 +888,7 @@ extension CloudHSM {
             AWSShapeMember(label: "HsmList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of ARNs that identify the HSMs.
         public let hsmList: [String]?
         /// If not null, more results are available. Pass this value to ListHsms to retrieve the next set of items.
@@ -700,6 +897,13 @@ extension CloudHSM {
         public init(hsmList: [String]? = nil, nextToken: String? = nil) {
             self.hsmList = hsmList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try hsmList?.forEach {
+                try validate($0, name:"hsmList[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
+            }
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9+/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -712,11 +916,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The NextToken value from a previous call to ListLunaClients. Pass null if this is the first call.
         public let nextToken: String?
 
         public init(nextToken: String? = nil) {
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9+/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -729,6 +938,7 @@ extension CloudHSM {
             AWSShapeMember(label: "ClientList", required: true, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of clients.
         public let clientList: [String]
         /// If not null, more results are available. Pass this to ListLunaClients to retrieve the next set of items.
@@ -737,6 +947,13 @@ extension CloudHSM {
         public init(clientList: [String], nextToken: String? = nil) {
             self.clientList = clientList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try clientList.forEach {
+                try validate($0, name:"clientList[]", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
+            }
+            try validate(nextToken, name:"nextToken", pattern: "[a-zA-Z0-9+/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -749,11 +966,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS CloudHSM resource.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "[\\w :+=./\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -765,11 +987,18 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TagList", required: true, type: .list)
         ]
+
         /// One or more tags.
         public let tagList: [Tag]
 
         public init(tagList: [Tag]) {
             self.tagList = tagList
+        }
+
+        public func validate() throws {
+            try tagList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -783,6 +1012,7 @@ extension CloudHSM {
             AWSShapeMember(label: "Label", required: false, type: .string), 
             AWSShapeMember(label: "PartitionSerialList", required: false, type: .list)
         ]
+
         /// The ARN of the high-availability partition group to modify.
         public let hapgArn: String
         /// The new label for the high-availability partition group.
@@ -796,6 +1026,14 @@ extension CloudHSM {
             self.partitionSerialList = partitionSerialList
         }
 
+        public func validate() throws {
+            try validate(hapgArn, name:"hapgArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
+            try validate(label, name:"label", pattern: "[a-zA-Z0-9_.-]{1,64}")
+            try partitionSerialList?.forEach {
+                try validate($0, name:"partitionSerialList[]", pattern: "\\d{6,12}")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hapgArn = "HapgArn"
             case label = "Label"
@@ -807,11 +1045,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HapgArn", required: false, type: .string)
         ]
+
         /// The ARN of the high-availability partition group.
         public let hapgArn: String?
 
         public init(hapgArn: String? = nil) {
             self.hapgArn = hapgArn
+        }
+
+        public func validate() throws {
+            try validate(hapgArn, name:"hapgArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hapg-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -828,6 +1071,7 @@ extension CloudHSM {
             AWSShapeMember(label: "SubnetId", location: .body(locationName: "SubnetId"), required: false, type: .string), 
             AWSShapeMember(label: "SyslogIp", location: .body(locationName: "SyslogIp"), required: false, type: .string)
         ]
+
         /// The new IP address for the elastic network interface (ENI) attached to the HSM. If the HSM is moved to a different subnet, and an IP address is not specified, an IP address will be randomly chosen from the CIDR range of the new subnet.
         public let eniIp: String?
         /// The new external ID.
@@ -850,6 +1094,15 @@ extension CloudHSM {
             self.syslogIp = syslogIp
         }
 
+        public func validate() throws {
+            try validate(eniIp, name:"eniIp", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
+            try validate(externalId, name:"externalId", pattern: "[\\w :+=./-]*")
+            try validate(hsmArn, name:"hsmArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
+            try validate(iamRoleArn, name:"iamRoleArn", pattern: "arn:aws(-iso)?:iam::[0-9]{12}:role/[a-zA-Z0-9_\\+=,\\.\\-@]{1,64}")
+            try validate(subnetId, name:"subnetId", pattern: "subnet-[0-9a-f]{8}")
+            try validate(syslogIp, name:"syslogIp", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case eniIp = "EniIp"
             case externalId = "ExternalId"
@@ -864,11 +1117,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HsmArn", required: false, type: .string)
         ]
+
         /// The ARN of the HSM.
         public let hsmArn: String?
 
         public init(hsmArn: String? = nil) {
             self.hsmArn = hsmArn
+        }
+
+        public func validate() throws {
+            try validate(hsmArn, name:"hsmArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:hsm-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -881,6 +1139,7 @@ extension CloudHSM {
             AWSShapeMember(label: "Certificate", required: true, type: .string), 
             AWSShapeMember(label: "ClientArn", required: true, type: .string)
         ]
+
         /// The new certificate for the client.
         public let certificate: String
         /// The ARN of the client.
@@ -889,6 +1148,13 @@ extension CloudHSM {
         public init(certificate: String, clientArn: String) {
             self.certificate = certificate
             self.clientArn = clientArn
+        }
+
+        public func validate() throws {
+            try validate(certificate, name:"certificate", max: 2400)
+            try validate(certificate, name:"certificate", min: 600)
+            try validate(certificate, name:"certificate", pattern: "[\\w :+=./\\n-]*")
+            try validate(clientArn, name:"clientArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -901,11 +1167,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ClientArn", required: false, type: .string)
         ]
+
         /// The ARN of the client.
         public let clientArn: String?
 
         public init(clientArn: String? = nil) {
             self.clientArn = clientArn
+        }
+
+        public func validate() throws {
+            try validate(clientArn, name:"clientArn", pattern: "arn:aws(-iso)?:cloudhsm:[a-zA-Z0-9\\-]*:[0-9]{12}:client-[0-9a-f]{8}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -918,6 +1189,7 @@ extension CloudHSM {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeyList", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS CloudHSM resource.
         public let resourceArn: String
         /// The tag key or keys to remove. Specify only the tag key to remove (not the value). To overwrite the value for an existing tag, use AddTagsToResource.
@@ -926,6 +1198,14 @@ extension CloudHSM {
         public init(resourceArn: String, tagKeyList: [String]) {
             self.resourceArn = resourceArn
             self.tagKeyList = tagKeyList
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "[\\w :+=./\\\\-]*")
+            try tagKeyList.forEach {
+                try validate($0, name:"tagKeyList[]", max: 128)
+                try validate($0, name:"tagKeyList[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -938,11 +1218,16 @@ extension CloudHSM {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Status", required: true, type: .string)
         ]
+
         /// The status of the operation.
         public let status: String
 
         public init(status: String) {
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(status, name:"status", pattern: "[\\w :+=./\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -960,6 +1245,7 @@ extension CloudHSM {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The key of the tag.
         public let key: String
         /// The value of the tag.
@@ -968,6 +1254,13 @@ extension CloudHSM {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {

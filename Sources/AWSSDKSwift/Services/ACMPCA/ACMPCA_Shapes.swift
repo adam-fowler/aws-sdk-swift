@@ -22,6 +22,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Surname", required: false, type: .string), 
             AWSShapeMember(label: "Title", required: false, type: .string)
         ]
+
         /// Fully qualified domain name (FQDN) associated with the certificate subject.
         public let commonName: String?
         /// Two-digit code that specifies the country in which the certificate subject located.
@@ -66,6 +67,37 @@ extension ACMPCA {
             self.state = state
             self.surname = surname
             self.title = title
+        }
+
+        public func validate() throws {
+            try validate(commonName, name:"commonName", max: 64)
+            try validate(commonName, name:"commonName", min: 0)
+            try validate(country, name:"country", pattern: "[A-Za-z]{2}")
+            try validate(distinguishedNameQualifier, name:"distinguishedNameQualifier", max: 64)
+            try validate(distinguishedNameQualifier, name:"distinguishedNameQualifier", min: 0)
+            try validate(distinguishedNameQualifier, name:"distinguishedNameQualifier", pattern: "[a-zA-Z0-9'()+-.?:/= ]*")
+            try validate(generationQualifier, name:"generationQualifier", max: 3)
+            try validate(generationQualifier, name:"generationQualifier", min: 0)
+            try validate(givenName, name:"givenName", max: 16)
+            try validate(givenName, name:"givenName", min: 0)
+            try validate(initials, name:"initials", max: 5)
+            try validate(initials, name:"initials", min: 0)
+            try validate(locality, name:"locality", max: 128)
+            try validate(locality, name:"locality", min: 0)
+            try validate(organization, name:"organization", max: 64)
+            try validate(organization, name:"organization", min: 0)
+            try validate(organizationalUnit, name:"organizationalUnit", max: 64)
+            try validate(organizationalUnit, name:"organizationalUnit", min: 0)
+            try validate(pseudonym, name:"pseudonym", max: 128)
+            try validate(pseudonym, name:"pseudonym", min: 0)
+            try validate(serialNumber, name:"serialNumber", max: 64)
+            try validate(serialNumber, name:"serialNumber", min: 0)
+            try validate(state, name:"state", max: 128)
+            try validate(state, name:"state", min: 0)
+            try validate(surname, name:"surname", max: 40)
+            try validate(surname, name:"surname", min: 0)
+            try validate(title, name:"title", max: 64)
+            try validate(title, name:"title", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -121,6 +153,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Status", required: false, type: .enum), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// Amazon Resource Name (ARN) for your private certificate authority (CA). The format is  12345678-1234-1234-1234-123456789012 .
         public let arn: String?
         /// Your private CA configuration.
@@ -161,6 +194,14 @@ extension ACMPCA {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 200)
+            try validate(arn, name:"arn", min: 5)
+            try validate(arn, name:"arn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try certificateAuthorityConfiguration?.validate()
+            try revocationConfiguration?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case certificateAuthorityConfiguration = "CertificateAuthorityConfiguration"
@@ -183,6 +224,7 @@ extension ACMPCA {
             AWSShapeMember(label: "SigningAlgorithm", required: true, type: .enum), 
             AWSShapeMember(label: "Subject", required: true, type: .structure)
         ]
+
         /// Type of the public key algorithm and size, in bits, of the key pair that your CA creates when it issues a certificate. When you create a subordinate CA, you must use a key algorithm supported by the parent CA.
         public let keyAlgorithm: KeyAlgorithm
         /// Name of the algorithm your private CA uses to sign certificate requests.
@@ -194,6 +236,10 @@ extension ACMPCA {
             self.keyAlgorithm = keyAlgorithm
             self.signingAlgorithm = signingAlgorithm
             self.subject = subject
+        }
+
+        public func validate() throws {
+            try subject.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -226,6 +272,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string), 
             AWSShapeMember(label: "S3BucketName", required: true, type: .string)
         ]
+
         /// The format in which to create the report. This can be either JSON or CSV.
         public let auditReportResponseFormat: AuditReportResponseFormat
         /// The Amazon Resource Name (ARN) of the CA to be audited. This is of the form:  arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 .
@@ -237,6 +284,12 @@ extension ACMPCA {
             self.auditReportResponseFormat = auditReportResponseFormat
             self.certificateAuthorityArn = certificateAuthorityArn
             self.s3BucketName = s3BucketName
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -251,6 +304,7 @@ extension ACMPCA {
             AWSShapeMember(label: "AuditReportId", required: false, type: .string), 
             AWSShapeMember(label: "S3Key", required: false, type: .string)
         ]
+
         /// An alphanumeric string that contains a report identifier.
         public let auditReportId: String?
         /// The key that uniquely identifies the report file in your S3 bucket.
@@ -259,6 +313,12 @@ extension ACMPCA {
         public init(auditReportId: String? = nil, s3Key: String? = nil) {
             self.auditReportId = auditReportId
             self.s3Key = s3Key
+        }
+
+        public func validate() throws {
+            try validate(auditReportId, name:"auditReportId", max: 36)
+            try validate(auditReportId, name:"auditReportId", min: 36)
+            try validate(auditReportId, name:"auditReportId", pattern: "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -275,6 +335,7 @@ extension ACMPCA {
             AWSShapeMember(label: "RevocationConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// Name and bit size of the private key algorithm, the name of the signing algorithm, and X.500 certificate subject information.
         public let certificateAuthorityConfiguration: CertificateAuthorityConfiguration
         /// The type of the certificate authority.
@@ -294,6 +355,19 @@ extension ACMPCA {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try certificateAuthorityConfiguration.validate()
+            try validate(idempotencyToken, name:"idempotencyToken", max: 36)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]*")
+            try revocationConfiguration?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificateAuthorityConfiguration = "CertificateAuthorityConfiguration"
             case certificateAuthorityType = "CertificateAuthorityType"
@@ -307,11 +381,18 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CertificateAuthorityArn", required: false, type: .string)
         ]
+
         /// If successful, the Amazon Resource Name (ARN) of the certificate authority (CA). This is of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
         public let certificateAuthorityArn: String?
 
         public init(certificateAuthorityArn: String? = nil) {
             self.certificateAuthorityArn = certificateAuthorityArn
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -326,6 +407,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Principal", required: true, type: .string), 
             AWSShapeMember(label: "SourceAccount", required: false, type: .string)
         ]
+
         /// The actions that the specified AWS service principal can use. These include IssueCertificate, GetCertificate, and ListPermissions.
         public let actions: [ActionType]
         /// The Amazon Resource Name (ARN) of the CA that grants the permissions. You can find the ARN by calling the ListCertificateAuthorities action. This must have the following form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
@@ -340,6 +422,20 @@ extension ACMPCA {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.principal = principal
             self.sourceAccount = sourceAccount
+        }
+
+        public func validate() throws {
+            try validate(actions, name:"actions", max: 3)
+            try validate(actions, name:"actions", min: 1)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(principal, name:"principal", max: 128)
+            try validate(principal, name:"principal", min: 0)
+            try validate(principal, name:"principal", pattern: "^[^*]+$")
+            try validate(sourceAccount, name:"sourceAccount", max: 12)
+            try validate(sourceAccount, name:"sourceAccount", min: 12)
+            try validate(sourceAccount, name:"sourceAccount", pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -357,6 +453,7 @@ extension ACMPCA {
             AWSShapeMember(label: "ExpirationInDays", required: false, type: .integer), 
             AWSShapeMember(label: "S3BucketName", required: false, type: .string)
         ]
+
         /// Name inserted into the certificate CRL Distribution Points extension that enables the use of an alias for the CRL distribution point. Use this value if you don't want the name of your S3 bucket to be public.
         public let customCname: String?
         /// Boolean value that specifies whether certificate revocation lists (CRLs) are enabled. You can use this value to enable certificate revocation for a new CA when you call the CreateCertificateAuthority action or for an existing CA when you call the UpdateCertificateAuthority action. 
@@ -373,6 +470,15 @@ extension ACMPCA {
             self.s3BucketName = s3BucketName
         }
 
+        public func validate() throws {
+            try validate(customCname, name:"customCname", max: 253)
+            try validate(customCname, name:"customCname", min: 0)
+            try validate(expirationInDays, name:"expirationInDays", max: 5000)
+            try validate(expirationInDays, name:"expirationInDays", min: 1)
+            try validate(s3BucketName, name:"s3BucketName", max: 255)
+            try validate(s3BucketName, name:"s3BucketName", min: 3)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case customCname = "CustomCname"
             case enabled = "Enabled"
@@ -386,6 +492,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string), 
             AWSShapeMember(label: "PermanentDeletionTimeInDays", required: false, type: .integer)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called CreateCertificateAuthority. This must have the following form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
         public let certificateAuthorityArn: String
         /// The number of days to make a CA restorable after it has been deleted. This can be anywhere from 7 to 30 days, with 30 being the default.
@@ -394,6 +501,14 @@ extension ACMPCA {
         public init(certificateAuthorityArn: String, permanentDeletionTimeInDays: Int32? = nil) {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.permanentDeletionTimeInDays = permanentDeletionTimeInDays
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(permanentDeletionTimeInDays, name:"permanentDeletionTimeInDays", max: 30)
+            try validate(permanentDeletionTimeInDays, name:"permanentDeletionTimeInDays", min: 7)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -408,6 +523,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Principal", required: true, type: .string), 
             AWSShapeMember(label: "SourceAccount", required: false, type: .string)
         ]
+
         /// The Amazon Resource Number (ARN) of the private CA that issued the permissions. You can find the CA's ARN by calling the ListCertificateAuthorities action. This must have the following form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
         public let certificateAuthorityArn: String
         /// The AWS service or identity that will have its CA permissions revoked. At this time, the only valid service principal is acm.amazonaws.com 
@@ -419,6 +535,18 @@ extension ACMPCA {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.principal = principal
             self.sourceAccount = sourceAccount
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(principal, name:"principal", max: 128)
+            try validate(principal, name:"principal", min: 0)
+            try validate(principal, name:"principal", pattern: "^[^*]+$")
+            try validate(sourceAccount, name:"sourceAccount", max: 12)
+            try validate(sourceAccount, name:"sourceAccount", min: 12)
+            try validate(sourceAccount, name:"sourceAccount", pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -433,6 +561,7 @@ extension ACMPCA {
             AWSShapeMember(label: "AuditReportId", required: true, type: .string), 
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string)
         ]
+
         /// The report ID returned by calling the CreateCertificateAuthorityAuditReport action.
         public let auditReportId: String
         /// The Amazon Resource Name (ARN) of the private CA. This must be of the form:  arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
@@ -441,6 +570,15 @@ extension ACMPCA {
         public init(auditReportId: String, certificateAuthorityArn: String) {
             self.auditReportId = auditReportId
             self.certificateAuthorityArn = certificateAuthorityArn
+        }
+
+        public func validate() throws {
+            try validate(auditReportId, name:"auditReportId", max: 36)
+            try validate(auditReportId, name:"auditReportId", min: 36)
+            try validate(auditReportId, name:"auditReportId", pattern: "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -456,6 +594,7 @@ extension ACMPCA {
             AWSShapeMember(label: "S3BucketName", required: false, type: .string), 
             AWSShapeMember(label: "S3Key", required: false, type: .string)
         ]
+
         /// Specifies whether report creation is in progress, has succeeded, or has failed.
         public let auditReportStatus: AuditReportStatus?
         /// The date and time at which the report was created.
@@ -484,11 +623,18 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called CreateCertificateAuthority. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
         public let certificateAuthorityArn: String
 
         public init(certificateAuthorityArn: String) {
             self.certificateAuthorityArn = certificateAuthorityArn
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -500,11 +646,16 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CertificateAuthority", required: false, type: .structure)
         ]
+
         /// A CertificateAuthority structure that contains information about your private CA.
         public let certificateAuthority: CertificateAuthority?
 
         public init(certificateAuthority: CertificateAuthority? = nil) {
             self.certificateAuthority = certificateAuthority
+        }
+
+        public func validate() throws {
+            try certificateAuthority?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -523,11 +674,18 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of your private CA. This is of the form:  arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
         public let certificateAuthorityArn: String
 
         public init(certificateAuthorityArn: String) {
             self.certificateAuthorityArn = certificateAuthorityArn
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -540,6 +698,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Certificate", required: false, type: .string), 
             AWSShapeMember(label: "CertificateChain", required: false, type: .string)
         ]
+
         /// Base64-encoded certificate authority (CA) certificate.
         public let certificate: String?
         /// Base64-encoded certificate chain that includes any intermediate certificates and chains up to root on-premises certificate that you used to sign your private CA certificate. The chain does not include your private CA certificate. If this is a root CA, the value will be null.
@@ -560,11 +719,18 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called the CreateCertificateAuthority action. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
 
         public init(certificateAuthorityArn: String) {
             self.certificateAuthorityArn = certificateAuthorityArn
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -576,6 +742,7 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Csr", required: false, type: .string)
         ]
+
         /// The base64 PEM-encoded certificate signing request (CSR) for your private CA certificate.
         public let csr: String?
 
@@ -593,6 +760,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateArn", required: true, type: .string), 
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string)
         ]
+
         /// The ARN of the issued certificate. The ARN contains the certificate serial number and must be in the following form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012/certificate/286535153982981100925020015808220737245  
         public let certificateArn: String
         /// The Amazon Resource Name (ARN) that was returned when you called CreateCertificateAuthority. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 . 
@@ -601,6 +769,15 @@ extension ACMPCA {
         public init(certificateArn: String, certificateAuthorityArn: String) {
             self.certificateArn = certificateArn
             self.certificateAuthorityArn = certificateAuthorityArn
+        }
+
+        public func validate() throws {
+            try validate(certificateArn, name:"certificateArn", max: 200)
+            try validate(certificateArn, name:"certificateArn", min: 5)
+            try validate(certificateArn, name:"certificateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -614,6 +791,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Certificate", required: false, type: .string), 
             AWSShapeMember(label: "CertificateChain", required: false, type: .string)
         ]
+
         /// The base64 PEM-encoded certificate specified by the CertificateArn parameter.
         public let certificate: String?
         /// The base64 PEM-encoded certificate chain that chains up to the on-premises root CA certificate that you used to sign your private CA certificate. 
@@ -636,6 +814,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string), 
             AWSShapeMember(label: "CertificateChain", required: false, type: .blob)
         ]
+
         /// The PEM-encoded certificate for a private CA. This may be a self-signed certificate in the case of a root CA, or it may be signed by another CA that you control.
         public let certificate: Data
         /// The Amazon Resource Name (ARN) that was returned when you called CreateCertificateAuthority. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
@@ -647,6 +826,16 @@ extension ACMPCA {
             self.certificate = certificate
             self.certificateAuthorityArn = certificateAuthorityArn
             self.certificateChain = certificateChain
+        }
+
+        public func validate() throws {
+            try validate(certificate, name:"certificate", max: 32768)
+            try validate(certificate, name:"certificate", min: 1)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(certificateChain, name:"certificateChain", max: 2097152)
+            try validate(certificateChain, name:"certificateChain", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -665,6 +854,7 @@ extension ACMPCA {
             AWSShapeMember(label: "TemplateArn", required: false, type: .string), 
             AWSShapeMember(label: "Validity", required: true, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called CreateCertificateAuthority. This must be of the form:  arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
         /// The certificate signing request (CSR) for the certificate you want to issue. You can use the following OpenSSL command to create the CSR and a 2048 bit RSA private key.   openssl req -new -newkey rsa:2048 -days 365 -keyout private/test_cert_priv_key.pem -out csr/test_cert_.csr  If you have a configuration file, you can use the following OpenSSL command. The usr_cert block in the configuration file contains your X509 version 3 extensions.   openssl req -new -config openssl_rsa.cnf -extensions usr_cert -newkey rsa:2048 -days -365 -keyout private/test_cert_priv_key.pem -out csr/test_cert_.csr 
@@ -687,6 +877,21 @@ extension ACMPCA {
             self.validity = validity
         }
 
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(csr, name:"csr", max: 32768)
+            try validate(csr, name:"csr", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", max: 36)
+            try validate(idempotencyToken, name:"idempotencyToken", min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]*")
+            try validate(templateArn, name:"templateArn", max: 200)
+            try validate(templateArn, name:"templateArn", min: 5)
+            try validate(templateArn, name:"templateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validity.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case certificateAuthorityArn = "CertificateAuthorityArn"
             case csr = "Csr"
@@ -701,11 +906,18 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CertificateArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the issued certificate and the certificate serial number. This is of the form:  arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012/certificate/286535153982981100925020015808220737245  
         public let certificateArn: String?
 
         public init(certificateArn: String? = nil) {
             self.certificateArn = certificateArn
+        }
+
+        public func validate() throws {
+            try validate(certificateArn, name:"certificateArn", max: 200)
+            try validate(certificateArn, name:"certificateArn", min: 5)
+            try validate(certificateArn, name:"certificateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -726,6 +938,7 @@ extension ACMPCA {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Use this parameter when paginating results to specify the maximum number of items to return in the response on each page. If additional items exist beyond the number you specify, the NextToken element is sent in the response. Use this NextToken value in a subsequent request to retrieve additional items.
         public let maxResults: Int32?
         /// Use this parameter when paginating results in a subsequent request after you receive a response with truncated results. Set it to the value of the NextToken parameter from the response you just received.
@@ -734,6 +947,13 @@ extension ACMPCA {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 500)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -747,6 +967,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateAuthorities", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Summary information about each certificate authority you have created.
         public let certificateAuthorities: [CertificateAuthority]?
         /// When the list is truncated, this value is present and should be used for the NextToken parameter in a subsequent pagination request.
@@ -755,6 +976,14 @@ extension ACMPCA {
         public init(certificateAuthorities: [CertificateAuthority]? = nil, nextToken: String? = nil) {
             self.certificateAuthorities = certificateAuthorities
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try certificateAuthorities?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 500)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -769,6 +998,7 @@ extension ACMPCA {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The Amazon Resource Number (ARN) of the private CA to inspect. You can find the ARN by calling the ListCertificateAuthorities action. This must be of the form: arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012 You can get a private CA's ARN by running the ListCertificateAuthorities action.
         public let certificateAuthorityArn: String
         /// When paginating results, use this parameter to specify the maximum number of items to return in the response. If additional items exist beyond the number you specify, the NextToken element is sent in the response. Use this NextToken value in a subsequent request to retrieve additional items.
@@ -780,6 +1010,16 @@ extension ACMPCA {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 500)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -794,6 +1034,7 @@ extension ACMPCA {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Permissions", required: false, type: .list)
         ]
+
         /// When the list is truncated, this value is present and should be used for the NextToken parameter in a subsequent pagination request. 
         public let nextToken: String?
         /// Summary information about each permission assigned by the specified private CA, including the action enabled, the policy provided, and the time of creation.
@@ -802,6 +1043,15 @@ extension ACMPCA {
         public init(nextToken: String? = nil, permissions: [Permission]? = nil) {
             self.nextToken = nextToken
             self.permissions = permissions
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 500)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try permissions?.forEach {
+                try $0.validate()
+            }
+            try validate(permissions, name:"permissions", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -816,6 +1066,7 @@ extension ACMPCA {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called the CreateCertificateAuthority action. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
         /// Use this parameter when paginating results to specify the maximum number of items to return in the response. If additional items exist beyond the number you specify, the NextToken element is sent in the response. Use this NextToken value in a subsequent request to retrieve additional items.
@@ -827,6 +1078,16 @@ extension ACMPCA {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 500)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -841,6 +1102,7 @@ extension ACMPCA {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// When the list is truncated, this value is present and should be used for the NextToken parameter in a subsequent pagination request. 
         public let nextToken: String?
         /// The tags associated with your private CA.
@@ -849,6 +1111,16 @@ extension ACMPCA {
         public init(nextToken: String? = nil, tags: [Tag]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 500)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -866,6 +1138,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Principal", required: false, type: .string), 
             AWSShapeMember(label: "SourceAccount", required: false, type: .string)
         ]
+
         /// The private CA actions that can be performed by the designated AWS service.
         public let actions: [ActionType]?
         /// The Amazon Resource Number (ARN) of the private CA from which the permission was issued.
@@ -888,6 +1161,14 @@ extension ACMPCA {
             self.sourceAccount = sourceAccount
         }
 
+        public func validate() throws {
+            try validate(actions, name:"actions", max: 3)
+            try validate(actions, name:"actions", min: 1)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case actions = "Actions"
             case certificateAuthorityArn = "CertificateAuthorityArn"
@@ -902,11 +1183,18 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called the CreateCertificateAuthority action. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
 
         public init(certificateAuthorityArn: String) {
             self.certificateAuthorityArn = certificateAuthorityArn
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -918,11 +1206,16 @@ extension ACMPCA {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CrlConfiguration", required: false, type: .structure)
         ]
+
         /// Configuration of the certificate revocation list (CRL), if any, maintained by your private CA.
         public let crlConfiguration: CrlConfiguration?
 
         public init(crlConfiguration: CrlConfiguration? = nil) {
             self.crlConfiguration = crlConfiguration
+        }
+
+        public func validate() throws {
+            try crlConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -948,6 +1241,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateSerial", required: true, type: .string), 
             AWSShapeMember(label: "RevocationReason", required: true, type: .enum)
         ]
+
         /// Amazon Resource Name (ARN) of the private CA that issued the certificate to be revoked. This must be of the form:  arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
         /// Serial number of the certificate to be revoked. This must be in hexadecimal format. You can retrieve the serial number by calling GetCertificate with the Amazon Resource Name (ARN) of the certificate you want and the ARN of your private CA. The GetCertificate action retrieves the certificate in the PEM format. You can use the following OpenSSL command to list the certificate in text format and copy the hexadecimal serial number.   openssl x509 -in file_path -text -noout  You can also copy the serial number from the console or use the DescribeCertificate action in the AWS Certificate Manager API Reference. 
@@ -959,6 +1253,14 @@ extension ACMPCA {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.certificateSerial = certificateSerial
             self.revocationReason = revocationReason
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(certificateSerial, name:"certificateSerial", max: 128)
+            try validate(certificateSerial, name:"certificateSerial", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -983,6 +1285,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// Key (name) of the tag.
         public let key: String
         /// Value of the tag.
@@ -991,6 +1294,15 @@ extension ACMPCA {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1004,6 +1316,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called CreateCertificateAuthority. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
         /// List of tags to be associated with the CA.
@@ -1012,6 +1325,17 @@ extension ACMPCA {
         public init(certificateAuthorityArn: String, tags: [Tag]) {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1025,6 +1349,7 @@ extension ACMPCA {
             AWSShapeMember(label: "CertificateAuthorityArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) that was returned when you called CreateCertificateAuthority. This must be of the form:   arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
         /// List of tags to be removed from the CA.
@@ -1033,6 +1358,17 @@ extension ACMPCA {
         public init(certificateAuthorityArn: String, tags: [Tag]) {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1047,6 +1383,7 @@ extension ACMPCA {
             AWSShapeMember(label: "RevocationConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "Status", required: false, type: .enum)
         ]
+
         /// Amazon Resource Name (ARN) of the private CA that issued the certificate to be revoked. This must be of the form:  arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012  
         public let certificateAuthorityArn: String
         /// Revocation information for your private CA.
@@ -1058,6 +1395,13 @@ extension ACMPCA {
             self.certificateAuthorityArn = certificateAuthorityArn
             self.revocationConfiguration = revocationConfiguration
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", max: 200)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", min: 5)
+            try validate(certificateAuthorityArn, name:"certificateAuthorityArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]*:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try revocationConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1072,6 +1416,7 @@ extension ACMPCA {
             AWSShapeMember(label: "Type", required: true, type: .enum), 
             AWSShapeMember(label: "Value", required: true, type: .long)
         ]
+
         /// Specifies whether the Value parameter represents days, months, or years.
         public let `type`: ValidityPeriodType
         /// Time period.
@@ -1080,6 +1425,10 @@ extension ACMPCA {
         public init(type: ValidityPeriodType, value: Int64) {
             self.`type` = `type`
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

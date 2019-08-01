@@ -10,6 +10,7 @@ extension Comprehend {
             AWSShapeMember(label: "Index", required: false, type: .integer), 
             AWSShapeMember(label: "Languages", required: false, type: .list)
         ]
+
         /// The zero-based index of the document in the input list.
         public let index: Int32?
         /// One or more DominantLanguage objects describing the dominant languages in the document.
@@ -18,6 +19,12 @@ extension Comprehend {
         public init(index: Int32? = nil, languages: [DominantLanguage]? = nil) {
             self.index = index
             self.languages = languages
+        }
+
+        public func validate() throws {
+            try languages?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -30,11 +37,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TextList", required: true, type: .list)
         ]
+
         /// A list containing the text of the input documents. The list can contain a maximum of 25 documents. Each document should contain at least 20 characters and must contain fewer than 5,000 bytes of UTF-8 encoded characters.
         public let textList: [String]
 
         public init(textList: [String]) {
             self.textList = textList
+        }
+
+        public func validate() throws {
+            try textList.forEach {
+                try validate($0, name:"textList[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -47,6 +61,7 @@ extension Comprehend {
             AWSShapeMember(label: "ErrorList", required: true, type: .list), 
             AWSShapeMember(label: "ResultList", required: true, type: .list)
         ]
+
         /// A list containing one object for each document that contained an error. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If there are no errors in the batch, the ErrorList is empty.
         public let errorList: [BatchItemError]
         /// A list of objects containing the results of the operation. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If all of the documents contain an error, the ResultList is empty.
@@ -55,6 +70,15 @@ extension Comprehend {
         public init(errorList: [BatchItemError], resultList: [BatchDetectDominantLanguageItemResult]) {
             self.errorList = errorList
             self.resultList = resultList
+        }
+
+        public func validate() throws {
+            try errorList.forEach {
+                try $0.validate()
+            }
+            try resultList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -68,6 +92,7 @@ extension Comprehend {
             AWSShapeMember(label: "Entities", required: false, type: .list), 
             AWSShapeMember(label: "Index", required: false, type: .integer)
         ]
+
         /// One or more Entity objects, one for each entity detected in the document.
         public let entities: [Entity]?
         /// The zero-based index of the document in the input list.
@@ -76,6 +101,12 @@ extension Comprehend {
         public init(entities: [Entity]? = nil, index: Int32? = nil) {
             self.entities = entities
             self.index = index
+        }
+
+        public func validate() throws {
+            try entities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -89,6 +120,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "TextList", required: true, type: .list)
         ]
+
         /// The language of the input documents. You can specify English ("en") or Spanish ("es"). All documents must be in the same language.
         public let languageCode: LanguageCode
         /// A list containing the text of the input documents. The list can contain a maximum of 25 documents. Each document must contain fewer than 5,000 bytes of UTF-8 encoded characters.
@@ -97,6 +129,12 @@ extension Comprehend {
         public init(languageCode: LanguageCode, textList: [String]) {
             self.languageCode = languageCode
             self.textList = textList
+        }
+
+        public func validate() throws {
+            try textList.forEach {
+                try validate($0, name:"textList[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -110,6 +148,7 @@ extension Comprehend {
             AWSShapeMember(label: "ErrorList", required: true, type: .list), 
             AWSShapeMember(label: "ResultList", required: true, type: .list)
         ]
+
         /// A list containing one object for each document that contained an error. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If there are no errors in the batch, the ErrorList is empty.
         public let errorList: [BatchItemError]
         /// A list of objects containing the results of the operation. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If all of the documents contain an error, the ResultList is empty.
@@ -118,6 +157,15 @@ extension Comprehend {
         public init(errorList: [BatchItemError], resultList: [BatchDetectEntitiesItemResult]) {
             self.errorList = errorList
             self.resultList = resultList
+        }
+
+        public func validate() throws {
+            try errorList.forEach {
+                try $0.validate()
+            }
+            try resultList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -131,6 +179,7 @@ extension Comprehend {
             AWSShapeMember(label: "Index", required: false, type: .integer), 
             AWSShapeMember(label: "KeyPhrases", required: false, type: .list)
         ]
+
         /// The zero-based index of the document in the input list.
         public let index: Int32?
         /// One or more KeyPhrase objects, one for each key phrase detected in the document.
@@ -139,6 +188,12 @@ extension Comprehend {
         public init(index: Int32? = nil, keyPhrases: [KeyPhrase]? = nil) {
             self.index = index
             self.keyPhrases = keyPhrases
+        }
+
+        public func validate() throws {
+            try keyPhrases?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -152,6 +207,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "TextList", required: true, type: .list)
         ]
+
         /// The language of the input documents. You can specify English ("en") or Spanish ("es"). All documents must be in the same language.
         public let languageCode: LanguageCode
         /// A list containing the text of the input documents. The list can contain a maximum of 25 documents. Each document must contain fewer that 5,000 bytes of UTF-8 encoded characters.
@@ -160,6 +216,12 @@ extension Comprehend {
         public init(languageCode: LanguageCode, textList: [String]) {
             self.languageCode = languageCode
             self.textList = textList
+        }
+
+        public func validate() throws {
+            try textList.forEach {
+                try validate($0, name:"textList[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -173,6 +235,7 @@ extension Comprehend {
             AWSShapeMember(label: "ErrorList", required: true, type: .list), 
             AWSShapeMember(label: "ResultList", required: true, type: .list)
         ]
+
         /// A list containing one object for each document that contained an error. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If there are no errors in the batch, the ErrorList is empty.
         public let errorList: [BatchItemError]
         /// A list of objects containing the results of the operation. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If all of the documents contain an error, the ResultList is empty.
@@ -181,6 +244,15 @@ extension Comprehend {
         public init(errorList: [BatchItemError], resultList: [BatchDetectKeyPhrasesItemResult]) {
             self.errorList = errorList
             self.resultList = resultList
+        }
+
+        public func validate() throws {
+            try errorList.forEach {
+                try $0.validate()
+            }
+            try resultList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -195,6 +267,7 @@ extension Comprehend {
             AWSShapeMember(label: "Sentiment", required: false, type: .enum), 
             AWSShapeMember(label: "SentimentScore", required: false, type: .structure)
         ]
+
         /// The zero-based index of the document in the input list.
         public let index: Int32?
         /// The sentiment detected in the document.
@@ -220,6 +293,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "TextList", required: true, type: .list)
         ]
+
         /// The language of the input documents. You can specify English ("en") or Spanish ("es"). All documents must be in the same language.
         public let languageCode: LanguageCode
         /// A list containing the text of the input documents. The list can contain a maximum of 25 documents. Each document must contain fewer that 5,000 bytes of UTF-8 encoded characters.
@@ -228,6 +302,12 @@ extension Comprehend {
         public init(languageCode: LanguageCode, textList: [String]) {
             self.languageCode = languageCode
             self.textList = textList
+        }
+
+        public func validate() throws {
+            try textList.forEach {
+                try validate($0, name:"textList[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -241,6 +321,7 @@ extension Comprehend {
             AWSShapeMember(label: "ErrorList", required: true, type: .list), 
             AWSShapeMember(label: "ResultList", required: true, type: .list)
         ]
+
         /// A list containing one object for each document that contained an error. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If there are no errors in the batch, the ErrorList is empty.
         public let errorList: [BatchItemError]
         /// A list of objects containing the results of the operation. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If all of the documents contain an error, the ResultList is empty.
@@ -249,6 +330,12 @@ extension Comprehend {
         public init(errorList: [BatchItemError], resultList: [BatchDetectSentimentItemResult]) {
             self.errorList = errorList
             self.resultList = resultList
+        }
+
+        public func validate() throws {
+            try errorList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -262,6 +349,7 @@ extension Comprehend {
             AWSShapeMember(label: "Index", required: false, type: .integer), 
             AWSShapeMember(label: "SyntaxTokens", required: false, type: .list)
         ]
+
         /// The zero-based index of the document in the input list.
         public let index: Int32?
         /// The syntax tokens for the words in the document, one token for each word.
@@ -270,6 +358,12 @@ extension Comprehend {
         public init(index: Int32? = nil, syntaxTokens: [SyntaxToken]? = nil) {
             self.index = index
             self.syntaxTokens = syntaxTokens
+        }
+
+        public func validate() throws {
+            try syntaxTokens?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -283,6 +377,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "TextList", required: true, type: .list)
         ]
+
         /// The language of the input documents. You can specify English ("en") or Spanish ("es"). All documents must be in the same language.
         public let languageCode: SyntaxLanguageCode
         /// A list containing the text of the input documents. The list can contain a maximum of 25 documents. Each document must contain fewer that 5,000 bytes of UTF-8 encoded characters.
@@ -291,6 +386,12 @@ extension Comprehend {
         public init(languageCode: SyntaxLanguageCode, textList: [String]) {
             self.languageCode = languageCode
             self.textList = textList
+        }
+
+        public func validate() throws {
+            try textList.forEach {
+                try validate($0, name:"textList[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -304,6 +405,7 @@ extension Comprehend {
             AWSShapeMember(label: "ErrorList", required: true, type: .list), 
             AWSShapeMember(label: "ResultList", required: true, type: .list)
         ]
+
         /// A list containing one object for each document that contained an error. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If there are no errors in the batch, the ErrorList is empty.
         public let errorList: [BatchItemError]
         /// A list of objects containing the results of the operation. The results are sorted in ascending order by the Index field and match the order of the documents in the input list. If all of the documents contain an error, the ResultList is empty.
@@ -312,6 +414,15 @@ extension Comprehend {
         public init(errorList: [BatchItemError], resultList: [BatchDetectSyntaxItemResult]) {
             self.errorList = errorList
             self.resultList = resultList
+        }
+
+        public func validate() throws {
+            try errorList.forEach {
+                try $0.validate()
+            }
+            try resultList.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -326,6 +437,7 @@ extension Comprehend {
             AWSShapeMember(label: "ErrorMessage", required: false, type: .string), 
             AWSShapeMember(label: "Index", required: false, type: .integer)
         ]
+
         /// The numeric error code of the error.
         public let errorCode: String?
         /// A text description of the error.
@@ -337,6 +449,11 @@ extension Comprehend {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.index = index
+        }
+
+        public func validate() throws {
+            try validate(errorCode, name:"errorCode", min: 1)
+            try validate(errorMessage, name:"errorMessage", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -353,6 +470,7 @@ extension Comprehend {
             AWSShapeMember(label: "Precision", required: false, type: .double), 
             AWSShapeMember(label: "Recall", required: false, type: .double)
         ]
+
         /// The fraction of the labels that were correct recognized. It is computed by dividing the number of labels in the test documents that were correctly recognized by the total number of labels in the test documents.
         public let accuracy: Double?
         /// A measure of how accurate the classifier results are for the test data. It is derived from the Precision and Recall values. The F1Score is the harmonic average of the two scores. The highest score is 1, and the worst score is 0. 
@@ -384,6 +502,7 @@ extension Comprehend {
             AWSShapeMember(label: "NumberOfTestDocuments", required: false, type: .integer), 
             AWSShapeMember(label: "NumberOfTrainedDocuments", required: false, type: .integer)
         ]
+
         ///  Describes the result metrics for the test data associated with an documentation classifier.
         public let evaluationMetrics: ClassifierEvaluationMetrics?
         /// The number of labels in the input data. 
@@ -420,6 +539,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// A unique identifier for the request. If you don't set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Management (IAM) role that grants Amazon Comprehend read access to your input data.
@@ -439,7 +559,7 @@ extension Comprehend {
         /// Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your custom classifier. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, documentClassifierName: String, inputDataConfig: DocumentClassifierInputDataConfig, languageCode: LanguageCode, outputDataConfig: DocumentClassifierOutputDataConfig? = nil, tags: [Tag]? = nil, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = CreateDocumentClassifierRequest.idempotencyToken(), dataAccessRoleArn: String, documentClassifierName: String, inputDataConfig: DocumentClassifierInputDataConfig, languageCode: LanguageCode, outputDataConfig: DocumentClassifierOutputDataConfig? = nil, tags: [Tag]? = nil, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.documentClassifierName = documentClassifierName
@@ -449,6 +569,24 @@ extension Comprehend {
             self.tags = tags
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try validate(documentClassifierName, name:"documentClassifierName", max: 63)
+            try validate(documentClassifierName, name:"documentClassifierName", pattern: "^[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try inputDataConfig.validate()
+            try outputDataConfig?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -468,11 +606,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentClassifierArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the document classifier.
         public let documentClassifierArn: String?
 
         public init(documentClassifierArn: String? = nil) {
             self.documentClassifierArn = documentClassifierArn
+        }
+
+        public func validate() throws {
+            try validate(documentClassifierArn, name:"documentClassifierArn", max: 256)
+            try validate(documentClassifierArn, name:"documentClassifierArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:document-classifier/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -491,6 +635,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         ///  A unique identifier for the request. If you don't set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Management (IAM) role that grants Amazon Comprehend read access to your input data.
@@ -508,7 +653,7 @@ extension Comprehend {
         /// Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your custom entity recognizer. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, inputDataConfig: EntityRecognizerInputDataConfig, languageCode: LanguageCode, recognizerName: String, tags: [Tag]? = nil, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = CreateEntityRecognizerRequest.idempotencyToken(), dataAccessRoleArn: String, inputDataConfig: EntityRecognizerInputDataConfig, languageCode: LanguageCode, recognizerName: String, tags: [Tag]? = nil, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.inputDataConfig = inputDataConfig
@@ -517,6 +662,23 @@ extension Comprehend {
             self.tags = tags
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig.validate()
+            try validate(recognizerName, name:"recognizerName", max: 63)
+            try validate(recognizerName, name:"recognizerName", pattern: "^[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -535,11 +697,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EntityRecognizerArn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the entity recognizer.
         public let entityRecognizerArn: String?
 
         public init(entityRecognizerArn: String? = nil) {
             self.entityRecognizerArn = entityRecognizerArn
+        }
+
+        public func validate() throws {
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", max: 256)
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:entity-recognizer/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -551,11 +719,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentClassifierArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the document classifier. 
         public let documentClassifierArn: String
 
         public init(documentClassifierArn: String) {
             self.documentClassifierArn = documentClassifierArn
+        }
+
+        public func validate() throws {
+            try validate(documentClassifierArn, name:"documentClassifierArn", max: 256)
+            try validate(documentClassifierArn, name:"documentClassifierArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:document-classifier/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -564,6 +738,7 @@ extension Comprehend {
     }
 
     public struct DeleteDocumentClassifierResponse: AWSShape {
+
 
         public init() {
         }
@@ -574,11 +749,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EntityRecognizerArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the entity recognizer.
         public let entityRecognizerArn: String
 
         public init(entityRecognizerArn: String) {
             self.entityRecognizerArn = entityRecognizerArn
+        }
+
+        public func validate() throws {
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", max: 256)
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:entity-recognizer/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -587,6 +768,7 @@ extension Comprehend {
     }
 
     public struct DeleteEntityRecognizerResponse: AWSShape {
+
 
         public init() {
         }
@@ -597,11 +779,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier that Amazon Comprehend generated for the job. The operation returns this identifier in its response.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -613,11 +802,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentClassificationJobProperties", required: false, type: .structure)
         ]
+
         /// An object that describes the properties associated with the document classification job.
         public let documentClassificationJobProperties: DocumentClassificationJobProperties?
 
         public init(documentClassificationJobProperties: DocumentClassificationJobProperties? = nil) {
             self.documentClassificationJobProperties = documentClassificationJobProperties
+        }
+
+        public func validate() throws {
+            try documentClassificationJobProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -629,11 +823,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentClassifierArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the document classifier. The operation returns this identifier in its response.
         public let documentClassifierArn: String
 
         public init(documentClassifierArn: String) {
             self.documentClassifierArn = documentClassifierArn
+        }
+
+        public func validate() throws {
+            try validate(documentClassifierArn, name:"documentClassifierArn", max: 256)
+            try validate(documentClassifierArn, name:"documentClassifierArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:document-classifier/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -645,11 +845,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentClassifierProperties", required: false, type: .structure)
         ]
+
         /// An object that contains the properties associated with a document classifier.
         public let documentClassifierProperties: DocumentClassifierProperties?
 
         public init(documentClassifierProperties: DocumentClassifierProperties? = nil) {
             self.documentClassifierProperties = documentClassifierProperties
+        }
+
+        public func validate() throws {
+            try documentClassifierProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -661,11 +866,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier that Amazon Comprehend generated for the job. The operation returns this identifier in its response.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -677,11 +889,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DominantLanguageDetectionJobProperties", required: false, type: .structure)
         ]
+
         /// An object that contains the properties associated with a dominant language detection job.
         public let dominantLanguageDetectionJobProperties: DominantLanguageDetectionJobProperties?
 
         public init(dominantLanguageDetectionJobProperties: DominantLanguageDetectionJobProperties? = nil) {
             self.dominantLanguageDetectionJobProperties = dominantLanguageDetectionJobProperties
+        }
+
+        public func validate() throws {
+            try dominantLanguageDetectionJobProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -693,11 +910,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier that Amazon Comprehend generated for the job. The operation returns this identifier in its response.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -709,11 +933,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EntitiesDetectionJobProperties", required: false, type: .structure)
         ]
+
         /// An object that contains the properties associated with an entities detection job.
         public let entitiesDetectionJobProperties: EntitiesDetectionJobProperties?
 
         public init(entitiesDetectionJobProperties: EntitiesDetectionJobProperties? = nil) {
             self.entitiesDetectionJobProperties = entitiesDetectionJobProperties
+        }
+
+        public func validate() throws {
+            try entitiesDetectionJobProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -725,11 +954,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EntityRecognizerArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the entity recognizer.
         public let entityRecognizerArn: String
 
         public init(entityRecognizerArn: String) {
             self.entityRecognizerArn = entityRecognizerArn
+        }
+
+        public func validate() throws {
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", max: 256)
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:entity-recognizer/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -741,11 +976,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EntityRecognizerProperties", required: false, type: .structure)
         ]
+
         /// Describes information associated with an entity recognizer.
         public let entityRecognizerProperties: EntityRecognizerProperties?
 
         public init(entityRecognizerProperties: EntityRecognizerProperties? = nil) {
             self.entityRecognizerProperties = entityRecognizerProperties
+        }
+
+        public func validate() throws {
+            try entityRecognizerProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -757,11 +997,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier that Amazon Comprehend generated for the job. The operation returns this identifier in its response.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -773,11 +1020,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "KeyPhrasesDetectionJobProperties", required: false, type: .structure)
         ]
+
         /// An object that contains the properties associated with a key phrases detection job. 
         public let keyPhrasesDetectionJobProperties: KeyPhrasesDetectionJobProperties?
 
         public init(keyPhrasesDetectionJobProperties: KeyPhrasesDetectionJobProperties? = nil) {
             self.keyPhrasesDetectionJobProperties = keyPhrasesDetectionJobProperties
+        }
+
+        public func validate() throws {
+            try keyPhrasesDetectionJobProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -789,11 +1041,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier that Amazon Comprehend generated for the job. The operation returns this identifier in its response.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -805,11 +1064,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SentimentDetectionJobProperties", required: false, type: .structure)
         ]
+
         /// An object that contains the properties associated with a sentiment detection job.
         public let sentimentDetectionJobProperties: SentimentDetectionJobProperties?
 
         public init(sentimentDetectionJobProperties: SentimentDetectionJobProperties? = nil) {
             self.sentimentDetectionJobProperties = sentimentDetectionJobProperties
+        }
+
+        public func validate() throws {
+            try sentimentDetectionJobProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -821,11 +1085,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier assigned by the user to the detection job.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -837,11 +1108,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "TopicsDetectionJobProperties", required: false, type: .structure)
         ]
+
         /// The list of properties for the requested job.
         public let topicsDetectionJobProperties: TopicsDetectionJobProperties?
 
         public init(topicsDetectionJobProperties: TopicsDetectionJobProperties? = nil) {
             self.topicsDetectionJobProperties = topicsDetectionJobProperties
+        }
+
+        public func validate() throws {
+            try topicsDetectionJobProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -853,11 +1129,16 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Text", required: true, type: .string)
         ]
+
         /// A UTF-8 text string. Each string should contain at least 20 characters and must contain fewer that 5,000 bytes of UTF-8 encoded characters.
         public let text: String
 
         public init(text: String) {
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -869,11 +1150,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Languages", required: false, type: .list)
         ]
+
         /// The languages that Amazon Comprehend detected in the input text. For each language, the response returns the RFC 5646 language code and the level of confidence that Amazon Comprehend has in the accuracy of its inference. For more information about RFC 5646, see Tags for Identifying Languages on the IETF Tools web site.
         public let languages: [DominantLanguage]?
 
         public init(languages: [DominantLanguage]? = nil) {
             self.languages = languages
+        }
+
+        public func validate() throws {
+            try languages?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -886,6 +1174,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "Text", required: true, type: .string)
         ]
+
         /// The language of the input documents. You can specify English ("en") or Spanish ("es"). All documents must be in the same language.
         public let languageCode: LanguageCode
         /// A UTF-8 text string. Each string must contain fewer that 5,000 bytes of UTF-8 encoded characters.
@@ -894,6 +1183,10 @@ extension Comprehend {
         public init(languageCode: LanguageCode, text: String) {
             self.languageCode = languageCode
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -906,11 +1199,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Entities", required: false, type: .list)
         ]
+
         /// A collection of entities identified in the input text. For each entity, the response provides the entity text, entity type, where the entity text begins and ends, and the level of confidence that Amazon Comprehend has in the detection. For a list of entity types, see how-entities. 
         public let entities: [Entity]?
 
         public init(entities: [Entity]? = nil) {
             self.entities = entities
+        }
+
+        public func validate() throws {
+            try entities?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -923,6 +1223,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "Text", required: true, type: .string)
         ]
+
         /// The language of the input documents. You can specify English ("en") or Spanish ("es"). All documents must be in the same language.
         public let languageCode: LanguageCode
         /// A UTF-8 text string. Each string must contain fewer that 5,000 bytes of UTF-8 encoded characters.
@@ -931,6 +1232,10 @@ extension Comprehend {
         public init(languageCode: LanguageCode, text: String) {
             self.languageCode = languageCode
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -943,11 +1248,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "KeyPhrases", required: false, type: .list)
         ]
+
         /// A collection of key phrases that Amazon Comprehend identified in the input text. For each key phrase, the response provides the text of the key phrase, where the key phrase begins and ends, and the level of confidence that Amazon Comprehend has in the accuracy of the detection. 
         public let keyPhrases: [KeyPhrase]?
 
         public init(keyPhrases: [KeyPhrase]? = nil) {
             self.keyPhrases = keyPhrases
+        }
+
+        public func validate() throws {
+            try keyPhrases?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -960,6 +1272,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "Text", required: true, type: .string)
         ]
+
         /// The language of the input documents. You can specify English ("en") or Spanish ("es"). All documents must be in the same language.
         public let languageCode: LanguageCode
         /// A UTF-8 text string. Each string must contain fewer that 5,000 bytes of UTF-8 encoded characters.
@@ -968,6 +1281,10 @@ extension Comprehend {
         public init(languageCode: LanguageCode, text: String) {
             self.languageCode = languageCode
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -981,6 +1298,7 @@ extension Comprehend {
             AWSShapeMember(label: "Sentiment", required: false, type: .enum), 
             AWSShapeMember(label: "SentimentScore", required: false, type: .structure)
         ]
+
         /// The inferred sentiment that Amazon Comprehend has the highest level of confidence in.
         public let sentiment: SentimentType?
         /// An object that lists the sentiments, and their corresponding confidence levels.
@@ -1002,6 +1320,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: true, type: .enum), 
             AWSShapeMember(label: "Text", required: true, type: .string)
         ]
+
         /// The language code of the input documents. You can specify English ("en") or Spanish ("es").
         public let languageCode: SyntaxLanguageCode
         /// A UTF-8 string. Each string must contain fewer that 5,000 bytes of UTF encoded characters.
@@ -1010,6 +1329,10 @@ extension Comprehend {
         public init(languageCode: SyntaxLanguageCode, text: String) {
             self.languageCode = languageCode
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1022,11 +1345,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SyntaxTokens", required: false, type: .list)
         ]
+
         /// A collection of syntax tokens describing the text. For each token, the response provides the text, the token type, where the text begins and ends, and the level of confidence that Amazon Comprehend has that the token is correct. For a list of token types, see how-syntax.
         public let syntaxTokens: [SyntaxToken]?
 
         public init(syntaxTokens: [SyntaxToken]? = nil) {
             self.syntaxTokens = syntaxTokens
+        }
+
+        public func validate() throws {
+            try syntaxTokens?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1041,6 +1371,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         /// Filters on the name of the job.
         public let jobName: String?
         /// Filters the list based on job status. Returns only jobs with the specified status.
@@ -1055,6 +1386,12 @@ extension Comprehend {
             self.jobStatus = jobStatus
             self.submitTimeAfter = submitTimeAfter
             self.submitTimeBefore = submitTimeBefore
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1080,6 +1417,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS identity and Access Management (IAM) role that grants Amazon Comprehend read access to your input data.
         public let dataAccessRoleArn: String?
         /// The Amazon Resource Name (ARN) that identifies the document classifier. 
@@ -1120,6 +1458,24 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try validate(documentClassifierArn, name:"documentClassifierArn", max: 256)
+            try validate(documentClassifierArn, name:"documentClassifierArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:document-classifier/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try inputDataConfig?.validate()
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataAccessRoleArn = "DataAccessRoleArn"
             case documentClassifierArn = "DocumentClassifierArn"
@@ -1142,6 +1498,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         /// Filters the list of classifiers based on status. 
         public let status: ModelStatus?
         /// Filters the list of classifiers based on the time that the classifier was submitted for processing. Returns only classifiers submitted after the specified time. Classifiers are returned in descending order, newest to oldest.
@@ -1166,11 +1523,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3Uri", required: true, type: .string)
         ]
+
         /// The Amazon S3 URI for the input data. The S3 bucket must be in the same region as the API endpoint that you are calling. The URI can point to a single input file or it can provide the prefix for a collection of input files. For example, if you use the URI S3://bucketName/prefix, if the prefix is a single file, Amazon Comprehend uses that file as input. If more than one file begins with the prefix, Amazon Comprehend uses all of them as input.
         public let s3Uri: String
 
         public init(s3Uri: String) {
             self.s3Uri = s3Uri
+        }
+
+        public func validate() throws {
+            try validate(s3Uri, name:"s3Uri", max: 1024)
+            try validate(s3Uri, name:"s3Uri", pattern: "s3://[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9](/.*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1183,6 +1546,7 @@ extension Comprehend {
             AWSShapeMember(label: "KmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "S3Uri", required: false, type: .string)
         ]
+
         /// ID for the AWS Key Management Service (KMS) key that Amazon Comprehend uses to encrypt the output results from an analysis job. The KmsKeyId can be one of the following formats:   KMS Key ID: "1234abcd-12ab-34cd-56ef-1234567890ab"    Amazon Resource Name (ARN) of a KMS Key: "arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab"    KMS Key Alias: "alias/ExampleAlias"    ARN of a KMS Key Alias: "arn:aws:kms:us-west-2:111122223333:alias/ExampleAlias"   
         public let kmsKeyId: String?
         /// When you use the OutputDataConfig object while creating a custom classifier, you specify the Amazon S3 location where you want to write the confusion matrix. The URI must be in the same region as the API endpoint that you are calling. The location is used as the prefix for the actual location of this output file. When the custom classifier job is finished, the service creates the output file in a directory specific to the job. The S3Uri field contains the location of the output file, called output.tar.gz. It is a compressed archive that contains the confusion matrix.
@@ -1191,6 +1555,12 @@ extension Comprehend {
         public init(kmsKeyId: String? = nil, s3Uri: String? = nil) {
             self.kmsKeyId = kmsKeyId
             self.s3Uri = s3Uri
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyId, name:"kmsKeyId", max: 2048)
+            try validate(s3Uri, name:"s3Uri", max: 1024)
+            try validate(s3Uri, name:"s3Uri", pattern: "s3://[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9](/.*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1216,6 +1586,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// Information about the document classifier, including the number of documents used for training the classifier, the number of documents used for test the classifier, and an accuracy rating.
         public let classifierMetadata: ClassifierMetadata?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Management (IAM) role that grants Amazon Comprehend read access to your input data.
@@ -1262,6 +1633,18 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try validate(documentClassifierArn, name:"documentClassifierArn", max: 256)
+            try validate(documentClassifierArn, name:"documentClassifierArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:document-classifier/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try inputDataConfig?.validate()
+            try outputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case classifierMetadata = "ClassifierMetadata"
             case dataAccessRoleArn = "DataAccessRoleArn"
@@ -1285,6 +1668,7 @@ extension Comprehend {
             AWSShapeMember(label: "LanguageCode", required: false, type: .string), 
             AWSShapeMember(label: "Score", required: false, type: .float)
         ]
+
         /// The RFC 5646 language code for the dominant language. For more information about RFC 5646, see Tags for Identifying Languages on the IETF Tools web site.
         public let languageCode: String?
         /// The level of confidence that Amazon Comprehend has in the accuracy of the detection.
@@ -1293,6 +1677,10 @@ extension Comprehend {
         public init(languageCode: String? = nil, score: Float? = nil) {
             self.languageCode = languageCode
             self.score = score
+        }
+
+        public func validate() throws {
+            try validate(languageCode, name:"languageCode", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1308,6 +1696,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         /// Filters on the name of the job.
         public let jobName: String?
         /// Filters the list of jobs based on job status. Returns only jobs with the specified status.
@@ -1322,6 +1711,12 @@ extension Comprehend {
             self.jobStatus = jobStatus
             self.submitTimeAfter = submitTimeAfter
             self.submitTimeBefore = submitTimeBefore
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1346,6 +1741,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) that gives Amazon Comprehend read access to your input data.
         public let dataAccessRoleArn: String?
         /// The time that the dominant language detection job completed.
@@ -1383,6 +1779,22 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig?.validate()
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataAccessRoleArn = "DataAccessRoleArn"
             case endTime = "EndTime"
@@ -1405,6 +1817,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         /// Filters on the name of the job.
         public let jobName: String?
         /// Filters the list of jobs based on job status. Returns only jobs with the specified status.
@@ -1419,6 +1832,12 @@ extension Comprehend {
             self.jobStatus = jobStatus
             self.submitTimeAfter = submitTimeAfter
             self.submitTimeBefore = submitTimeBefore
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1445,6 +1864,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) that gives Amazon Comprehend read access to your input data.
         public let dataAccessRoleArn: String?
         /// The time that the entities detection job completed
@@ -1488,6 +1908,24 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", max: 256)
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:entity-recognizer/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try inputDataConfig?.validate()
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataAccessRoleArn = "DataAccessRoleArn"
             case endTime = "EndTime"
@@ -1513,6 +1951,7 @@ extension Comprehend {
             AWSShapeMember(label: "Text", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// A character offset in the input text that shows where the entity begins (the first character is at position 0). The offset returns the position of each UTF-8 code point in the string. A code point is the abstract character from a particular graphical representation. For example, a multi-byte UTF-8 character maps to a single code point.
         public let beginOffset: Int32?
         /// A character offset in the input text that shows where the entity ends. The offset returns the position of each UTF-8 code point in the string. A code point is the abstract character from a particular graphical representation. For example, a multi-byte UTF-8 character maps to a single code point. 
@@ -1532,6 +1971,10 @@ extension Comprehend {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case beginOffset = "BeginOffset"
             case endOffset = "EndOffset"
@@ -1545,11 +1988,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3Uri", required: true, type: .string)
         ]
+
         ///  Specifies the Amazon S3 location where the annotations for an entity recognizer are located. The URI must be in the same region as the API endpoint that you are calling.
         public let s3Uri: String
 
         public init(s3Uri: String) {
             self.s3Uri = s3Uri
+        }
+
+        public func validate() throws {
+            try validate(s3Uri, name:"s3Uri", max: 1024)
+            try validate(s3Uri, name:"s3Uri", pattern: "s3://[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9](/.*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1561,11 +2010,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3Uri", required: true, type: .string)
         ]
+
         ///  Specifies the Amazon S3 location where the training documents for an entity recognizer are located. The URI must be in the same region as the API endpoint that you are calling.
         public let s3Uri: String
 
         public init(s3Uri: String) {
             self.s3Uri = s3Uri
+        }
+
+        public func validate() throws {
+            try validate(s3Uri, name:"s3Uri", max: 1024)
+            try validate(s3Uri, name:"s3Uri", pattern: "s3://[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9](/.*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1577,11 +2032,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "S3Uri", required: true, type: .string)
         ]
+
         /// Specifies the Amazon S3 location where the entity list is located. The URI must be in the same region as the API endpoint that you are calling.
         public let s3Uri: String
 
         public init(s3Uri: String) {
             self.s3Uri = s3Uri
+        }
+
+        public func validate() throws {
+            try validate(s3Uri, name:"s3Uri", max: 1024)
+            try validate(s3Uri, name:"s3Uri", pattern: "s3://[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9](/.*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1595,6 +2056,7 @@ extension Comprehend {
             AWSShapeMember(label: "Precision", required: false, type: .double), 
             AWSShapeMember(label: "Recall", required: false, type: .double)
         ]
+
         /// A measure of how accurate the recognizer results are for the test data. It is derived from the Precision and Recall values. The F1Score is the harmonic average of the two scores. The highest score is 1, and the worst score is 0. 
         public let f1Score: Double?
         /// A measure of the usefulness of the recognizer results in the test data. High precision means that the recognizer returned substantially more relevant results than irrelevant ones. 
@@ -1621,6 +2083,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         /// The status of an entity recognizer.
         public let status: ModelStatus?
         /// Filters the list of entities based on the time that the list was submitted for processing. Returns only jobs submitted after the specified time. Jobs are returned in ascending order, oldest to newest.
@@ -1648,6 +2111,7 @@ extension Comprehend {
             AWSShapeMember(label: "EntityList", required: false, type: .structure), 
             AWSShapeMember(label: "EntityTypes", required: true, type: .list)
         ]
+
         /// S3 location of the annotations file for an entity recognizer.
         public let annotations: EntityRecognizerAnnotations?
         /// S3 location of the documents folder for an entity recognizer
@@ -1662,6 +2126,15 @@ extension Comprehend {
             self.documents = documents
             self.entityList = entityList
             self.entityTypes = entityTypes
+        }
+
+        public func validate() throws {
+            try annotations?.validate()
+            try documents.validate()
+            try entityList?.validate()
+            try entityTypes.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1679,6 +2152,7 @@ extension Comprehend {
             AWSShapeMember(label: "NumberOfTestDocuments", required: false, type: .integer), 
             AWSShapeMember(label: "NumberOfTrainedDocuments", required: false, type: .integer)
         ]
+
         /// Entity types from the metadata of an entity recognizer.
         public let entityTypes: [EntityRecognizerMetadataEntityTypesListItem]?
         ///  Detailed information about the accuracy of an entity recognizer.
@@ -1707,6 +2181,7 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Type", required: false, type: .string)
         ]
+
         /// Type of entity from the list of entity types in the metadata of an entity recognizer. 
         public let `type`: String?
 
@@ -1735,6 +2210,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         ///  The Amazon Resource Name (ARN) of the AWS Identity and Management (IAM) role that grants Amazon Comprehend read access to your input data.
         public let dataAccessRoleArn: String?
         /// The time that the recognizer creation completed.
@@ -1778,6 +2254,17 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", max: 256)
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:entity-recognizer/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try inputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataAccessRoleArn = "DataAccessRoleArn"
             case endTime = "EndTime"
@@ -1812,11 +2299,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Type", required: true, type: .string)
         ]
+
         /// Entity type of an item on an entity type list.
         public let `type`: String
 
         public init(type: String) {
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(`type`, name:"`type`", max: 64)
+            try validate(`type`, name:"`type`", pattern: "[_A-Z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1829,6 +2322,7 @@ extension Comprehend {
             AWSShapeMember(label: "InputFormat", required: false, type: .enum), 
             AWSShapeMember(label: "S3Uri", required: true, type: .string)
         ]
+
         /// Specifies how the text in an input file should be processed:    ONE_DOC_PER_FILE - Each file is considered a separate document. Use this option when you are processing large documents, such as newspaper articles or scientific papers.    ONE_DOC_PER_LINE - Each line in a file is considered a separate document. Use this option when you are processing many short documents, such as text messages.  
         public let inputFormat: InputFormat?
         /// The Amazon S3 URI for the input data. The URI must be in same region as the API endpoint that you are calling. The URI can point to a single input file or it can provide the prefix for a collection of data files.  For example, if you use the URI S3://bucketName/prefix, if the prefix is a single file, Amazon Comprehend uses that file as input. If more than one file begins with the prefix, Amazon Comprehend uses all of them as input.
@@ -1837,6 +2331,11 @@ extension Comprehend {
         public init(inputFormat: InputFormat? = nil, s3Uri: String) {
             self.inputFormat = inputFormat
             self.s3Uri = s3Uri
+        }
+
+        public func validate() throws {
+            try validate(s3Uri, name:"s3Uri", max: 1024)
+            try validate(s3Uri, name:"s3Uri", pattern: "s3://[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9](/.*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1868,6 +2367,7 @@ extension Comprehend {
             AWSShapeMember(label: "Score", required: false, type: .float), 
             AWSShapeMember(label: "Text", required: false, type: .string)
         ]
+
         /// A character offset in the input text that shows where the key phrase begins (the first character is at position 0). The offset returns the position of each UTF-8 code point in the string. A code point is the abstract character from a particular graphical representation. For example, a multi-byte UTF-8 character maps to a single code point.
         public let beginOffset: Int32?
         /// A character offset in the input text where the key phrase ends. The offset returns the position of each UTF-8 code point in the string. A code point is the abstract character from a particular graphical representation. For example, a multi-byte UTF-8 character maps to a single code point.
@@ -1882,6 +2382,10 @@ extension Comprehend {
             self.endOffset = endOffset
             self.score = score
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1899,6 +2403,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         /// Filters on the name of the job.
         public let jobName: String?
         /// Filters the list of jobs based on job status. Returns only jobs with the specified status.
@@ -1913,6 +2418,12 @@ extension Comprehend {
             self.jobStatus = jobStatus
             self.submitTimeAfter = submitTimeAfter
             self.submitTimeBefore = submitTimeBefore
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1938,6 +2449,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) that gives Amazon Comprehend read access to your input data.
         public let dataAccessRoleArn: String?
         /// The time that the key phrases detection job completed.
@@ -1978,6 +2490,22 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig?.validate()
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataAccessRoleArn = "DataAccessRoleArn"
             case endTime = "EndTime"
@@ -2010,6 +2538,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the jobs that are returned. You can filter jobs on their names, status, or the date and time that they were submitted. You can only set one filter at a time.
         public let filter: DocumentClassificationJobFilter?
         /// The maximum number of results to return in each page. The default is 100.
@@ -2021,6 +2550,13 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2035,6 +2571,7 @@ extension Comprehend {
             AWSShapeMember(label: "DocumentClassificationJobPropertiesList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list containing the properties of each job returned.
         public let documentClassificationJobPropertiesList: [DocumentClassificationJobProperties]?
         /// Identifies the next page of results to return.
@@ -2043,6 +2580,13 @@ extension Comprehend {
         public init(documentClassificationJobPropertiesList: [DocumentClassificationJobProperties]? = nil, nextToken: String? = nil) {
             self.documentClassificationJobPropertiesList = documentClassificationJobPropertiesList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try documentClassificationJobPropertiesList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2057,6 +2601,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the jobs that are returned. You can filter jobs on their name, status, or the date and time that they were submitted. You can only set one filter at a time.
         public let filter: DocumentClassifierFilter?
         /// The maximum number of results to return in each page. The default is 100.
@@ -2068,6 +2613,12 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2082,6 +2633,7 @@ extension Comprehend {
             AWSShapeMember(label: "DocumentClassifierPropertiesList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list containing the properties of each job returned.
         public let documentClassifierPropertiesList: [DocumentClassifierProperties]?
         /// Identifies the next page of results to return.
@@ -2090,6 +2642,13 @@ extension Comprehend {
         public init(documentClassifierPropertiesList: [DocumentClassifierProperties]? = nil, nextToken: String? = nil) {
             self.documentClassifierPropertiesList = documentClassifierPropertiesList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try documentClassifierPropertiesList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2104,6 +2663,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters that jobs that are returned. You can filter jobs on their name, status, or the date and time that they were submitted. You can only set one filter at a time.
         public let filter: DominantLanguageDetectionJobFilter?
         /// The maximum number of results to return in each page. The default is 100.
@@ -2115,6 +2675,13 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2129,6 +2696,7 @@ extension Comprehend {
             AWSShapeMember(label: "DominantLanguageDetectionJobPropertiesList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list containing the properties of each job that is returned.
         public let dominantLanguageDetectionJobPropertiesList: [DominantLanguageDetectionJobProperties]?
         /// Identifies the next page of results to return.
@@ -2137,6 +2705,13 @@ extension Comprehend {
         public init(dominantLanguageDetectionJobPropertiesList: [DominantLanguageDetectionJobProperties]? = nil, nextToken: String? = nil) {
             self.dominantLanguageDetectionJobPropertiesList = dominantLanguageDetectionJobPropertiesList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try dominantLanguageDetectionJobPropertiesList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2151,6 +2726,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the jobs that are returned. You can filter jobs on their name, status, or the date and time that they were submitted. You can only set one filter at a time.
         public let filter: EntitiesDetectionJobFilter?
         /// The maximum number of results to return in each page. The default is 100.
@@ -2162,6 +2738,13 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2176,6 +2759,7 @@ extension Comprehend {
             AWSShapeMember(label: "EntitiesDetectionJobPropertiesList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list containing the properties of each job that is returned.
         public let entitiesDetectionJobPropertiesList: [EntitiesDetectionJobProperties]?
         /// Identifies the next page of results to return.
@@ -2184,6 +2768,13 @@ extension Comprehend {
         public init(entitiesDetectionJobPropertiesList: [EntitiesDetectionJobProperties]? = nil, nextToken: String? = nil) {
             self.entitiesDetectionJobPropertiesList = entitiesDetectionJobPropertiesList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try entitiesDetectionJobPropertiesList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2198,6 +2789,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the list of entities returned. You can filter on Status, SubmitTimeBefore, or SubmitTimeAfter. You can only set one filter at a time.
         public let filter: EntityRecognizerFilter?
         ///  The maximum number of results to return on each page. The default is 100.
@@ -2209,6 +2801,12 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2223,6 +2821,7 @@ extension Comprehend {
             AWSShapeMember(label: "EntityRecognizerPropertiesList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The list of properties of an entity recognizer.
         public let entityRecognizerPropertiesList: [EntityRecognizerProperties]?
         /// Identifies the next page of results to return.
@@ -2231,6 +2830,13 @@ extension Comprehend {
         public init(entityRecognizerPropertiesList: [EntityRecognizerProperties]? = nil, nextToken: String? = nil) {
             self.entityRecognizerPropertiesList = entityRecognizerPropertiesList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try entityRecognizerPropertiesList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2245,6 +2851,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the jobs that are returned. You can filter jobs on their name, status, or the date and time that they were submitted. You can only set one filter at a time.
         public let filter: KeyPhrasesDetectionJobFilter?
         /// The maximum number of results to return in each page. The default is 100.
@@ -2256,6 +2863,13 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2270,6 +2884,7 @@ extension Comprehend {
             AWSShapeMember(label: "KeyPhrasesDetectionJobPropertiesList", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A list containing the properties of each job that is returned.
         public let keyPhrasesDetectionJobPropertiesList: [KeyPhrasesDetectionJobProperties]?
         /// Identifies the next page of results to return.
@@ -2278,6 +2893,13 @@ extension Comprehend {
         public init(keyPhrasesDetectionJobPropertiesList: [KeyPhrasesDetectionJobProperties]? = nil, nextToken: String? = nil) {
             self.keyPhrasesDetectionJobPropertiesList = keyPhrasesDetectionJobPropertiesList
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try keyPhrasesDetectionJobPropertiesList?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2292,6 +2914,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the jobs that are returned. You can filter jobs on their name, status, or the date and time that they were submitted. You can only set one filter at a time.
         public let filter: SentimentDetectionJobFilter?
         /// The maximum number of results to return in each page. The default is 100.
@@ -2303,6 +2926,13 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2317,6 +2947,7 @@ extension Comprehend {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "SentimentDetectionJobPropertiesList", required: false, type: .list)
         ]
+
         /// Identifies the next page of results to return.
         public let nextToken: String?
         /// A list containing the properties of each job that is returned.
@@ -2325,6 +2956,13 @@ extension Comprehend {
         public init(nextToken: String? = nil, sentimentDetectionJobPropertiesList: [SentimentDetectionJobProperties]? = nil) {
             self.nextToken = nextToken
             self.sentimentDetectionJobPropertiesList = sentimentDetectionJobPropertiesList
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try sentimentDetectionJobPropertiesList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2337,11 +2975,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the given Amazon Comprehend resource you are querying. 
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:[a-zA-Z0-9-]{1,64}/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2354,6 +2998,7 @@ extension Comprehend {
             AWSShapeMember(label: "ResourceArn", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the given Amazon Comprehend resource you are querying.
         public let resourceArn: String?
         /// Tags associated with the Amazon Comprehend resource being queried. A tag is a key-value pair that adds as a metadata to a resource used by Amazon Comprehend. For example, a tag with "Sales" as the key might be added to a resource to indicate its use by the sales department. 
@@ -2362,6 +3007,14 @@ extension Comprehend {
         public init(resourceArn: String? = nil, tags: [Tag]? = nil) {
             self.resourceArn = resourceArn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:[a-zA-Z0-9-]{1,64}/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2376,6 +3029,7 @@ extension Comprehend {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Filters the jobs that are returned. Jobs can be filtered on their name, status, or the date and time that they were submitted. You can set only one filter at a time.
         public let filter: TopicsDetectionJobFilter?
         /// The maximum number of results to return in each page. The default is 100.
@@ -2387,6 +3041,13 @@ extension Comprehend {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filter?.validate()
+            try validate(maxResults, name:"maxResults", max: 500)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2401,6 +3062,7 @@ extension Comprehend {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "TopicsDetectionJobPropertiesList", required: false, type: .list)
         ]
+
         /// Identifies the next page of results to return.
         public let nextToken: String?
         /// A list containing the properties of each job that is returned.
@@ -2409,6 +3071,13 @@ extension Comprehend {
         public init(nextToken: String? = nil, topicsDetectionJobPropertiesList: [TopicsDetectionJobProperties]? = nil) {
             self.nextToken = nextToken
             self.topicsDetectionJobPropertiesList = topicsDetectionJobPropertiesList
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try topicsDetectionJobPropertiesList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2433,6 +3102,7 @@ extension Comprehend {
             AWSShapeMember(label: "KmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "S3Uri", required: true, type: .string)
         ]
+
         /// ID for the AWS Key Management Service (KMS) key that Amazon Comprehend uses to encrypt the output results from an analysis job. The KmsKeyId can be one of the following formats:   KMS Key ID: "1234abcd-12ab-34cd-56ef-1234567890ab"    Amazon Resource Name (ARN) of a KMS Key: "arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab"    KMS Key Alias: "alias/ExampleAlias"    ARN of a KMS Key Alias: "arn:aws:kms:us-west-2:111122223333:alias/ExampleAlias"   
         public let kmsKeyId: String?
         /// When you use the OutputDataConfig object with asynchronous operations, you specify the Amazon S3 location where you want to write the output data. The URI must be in the same region as the API endpoint that you are calling. The location is used as the prefix for the actual location of the output file. When the topic detection job is finished, the service creates an output file in a directory specific to the job. The S3Uri field contains the location of the output file, called output.tar.gz. It is a compressed archive that contains the ouput of the operation.
@@ -2441,6 +3111,12 @@ extension Comprehend {
         public init(kmsKeyId: String? = nil, s3Uri: String) {
             self.kmsKeyId = kmsKeyId
             self.s3Uri = s3Uri
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyId, name:"kmsKeyId", max: 2048)
+            try validate(s3Uri, name:"s3Uri", max: 1024)
+            try validate(s3Uri, name:"s3Uri", pattern: "s3://[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9](/.*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2454,6 +3130,7 @@ extension Comprehend {
             AWSShapeMember(label: "Score", required: false, type: .float), 
             AWSShapeMember(label: "Tag", required: false, type: .enum)
         ]
+
         /// The confidence that Amazon Comprehend has that the part of speech was correctly identified.
         public let score: Float?
         /// Identifies the part of speech that the token represents.
@@ -2499,6 +3176,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         /// Filters on the name of the job.
         public let jobName: String?
         /// Filters the list of jobs based on job status. Returns only jobs with the specified status.
@@ -2513,6 +3191,12 @@ extension Comprehend {
             self.jobStatus = jobStatus
             self.submitTimeAfter = submitTimeAfter
             self.submitTimeBefore = submitTimeBefore
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2538,6 +3222,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) that gives Amazon Comprehend read access to your input data.
         public let dataAccessRoleArn: String?
         /// The time that the sentiment detection job ended.
@@ -2578,6 +3263,22 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig?.validate()
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataAccessRoleArn = "DataAccessRoleArn"
             case endTime = "EndTime"
@@ -2601,6 +3302,7 @@ extension Comprehend {
             AWSShapeMember(label: "Neutral", required: false, type: .float), 
             AWSShapeMember(label: "Positive", required: false, type: .float)
         ]
+
         /// The level of confidence that Amazon Comprehend has in the accuracy of its detection of the MIXED sentiment.
         public let mixed: Float?
         /// The level of confidence that Amazon Comprehend has in the accuracy of its detection of the NEGATIVE sentiment.
@@ -2644,6 +3346,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// A unique identifier for the request. If you do not set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that grants Amazon Comprehend read access to your input data.
@@ -2661,7 +3364,7 @@ extension Comprehend {
         /// Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your document classification job. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, documentClassifierArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = StartDocumentClassificationJobRequest.idempotencyToken(), dataAccessRoleArn: String, documentClassifierArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.documentClassifierArn = documentClassifierArn
@@ -2670,6 +3373,24 @@ extension Comprehend {
             self.outputDataConfig = outputDataConfig
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try validate(documentClassifierArn, name:"documentClassifierArn", max: 256)
+            try validate(documentClassifierArn, name:"documentClassifierArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:document-classifier/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try inputDataConfig.validate()
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2689,6 +3410,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier generated for the job. To get the status of the job, use this identifier with the operation.
         public let jobId: String?
         /// The status of the job:   SUBMITTED - The job has been received and queued for processing.   IN_PROGRESS - Amazon Comprehend is processing the job.   COMPLETED - The job was successfully completed and the output is available.   FAILED - The job did not complete. For details, use the operation.   STOP_REQUESTED - Amazon Comprehend has received a stop request for the job and is processing the request.   STOPPED - The job was successfully stopped without completing.  
@@ -2697,6 +3419,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2715,6 +3443,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// A unique identifier for the request. If you do not set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that grants Amazon Comprehend read access to your input data. For more information, see https://docs.aws.amazon.com/comprehend/latest/dg/access-control-managing-permissions.html#auth-role-permissions.
@@ -2730,7 +3459,7 @@ extension Comprehend {
         /// Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your dominant language detection job. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = StartDominantLanguageDetectionJobRequest.idempotencyToken(), dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.inputDataConfig = inputDataConfig
@@ -2738,6 +3467,22 @@ extension Comprehend {
             self.outputDataConfig = outputDataConfig
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig.validate()
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2756,6 +3501,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier generated for the job. To get the status of a job, use this identifier with the operation.
         public let jobId: String?
         /// The status of the job.    SUBMITTED - The job has been received and is queued for processing.   IN_PROGRESS - Amazon Comprehend is processing the job.   COMPLETED - The job was successfully completed and the output is available.   FAILED - The job did not complete. To get details, use the operation.  
@@ -2764,6 +3510,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2784,6 +3536,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// A unique identifier for the request. If you don't set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that grants Amazon Comprehend read access to your input data. For more information, see https://docs.aws.amazon.com/comprehend/latest/dg/access-control-managing-permissions.html#auth-role-permissions.
@@ -2803,7 +3556,7 @@ extension Comprehend {
         /// Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your entity detection job. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, entityRecognizerArn: String? = nil, inputDataConfig: InputDataConfig, jobName: String? = nil, languageCode: LanguageCode, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = StartEntitiesDetectionJobRequest.idempotencyToken(), dataAccessRoleArn: String, entityRecognizerArn: String? = nil, inputDataConfig: InputDataConfig, jobName: String? = nil, languageCode: LanguageCode, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.entityRecognizerArn = entityRecognizerArn
@@ -2813,6 +3566,24 @@ extension Comprehend {
             self.outputDataConfig = outputDataConfig
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", max: 256)
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:entity-recognizer/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try inputDataConfig.validate()
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2833,6 +3604,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier generated for the job. To get the status of job, use this identifier with the operation.
         public let jobId: String?
         /// The status of the job.    SUBMITTED - The job has been received and is queued for processing.   IN_PROGRESS - Amazon Comprehend is processing the job.   COMPLETED - The job was successfully completed and the output is available.   FAILED - The job did not complete. To get details, use the operation.   STOP_REQUESTED - Amazon Comprehend has received a stop request for the job and is processing the request.   STOPPED - The job was successfully stopped without completing.  
@@ -2841,6 +3613,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2860,6 +3638,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// A unique identifier for the request. If you don't set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that grants Amazon Comprehend read access to your input data. For more information, see https://docs.aws.amazon.com/comprehend/latest/dg/access-control-managing-permissions.html#auth-role-permissions.
@@ -2877,7 +3656,7 @@ extension Comprehend {
         ///  Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your key phrases detection job. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, languageCode: LanguageCode, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = StartKeyPhrasesDetectionJobRequest.idempotencyToken(), dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, languageCode: LanguageCode, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.inputDataConfig = inputDataConfig
@@ -2886,6 +3665,22 @@ extension Comprehend {
             self.outputDataConfig = outputDataConfig
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig.validate()
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2905,6 +3700,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier generated for the job. To get the status of a job, use this identifier with the operation.
         public let jobId: String?
         /// The status of the job.    SUBMITTED - The job has been received and is queued for processing.   IN_PROGRESS - Amazon Comprehend is processing the job.   COMPLETED - The job was successfully completed and the output is available.   FAILED - The job did not complete. To get details, use the operation.  
@@ -2913,6 +3709,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2932,6 +3734,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// A unique identifier for the request. If you don't set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that grants Amazon Comprehend read access to your input data. For more information, see https://docs.aws.amazon.com/comprehend/latest/dg/access-control-managing-permissions.html#auth-role-permissions.
@@ -2949,7 +3752,7 @@ extension Comprehend {
         /// Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your sentiment detection job. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, languageCode: LanguageCode, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = StartSentimentDetectionJobRequest.idempotencyToken(), dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, languageCode: LanguageCode, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.inputDataConfig = inputDataConfig
@@ -2958,6 +3761,22 @@ extension Comprehend {
             self.outputDataConfig = outputDataConfig
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig.validate()
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2977,6 +3796,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier generated for the job. To get the status of a job, use this identifier with the operation.
         public let jobId: String?
         /// The status of the job.    SUBMITTED - The job has been received and is queued for processing.   IN_PROGRESS - Amazon Comprehend is processing the job.   COMPLETED - The job was successfully completed and the output is available.   FAILED - The job did not complete. To get details, use the operation.  
@@ -2985,6 +3805,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3004,6 +3830,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// A unique identifier for the request. If you do not set the client request token, Amazon Comprehend generates one.
         public let clientRequestToken: String?
         /// The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that grants Amazon Comprehend read access to your input data. For more information, see https://docs.aws.amazon.com/comprehend/latest/dg/access-control-managing-permissions.html#auth-role-permissions.
@@ -3021,7 +3848,7 @@ extension Comprehend {
         /// Configuration parameters for an optional private Virtual Private Cloud (VPC) containing the resources you are using for your topic detection job. For more information, see Amazon VPC. 
         public let vpcConfig: VpcConfig?
 
-        public init(clientRequestToken: String? = nil, dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, numberOfTopics: Int32? = nil, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(clientRequestToken: String? = StartTopicsDetectionJobRequest.idempotencyToken(), dataAccessRoleArn: String, inputDataConfig: InputDataConfig, jobName: String? = nil, numberOfTopics: Int32? = nil, outputDataConfig: OutputDataConfig, volumeKmsKeyId: String? = nil, vpcConfig: VpcConfig? = nil) {
             self.clientRequestToken = clientRequestToken
             self.dataAccessRoleArn = dataAccessRoleArn
             self.inputDataConfig = inputDataConfig
@@ -3030,6 +3857,24 @@ extension Comprehend {
             self.outputDataConfig = outputDataConfig
             self.volumeKmsKeyId = volumeKmsKeyId
             self.vpcConfig = vpcConfig
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-]+$")
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig.validate()
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(numberOfTopics, name:"numberOfTopics", max: 100)
+            try validate(numberOfTopics, name:"numberOfTopics", min: 1)
+            try outputDataConfig.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3049,6 +3894,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier generated for the job. To get the status of the job, use this identifier with the DescribeTopicDetectionJob operation.
         public let jobId: String?
         /// The status of the job:    SUBMITTED - The job has been received and is queued for processing.   IN_PROGRESS - Amazon Comprehend is processing the job.   COMPLETED - The job was successfully completed and the output is available.   FAILED - The job did not complete. To get details, use the DescribeTopicDetectionJob operation.  
@@ -3057,6 +3903,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3069,11 +3921,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier of the dominant language detection job to stop.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3086,6 +3945,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier of the dominant language detection job to stop.
         public let jobId: String?
         /// Either STOP_REQUESTED if the job is currently running, or STOPPED if the job was previously stopped with the StopDominantLanguageDetectionJob operation.
@@ -3094,6 +3954,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3106,11 +3972,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier of the entities detection job to stop.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3123,6 +3996,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier of the entities detection job to stop.
         public let jobId: String?
         /// Either STOP_REQUESTED if the job is currently running, or STOPPED if the job was previously stopped with the StopEntitiesDetectionJob operation.
@@ -3131,6 +4005,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3143,11 +4023,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier of the key phrases detection job to stop.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3160,6 +4047,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier of the key phrases detection job to stop.
         public let jobId: String?
         /// Either STOP_REQUESTED if the job is currently running, or STOPPED if the job was previously stopped with the StopKeyPhrasesDetectionJob operation.
@@ -3168,6 +4056,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3180,11 +4074,18 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "JobId", required: true, type: .string)
         ]
+
         /// The identifier of the sentiment detection job to stop.
         public let jobId: String
 
         public init(jobId: String) {
             self.jobId = jobId
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3197,6 +4098,7 @@ extension Comprehend {
             AWSShapeMember(label: "JobId", required: false, type: .string), 
             AWSShapeMember(label: "JobStatus", required: false, type: .enum)
         ]
+
         /// The identifier of the sentiment detection job to stop.
         public let jobId: String?
         /// Either STOP_REQUESTED if the job is currently running, or STOPPED if the job was previously stopped with the StopSentimentDetectionJob operation.
@@ -3205,6 +4107,12 @@ extension Comprehend {
         public init(jobId: String? = nil, jobStatus: JobStatus? = nil) {
             self.jobId = jobId
             self.jobStatus = jobStatus
+        }
+
+        public func validate() throws {
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3217,11 +4125,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DocumentClassifierArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the document classifier currently being trained.
         public let documentClassifierArn: String
 
         public init(documentClassifierArn: String) {
             self.documentClassifierArn = documentClassifierArn
+        }
+
+        public func validate() throws {
+            try validate(documentClassifierArn, name:"documentClassifierArn", max: 256)
+            try validate(documentClassifierArn, name:"documentClassifierArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:document-classifier/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3230,6 +4144,7 @@ extension Comprehend {
     }
 
     public struct StopTrainingDocumentClassifierResponse: AWSShape {
+
 
         public init() {
         }
@@ -3240,11 +4155,17 @@ extension Comprehend {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EntityRecognizerArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) that identifies the entity recognizer currently being trained.
         public let entityRecognizerArn: String
 
         public init(entityRecognizerArn: String) {
             self.entityRecognizerArn = entityRecognizerArn
+        }
+
+        public func validate() throws {
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", max: 256)
+            try validate(entityRecognizerArn, name:"entityRecognizerArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:entity-recognizer/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3253,6 +4174,7 @@ extension Comprehend {
     }
 
     public struct StopTrainingEntityRecognizerResponse: AWSShape {
+
 
         public init() {
         }
@@ -3277,6 +4199,7 @@ extension Comprehend {
             AWSShapeMember(label: "Text", required: false, type: .string), 
             AWSShapeMember(label: "TokenId", required: false, type: .integer)
         ]
+
         /// The zero-based offset from the beginning of the source text to the first character in the word.
         public let beginOffset: Int32?
         /// The zero-based offset from the beginning of the source text to the last character in the word.
@@ -3296,6 +4219,10 @@ extension Comprehend {
             self.tokenId = tokenId
         }
 
+        public func validate() throws {
+            try validate(text, name:"text", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case beginOffset = "BeginOffset"
             case endOffset = "EndOffset"
@@ -3310,6 +4237,7 @@ extension Comprehend {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The initial part of a key-value pair that forms a tag associated with a given resource. For instance, if you want to show which resources are used by which departments, you might use “Department” as the key portion of the pair, with multiple possible values such as “sales,” “legal,” and “administration.” 
         public let key: String
         ///  The second part of a key-value pair that forms a tag associated with a given resource. For instance, if you want to show which resources are used by which departments, you might use “Department” as the initial (key) portion of the pair, with a value of “sales” to indicate the sales department. 
@@ -3318,6 +4246,13 @@ extension Comprehend {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3331,6 +4266,7 @@ extension Comprehend {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the given Amazon Comprehend resource to which you want to associate the tags. 
         public let resourceArn: String
         /// Tags being associated with a specific Amazon Comprehend resource. There can be a maximum of 50 tags (both existing and pending) associated with a specific resource. 
@@ -3341,6 +4277,14 @@ extension Comprehend {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:[a-zA-Z0-9-]{1,64}/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try tags.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tags = "Tags"
@@ -3348,6 +4292,7 @@ extension Comprehend {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -3361,6 +4306,7 @@ extension Comprehend {
             AWSShapeMember(label: "SubmitTimeAfter", required: false, type: .timestamp), 
             AWSShapeMember(label: "SubmitTimeBefore", required: false, type: .timestamp)
         ]
+
         public let jobName: String?
         /// Filters the list of topic detection jobs based on job status. Returns only jobs with the specified status.
         public let jobStatus: JobStatus?
@@ -3374,6 +4320,12 @@ extension Comprehend {
             self.jobStatus = jobStatus
             self.submitTimeAfter = submitTimeAfter
             self.submitTimeBefore = submitTimeBefore
+        }
+
+        public func validate() throws {
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3399,6 +4351,7 @@ extension Comprehend {
             AWSShapeMember(label: "VolumeKmsKeyId", required: false, type: .string), 
             AWSShapeMember(label: "VpcConfig", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) of the AWS Identity and Management (IAM) role that grants Amazon Comprehend read access to your job data. 
         public let dataAccessRoleArn: String?
         /// The time that the topic detection job was completed.
@@ -3439,6 +4392,22 @@ extension Comprehend {
             self.vpcConfig = vpcConfig
         }
 
+        public func validate() throws {
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", max: 2048)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", min: 20)
+            try validate(dataAccessRoleArn, name:"dataAccessRoleArn", pattern: "arn:aws(-[^:]+)?:iam::[0-9]{12}:role/.+")
+            try inputDataConfig?.validate()
+            try validate(jobId, name:"jobId", max: 32)
+            try validate(jobId, name:"jobId", min: 1)
+            try validate(jobId, name:"jobId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try validate(jobName, name:"jobName", max: 256)
+            try validate(jobName, name:"jobName", min: 1)
+            try validate(jobName, name:"jobName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-%@]*)$")
+            try outputDataConfig?.validate()
+            try validate(volumeKmsKeyId, name:"volumeKmsKeyId", max: 2048)
+            try vpcConfig?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataAccessRoleArn = "DataAccessRoleArn"
             case endTime = "EndTime"
@@ -3460,6 +4429,7 @@ extension Comprehend {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         ///  The Amazon Resource Name (ARN) of the given Amazon Comprehend resource from which you want to remove the tags. 
         public let resourceArn: String
         /// The initial part of a key-value pair that forms a tag being removed from a given resource. For example, a tag with "Sales" as the key might be added to a resource to indicate its use by the sales department. Keys must be unique and cannot be duplicated for a particular resource. 
@@ -3470,6 +4440,15 @@ extension Comprehend {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 256)
+            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[^:]+)?:comprehend:[a-zA-Z0-9-]*:[0-9]{12}:[a-zA-Z0-9-]{1,64}/[a-zA-Z0-9](-*[a-zA-Z0-9])*")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tagKeys = "TagKeys"
@@ -3477,6 +4456,7 @@ extension Comprehend {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -3488,6 +4468,7 @@ extension Comprehend {
             AWSShapeMember(label: "SecurityGroupIds", required: true, type: .list), 
             AWSShapeMember(label: "Subnets", required: true, type: .list)
         ]
+
         /// The ID number for a security group on an instance of your private VPC. Security groups on your VPC function serve as a virtual firewall to control inbound and outbound traffic and provides security for the resources that you’ll be accessing on the VPC. This ID number is preceded by "sg-", for instance: "sg-03b388029b0a285ea". For more information, see Security Groups for your VPC. 
         public let securityGroupIds: [String]
         /// The ID for each subnet being used in your private VPC. This subnet is a subset of the a range of IPv4 addresses used by the VPC and is specific to a given availability zone in the VPC’s region. This ID number is preceded by "subnet-", for instance: "subnet-04ccf456919e69055". For more information, see VPCs and Subnets. 
@@ -3496,6 +4477,23 @@ extension Comprehend {
         public init(securityGroupIds: [String], subnets: [String]) {
             self.securityGroupIds = securityGroupIds
             self.subnets = subnets
+        }
+
+        public func validate() throws {
+            try securityGroupIds.forEach {
+                try validate($0, name:"securityGroupIds[]", max: 32)
+                try validate($0, name:"securityGroupIds[]", min: 1)
+                try validate($0, name:"securityGroupIds[]", pattern: "[-0-9a-zA-Z]+")
+            }
+            try validate(securityGroupIds, name:"securityGroupIds", max: 5)
+            try validate(securityGroupIds, name:"securityGroupIds", min: 1)
+            try subnets.forEach {
+                try validate($0, name:"subnets[]", max: 32)
+                try validate($0, name:"subnets[]", min: 1)
+                try validate($0, name:"subnets[]", pattern: "[-0-9a-zA-Z]+")
+            }
+            try validate(subnets, name:"subnets", max: 16)
+            try validate(subnets, name:"subnets", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

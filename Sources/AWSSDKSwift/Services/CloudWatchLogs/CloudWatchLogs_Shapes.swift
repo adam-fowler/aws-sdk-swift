@@ -10,6 +10,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "kmsKeyId", required: true, type: .string), 
             AWSShapeMember(label: "logGroupName", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the CMK to use when encrypting log data. For more information, see Amazon Resource Names - AWS Key Management Service (AWS KMS).
         public let kmsKeyId: String
         /// The name of the log group.
@@ -18,6 +19,13 @@ extension CloudWatchLogs {
         public init(kmsKeyId: String, logGroupName: String) {
             self.kmsKeyId = kmsKeyId
             self.logGroupName = logGroupName
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyId, name:"kmsKeyId", max: 256)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -30,11 +38,17 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", required: true, type: .string)
         ]
+
         /// The ID of the export task.
         public let taskId: String
 
         public init(taskId: String) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 512)
+            try validate(taskId, name:"taskId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -52,6 +66,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "taskName", required: false, type: .string), 
             AWSShapeMember(label: "to", required: true, type: .long)
         ]
+
         /// The name of S3 bucket for the exported log data. The bucket must be in the same AWS region.
         public let destination: String
         /// The prefix used as the start of the key for every object exported. If you don't specify a value, the default is exportedlogs.
@@ -77,6 +92,21 @@ extension CloudWatchLogs {
             self.to = to
         }
 
+        public func validate() throws {
+            try validate(destination, name:"destination", max: 512)
+            try validate(destination, name:"destination", min: 1)
+            try validate(from, name:"from", min: 0)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", max: 512)
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", min: 1)
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", pattern: "[^:*]*")
+            try validate(taskName, name:"taskName", max: 512)
+            try validate(taskName, name:"taskName", min: 1)
+            try validate(to, name:"to", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case destination = "destination"
             case destinationPrefix = "destinationPrefix"
@@ -92,11 +122,17 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "taskId", required: false, type: .string)
         ]
+
         /// The ID of the export task.
         public let taskId: String?
 
         public init(taskId: String? = nil) {
             self.taskId = taskId
+        }
+
+        public func validate() throws {
+            try validate(taskId, name:"taskId", max: 512)
+            try validate(taskId, name:"taskId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -110,6 +146,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) of the CMK to use when encrypting log data. For more information, see Amazon Resource Names - AWS Key Management Service (AWS KMS).
         public let kmsKeyId: String?
         /// The name of the log group.
@@ -121,6 +158,13 @@ extension CloudWatchLogs {
             self.kmsKeyId = kmsKeyId
             self.logGroupName = logGroupName
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(kmsKeyId, name:"kmsKeyId", max: 256)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -135,6 +179,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "logStreamName", required: true, type: .string)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
         /// The name of the log stream.
@@ -143,6 +188,15 @@ extension CloudWatchLogs {
         public init(logGroupName: String, logStreamName: String) {
             self.logGroupName = logGroupName
             self.logStreamName = logStreamName
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStreamName, name:"logStreamName", max: 512)
+            try validate(logStreamName, name:"logStreamName", min: 1)
+            try validate(logStreamName, name:"logStreamName", pattern: "[^:*]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -155,11 +209,18 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "destinationName", required: true, type: .string)
         ]
+
         /// The name of the destination.
         public let destinationName: String
 
         public init(destinationName: String) {
             self.destinationName = destinationName
+        }
+
+        public func validate() throws {
+            try validate(destinationName, name:"destinationName", max: 512)
+            try validate(destinationName, name:"destinationName", min: 1)
+            try validate(destinationName, name:"destinationName", pattern: "[^:*]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -171,11 +232,18 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "logGroupName", required: true, type: .string)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
 
         public init(logGroupName: String) {
             self.logGroupName = logGroupName
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -188,6 +256,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "logStreamName", required: true, type: .string)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
         /// The name of the log stream.
@@ -196,6 +265,15 @@ extension CloudWatchLogs {
         public init(logGroupName: String, logStreamName: String) {
             self.logGroupName = logGroupName
             self.logStreamName = logStreamName
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStreamName, name:"logStreamName", max: 512)
+            try validate(logStreamName, name:"logStreamName", min: 1)
+            try validate(logStreamName, name:"logStreamName", pattern: "[^:*]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -209,6 +287,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "filterName", required: true, type: .string), 
             AWSShapeMember(label: "logGroupName", required: true, type: .string)
         ]
+
         /// The name of the metric filter.
         public let filterName: String
         /// The name of the log group.
@@ -217,6 +296,15 @@ extension CloudWatchLogs {
         public init(filterName: String, logGroupName: String) {
             self.filterName = filterName
             self.logGroupName = logGroupName
+        }
+
+        public func validate() throws {
+            try validate(filterName, name:"filterName", max: 512)
+            try validate(filterName, name:"filterName", min: 1)
+            try validate(filterName, name:"filterName", pattern: "[^:*]*")
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -229,6 +317,7 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "policyName", required: false, type: .string)
         ]
+
         /// The name of the policy to be revoked. This parameter is required.
         public let policyName: String?
 
@@ -245,11 +334,18 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "logGroupName", required: true, type: .string)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
 
         public init(logGroupName: String) {
             self.logGroupName = logGroupName
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -262,6 +358,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "filterName", required: true, type: .string), 
             AWSShapeMember(label: "logGroupName", required: true, type: .string)
         ]
+
         /// The name of the subscription filter.
         public let filterName: String
         /// The name of the log group.
@@ -270,6 +367,15 @@ extension CloudWatchLogs {
         public init(filterName: String, logGroupName: String) {
             self.filterName = filterName
             self.logGroupName = logGroupName
+        }
+
+        public func validate() throws {
+            try validate(filterName, name:"filterName", max: 512)
+            try validate(filterName, name:"filterName", min: 1)
+            try validate(filterName, name:"filterName", pattern: "[^:*]*")
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -284,6 +390,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "limit", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The prefix to match. If you don't specify a value, no prefix filter is applied.
         public let destinationNamePrefix: String?
         /// The maximum number of items returned. If you don't specify a value, the default is up to 50 items.
@@ -295,6 +402,15 @@ extension CloudWatchLogs {
             self.destinationNamePrefix = destinationNamePrefix
             self.limit = limit
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(destinationNamePrefix, name:"destinationNamePrefix", max: 512)
+            try validate(destinationNamePrefix, name:"destinationNamePrefix", min: 1)
+            try validate(destinationNamePrefix, name:"destinationNamePrefix", pattern: "[^:*]*")
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -309,6 +425,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "destinations", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The destinations.
         public let destinations: [Destination]?
         public let nextToken: String?
@@ -316,6 +433,13 @@ extension CloudWatchLogs {
         public init(destinations: [Destination]? = nil, nextToken: String? = nil) {
             self.destinations = destinations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try destinations?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -331,6 +455,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "statusCode", required: false, type: .enum), 
             AWSShapeMember(label: "taskId", required: false, type: .string)
         ]
+
         /// The maximum number of items returned. If you don't specify a value, the default is up to 50 items.
         public let limit: Int32?
         /// The token for the next set of items to return. (You received this token from a previous call.)
@@ -347,6 +472,14 @@ extension CloudWatchLogs {
             self.taskId = taskId
         }
 
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(taskId, name:"taskId", max: 512)
+            try validate(taskId, name:"taskId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case limit = "limit"
             case nextToken = "nextToken"
@@ -360,6 +493,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "exportTasks", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The export tasks.
         public let exportTasks: [ExportTask]?
         public let nextToken: String?
@@ -367,6 +501,13 @@ extension CloudWatchLogs {
         public init(exportTasks: [ExportTask]? = nil, nextToken: String? = nil) {
             self.exportTasks = exportTasks
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try exportTasks?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -381,6 +522,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupNamePrefix", required: false, type: .string), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The maximum number of items returned. If you don't specify a value, the default is up to 50 items.
         public let limit: Int32?
         /// The prefix to match.
@@ -392,6 +534,15 @@ extension CloudWatchLogs {
             self.limit = limit
             self.logGroupNamePrefix = logGroupNamePrefix
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(logGroupNamePrefix, name:"logGroupNamePrefix", max: 512)
+            try validate(logGroupNamePrefix, name:"logGroupNamePrefix", min: 1)
+            try validate(logGroupNamePrefix, name:"logGroupNamePrefix", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -406,6 +557,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroups", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The log groups.
         public let logGroups: [LogGroup]?
         public let nextToken: String?
@@ -413,6 +565,13 @@ extension CloudWatchLogs {
         public init(logGroups: [LogGroup]? = nil, nextToken: String? = nil) {
             self.logGroups = logGroups
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try logGroups?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -430,6 +589,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "orderBy", required: false, type: .enum)
         ]
+
         /// If the value is true, results are returned in descending order. If the value is to false, results are returned in ascending order. The default value is false.
         public let descending: Bool?
         /// The maximum number of items returned. If you don't specify a value, the default is up to 50 items.
@@ -452,6 +612,18 @@ extension CloudWatchLogs {
             self.orderBy = orderBy
         }
 
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", max: 512)
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", min: 1)
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", pattern: "[^:*]*")
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case descending = "descending"
             case limit = "limit"
@@ -467,6 +639,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logStreams", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The log streams.
         public let logStreams: [LogStream]?
         public let nextToken: String?
@@ -474,6 +647,13 @@ extension CloudWatchLogs {
         public init(logStreams: [LogStream]? = nil, nextToken: String? = nil) {
             self.logStreams = logStreams
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try logStreams?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -491,6 +671,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "metricNamespace", required: false, type: .string), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The prefix to match.
         public let filterNamePrefix: String?
         /// The maximum number of items returned. If you don't specify a value, the default is up to 50 items.
@@ -513,6 +694,22 @@ extension CloudWatchLogs {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(filterNamePrefix, name:"filterNamePrefix", max: 512)
+            try validate(filterNamePrefix, name:"filterNamePrefix", min: 1)
+            try validate(filterNamePrefix, name:"filterNamePrefix", pattern: "[^:*]*")
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", pattern: "[^:*$]*")
+            try validate(metricNamespace, name:"metricNamespace", max: 255)
+            try validate(metricNamespace, name:"metricNamespace", pattern: "[^:*$]*")
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filterNamePrefix = "filterNamePrefix"
             case limit = "limit"
@@ -528,6 +725,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "metricFilters", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The metric filters.
         public let metricFilters: [MetricFilter]?
         public let nextToken: String?
@@ -535,6 +733,13 @@ extension CloudWatchLogs {
         public init(metricFilters: [MetricFilter]? = nil, nextToken: String? = nil) {
             self.metricFilters = metricFilters
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try metricFilters?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -550,6 +755,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// Limits the returned queries to only those for the specified log group.
         public let logGroupName: String?
         /// Limits the number of returned queries to the specified number.
@@ -565,6 +771,15 @@ extension CloudWatchLogs {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case logGroupName = "logGroupName"
             case maxResults = "maxResults"
@@ -578,6 +793,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "queries", required: false, type: .list)
         ]
+
         public let nextToken: String?
         /// The list of queries that match the request.
         public let queries: [QueryInfo]?
@@ -585,6 +801,13 @@ extension CloudWatchLogs {
         public init(nextToken: String? = nil, queries: [QueryInfo]? = nil) {
             self.nextToken = nextToken
             self.queries = queries
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try queries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -598,6 +821,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "limit", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The maximum number of resource policies to be displayed with one call of this API.
         public let limit: Int32?
         public let nextToken: String?
@@ -605,6 +829,12 @@ extension CloudWatchLogs {
         public init(limit: Int32? = nil, nextToken: String? = nil) {
             self.limit = limit
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -618,6 +848,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "resourcePolicies", required: false, type: .list)
         ]
+
         public let nextToken: String?
         /// The resource policies that exist in this account.
         public let resourcePolicies: [ResourcePolicy]?
@@ -625,6 +856,13 @@ extension CloudWatchLogs {
         public init(nextToken: String? = nil, resourcePolicies: [ResourcePolicy]? = nil) {
             self.nextToken = nextToken
             self.resourcePolicies = resourcePolicies
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try resourcePolicies?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -640,6 +878,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The prefix to match. If you don't specify a value, no prefix filter is applied.
         public let filterNamePrefix: String?
         /// The maximum number of items returned. If you don't specify a value, the default is up to 50 items.
@@ -656,6 +895,18 @@ extension CloudWatchLogs {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(filterNamePrefix, name:"filterNamePrefix", max: 512)
+            try validate(filterNamePrefix, name:"filterNamePrefix", min: 1)
+            try validate(filterNamePrefix, name:"filterNamePrefix", pattern: "[^:*]*")
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(nextToken, name:"nextToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filterNamePrefix = "filterNamePrefix"
             case limit = "limit"
@@ -669,6 +920,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "subscriptionFilters", required: false, type: .list)
         ]
+
         public let nextToken: String?
         /// The subscription filters.
         public let subscriptionFilters: [SubscriptionFilter]?
@@ -676,6 +928,13 @@ extension CloudWatchLogs {
         public init(nextToken: String? = nil, subscriptionFilters: [SubscriptionFilter]? = nil) {
             self.nextToken = nextToken
             self.subscriptionFilters = subscriptionFilters
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try subscriptionFilters?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -693,6 +952,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "roleArn", required: false, type: .string), 
             AWSShapeMember(label: "targetArn", required: false, type: .string)
         ]
+
         /// An IAM policy document that governs which AWS accounts can create subscription filters against this destination.
         public let accessPolicy: String?
         /// The ARN of this destination.
@@ -715,6 +975,16 @@ extension CloudWatchLogs {
             self.targetArn = targetArn
         }
 
+        public func validate() throws {
+            try validate(accessPolicy, name:"accessPolicy", min: 1)
+            try validate(creationTime, name:"creationTime", min: 0)
+            try validate(destinationName, name:"destinationName", max: 512)
+            try validate(destinationName, name:"destinationName", min: 1)
+            try validate(destinationName, name:"destinationName", pattern: "[^:*]*")
+            try validate(roleArn, name:"roleArn", min: 1)
+            try validate(targetArn, name:"targetArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accessPolicy = "accessPolicy"
             case arn = "arn"
@@ -729,11 +999,18 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "logGroupName", required: true, type: .string)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
 
         public init(logGroupName: String) {
             self.logGroupName = logGroupName
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -759,6 +1036,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "taskName", required: false, type: .string), 
             AWSShapeMember(label: "to", required: false, type: .long)
         ]
+
         /// The name of Amazon S3 bucket to which the log data was exported.
         public let destination: String?
         /// The prefix that was used as the start of Amazon S3 key for every object exported.
@@ -790,6 +1068,21 @@ extension CloudWatchLogs {
             self.to = to
         }
 
+        public func validate() throws {
+            try validate(destination, name:"destination", max: 512)
+            try validate(destination, name:"destination", min: 1)
+            try executionInfo?.validate()
+            try validate(from, name:"from", min: 0)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(taskId, name:"taskId", max: 512)
+            try validate(taskId, name:"taskId", min: 1)
+            try validate(taskName, name:"taskName", max: 512)
+            try validate(taskName, name:"taskName", min: 1)
+            try validate(to, name:"to", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case destination = "destination"
             case destinationPrefix = "destinationPrefix"
@@ -808,6 +1101,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "completionTime", required: false, type: .long), 
             AWSShapeMember(label: "creationTime", required: false, type: .long)
         ]
+
         /// The completion time of the export task, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
         public let completionTime: Int64?
         /// The creation time of the export task, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
@@ -816,6 +1110,11 @@ extension CloudWatchLogs {
         public init(completionTime: Int64? = nil, creationTime: Int64? = nil) {
             self.completionTime = completionTime
             self.creationTime = creationTime
+        }
+
+        public func validate() throws {
+            try validate(completionTime, name:"completionTime", min: 0)
+            try validate(creationTime, name:"creationTime", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -829,6 +1128,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "code", required: false, type: .enum), 
             AWSShapeMember(label: "message", required: false, type: .string)
         ]
+
         /// The status code of the export task.
         public let code: ExportTaskStatusCode?
         /// The status message related to the status code.
@@ -867,6 +1167,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "startTime", required: false, type: .long)
         ]
+
         /// The end of the time range, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC. Events with a timestamp later than this time are not returned.
         public let endTime: Int64?
         /// The filter pattern to use. For more information, see Filter and Pattern Syntax. If not provided, all the events are matched.
@@ -898,6 +1199,29 @@ extension CloudWatchLogs {
             self.startTime = startTime
         }
 
+        public func validate() throws {
+            try validate(endTime, name:"endTime", min: 0)
+            try validate(filterPattern, name:"filterPattern", max: 1024)
+            try validate(filterPattern, name:"filterPattern", min: 0)
+            try validate(limit, name:"limit", max: 10000)
+            try validate(limit, name:"limit", min: 1)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", max: 512)
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", min: 1)
+            try validate(logStreamNamePrefix, name:"logStreamNamePrefix", pattern: "[^:*]*")
+            try logStreamNames?.forEach {
+                try validate($0, name:"logStreamNames[]", max: 512)
+                try validate($0, name:"logStreamNames[]", min: 1)
+                try validate($0, name:"logStreamNames[]", pattern: "[^:*]*")
+            }
+            try validate(logStreamNames, name:"logStreamNames", max: 100)
+            try validate(logStreamNames, name:"logStreamNames", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(startTime, name:"startTime", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "endTime"
             case filterPattern = "filterPattern"
@@ -917,6 +1241,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "searchedLogStreams", required: false, type: .list)
         ]
+
         /// The matched events.
         public let events: [FilteredLogEvent]?
         /// The token to use when requesting the next set of items. The token expires after 24 hours.
@@ -928,6 +1253,16 @@ extension CloudWatchLogs {
             self.events = events
             self.nextToken = nextToken
             self.searchedLogStreams = searchedLogStreams
+        }
+
+        public func validate() throws {
+            try events?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
+            try searchedLogStreams?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -945,6 +1280,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "message", required: false, type: .string), 
             AWSShapeMember(label: "timestamp", required: false, type: .long)
         ]
+
         /// The ID of the event.
         public let eventId: String?
         /// The time the event was ingested, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
@@ -962,6 +1298,15 @@ extension CloudWatchLogs {
             self.logStreamName = logStreamName
             self.message = message
             self.timestamp = timestamp
+        }
+
+        public func validate() throws {
+            try validate(ingestionTime, name:"ingestionTime", min: 0)
+            try validate(logStreamName, name:"logStreamName", max: 512)
+            try validate(logStreamName, name:"logStreamName", min: 1)
+            try validate(logStreamName, name:"logStreamName", pattern: "[^:*]*")
+            try validate(message, name:"message", min: 1)
+            try validate(timestamp, name:"timestamp", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -983,6 +1328,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "startFromHead", required: false, type: .boolean), 
             AWSShapeMember(label: "startTime", required: false, type: .long)
         ]
+
         /// The end of the time range, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC. Events with a timestamp equal to or later than this time are not included.
         public let endTime: Int64?
         /// The maximum number of log events returned. If you don't specify a value, the maximum is as many log events as can fit in a response size of 1 MB, up to 10,000 log events.
@@ -1008,6 +1354,20 @@ extension CloudWatchLogs {
             self.startTime = startTime
         }
 
+        public func validate() throws {
+            try validate(endTime, name:"endTime", min: 0)
+            try validate(limit, name:"limit", max: 10000)
+            try validate(limit, name:"limit", min: 1)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStreamName, name:"logStreamName", max: 512)
+            try validate(logStreamName, name:"logStreamName", min: 1)
+            try validate(logStreamName, name:"logStreamName", pattern: "[^:*]*")
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(startTime, name:"startTime", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "endTime"
             case limit = "limit"
@@ -1025,6 +1385,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextBackwardToken", required: false, type: .string), 
             AWSShapeMember(label: "nextForwardToken", required: false, type: .string)
         ]
+
         /// The events.
         public let events: [OutputLogEvent]?
         /// The token for the next set of items in the backward direction. The token expires after 24 hours. This token will never be null. If you have reached the end of the stream, it will return the same token you passed in.
@@ -1036,6 +1397,14 @@ extension CloudWatchLogs {
             self.events = events
             self.nextBackwardToken = nextBackwardToken
             self.nextForwardToken = nextForwardToken
+        }
+
+        public func validate() throws {
+            try events?.forEach {
+                try $0.validate()
+            }
+            try validate(nextBackwardToken, name:"nextBackwardToken", min: 1)
+            try validate(nextForwardToken, name:"nextForwardToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1050,6 +1419,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "time", required: false, type: .long)
         ]
+
         /// The name of the log group to search.
         public let logGroupName: String
         /// The time to set as the center of the query. If you specify time, the 8 minutes before and 8 minutes after this time are searched. If you omit time, the past 15 minutes are queried. The time value is specified as epoch time, the number of seconds since January 1, 1970, 00:00:00 UTC.
@@ -1058,6 +1428,13 @@ extension CloudWatchLogs {
         public init(logGroupName: String, time: Int64? = nil) {
             self.logGroupName = logGroupName
             self.time = time
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(time, name:"time", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1070,11 +1447,18 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "logGroupFields", required: false, type: .list)
         ]
+
         /// The array of fields found in the query. Each object in the array contains the name of the field, along with the percentage of time it appeared in the log events that were queried.
         public let logGroupFields: [LogGroupField]?
 
         public init(logGroupFields: [LogGroupField]? = nil) {
             self.logGroupFields = logGroupFields
+        }
+
+        public func validate() throws {
+            try logGroupFields?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1086,6 +1470,7 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "logRecordPointer", required: true, type: .string)
         ]
+
         /// The pointer corresponding to the log event record you want to retrieve. You get this from the response of a GetQueryResults operation. In that response, the value of the @ptr field for a log event is the value to use as logRecordPointer to retrieve that complete log event record.
         public let logRecordPointer: String
 
@@ -1102,6 +1487,7 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "logRecord", required: false, type: .map)
         ]
+
         /// The requested log event, as a JSON string.
         public let logRecord: [String: String]?
 
@@ -1118,11 +1504,17 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "queryId", required: true, type: .string)
         ]
+
         /// The ID number of the query.
         public let queryId: String
 
         public init(queryId: String) {
             self.queryId = queryId
+        }
+
+        public func validate() throws {
+            try validate(queryId, name:"queryId", max: 256)
+            try validate(queryId, name:"queryId", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1136,6 +1528,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "statistics", required: false, type: .structure), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The log events that matched the query criteria during the most recent time it ran. The results value is an array of arrays. Each log event is one object in the top-level array. Each of these log event objects is an array of field/value pairs.
         public let results: [[ResultField]]?
         /// Includes the number of log events scanned by the query, the number of log events that matched the query criteria, and the total number of bytes in the log events that were scanned.
@@ -1161,6 +1554,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "message", required: true, type: .string), 
             AWSShapeMember(label: "timestamp", required: true, type: .long)
         ]
+
         /// The raw event message.
         public let message: String
         /// The time the event occurred, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
@@ -1169,6 +1563,11 @@ extension CloudWatchLogs {
         public init(message: String, timestamp: Int64) {
             self.message = message
             self.timestamp = timestamp
+        }
+
+        public func validate() throws {
+            try validate(message, name:"message", min: 1)
+            try validate(timestamp, name:"timestamp", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1181,11 +1580,18 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "logGroupName", required: true, type: .string)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
 
         public init(logGroupName: String) {
             self.logGroupName = logGroupName
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1197,6 +1603,7 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tags", required: false, type: .map)
         ]
+
         /// The tags for the log group.
         public let tags: [String: String]?
 
@@ -1219,6 +1626,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "retentionInDays", required: false, type: .integer), 
             AWSShapeMember(label: "storedBytes", required: false, type: .long)
         ]
+
         /// The Amazon Resource Name (ARN) of the log group.
         public let arn: String?
         /// The creation time of the log group, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
@@ -1243,6 +1651,15 @@ extension CloudWatchLogs {
             self.storedBytes = storedBytes
         }
 
+        public func validate() throws {
+            try validate(creationTime, name:"creationTime", min: 0)
+            try validate(kmsKeyId, name:"kmsKeyId", max: 256)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(storedBytes, name:"storedBytes", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case creationTime = "creationTime"
@@ -1259,6 +1676,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "name", required: false, type: .string), 
             AWSShapeMember(label: "percent", required: false, type: .integer)
         ]
+
         /// The name of a log field.
         public let name: String?
         /// The percentage of log events queried that contained the field.
@@ -1267,6 +1685,11 @@ extension CloudWatchLogs {
         public init(name: String? = nil, percent: Int32? = nil) {
             self.name = name
             self.percent = percent
+        }
+
+        public func validate() throws {
+            try validate(percent, name:"percent", max: 100)
+            try validate(percent, name:"percent", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1286,6 +1709,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "storedBytes", required: false, type: .long), 
             AWSShapeMember(label: "uploadSequenceToken", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the log stream.
         public let arn: String?
         /// The creation time of the stream, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
@@ -1314,6 +1738,18 @@ extension CloudWatchLogs {
             self.uploadSequenceToken = uploadSequenceToken
         }
 
+        public func validate() throws {
+            try validate(creationTime, name:"creationTime", min: 0)
+            try validate(firstEventTimestamp, name:"firstEventTimestamp", min: 0)
+            try validate(lastEventTimestamp, name:"lastEventTimestamp", min: 0)
+            try validate(lastIngestionTime, name:"lastIngestionTime", min: 0)
+            try validate(logStreamName, name:"logStreamName", max: 512)
+            try validate(logStreamName, name:"logStreamName", min: 1)
+            try validate(logStreamName, name:"logStreamName", pattern: "[^:*]*")
+            try validate(storedBytes, name:"storedBytes", min: 0)
+            try validate(uploadSequenceToken, name:"uploadSequenceToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case creationTime = "creationTime"
@@ -1334,6 +1770,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: false, type: .string), 
             AWSShapeMember(label: "metricTransformations", required: false, type: .list)
         ]
+
         /// The creation time of the metric filter, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
         public let creationTime: Int64?
         /// The name of the metric filter.
@@ -1352,6 +1789,23 @@ extension CloudWatchLogs {
             self.metricTransformations = metricTransformations
         }
 
+        public func validate() throws {
+            try validate(creationTime, name:"creationTime", min: 0)
+            try validate(filterName, name:"filterName", max: 512)
+            try validate(filterName, name:"filterName", min: 1)
+            try validate(filterName, name:"filterName", pattern: "[^:*]*")
+            try validate(filterPattern, name:"filterPattern", max: 1024)
+            try validate(filterPattern, name:"filterPattern", min: 0)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try metricTransformations?.forEach {
+                try $0.validate()
+            }
+            try validate(metricTransformations, name:"metricTransformations", max: 1)
+            try validate(metricTransformations, name:"metricTransformations", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "creationTime"
             case filterName = "filterName"
@@ -1367,6 +1821,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "eventNumber", required: false, type: .long), 
             AWSShapeMember(label: "extractedValues", required: false, type: .map)
         ]
+
         /// The raw event data.
         public let eventMessage: String?
         /// The event number.
@@ -1378,6 +1833,10 @@ extension CloudWatchLogs {
             self.eventMessage = eventMessage
             self.eventNumber = eventNumber
             self.extractedValues = extractedValues
+        }
+
+        public func validate() throws {
+            try validate(eventMessage, name:"eventMessage", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1394,6 +1853,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "metricNamespace", required: true, type: .string), 
             AWSShapeMember(label: "metricValue", required: true, type: .string)
         ]
+
         /// (Optional) The value to emit when a filter pattern does not match a log event. This value can be null.
         public let defaultValue: Double?
         /// The name of the CloudWatch metric.
@@ -1408,6 +1868,14 @@ extension CloudWatchLogs {
             self.metricName = metricName
             self.metricNamespace = metricNamespace
             self.metricValue = metricValue
+        }
+
+        public func validate() throws {
+            try validate(metricName, name:"metricName", max: 255)
+            try validate(metricName, name:"metricName", pattern: "[^:*$]*")
+            try validate(metricNamespace, name:"metricNamespace", max: 255)
+            try validate(metricNamespace, name:"metricNamespace", pattern: "[^:*$]*")
+            try validate(metricValue, name:"metricValue", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1430,6 +1898,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "message", required: false, type: .string), 
             AWSShapeMember(label: "timestamp", required: false, type: .long)
         ]
+
         /// The time the event was ingested, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
         public let ingestionTime: Int64?
         /// The data contained in the log event.
@@ -1441,6 +1910,12 @@ extension CloudWatchLogs {
             self.ingestionTime = ingestionTime
             self.message = message
             self.timestamp = timestamp
+        }
+
+        public func validate() throws {
+            try validate(ingestionTime, name:"ingestionTime", min: 0)
+            try validate(message, name:"message", min: 1)
+            try validate(timestamp, name:"timestamp", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1455,6 +1930,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "accessPolicy", required: true, type: .string), 
             AWSShapeMember(label: "destinationName", required: true, type: .string)
         ]
+
         /// An IAM policy document that authorizes cross-account users to deliver their log events to the associated destination.
         public let accessPolicy: String
         /// A name for an existing destination.
@@ -1463,6 +1939,13 @@ extension CloudWatchLogs {
         public init(accessPolicy: String, destinationName: String) {
             self.accessPolicy = accessPolicy
             self.destinationName = destinationName
+        }
+
+        public func validate() throws {
+            try validate(accessPolicy, name:"accessPolicy", min: 1)
+            try validate(destinationName, name:"destinationName", max: 512)
+            try validate(destinationName, name:"destinationName", min: 1)
+            try validate(destinationName, name:"destinationName", pattern: "[^:*]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1477,6 +1960,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "roleArn", required: true, type: .string), 
             AWSShapeMember(label: "targetArn", required: true, type: .string)
         ]
+
         /// A name for the destination.
         public let destinationName: String
         /// The ARN of an IAM role that grants CloudWatch Logs permissions to call the Amazon Kinesis PutRecord operation on the destination stream.
@@ -1490,6 +1974,14 @@ extension CloudWatchLogs {
             self.targetArn = targetArn
         }
 
+        public func validate() throws {
+            try validate(destinationName, name:"destinationName", max: 512)
+            try validate(destinationName, name:"destinationName", min: 1)
+            try validate(destinationName, name:"destinationName", pattern: "[^:*]*")
+            try validate(roleArn, name:"roleArn", min: 1)
+            try validate(targetArn, name:"targetArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case destinationName = "destinationName"
             case roleArn = "roleArn"
@@ -1501,11 +1993,16 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "destination", required: false, type: .structure)
         ]
+
         /// The destination.
         public let destination: Destination?
 
         public init(destination: Destination? = nil) {
             self.destination = destination
+        }
+
+        public func validate() throws {
+            try destination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1520,6 +2017,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logStreamName", required: true, type: .string), 
             AWSShapeMember(label: "sequenceToken", required: false, type: .string)
         ]
+
         /// The log events.
         public let logEvents: [InputLogEvent]
         /// The name of the log group.
@@ -1536,6 +2034,21 @@ extension CloudWatchLogs {
             self.sequenceToken = sequenceToken
         }
 
+        public func validate() throws {
+            try logEvents.forEach {
+                try $0.validate()
+            }
+            try validate(logEvents, name:"logEvents", max: 10000)
+            try validate(logEvents, name:"logEvents", min: 1)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(logStreamName, name:"logStreamName", max: 512)
+            try validate(logStreamName, name:"logStreamName", min: 1)
+            try validate(logStreamName, name:"logStreamName", pattern: "[^:*]*")
+            try validate(sequenceToken, name:"sequenceToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case logEvents = "logEvents"
             case logGroupName = "logGroupName"
@@ -1549,6 +2062,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "nextSequenceToken", required: false, type: .string), 
             AWSShapeMember(label: "rejectedLogEventsInfo", required: false, type: .structure)
         ]
+
         /// The next sequence token.
         public let nextSequenceToken: String?
         /// The rejected events.
@@ -1557,6 +2071,10 @@ extension CloudWatchLogs {
         public init(nextSequenceToken: String? = nil, rejectedLogEventsInfo: RejectedLogEventsInfo? = nil) {
             self.nextSequenceToken = nextSequenceToken
             self.rejectedLogEventsInfo = rejectedLogEventsInfo
+        }
+
+        public func validate() throws {
+            try validate(nextSequenceToken, name:"nextSequenceToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1572,6 +2090,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "metricTransformations", required: true, type: .list)
         ]
+
         /// A name for the metric filter.
         public let filterName: String
         /// A filter pattern for extracting metric data out of ingested log events.
@@ -1588,6 +2107,22 @@ extension CloudWatchLogs {
             self.metricTransformations = metricTransformations
         }
 
+        public func validate() throws {
+            try validate(filterName, name:"filterName", max: 512)
+            try validate(filterName, name:"filterName", min: 1)
+            try validate(filterName, name:"filterName", pattern: "[^:*]*")
+            try validate(filterPattern, name:"filterPattern", max: 1024)
+            try validate(filterPattern, name:"filterPattern", min: 0)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try metricTransformations.forEach {
+                try $0.validate()
+            }
+            try validate(metricTransformations, name:"metricTransformations", max: 1)
+            try validate(metricTransformations, name:"metricTransformations", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case filterName = "filterName"
             case filterPattern = "filterPattern"
@@ -1601,6 +2136,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "policyDocument", required: false, type: .string), 
             AWSShapeMember(label: "policyName", required: false, type: .string)
         ]
+
         /// Details of the new policy, including the identity of the principal that is enabled to put logs to this account. This is formatted as a JSON string. This parameter is required. The following example creates a resource policy enabling the Route 53 service to put DNS query logs in to the specified log group. Replace "logArn" with the ARN of your CloudWatch Logs resource, such as a log group or log stream.  { "Version": "2012-10-17", "Statement": [ { "Sid": "Route53LogsToCloudWatchLogs", "Effect": "Allow", "Principal": { "Service": [ "route53.amazonaws.com" ] }, "Action":"logs:PutLogEvents", "Resource": "logArn" } ] }  
         public let policyDocument: String?
         /// Name of the new policy. This parameter is required.
@@ -1609,6 +2145,11 @@ extension CloudWatchLogs {
         public init(policyDocument: String? = nil, policyName: String? = nil) {
             self.policyDocument = policyDocument
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(policyDocument, name:"policyDocument", max: 5120)
+            try validate(policyDocument, name:"policyDocument", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1621,11 +2162,16 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourcePolicy", required: false, type: .structure)
         ]
+
         /// The new policy.
         public let resourcePolicy: ResourcePolicy?
 
         public init(resourcePolicy: ResourcePolicy? = nil) {
             self.resourcePolicy = resourcePolicy
+        }
+
+        public func validate() throws {
+            try resourcePolicy?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1638,6 +2184,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "retentionInDays", required: true, type: .integer)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
         public let retentionInDays: Int32
@@ -1645,6 +2192,12 @@ extension CloudWatchLogs {
         public init(logGroupName: String, retentionInDays: Int32) {
             self.logGroupName = logGroupName
             self.retentionInDays = retentionInDays
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1662,6 +2215,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The ARN of the destination to deliver matching log events to. Currently, the supported destinations are:   An Amazon Kinesis stream belonging to the same account as the subscription filter, for same-account delivery.   A logical destination (specified using an ARN) belonging to a different account, for cross-account delivery.   An Amazon Kinesis Firehose delivery stream belonging to the same account as the subscription filter, for same-account delivery.   An AWS Lambda function belonging to the same account as the subscription filter, for same-account delivery.  
         public let destinationArn: String
         /// The method used to distribute log data to the destination. By default log data is grouped by log stream, but the grouping can be set to random for a more even distribution. This property is only applicable when the destination is an Amazon Kinesis stream. 
@@ -1684,6 +2238,19 @@ extension CloudWatchLogs {
             self.roleArn = roleArn
         }
 
+        public func validate() throws {
+            try validate(destinationArn, name:"destinationArn", min: 1)
+            try validate(filterName, name:"filterName", max: 512)
+            try validate(filterName, name:"filterName", min: 1)
+            try validate(filterName, name:"filterName", pattern: "[^:*]*")
+            try validate(filterPattern, name:"filterPattern", max: 1024)
+            try validate(filterPattern, name:"filterPattern", min: 0)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(roleArn, name:"roleArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case destinationArn = "destinationArn"
             case distribution = "distribution"
@@ -1699,6 +2266,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "location", required: false, type: .structure), 
             AWSShapeMember(label: "message", required: false, type: .string)
         ]
+
         /// Reserved.
         public let location: QueryCompileErrorLocation?
         /// Reserved.
@@ -1720,6 +2288,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "endCharOffset", required: false, type: .integer), 
             AWSShapeMember(label: "startCharOffset", required: false, type: .integer)
         ]
+
         /// Reserved.
         public let endCharOffset: Int32?
         /// Reserved.
@@ -1744,6 +2313,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "queryString", required: false, type: .string), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The date and time that this query was created.
         public let createTime: Int64?
         /// The name of the log group scanned by this query.
@@ -1763,6 +2333,17 @@ extension CloudWatchLogs {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(createTime, name:"createTime", min: 0)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(queryId, name:"queryId", max: 256)
+            try validate(queryId, name:"queryId", min: 0)
+            try validate(queryString, name:"queryString", max: 2048)
+            try validate(queryString, name:"queryString", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createTime = "createTime"
             case logGroupName = "logGroupName"
@@ -1778,6 +2359,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "recordsMatched", required: false, type: .double), 
             AWSShapeMember(label: "recordsScanned", required: false, type: .double)
         ]
+
         /// The total number of bytes in the log events scanned during the query.
         public let bytesScanned: Double?
         /// The number of log events that matched the query string.
@@ -1813,6 +2395,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "tooNewLogEventStartIndex", required: false, type: .integer), 
             AWSShapeMember(label: "tooOldLogEventEndIndex", required: false, type: .integer)
         ]
+
         /// The expired log events.
         public let expiredLogEventEndIndex: Int32?
         /// The log events that are too new.
@@ -1839,6 +2422,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "policyDocument", required: false, type: .string), 
             AWSShapeMember(label: "policyName", required: false, type: .string)
         ]
+
         /// Timestamp showing when this policy was last updated, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
         public let lastUpdatedTime: Int64?
         /// The details of the policy.
@@ -1850,6 +2434,12 @@ extension CloudWatchLogs {
             self.lastUpdatedTime = lastUpdatedTime
             self.policyDocument = policyDocument
             self.policyName = policyName
+        }
+
+        public func validate() throws {
+            try validate(lastUpdatedTime, name:"lastUpdatedTime", min: 0)
+            try validate(policyDocument, name:"policyDocument", max: 5120)
+            try validate(policyDocument, name:"policyDocument", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1864,6 +2454,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "field", required: false, type: .string), 
             AWSShapeMember(label: "value", required: false, type: .string)
         ]
+
         /// The log event field.
         public let field: String?
         /// The value of this field.
@@ -1885,6 +2476,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logStreamName", required: false, type: .string), 
             AWSShapeMember(label: "searchedCompletely", required: false, type: .boolean)
         ]
+
         /// The name of the log stream.
         public let logStreamName: String?
         /// Indicates whether all the events in this log stream were searched.
@@ -1893,6 +2485,12 @@ extension CloudWatchLogs {
         public init(logStreamName: String? = nil, searchedCompletely: Bool? = nil) {
             self.logStreamName = logStreamName
             self.searchedCompletely = searchedCompletely
+        }
+
+        public func validate() throws {
+            try validate(logStreamName, name:"logStreamName", max: 512)
+            try validate(logStreamName, name:"logStreamName", min: 1)
+            try validate(logStreamName, name:"logStreamName", pattern: "[^:*]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1909,6 +2507,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "queryString", required: true, type: .string), 
             AWSShapeMember(label: "startTime", required: true, type: .long)
         ]
+
         /// The end of the time range to query. The range is inclusive, so the specified end time is included in the query. Specified as epoch time, the number of seconds since January 1, 1970, 00:00:00 UTC.
         public let endTime: Int64
         /// The maximum number of log events to return in the query. If the query string uses the fields command, only the specified fields and their values are returned.
@@ -1928,6 +2527,18 @@ extension CloudWatchLogs {
             self.startTime = startTime
         }
 
+        public func validate() throws {
+            try validate(endTime, name:"endTime", min: 0)
+            try validate(limit, name:"limit", max: 10000)
+            try validate(limit, name:"limit", min: 1)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(queryString, name:"queryString", max: 2048)
+            try validate(queryString, name:"queryString", min: 0)
+            try validate(startTime, name:"startTime", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "endTime"
             case limit = "limit"
@@ -1941,11 +2552,17 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "queryId", required: false, type: .string)
         ]
+
         /// The unique ID of the query. 
         public let queryId: String?
 
         public init(queryId: String? = nil) {
             self.queryId = queryId
+        }
+
+        public func validate() throws {
+            try validate(queryId, name:"queryId", max: 256)
+            try validate(queryId, name:"queryId", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1957,11 +2574,17 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "queryId", required: true, type: .string)
         ]
+
         /// The ID number of the query to stop. If necessary, you can use DescribeQueries to find this ID number.
         public let queryId: String
 
         public init(queryId: String) {
             self.queryId = queryId
+        }
+
+        public func validate() throws {
+            try validate(queryId, name:"queryId", max: 256)
+            try validate(queryId, name:"queryId", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1973,6 +2596,7 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "success", required: false, type: .boolean)
         ]
+
         /// This is true if the query was stopped by the StopQuery operation.
         public let success: Bool?
 
@@ -1995,6 +2619,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: false, type: .string), 
             AWSShapeMember(label: "roleArn", required: false, type: .string)
         ]
+
         /// The creation time of the subscription filter, expressed as the number of milliseconds after Jan 1, 1970 00:00:00 UTC.
         public let creationTime: Int64?
         /// The Amazon Resource Name (ARN) of the destination.
@@ -2017,6 +2642,20 @@ extension CloudWatchLogs {
             self.roleArn = roleArn
         }
 
+        public func validate() throws {
+            try validate(creationTime, name:"creationTime", min: 0)
+            try validate(destinationArn, name:"destinationArn", min: 1)
+            try validate(filterName, name:"filterName", max: 512)
+            try validate(filterName, name:"filterName", min: 1)
+            try validate(filterName, name:"filterName", pattern: "[^:*]*")
+            try validate(filterPattern, name:"filterPattern", max: 1024)
+            try validate(filterPattern, name:"filterPattern", min: 0)
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try validate(roleArn, name:"roleArn", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "creationTime"
             case destinationArn = "destinationArn"
@@ -2033,6 +2672,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .map)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
         /// The key-value pairs to use for the tags.
@@ -2041,6 +2681,12 @@ extension CloudWatchLogs {
         public init(logGroupName: String, tags: [String: String]) {
             self.logGroupName = logGroupName
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2054,6 +2700,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "filterPattern", required: true, type: .string), 
             AWSShapeMember(label: "logEventMessages", required: true, type: .list)
         ]
+
         public let filterPattern: String
         /// The log event messages to test.
         public let logEventMessages: [String]
@@ -2061,6 +2708,16 @@ extension CloudWatchLogs {
         public init(filterPattern: String, logEventMessages: [String]) {
             self.filterPattern = filterPattern
             self.logEventMessages = logEventMessages
+        }
+
+        public func validate() throws {
+            try validate(filterPattern, name:"filterPattern", max: 1024)
+            try validate(filterPattern, name:"filterPattern", min: 0)
+            try logEventMessages.forEach {
+                try validate($0, name:"logEventMessages[]", min: 1)
+            }
+            try validate(logEventMessages, name:"logEventMessages", max: 50)
+            try validate(logEventMessages, name:"logEventMessages", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2073,11 +2730,18 @@ extension CloudWatchLogs {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "matches", required: false, type: .list)
         ]
+
         /// The matched events.
         public let matches: [MetricFilterMatchRecord]?
 
         public init(matches: [MetricFilterMatchRecord]? = nil) {
             self.matches = matches
+        }
+
+        public func validate() throws {
+            try matches?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2090,6 +2754,7 @@ extension CloudWatchLogs {
             AWSShapeMember(label: "logGroupName", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The name of the log group.
         public let logGroupName: String
         /// The tag keys. The corresponding tags are removed from the log group.
@@ -2098,6 +2763,18 @@ extension CloudWatchLogs {
         public init(logGroupName: String, tags: [String]) {
             self.logGroupName = logGroupName
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(logGroupName, name:"logGroupName", max: 512)
+            try validate(logGroupName, name:"logGroupName", min: 1)
+            try validate(logGroupName, name:"logGroupName", pattern: "[\\.\\-_/#A-Za-z0-9]+")
+            try tags.forEach {
+                try validate($0, name:"tags[]", max: 128)
+                try validate($0, name:"tags[]", min: 1)
+                try validate($0, name:"tags[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]+)$")
+            }
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

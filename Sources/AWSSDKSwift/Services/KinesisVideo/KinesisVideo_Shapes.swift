@@ -29,6 +29,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamName", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The number of hours that you want to retain the data in the stream. Kinesis Video Streams retains the data in a data store that is associated with the stream. The default value is 0, indicating that the stream does not persist data. When the DataRetentionInHours value is 0, consumers can still consume the fragments that remain in the service host buffer, which has a retention time limit of 5 minutes and a retention memory limit of 200 MB. Fragments are removed from the buffer when either limit is reached.
         public let dataRetentionInHours: Int32?
         /// The name of the device that is writing to the stream.   In the current implementation, Kinesis Video Streams does not use this name. 
@@ -51,6 +52,21 @@ extension KinesisVideo {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(dataRetentionInHours, name:"dataRetentionInHours", min: 0)
+            try validate(deviceName, name:"deviceName", max: 128)
+            try validate(deviceName, name:"deviceName", min: 1)
+            try validate(deviceName, name:"deviceName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(kmsKeyId, name:"kmsKeyId", max: 2048)
+            try validate(kmsKeyId, name:"kmsKeyId", min: 1)
+            try validate(mediaType, name:"mediaType", max: 128)
+            try validate(mediaType, name:"mediaType", min: 1)
+            try validate(mediaType, name:"mediaType", pattern: "[\\w\\-\\.\\+]+/[\\w\\-\\.\\+]+(,[\\w\\-\\.\\+]+/[\\w\\-\\.\\+]+)*")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dataRetentionInHours = "DataRetentionInHours"
             case deviceName = "DeviceName"
@@ -65,11 +81,18 @@ extension KinesisVideo {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StreamARN", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the stream.
         public let streamARN: String?
 
         public init(streamARN: String? = nil) {
             self.streamARN = streamARN
+        }
+
+        public func validate() throws {
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -82,6 +105,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "CurrentVersion", required: false, type: .string), 
             AWSShapeMember(label: "StreamARN", required: true, type: .string)
         ]
+
         /// Optional: The version of the stream that you want to delete.  Specify the version as a safeguard to ensure that your are deleting the correct stream. To get the stream version, use the DescribeStream API. If not specified, only the CreationTime is checked before deleting the stream.
         public let currentVersion: String?
         /// The Amazon Resource Name (ARN) of the stream that you want to delete. 
@@ -92,6 +116,15 @@ extension KinesisVideo {
             self.streamARN = streamARN
         }
 
+        public func validate() throws {
+            try validate(currentVersion, name:"currentVersion", max: 64)
+            try validate(currentVersion, name:"currentVersion", min: 1)
+            try validate(currentVersion, name:"currentVersion", pattern: "[a-zA-Z0-9]+")
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case currentVersion = "CurrentVersion"
             case streamARN = "StreamARN"
@@ -99,6 +132,7 @@ extension KinesisVideo {
     }
 
     public struct DeleteStreamOutput: AWSShape {
+
 
         public init() {
         }
@@ -110,6 +144,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamARN", required: false, type: .string), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the stream.
         public let streamARN: String?
         /// The name of the stream.
@@ -118,6 +153,15 @@ extension KinesisVideo {
         public init(streamARN: String? = nil, streamName: String? = nil) {
             self.streamARN = streamARN
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -130,11 +174,16 @@ extension KinesisVideo {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StreamInfo", required: false, type: .structure)
         ]
+
         /// An object that describes the stream.
         public let streamInfo: StreamInfo?
 
         public init(streamInfo: StreamInfo? = nil) {
             self.streamInfo = streamInfo
+        }
+
+        public func validate() throws {
+            try streamInfo?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -148,6 +197,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamARN", required: false, type: .string), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// The name of the API action for which to get an endpoint.
         public let aPIName: APIName
         /// The Amazon Resource Name (ARN) of the stream that you want to get the endpoint for. You must specify either this parameter or a StreamName in the request. 
@@ -161,6 +211,15 @@ extension KinesisVideo {
             self.streamName = streamName
         }
 
+        public func validate() throws {
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case aPIName = "APIName"
             case streamARN = "StreamARN"
@@ -172,6 +231,7 @@ extension KinesisVideo {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DataEndpoint", required: false, type: .string)
         ]
+
         /// The endpoint value. To read data from the stream or to write data to it, specify this endpoint in your application.
         public let dataEndpoint: String?
 
@@ -190,6 +250,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "StreamNameCondition", required: false, type: .structure)
         ]
+
         /// The maximum number of streams to return in the response. The default is 10,000.
         public let maxResults: Int32?
         /// If you specify this parameter, when the result of a ListStreams operation is truncated, the call returns the NextToken in the response. To get another batch of streams, provide this token in your next request.
@@ -201,6 +262,14 @@ extension KinesisVideo {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.streamNameCondition = streamNameCondition
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 10000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try streamNameCondition?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -215,6 +284,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "StreamInfoList", required: false, type: .list)
         ]
+
         /// If the response is truncated, the call returns this element with a token. To get the next batch of streams, use this token in your next request. 
         public let nextToken: String?
         /// An array of StreamInfo objects.
@@ -223,6 +293,14 @@ extension KinesisVideo {
         public init(nextToken: String? = nil, streamInfoList: [StreamInfo]? = nil) {
             self.nextToken = nextToken
             self.streamInfoList = streamInfoList
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try streamInfoList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -237,6 +315,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamARN", required: false, type: .string), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// If you specify this parameter and the result of a ListTagsForStream call is truncated, the response includes a token that you can use in the next request to fetch the next batch of tags.
         public let nextToken: String?
         /// The Amazon Resource Name (ARN) of the stream that you want to list tags for.
@@ -248,6 +327,17 @@ extension KinesisVideo {
             self.nextToken = nextToken
             self.streamARN = streamARN
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 0)
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -262,6 +352,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// If you specify this parameter and the result of a ListTags call is truncated, the response includes a token that you can use in the next request to fetch the next set of tags.
         public let nextToken: String?
         /// A map of tag keys and values associated with the specified stream.
@@ -270,6 +361,11 @@ extension KinesisVideo {
         public init(nextToken: String? = nil, tags: [String: String]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -298,6 +394,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamName", required: false, type: .string), 
             AWSShapeMember(label: "Version", required: false, type: .string)
         ]
+
         /// A time stamp that indicates when the stream was created.
         public let creationTime: TimeStamp?
         /// How long the stream retains data, in hours.
@@ -329,6 +426,27 @@ extension KinesisVideo {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(dataRetentionInHours, name:"dataRetentionInHours", min: 0)
+            try validate(deviceName, name:"deviceName", max: 128)
+            try validate(deviceName, name:"deviceName", min: 1)
+            try validate(deviceName, name:"deviceName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(kmsKeyId, name:"kmsKeyId", max: 2048)
+            try validate(kmsKeyId, name:"kmsKeyId", min: 1)
+            try validate(mediaType, name:"mediaType", max: 128)
+            try validate(mediaType, name:"mediaType", min: 1)
+            try validate(mediaType, name:"mediaType", pattern: "[\\w\\-\\.\\+]+/[\\w\\-\\.\\+]+(,[\\w\\-\\.\\+]+/[\\w\\-\\.\\+]+)*")
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(version, name:"version", max: 64)
+            try validate(version, name:"version", min: 1)
+            try validate(version, name:"version", pattern: "[a-zA-Z0-9]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationTime = "CreationTime"
             case dataRetentionInHours = "DataRetentionInHours"
@@ -347,6 +465,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "ComparisonOperator", required: false, type: .enum), 
             AWSShapeMember(label: "ComparisonValue", required: false, type: .string)
         ]
+
         /// A comparison operator. Currently, you can specify only the BEGINS_WITH operator, which finds streams whose names start with a given prefix.
         public let comparisonOperator: ComparisonOperator?
         /// A value to compare.
@@ -355,6 +474,12 @@ extension KinesisVideo {
         public init(comparisonOperator: ComparisonOperator? = nil, comparisonValue: String? = nil) {
             self.comparisonOperator = comparisonOperator
             self.comparisonValue = comparisonValue
+        }
+
+        public func validate() throws {
+            try validate(comparisonValue, name:"comparisonValue", max: 256)
+            try validate(comparisonValue, name:"comparisonValue", min: 1)
+            try validate(comparisonValue, name:"comparisonValue", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -369,6 +494,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamName", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource that you want to add the tag or tags to.
         public let streamARN: String?
         /// The name of the stream that you want to add the tag or tags to.
@@ -382,6 +508,15 @@ extension KinesisVideo {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case streamARN = "StreamARN"
             case streamName = "StreamName"
@@ -390,6 +525,7 @@ extension KinesisVideo {
     }
 
     public struct TagStreamOutput: AWSShape {
+
 
         public init() {
         }
@@ -402,6 +538,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamName", required: false, type: .string), 
             AWSShapeMember(label: "TagKeyList", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the stream that you want to remove tags from.
         public let streamARN: String?
         /// The name of the stream that you want to remove tags from.
@@ -415,6 +552,21 @@ extension KinesisVideo {
             self.tagKeyList = tagKeyList
         }
 
+        public func validate() throws {
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+            try tagKeyList.forEach {
+                try validate($0, name:"tagKeyList[]", max: 128)
+                try validate($0, name:"tagKeyList[]", min: 1)
+            }
+            try validate(tagKeyList, name:"tagKeyList", max: 50)
+            try validate(tagKeyList, name:"tagKeyList", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case streamARN = "StreamARN"
             case streamName = "StreamName"
@@ -423,6 +575,7 @@ extension KinesisVideo {
     }
 
     public struct UntagStreamOutput: AWSShape {
+
 
         public init() {
         }
@@ -437,6 +590,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamARN", required: false, type: .string), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// The version of the stream whose retention period you want to change. To get the version, call either the DescribeStream or the ListStreams API.
         public let currentVersion: String
         /// The retention period, in hours. The value you specify replaces the current value. The maximum value for this parameter is 87600 (ten years).
@@ -456,6 +610,19 @@ extension KinesisVideo {
             self.streamName = streamName
         }
 
+        public func validate() throws {
+            try validate(currentVersion, name:"currentVersion", max: 64)
+            try validate(currentVersion, name:"currentVersion", min: 1)
+            try validate(currentVersion, name:"currentVersion", pattern: "[a-zA-Z0-9]+")
+            try validate(dataRetentionChangeInHours, name:"dataRetentionChangeInHours", min: 1)
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case currentVersion = "CurrentVersion"
             case dataRetentionChangeInHours = "DataRetentionChangeInHours"
@@ -473,6 +640,7 @@ extension KinesisVideo {
 
     public struct UpdateDataRetentionOutput: AWSShape {
 
+
         public init() {
         }
 
@@ -486,6 +654,7 @@ extension KinesisVideo {
             AWSShapeMember(label: "StreamARN", required: false, type: .string), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// The version of the stream whose metadata you want to update.
         public let currentVersion: String
         /// The name of the device that is writing to the stream.    In the current implementation, Kinesis Video Streams does not use this name.  
@@ -505,6 +674,24 @@ extension KinesisVideo {
             self.streamName = streamName
         }
 
+        public func validate() throws {
+            try validate(currentVersion, name:"currentVersion", max: 64)
+            try validate(currentVersion, name:"currentVersion", min: 1)
+            try validate(currentVersion, name:"currentVersion", pattern: "[a-zA-Z0-9]+")
+            try validate(deviceName, name:"deviceName", max: 128)
+            try validate(deviceName, name:"deviceName", min: 1)
+            try validate(deviceName, name:"deviceName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(mediaType, name:"mediaType", max: 128)
+            try validate(mediaType, name:"mediaType", min: 1)
+            try validate(mediaType, name:"mediaType", pattern: "[\\w\\-\\.\\+]+/[\\w\\-\\.\\+]+(,[\\w\\-\\.\\+]+/[\\w\\-\\.\\+]+)*")
+            try validate(streamARN, name:"streamARN", max: 1024)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws:kinesisvideo:[a-z0-9-]+:[0-9]+:[a-z]+/[a-zA-Z0-9_.-]+/[0-9]+")
+            try validate(streamName, name:"streamName", max: 256)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case currentVersion = "CurrentVersion"
             case deviceName = "DeviceName"
@@ -515,6 +702,7 @@ extension KinesisVideo {
     }
 
     public struct UpdateStreamOutput: AWSShape {
+
 
         public init() {
         }

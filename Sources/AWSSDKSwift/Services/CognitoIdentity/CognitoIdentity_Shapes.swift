@@ -17,6 +17,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "ProviderName", required: false, type: .string), 
             AWSShapeMember(label: "ServerSideTokenCheck", required: false, type: .boolean)
         ]
+
         /// The client ID for the Amazon Cognito user pool.
         public let clientId: String?
         /// The provider name for an Amazon Cognito user pool. For example, cognito-idp.us-east-1.amazonaws.com/us-east-1_123456789.
@@ -28,6 +29,15 @@ extension CognitoIdentity {
             self.clientId = clientId
             self.providerName = providerName
             self.serverSideTokenCheck = serverSideTokenCheck
+        }
+
+        public func validate() throws {
+            try validate(clientId, name:"clientId", max: 128)
+            try validate(clientId, name:"clientId", min: 1)
+            try validate(clientId, name:"clientId", pattern: "[\\w_]+")
+            try validate(providerName, name:"providerName", max: 128)
+            try validate(providerName, name:"providerName", min: 1)
+            try validate(providerName, name:"providerName", pattern: "[\\w._:/-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -48,6 +58,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "SamlProviderARNs", required: false, type: .list), 
             AWSShapeMember(label: "SupportedLoginProviders", required: false, type: .map)
         ]
+
         /// TRUE if the identity pool supports unauthenticated logins.
         public let allowUnauthenticatedIdentities: Bool
         /// An array of Amazon Cognito user pools and their client IDs.
@@ -76,6 +87,26 @@ extension CognitoIdentity {
             self.supportedLoginProviders = supportedLoginProviders
         }
 
+        public func validate() throws {
+            try cognitoIdentityProviders?.forEach {
+                try $0.validate()
+            }
+            try validate(developerProviderName, name:"developerProviderName", max: 128)
+            try validate(developerProviderName, name:"developerProviderName", min: 1)
+            try validate(developerProviderName, name:"developerProviderName", pattern: "[\\w._-]+")
+            try validate(identityPoolName, name:"identityPoolName", max: 128)
+            try validate(identityPoolName, name:"identityPoolName", min: 1)
+            try validate(identityPoolName, name:"identityPoolName", pattern: "[\\w ]+")
+            try openIdConnectProviderARNs?.forEach {
+                try validate($0, name:"openIdConnectProviderARNs[]", max: 2048)
+                try validate($0, name:"openIdConnectProviderARNs[]", min: 20)
+            }
+            try samlProviderARNs?.forEach {
+                try validate($0, name:"samlProviderARNs[]", max: 2048)
+                try validate($0, name:"samlProviderARNs[]", min: 20)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowUnauthenticatedIdentities = "AllowUnauthenticatedIdentities"
             case cognitoIdentityProviders = "CognitoIdentityProviders"
@@ -95,6 +126,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "SecretKey", required: false, type: .string), 
             AWSShapeMember(label: "SessionToken", required: false, type: .string)
         ]
+
         /// The Access Key portion of the credentials.
         public let accessKeyId: String?
         /// The date at which these credentials will expire.
@@ -123,11 +155,22 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityIdsToDelete", required: true, type: .list)
         ]
+
         /// A list of 1-60 identities that you want to delete.
         public let identityIdsToDelete: [String]
 
         public init(identityIdsToDelete: [String]) {
             self.identityIdsToDelete = identityIdsToDelete
+        }
+
+        public func validate() throws {
+            try identityIdsToDelete.forEach {
+                try validate($0, name:"identityIdsToDelete[]", max: 55)
+                try validate($0, name:"identityIdsToDelete[]", min: 1)
+                try validate($0, name:"identityIdsToDelete[]", pattern: "[\\w-]+:[0-9a-f-]+")
+            }
+            try validate(identityIdsToDelete, name:"identityIdsToDelete", max: 60)
+            try validate(identityIdsToDelete, name:"identityIdsToDelete", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -139,11 +182,19 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedIdentityIds", required: false, type: .list)
         ]
+
         /// An array of UnprocessedIdentityId objects, each of which contains an ErrorCode and IdentityId.
         public let unprocessedIdentityIds: [UnprocessedIdentityId]?
 
         public init(unprocessedIdentityIds: [UnprocessedIdentityId]? = nil) {
             self.unprocessedIdentityIds = unprocessedIdentityIds
+        }
+
+        public func validate() throws {
+            try unprocessedIdentityIds?.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedIdentityIds, name:"unprocessedIdentityIds", max: 60)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -155,11 +206,18 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", required: true, type: .string)
         ]
+
         /// An identity pool ID in the format REGION:GUID.
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -171,11 +229,18 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityId", required: true, type: .string)
         ]
+
         /// A unique identifier in the format REGION:GUID.
         public let identityId: String
 
         public init(identityId: String) {
             self.identityId = identityId
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -187,11 +252,18 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", required: true, type: .string)
         ]
+
         /// An identity pool ID in the format REGION:GUID.
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -211,6 +283,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityId", required: true, type: .string), 
             AWSShapeMember(label: "Logins", required: false, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) of the role to be assumed when multiple roles were received in the token from the identity provider. For example, a SAML-based identity provider. This parameter is optional for identity providers that do not support role customization.
         public let customRoleArn: String?
         /// A unique identifier in the format REGION:GUID.
@@ -222,6 +295,14 @@ extension CognitoIdentity {
             self.customRoleArn = customRoleArn
             self.identityId = identityId
             self.logins = logins
+        }
+
+        public func validate() throws {
+            try validate(customRoleArn, name:"customRoleArn", max: 2048)
+            try validate(customRoleArn, name:"customRoleArn", min: 20)
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -236,6 +317,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "Credentials", required: false, type: .structure), 
             AWSShapeMember(label: "IdentityId", required: false, type: .string)
         ]
+
         /// Credentials for the provided identity ID.
         public let credentials: Credentials?
         /// A unique identifier in the format REGION:GUID.
@@ -244,6 +326,12 @@ extension CognitoIdentity {
         public init(credentials: Credentials? = nil, identityId: String? = nil) {
             self.credentials = credentials
             self.identityId = identityId
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -258,6 +346,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityPoolId", required: true, type: .string), 
             AWSShapeMember(label: "Logins", required: false, type: .map)
         ]
+
         /// A standard AWS account ID (9+ digits).
         public let accountId: String?
         /// An identity pool ID in the format REGION:GUID.
@@ -271,6 +360,15 @@ extension CognitoIdentity {
             self.logins = logins
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 15)
+            try validate(accountId, name:"accountId", min: 1)
+            try validate(accountId, name:"accountId", pattern: "\\d+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case identityPoolId = "IdentityPoolId"
@@ -282,11 +380,18 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityId", required: false, type: .string)
         ]
+
         /// A unique identifier in the format REGION:GUID.
         public let identityId: String?
 
         public init(identityId: String? = nil) {
             self.identityId = identityId
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -298,11 +403,18 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityPoolId", required: true, type: .string)
         ]
+
         /// An identity pool ID in the format REGION:GUID.
         public let identityPoolId: String
 
         public init(identityPoolId: String) {
             self.identityPoolId = identityPoolId
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -316,6 +428,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "RoleMappings", required: false, type: .map), 
             AWSShapeMember(label: "Roles", required: false, type: .map)
         ]
+
         /// An identity pool ID in the format REGION:GUID.
         public let identityPoolId: String?
         /// How users for a specific identity provider are to mapped to roles. This is a String-to-RoleMapping object map. The string identifies the identity provider, for example, "graph.facebook.com" or "cognito-idp.us-east-1.amazonaws.com/us-east-1_abcdefghi:app_client_id".
@@ -327,6 +440,12 @@ extension CognitoIdentity {
             self.identityPoolId = identityPoolId
             self.roleMappings = roleMappings
             self.roles = roles
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -343,6 +462,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "Logins", required: true, type: .map), 
             AWSShapeMember(label: "TokenDuration", required: false, type: .long)
         ]
+
         /// A unique identifier in the format REGION:GUID.
         public let identityId: String?
         /// An identity pool ID in the format REGION:GUID.
@@ -359,6 +479,17 @@ extension CognitoIdentity {
             self.tokenDuration = tokenDuration
         }
 
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(tokenDuration, name:"tokenDuration", max: 86400)
+            try validate(tokenDuration, name:"tokenDuration", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case identityId = "IdentityId"
             case identityPoolId = "IdentityPoolId"
@@ -372,6 +503,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityId", required: false, type: .string), 
             AWSShapeMember(label: "Token", required: false, type: .string)
         ]
+
         /// A unique identifier in the format REGION:GUID.
         public let identityId: String?
         /// An OpenID token.
@@ -380,6 +512,12 @@ extension CognitoIdentity {
         public init(identityId: String? = nil, token: String? = nil) {
             self.identityId = identityId
             self.token = token
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -393,6 +531,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityId", required: true, type: .string), 
             AWSShapeMember(label: "Logins", required: false, type: .map)
         ]
+
         /// A unique identifier in the format REGION:GUID.
         public let identityId: String
         /// A set of optional name-value pairs that map provider names to provider tokens. When using graph.facebook.com and www.amazon.com, supply the access_token returned from the provider's authflow. For accounts.google.com, an Amazon Cognito user pool provider, or any other OpenId Connect provider, always include the id_token.
@@ -401,6 +540,12 @@ extension CognitoIdentity {
         public init(identityId: String, logins: [String: String]? = nil) {
             self.identityId = identityId
             self.logins = logins
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -414,6 +559,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityId", required: false, type: .string), 
             AWSShapeMember(label: "Token", required: false, type: .string)
         ]
+
         /// A unique identifier in the format REGION:GUID. Note that the IdentityId returned may not match the one passed on input.
         public let identityId: String?
         /// An OpenID token, valid for 10 minutes.
@@ -422,6 +568,12 @@ extension CognitoIdentity {
         public init(identityId: String? = nil, token: String? = nil) {
             self.identityId = identityId
             self.token = token
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -437,6 +589,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "LastModifiedDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "Logins", required: false, type: .list)
         ]
+
         /// Date on which the identity was created.
         public let creationDate: TimeStamp?
         /// A unique identifier in the format REGION:GUID.
@@ -451,6 +604,16 @@ extension CognitoIdentity {
             self.identityId = identityId
             self.lastModifiedDate = lastModifiedDate
             self.logins = logins
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try logins?.forEach {
+                try validate($0, name:"logins[]", max: 128)
+                try validate($0, name:"logins[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -473,6 +636,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "SamlProviderARNs", required: false, type: .list), 
             AWSShapeMember(label: "SupportedLoginProviders", required: false, type: .map)
         ]
+
         /// TRUE if the identity pool supports unauthenticated logins.
         public let allowUnauthenticatedIdentities: Bool
         /// A list representing an Amazon Cognito user pool and its client ID.
@@ -504,6 +668,29 @@ extension CognitoIdentity {
             self.supportedLoginProviders = supportedLoginProviders
         }
 
+        public func validate() throws {
+            try cognitoIdentityProviders?.forEach {
+                try $0.validate()
+            }
+            try validate(developerProviderName, name:"developerProviderName", max: 128)
+            try validate(developerProviderName, name:"developerProviderName", min: 1)
+            try validate(developerProviderName, name:"developerProviderName", pattern: "[\\w._-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolName, name:"identityPoolName", max: 128)
+            try validate(identityPoolName, name:"identityPoolName", min: 1)
+            try validate(identityPoolName, name:"identityPoolName", pattern: "[\\w ]+")
+            try openIdConnectProviderARNs?.forEach {
+                try validate($0, name:"openIdConnectProviderARNs[]", max: 2048)
+                try validate($0, name:"openIdConnectProviderARNs[]", min: 20)
+            }
+            try samlProviderARNs?.forEach {
+                try validate($0, name:"samlProviderARNs[]", max: 2048)
+                try validate($0, name:"samlProviderARNs[]", min: 20)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case allowUnauthenticatedIdentities = "AllowUnauthenticatedIdentities"
             case cognitoIdentityProviders = "CognitoIdentityProviders"
@@ -522,6 +709,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityPoolId", required: false, type: .string), 
             AWSShapeMember(label: "IdentityPoolName", required: false, type: .string)
         ]
+
         /// An identity pool ID in the format REGION:GUID.
         public let identityPoolId: String?
         /// A string that you provide.
@@ -530,6 +718,15 @@ extension CognitoIdentity {
         public init(identityPoolId: String? = nil, identityPoolName: String? = nil) {
             self.identityPoolId = identityPoolId
             self.identityPoolName = identityPoolName
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolName, name:"identityPoolName", max: 128)
+            try validate(identityPoolName, name:"identityPoolName", min: 1)
+            try validate(identityPoolName, name:"identityPoolName", pattern: "[\\w ]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -545,6 +742,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "MaxResults", required: true, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An optional boolean parameter that allows you to hide disabled identities. If omitted, the ListIdentities API will include disabled identities in the response.
         public let hideDisabled: Bool?
         /// An identity pool ID in the format REGION:GUID.
@@ -561,6 +759,16 @@ extension CognitoIdentity {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(maxResults, name:"maxResults", max: 60)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case hideDisabled = "HideDisabled"
             case identityPoolId = "IdentityPoolId"
@@ -575,6 +783,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityPoolId", required: false, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An object containing a set of identities and associated mappings.
         public let identities: [IdentityDescription]?
         /// An identity pool ID in the format REGION:GUID.
@@ -586,6 +795,17 @@ extension CognitoIdentity {
             self.identities = identities
             self.identityPoolId = identityPoolId
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try identities?.forEach {
+                try $0.validate()
+            }
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -600,6 +820,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "MaxResults", required: true, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of identities to return.
         public let maxResults: Int32
         /// A pagination token.
@@ -608,6 +829,13 @@ extension CognitoIdentity {
         public init(maxResults: Int32, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 60)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -621,6 +849,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityPools", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The identity pools returned by the ListIdentityPools action.
         public let identityPools: [IdentityPoolShortDescription]?
         /// A pagination token.
@@ -629,6 +858,14 @@ extension CognitoIdentity {
         public init(identityPools: [IdentityPoolShortDescription]? = nil, nextToken: String? = nil) {
             self.identityPools = identityPools
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try identityPools?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -641,11 +878,17 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the identity pool that the tags are assigned to.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 2048)
+            try validate(resourceArn, name:"resourceArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -657,6 +900,7 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The tags that are assigned to the identity pool.
         public let tags: [String: String]?
 
@@ -677,6 +921,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// A unique ID used by your backend authentication process to identify a user. Typically, a developer identity provider would issue many developer user identifiers, in keeping with the number of users.
         public let developerUserIdentifier: String?
         /// A unique identifier in the format REGION:GUID.
@@ -696,6 +941,21 @@ extension CognitoIdentity {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(developerUserIdentifier, name:"developerUserIdentifier", max: 1024)
+            try validate(developerUserIdentifier, name:"developerUserIdentifier", min: 1)
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(maxResults, name:"maxResults", max: 60)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case developerUserIdentifier = "DeveloperUserIdentifier"
             case identityId = "IdentityId"
@@ -711,6 +971,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityId", required: false, type: .string), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// This is the list of developer user identifiers associated with an identity ID. Cognito supports the association of multiple developer user identifiers with an identity ID.
         public let developerUserIdentifierList: [String]?
         /// A unique identifier in the format REGION:GUID.
@@ -722,6 +983,18 @@ extension CognitoIdentity {
             self.developerUserIdentifierList = developerUserIdentifierList
             self.identityId = identityId
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try developerUserIdentifierList?.forEach {
+                try validate($0, name:"developerUserIdentifierList[]", max: 1024)
+                try validate($0, name:"developerUserIdentifierList[]", min: 1)
+            }
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -738,6 +1011,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "RoleARN", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The claim name that must be present in the token, for example, "isAdmin" or "paid".
         public let claim: String
         /// The match condition that specifies how closely the claim value in the IdP token must match Value.
@@ -752,6 +1026,16 @@ extension CognitoIdentity {
             self.matchType = matchType
             self.roleARN = roleARN
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(claim, name:"claim", max: 64)
+            try validate(claim, name:"claim", min: 1)
+            try validate(claim, name:"claim", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(roleARN, name:"roleARN", max: 2048)
+            try validate(roleARN, name:"roleARN", min: 20)
+            try validate(value, name:"value", max: 128)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -777,6 +1061,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityPoolId", required: true, type: .string), 
             AWSShapeMember(label: "SourceUserIdentifier", required: true, type: .string)
         ]
+
         /// User identifier for the destination user. The value should be a DeveloperUserIdentifier.
         public let destinationUserIdentifier: String
         /// The "domain" by which Cognito will refer to your users. This is a (pseudo) domain name that you provide while creating an identity pool. This name acts as a placeholder that allows your backend and the Cognito service to communicate about the developer provider. For the DeveloperProviderName, you can use letters as well as period (.), underscore (_), and dash (-).
@@ -793,6 +1078,19 @@ extension CognitoIdentity {
             self.sourceUserIdentifier = sourceUserIdentifier
         }
 
+        public func validate() throws {
+            try validate(destinationUserIdentifier, name:"destinationUserIdentifier", max: 1024)
+            try validate(destinationUserIdentifier, name:"destinationUserIdentifier", min: 1)
+            try validate(developerProviderName, name:"developerProviderName", max: 128)
+            try validate(developerProviderName, name:"developerProviderName", min: 1)
+            try validate(developerProviderName, name:"developerProviderName", pattern: "[\\w._-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(sourceUserIdentifier, name:"sourceUserIdentifier", max: 1024)
+            try validate(sourceUserIdentifier, name:"sourceUserIdentifier", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case destinationUserIdentifier = "DestinationUserIdentifier"
             case developerProviderName = "DeveloperProviderName"
@@ -805,11 +1103,18 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IdentityId", required: false, type: .string)
         ]
+
         /// A unique identifier in the format REGION:GUID.
         public let identityId: String?
 
         public init(identityId: String? = nil) {
             self.identityId = identityId
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -823,6 +1128,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "RulesConfiguration", required: false, type: .structure), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         /// If you specify Token or Rules as the Type, AmbiguousRoleResolution is required. Specifies the action to be taken if either no rules match the claim value for the Rules type, or there is no cognito:preferred_role claim and there are multiple cognito:roles matches for the Token type.
         public let ambiguousRoleResolution: AmbiguousRoleResolutionType?
         /// The rules to be used for mapping users to roles. If you specify Rules as the role mapping type, RulesConfiguration is required.
@@ -834,6 +1140,10 @@ extension CognitoIdentity {
             self.ambiguousRoleResolution = ambiguousRoleResolution
             self.rulesConfiguration = rulesConfiguration
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try rulesConfiguration?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -853,11 +1163,20 @@ extension CognitoIdentity {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Rules", required: true, type: .list)
         ]
+
         /// An array of rules. You can specify up to 25 rules per identity provider. Rules are evaluated in order. The first one to match specifies the role.
         public let rules: [MappingRule]
 
         public init(rules: [MappingRule]) {
             self.rules = rules
+        }
+
+        public func validate() throws {
+            try rules.forEach {
+                try $0.validate()
+            }
+            try validate(rules, name:"rules", max: 25)
+            try validate(rules, name:"rules", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -871,6 +1190,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "RoleMappings", required: false, type: .map), 
             AWSShapeMember(label: "Roles", required: true, type: .map)
         ]
+
         /// An identity pool ID in the format REGION:GUID.
         public let identityPoolId: String
         /// How users for a specific identity provider are to mapped to roles. This is a string to RoleMapping object map. The string identifies the identity provider, for example, "graph.facebook.com" or "cognito-idp-east-1.amazonaws.com/us-east-1_abcdefghi:app_client_id". Up to 25 rules can be specified per identity provider.
@@ -882,6 +1202,12 @@ extension CognitoIdentity {
             self.identityPoolId = identityPoolId
             self.roleMappings = roleMappings
             self.roles = roles
+        }
+
+        public func validate() throws {
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -896,6 +1222,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) of the identity pool to assign the tags to.
         public let resourceArn: String
         /// The tags to assign to the identity pool.
@@ -906,6 +1233,11 @@ extension CognitoIdentity {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 2048)
+            try validate(resourceArn, name:"resourceArn", min: 20)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tags = "Tags"
@@ -913,6 +1245,7 @@ extension CognitoIdentity {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -926,6 +1259,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "IdentityId", required: true, type: .string), 
             AWSShapeMember(label: "IdentityPoolId", required: true, type: .string)
         ]
+
         /// The "domain" by which Cognito will refer to your users.
         public let developerProviderName: String
         /// A unique ID used by your backend authentication process to identify a user.
@@ -942,6 +1276,20 @@ extension CognitoIdentity {
             self.identityPoolId = identityPoolId
         }
 
+        public func validate() throws {
+            try validate(developerProviderName, name:"developerProviderName", max: 128)
+            try validate(developerProviderName, name:"developerProviderName", min: 1)
+            try validate(developerProviderName, name:"developerProviderName", pattern: "[\\w._-]+")
+            try validate(developerUserIdentifier, name:"developerUserIdentifier", max: 1024)
+            try validate(developerUserIdentifier, name:"developerUserIdentifier", min: 1)
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try validate(identityPoolId, name:"identityPoolId", max: 55)
+            try validate(identityPoolId, name:"identityPoolId", min: 1)
+            try validate(identityPoolId, name:"identityPoolId", pattern: "[\\w-]+:[0-9a-f-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case developerProviderName = "DeveloperProviderName"
             case developerUserIdentifier = "DeveloperUserIdentifier"
@@ -956,6 +1304,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "Logins", required: true, type: .map), 
             AWSShapeMember(label: "LoginsToRemove", required: true, type: .list)
         ]
+
         /// A unique identifier in the format REGION:GUID.
         public let identityId: String
         /// A set of optional name-value pairs that map provider names to provider tokens.
@@ -967,6 +1316,16 @@ extension CognitoIdentity {
             self.identityId = identityId
             self.logins = logins
             self.loginsToRemove = loginsToRemove
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
+            try loginsToRemove.forEach {
+                try validate($0, name:"loginsToRemove[]", max: 128)
+                try validate($0, name:"loginsToRemove[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -981,6 +1340,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "ErrorCode", required: false, type: .enum), 
             AWSShapeMember(label: "IdentityId", required: false, type: .string)
         ]
+
         /// The error code indicating the type of error that occurred.
         public let errorCode: ErrorCode?
         /// A unique identifier in the format REGION:GUID.
@@ -989,6 +1349,12 @@ extension CognitoIdentity {
         public init(errorCode: ErrorCode? = nil, identityId: String? = nil) {
             self.errorCode = errorCode
             self.identityId = identityId
+        }
+
+        public func validate() throws {
+            try validate(identityId, name:"identityId", max: 55)
+            try validate(identityId, name:"identityId", min: 1)
+            try validate(identityId, name:"identityId", pattern: "[\\w-]+:[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1002,6 +1368,7 @@ extension CognitoIdentity {
             AWSShapeMember(label: "ResourceArn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: false, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the identity pool that the tags are assigned to.
         public let resourceArn: String
         /// The keys of the tags to remove from the user pool.
@@ -1012,6 +1379,15 @@ extension CognitoIdentity {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 2048)
+            try validate(resourceArn, name:"resourceArn", min: 20)
+            try tagKeys?.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case tagKeys = "TagKeys"
@@ -1019,6 +1395,7 @@ extension CognitoIdentity {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }

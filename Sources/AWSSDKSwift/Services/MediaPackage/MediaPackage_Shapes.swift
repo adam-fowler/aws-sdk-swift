@@ -28,6 +28,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) assigned to the Channel.
         public let arn: String?
         /// A short text description of the Channel.
@@ -60,6 +61,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// A short text description of the Channel.
         public let description: String?
         /// The ID of the Channel. The ID must be unique within the region and it
@@ -85,6 +87,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Channels", location: .body(locationName: "channels"), required: false, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// A list of Channel records.
         public let channels: [Channel]?
         /// A token that can be used to resume pagination from the end of the collection.
@@ -105,6 +108,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Description", location: .body(locationName: "description"), required: false, type: .string)
         ]
+
         /// A short text description of the Channel.
         public let description: String?
 
@@ -122,6 +126,7 @@ extension MediaPackage {
             AWSShapeMember(label: "KeyRotationIntervalSeconds", location: .body(locationName: "keyRotationIntervalSeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "SpekeKeyProvider", location: .body(locationName: "spekeKeyProvider"), required: true, type: .structure)
         ]
+
         /// Time (in seconds) between each encryption key rotation.
         public let keyRotationIntervalSeconds: Int32?
         public let spekeKeyProvider: SpekeKeyProvider
@@ -145,6 +150,7 @@ extension MediaPackage {
             AWSShapeMember(label: "SegmentPrefix", location: .body(locationName: "segmentPrefix"), required: false, type: .string), 
             AWSShapeMember(label: "StreamSelection", location: .body(locationName: "streamSelection"), required: false, type: .structure)
         ]
+
         public let encryption: CmafEncryption?
         /// A list of HLS manifest configurations
         public let hlsManifests: [HlsManifest]?
@@ -180,6 +186,7 @@ extension MediaPackage {
             AWSShapeMember(label: "SegmentPrefix", location: .body(locationName: "segmentPrefix"), required: false, type: .string), 
             AWSShapeMember(label: "StreamSelection", location: .body(locationName: "streamSelection"), required: false, type: .structure)
         ]
+
         public let encryption: CmafEncryption?
         /// A list of HLS manifest configurations
         public let hlsManifests: [HlsManifestCreateOrUpdateParameters]?
@@ -213,6 +220,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let description: String?
         public let id: String
         public let tags: [String: String]?
@@ -238,6 +246,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let arn: String?
         public let description: String?
         public let hlsIngest: HlsIngest?
@@ -276,6 +285,7 @@ extension MediaPackage {
             AWSShapeMember(label: "TimeDelaySeconds", location: .body(locationName: "timeDelaySeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         public let channelId: String
         public let cmafPackage: CmafPackageCreateOrUpdateParameters?
         public let dashPackage: DashPackage?
@@ -337,6 +347,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         public let arn: String?
         public let channelId: String?
         public let cmafPackage: CmafPackage?
@@ -392,6 +403,7 @@ extension MediaPackage {
             AWSShapeMember(label: "KeyRotationIntervalSeconds", location: .body(locationName: "keyRotationIntervalSeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "SpekeKeyProvider", location: .body(locationName: "spekeKeyProvider"), required: true, type: .structure)
         ]
+
         /// Time (in seconds) between each encryption key rotation.
         public let keyRotationIntervalSeconds: Int32?
         public let spekeKeyProvider: SpekeKeyProvider
@@ -423,6 +435,7 @@ extension MediaPackage {
             AWSShapeMember(label: "StreamSelection", location: .body(locationName: "streamSelection"), required: false, type: .structure), 
             AWSShapeMember(label: "SuggestedPresentationDelaySeconds", location: .body(locationName: "suggestedPresentationDelaySeconds"), required: false, type: .integer)
         ]
+
         public let adsOnDeliveryRestrictions: AdsOnDeliveryRestrictions?
         public let adTriggers: [Adtriggerselement]?
         public let encryption: DashEncryption?
@@ -487,6 +500,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         public let id: String
 
         public init(id: String) {
@@ -500,6 +514,7 @@ extension MediaPackage {
 
     public struct DeleteChannelResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -509,6 +524,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         public let id: String
 
         public init(id: String) {
@@ -522,6 +538,7 @@ extension MediaPackage {
 
     public struct DeleteOriginEndpointResponse: AWSShape {
 
+
         public init() {
         }
 
@@ -531,6 +548,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         public let id: String
 
         public init(id: String) {
@@ -550,6 +568,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let arn: String?
         public let description: String?
         public let hlsIngest: HlsIngest?
@@ -577,6 +596,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         public let id: String
 
         public init(id: String) {
@@ -605,6 +625,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         public let arn: String?
         public let channelId: String?
         public let cmafPackage: CmafPackage?
@@ -669,6 +690,7 @@ extension MediaPackage {
             AWSShapeMember(label: "RepeatExtXKey", location: .body(locationName: "repeatExtXKey"), required: false, type: .boolean), 
             AWSShapeMember(label: "SpekeKeyProvider", location: .body(locationName: "spekeKeyProvider"), required: true, type: .structure)
         ]
+
         /// A constant initialization vector for encryption (optional).
         /// When not specified the initialization vector will be periodically rotated.
         public let constantInitializationVector: String?
@@ -701,6 +723,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IngestEndpoints", location: .body(locationName: "ingestEndpoints"), required: false, type: .list)
         ]
+
         /// A list of endpoints to which the source stream should be sent.
         public let ingestEndpoints: [IngestEndpoint]?
 
@@ -724,6 +747,7 @@ extension MediaPackage {
             AWSShapeMember(label: "ProgramDateTimeIntervalSeconds", location: .body(locationName: "programDateTimeIntervalSeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string)
         ]
+
         /// This setting controls how ad markers are included in the packaged OriginEndpoint.
         /// "NONE" will omit all SCTE-35 ad markers from the output.
         /// "PASSTHROUGH" causes the manifest to contain a copy of the SCTE-35 ad
@@ -791,6 +815,7 @@ extension MediaPackage {
             AWSShapeMember(label: "PlaylistWindowSeconds", location: .body(locationName: "playlistWindowSeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "ProgramDateTimeIntervalSeconds", location: .body(locationName: "programDateTimeIntervalSeconds"), required: false, type: .integer)
         ]
+
         /// This setting controls how ad markers are included in the packaged OriginEndpoint.
         /// "NONE" will omit all SCTE-35 ad markers from the output.
         /// "PASSTHROUGH" causes the manifest to contain a copy of the SCTE-35 ad
@@ -862,6 +887,7 @@ extension MediaPackage {
             AWSShapeMember(label: "StreamSelection", location: .body(locationName: "streamSelection"), required: false, type: .structure), 
             AWSShapeMember(label: "UseAudioRenditionGroup", location: .body(locationName: "useAudioRenditionGroup"), required: false, type: .boolean)
         ]
+
         /// This setting controls how ad markers are included in the packaged OriginEndpoint.
         /// "NONE" will omit all SCTE-35 ad markers from the output.
         /// "PASSTHROUGH" causes the manifest to contain a copy of the SCTE-35 ad
@@ -933,6 +959,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string), 
             AWSShapeMember(label: "Username", location: .body(locationName: "username"), required: false, type: .string)
         ]
+
         /// The system generated unique identifier for the IngestEndpoint
         public let id: String?
         /// The system generated password for ingest authentication.
@@ -962,12 +989,18 @@ extension MediaPackage {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         public let maxResults: Int32?
         public let nextToken: String?
 
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -981,6 +1014,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Channels", location: .body(locationName: "channels"), required: false, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         public let channels: [Channel]?
         public let nextToken: String?
 
@@ -1001,6 +1035,7 @@ extension MediaPackage {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         public let channelId: String?
         public let maxResults: Int32?
         public let nextToken: String?
@@ -1009,6 +1044,11 @@ extension MediaPackage {
             self.channelId = channelId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1023,6 +1063,7 @@ extension MediaPackage {
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "OriginEndpoints", location: .body(locationName: "originEndpoints"), required: false, type: .list)
         ]
+
         public let nextToken: String?
         public let originEndpoints: [OriginEndpoint]?
 
@@ -1041,6 +1082,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceArn", location: .uri(locationName: "resource-arn"), required: true, type: .string)
         ]
+
         public let resourceArn: String
 
         public init(resourceArn: String) {
@@ -1056,6 +1098,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let tags: [String: String]?
 
         public init(tags: [String: String]? = nil) {
@@ -1077,6 +1120,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "SpekeKeyProvider", location: .body(locationName: "spekeKeyProvider"), required: true, type: .structure)
         ]
+
         public let spekeKeyProvider: SpekeKeyProvider
 
         public init(spekeKeyProvider: SpekeKeyProvider) {
@@ -1095,6 +1139,7 @@ extension MediaPackage {
             AWSShapeMember(label: "SegmentDurationSeconds", location: .body(locationName: "segmentDurationSeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "StreamSelection", location: .body(locationName: "streamSelection"), required: false, type: .structure)
         ]
+
         public let encryption: MssEncryption?
         /// The time window (in seconds) contained in each manifest.
         public let manifestWindowSeconds: Int32?
@@ -1134,6 +1179,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) assigned to the OriginEndpoint.
         public let arn: String?
         /// The ID of the Channel the OriginEndpoint is associated with.
@@ -1210,6 +1256,7 @@ extension MediaPackage {
             AWSShapeMember(label: "TimeDelaySeconds", location: .body(locationName: "timeDelaySeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         /// The ID of the Channel that the OriginEndpoint will be associated with.
         /// This cannot be changed after the OriginEndpoint is created.
         public let channelId: String
@@ -1270,6 +1317,7 @@ extension MediaPackage {
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "OriginEndpoints", location: .body(locationName: "originEndpoints"), required: false, type: .list)
         ]
+
         /// A token that can be used to resume pagination from the end of the collection.
         public let nextToken: String?
         /// A list of OriginEndpoint records.
@@ -1298,6 +1346,7 @@ extension MediaPackage {
             AWSShapeMember(label: "TimeDelaySeconds", location: .body(locationName: "timeDelaySeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         public let cmafPackage: CmafPackageCreateOrUpdateParameters?
         public let dashPackage: DashPackage?
         /// A short text description of the OriginEndpoint.
@@ -1357,6 +1406,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         public let id: String
 
         public init(id: String) {
@@ -1376,6 +1426,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let arn: String?
         public let description: String?
         public let hlsIngest: HlsIngest?
@@ -1404,6 +1455,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string), 
             AWSShapeMember(label: "IngestEndpointId", location: .uri(locationName: "ingest_endpoint_id"), required: true, type: .string)
         ]
+
         public let id: String
         public let ingestEndpointId: String
 
@@ -1426,6 +1478,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let arn: String?
         public let description: String?
         public let hlsIngest: HlsIngest?
@@ -1464,6 +1517,7 @@ extension MediaPackage {
             AWSShapeMember(label: "SystemIds", location: .body(locationName: "systemIds"), required: true, type: .list), 
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: true, type: .string)
         ]
+
         /// An Amazon Resource Name (ARN) of a Certificate Manager certificate
         /// that MediaPackage will use for enforcing secure end-to-end data
         /// transfer with the key provider service.
@@ -1508,6 +1562,7 @@ extension MediaPackage {
             AWSShapeMember(label: "MinVideoBitsPerSecond", location: .body(locationName: "minVideoBitsPerSecond"), required: false, type: .integer), 
             AWSShapeMember(label: "StreamOrder", location: .body(locationName: "streamOrder"), required: false, type: .enum)
         ]
+
         /// The maximum video bitrate (bps) to include in output.
         public let maxVideoBitsPerSecond: Int32?
         /// The minimum video bitrate (bps) to include in output.
@@ -1533,6 +1588,7 @@ extension MediaPackage {
             AWSShapeMember(label: "ResourceArn", location: .uri(locationName: "resource-arn"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: true, type: .map)
         ]
+
         public let resourceArn: String
         public let tags: [String: String]
 
@@ -1551,6 +1607,7 @@ extension MediaPackage {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: true, type: .map)
         ]
+
         public let tags: [String: String]
 
         public init(tags: [String: String]) {
@@ -1567,6 +1624,7 @@ extension MediaPackage {
             AWSShapeMember(label: "ResourceArn", location: .uri(locationName: "resource-arn"), required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", location: .querystring(locationName: "tagKeys"), required: true, type: .list)
         ]
+
         public let resourceArn: String
         public let tagKeys: [String]
 
@@ -1586,6 +1644,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Description", location: .body(locationName: "description"), required: false, type: .string), 
             AWSShapeMember(label: "Id", location: .uri(locationName: "id"), required: true, type: .string)
         ]
+
         public let description: String?
         public let id: String
 
@@ -1608,6 +1667,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let arn: String?
         public let description: String?
         public let hlsIngest: HlsIngest?
@@ -1644,6 +1704,7 @@ extension MediaPackage {
             AWSShapeMember(label: "TimeDelaySeconds", location: .body(locationName: "timeDelaySeconds"), required: false, type: .integer), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         public let cmafPackage: CmafPackageCreateOrUpdateParameters?
         public let dashPackage: DashPackage?
         public let description: String?
@@ -1699,6 +1760,7 @@ extension MediaPackage {
             AWSShapeMember(label: "Url", location: .body(locationName: "url"), required: false, type: .string), 
             AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
         ]
+
         public let arn: String?
         public let channelId: String?
         public let cmafPackage: CmafPackage?

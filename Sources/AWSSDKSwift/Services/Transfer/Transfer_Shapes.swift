@@ -15,6 +15,7 @@ extension Transfer {
             AWSShapeMember(label: "LoggingRole", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// The virtual private cloud (VPC) endpoint settings that you want to configure for your SFTP server.
         public let endpointDetails: EndpointDetails?
         /// The type of VPC endpoint that you want your SFTP server connect to. If you connect to a VPC endpoint, your SFTP server isn't accessible over the public internet.
@@ -40,6 +41,15 @@ extension Transfer {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try endpointDetails?.validate()
+            try validate(hostKey, name:"hostKey", max: 4096)
+            try identityProviderDetails?.validate()
+            try validate(loggingRole, name:"loggingRole", pattern: "arn:.*role/.*")
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endpointDetails = "EndpointDetails"
             case endpointType = "EndpointType"
@@ -55,11 +65,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// The service-assigned ID of the SFTP server that is created.
         public let serverId: String
 
         public init(serverId: String) {
             self.serverId = serverId
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -77,6 +92,7 @@ extension Transfer {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The landing directory (folder) for a user when they log in to the server using their SFTP client. An example is /home/username .
         public let homeDirectory: String?
         /// A scope-down policy for your user so you can use the same IAM role across multiple users. This policy scopes down user access to portions of their Amazon S3 bucket. Variables you can use inside this policy include ${Transfer:UserName}, ${Transfer:HomeDirectory}, and ${Transfer:HomeBucket}.
@@ -102,6 +118,18 @@ extension Transfer {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(homeDirectory, name:"homeDirectory", max: 1024)
+            try validate(homeDirectory, name:"homeDirectory", pattern: "^$|/.*")
+            try validate(role, name:"role", pattern: "arn:.*role/.*")
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(sshPublicKeyBody, name:"sshPublicKeyBody", max: 2048)
+            try validate(sshPublicKeyBody, name:"sshPublicKeyBody", pattern: "^ssh-rsa\\s+[A-Za-z0-9+/]+[=]{0,3}(\\s+.+)?\\s*$")
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case homeDirectory = "HomeDirectory"
             case policy = "Policy"
@@ -118,6 +146,7 @@ extension Transfer {
             AWSShapeMember(label: "ServerId", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The ID of the SFTP server that the user is attached to.
         public let serverId: String
         /// A unique string that identifies a user account associated with an SFTP server.
@@ -126,6 +155,11 @@ extension Transfer {
         public init(serverId: String, userName: String) {
             self.serverId = serverId
             self.userName = userName
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -138,11 +172,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// A unique system-assigned identifier for an SFTP server instance.
         public let serverId: String
 
         public init(serverId: String) {
             self.serverId = serverId
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -156,6 +195,7 @@ extension Transfer {
             AWSShapeMember(label: "SshPublicKeyId", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for a Secure File Transfer Protocol (SFTP) server instance that has the user assigned to it.
         public let serverId: String
         /// A unique identifier used to reference your user's specific SSH key.
@@ -167,6 +207,12 @@ extension Transfer {
             self.serverId = serverId
             self.sshPublicKeyId = sshPublicKeyId
             self.userName = userName
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(sshPublicKeyId, name:"sshPublicKeyId", pattern: "^key-[0-9a-f]{17}$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -181,6 +227,7 @@ extension Transfer {
             AWSShapeMember(label: "ServerId", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server instance that has the user assigned to it.
         public let serverId: String
         /// A unique string that identifies a user that is being deleted from the server.
@@ -189,6 +236,11 @@ extension Transfer {
         public init(serverId: String, userName: String) {
             self.serverId = serverId
             self.userName = userName
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -201,11 +253,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server.
         public let serverId: String
 
         public init(serverId: String) {
             self.serverId = serverId
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -217,11 +274,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Server", required: true, type: .structure)
         ]
+
         /// An array containing the properties of the server with the ServerID you specified.
         public let server: DescribedServer
 
         public init(server: DescribedServer) {
             self.server = server
+        }
+
+        public func validate() throws {
+            try server.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -234,6 +296,7 @@ extension Transfer {
             AWSShapeMember(label: "ServerId", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server that has this user assigned.
         public let serverId: String
         /// The name of the user assigned to one or more servers. User names are part of the sign-in credentials to use the AWS Transfer service and perform file transfer tasks.
@@ -242,6 +305,11 @@ extension Transfer {
         public init(serverId: String, userName: String) {
             self.serverId = serverId
             self.userName = userName
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -255,6 +323,7 @@ extension Transfer {
             AWSShapeMember(label: "ServerId", required: true, type: .string), 
             AWSShapeMember(label: "User", required: true, type: .structure)
         ]
+
         /// A system-assigned unique identifier for an SFTP server that has this user assigned.
         public let serverId: String
         /// An array containing the properties of the user account for the ServerID value that you specified.
@@ -263,6 +332,11 @@ extension Transfer {
         public init(serverId: String, user: DescribedUser) {
             self.serverId = serverId
             self.user = user
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try user.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -285,6 +359,7 @@ extension Transfer {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "UserCount", required: false, type: .integer)
         ]
+
         /// Specifies the unique Amazon Resource Name (ARN) for the server to be described.
         public let arn: String
         /// The virtual private cloud (VPC) endpoint settings that you configured for your SFTP server.
@@ -322,6 +397,17 @@ extension Transfer {
             self.userCount = userCount
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try endpointDetails?.validate()
+            try identityProviderDetails?.validate()
+            try validate(loggingRole, name:"loggingRole", pattern: "arn:.*role/.*")
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case endpointDetails = "EndpointDetails"
@@ -347,6 +433,7 @@ extension Transfer {
             AWSShapeMember(label: "Tags", required: false, type: .list), 
             AWSShapeMember(label: "UserName", required: false, type: .string)
         ]
+
         /// This property contains the unique Amazon Resource Name (ARN) for the user that was requested to be described.
         public let arn: String
         /// This property specifies the landing directory (or folder) which is the location that files are written to or read from in an Amazon S3 bucket for the described user. An example would be: /bucket_name/home/username .
@@ -372,6 +459,21 @@ extension Transfer {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try validate(homeDirectory, name:"homeDirectory", max: 1024)
+            try validate(homeDirectory, name:"homeDirectory", pattern: "^$|/.*")
+            try validate(role, name:"role", pattern: "arn:.*role/.*")
+            try sshPublicKeys?.forEach {
+                try $0.validate()
+            }
+            try validate(sshPublicKeys, name:"sshPublicKeys", max: 5)
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case homeDirectory = "HomeDirectory"
@@ -387,11 +489,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "VpcEndpointId", required: false, type: .string)
         ]
+
         /// The ID of the VPC endpoint.
         public let vpcEndpointId: String?
 
         public init(vpcEndpointId: String? = nil) {
             self.vpcEndpointId = vpcEndpointId
+        }
+
+        public func validate() throws {
+            try validate(vpcEndpointId, name:"vpcEndpointId", pattern: "^vpce-[0-9a-f]{17}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -410,6 +517,7 @@ extension Transfer {
             AWSShapeMember(label: "InvocationRole", required: false, type: .string), 
             AWSShapeMember(label: "Url", required: false, type: .string)
         ]
+
         /// The Role parameter provides the type of InvocationRole used to authenticate the user account.
         public let invocationRole: String?
         /// The IdentityProviderDetail parameter contains the location of the service endpoint used to authenticate users.
@@ -418,6 +526,10 @@ extension Transfer {
         public init(invocationRole: String? = nil, url: String? = nil) {
             self.invocationRole = invocationRole
             self.url = url
+        }
+
+        public func validate() throws {
+            try validate(invocationRole, name:"invocationRole", pattern: "arn:.*role/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -438,6 +550,7 @@ extension Transfer {
             AWSShapeMember(label: "SshPublicKeyBody", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server.
         public let serverId: String
         /// The public key portion of an SSH key pair.
@@ -449,6 +562,13 @@ extension Transfer {
             self.serverId = serverId
             self.sshPublicKeyBody = sshPublicKeyBody
             self.userName = userName
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(sshPublicKeyBody, name:"sshPublicKeyBody", max: 2048)
+            try validate(sshPublicKeyBody, name:"sshPublicKeyBody", pattern: "^ssh-rsa\\s+[A-Za-z0-9+/]+[=]{0,3}(\\s+.+)?\\s*$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -464,6 +584,7 @@ extension Transfer {
             AWSShapeMember(label: "SshPublicKeyId", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server.
         public let serverId: String
         /// This identifier is the name given to a public key by the system that was imported.
@@ -475,6 +596,12 @@ extension Transfer {
             self.serverId = serverId
             self.sshPublicKeyId = sshPublicKeyId
             self.userName = userName
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(sshPublicKeyId, name:"sshPublicKeyId", pattern: "^key-[0-9a-f]{17}$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -489,6 +616,7 @@ extension Transfer {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Specifies the number of servers to return as a response to the ListServers query.
         public let maxResults: Int32?
         /// When additional results are obtained from the ListServers command, a NextToken parameter is returned in the output. You can then pass the NextToken parameter in a subsequent command to continue listing additional servers.
@@ -497,6 +625,13 @@ extension Transfer {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 6144)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -510,6 +645,7 @@ extension Transfer {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Servers", required: true, type: .list)
         ]
+
         /// When you can get additional results from the ListServers operation, a NextToken parameter is returned in the output. In a following command, you can pass in the NextToken parameter to continue listing additional servers.
         public let nextToken: String?
         /// An array of servers that were listed.
@@ -518,6 +654,14 @@ extension Transfer {
         public init(nextToken: String? = nil, servers: [ListedServer]) {
             self.nextToken = nextToken
             self.servers = servers
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 6144)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try servers.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -532,6 +676,7 @@ extension Transfer {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Requests the tags associated with a particular Amazon Resource Name (ARN). An ARN is an identifier for a specific AWS resource, such as a server, user, or role.
         public let arn: String
         /// Specifies the number of tags to return as a response to the ListTagsForResource request.
@@ -543,6 +688,15 @@ extension Transfer {
             self.arn = arn
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 6144)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -558,6 +712,7 @@ extension Transfer {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Tags", required: false, type: .list)
         ]
+
         /// This value is the ARN you specified to list the tags of.
         public let arn: String?
         /// When you can get additional results from the ListTagsForResource call, a NextToken parameter is returned in the output. You can then pass in a subsequent command the NextToken parameter to continue listing additional tags.
@@ -569,6 +724,15 @@ extension Transfer {
             self.arn = arn
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try validate(nextToken, name:"nextToken", max: 6144)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -584,6 +748,7 @@ extension Transfer {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// Specifies the number of users to return as a response to the ListUsers request.
         public let maxResults: Int32?
         /// When you can get additional results from the ListUsers call, a NextToken parameter is returned in the output. You can then pass in a subsequent command the NextToken parameter to continue listing additional users.
@@ -595,6 +760,14 @@ extension Transfer {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serverId = serverId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 1000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 6144)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -610,6 +783,7 @@ extension Transfer {
             AWSShapeMember(label: "ServerId", required: true, type: .string), 
             AWSShapeMember(label: "Users", required: true, type: .list)
         ]
+
         /// When you can get additional results from the ListUsers call, a NextToken parameter is returned in the output. You can then pass in a subsequent command the NextToken parameter to continue listing additional users.
         public let nextToken: String?
         /// A system-assigned unique identifier for an SFTP server that the users are assigned to.
@@ -621,6 +795,15 @@ extension Transfer {
             self.nextToken = nextToken
             self.serverId = serverId
             self.users = users
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 6144)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try users.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -640,6 +823,7 @@ extension Transfer {
             AWSShapeMember(label: "State", required: false, type: .enum), 
             AWSShapeMember(label: "UserCount", required: false, type: .integer)
         ]
+
         /// The unique Amazon Resource Name (ARN) for the server to be listed.
         public let arn: String
         /// The type of VPC endpoint that your SFTP server is connected to. If your SFTP server is connected to a VPC endpoint, your server isn't accessible over the public internet.
@@ -665,6 +849,13 @@ extension Transfer {
             self.userCount = userCount
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try validate(loggingRole, name:"loggingRole", pattern: "arn:.*role/.*")
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case endpointType = "EndpointType"
@@ -684,6 +875,7 @@ extension Transfer {
             AWSShapeMember(label: "SshPublicKeyCount", required: false, type: .integer), 
             AWSShapeMember(label: "UserName", required: false, type: .string)
         ]
+
         /// This property is the unique Amazon Resource Name (ARN) for the user that you wish to learn about.
         public let arn: String
         /// This value specifies the location that files are written to or read from an Amazon S3 bucket for the user you specify by their ARN.
@@ -703,6 +895,15 @@ extension Transfer {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try validate(homeDirectory, name:"homeDirectory", max: 1024)
+            try validate(homeDirectory, name:"homeDirectory", pattern: "^$|/.*")
+            try validate(role, name:"role", pattern: "arn:.*role/.*")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case homeDirectory = "HomeDirectory"
@@ -718,6 +919,7 @@ extension Transfer {
             AWSShapeMember(label: "SshPublicKeyBody", required: true, type: .string), 
             AWSShapeMember(label: "SshPublicKeyId", required: true, type: .string)
         ]
+
         /// The date that the public key was added to the user account.
         public let dateImported: TimeStamp
         /// The content of the SSH public key as specified by the PublicKeyId.
@@ -731,6 +933,12 @@ extension Transfer {
             self.sshPublicKeyId = sshPublicKeyId
         }
 
+        public func validate() throws {
+            try validate(sshPublicKeyBody, name:"sshPublicKeyBody", max: 2048)
+            try validate(sshPublicKeyBody, name:"sshPublicKeyBody", pattern: "^ssh-rsa\\s+[A-Za-z0-9+/]+[=]{0,3}(\\s+.+)?\\s*$")
+            try validate(sshPublicKeyId, name:"sshPublicKeyId", pattern: "^key-[0-9a-f]{17}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case dateImported = "DateImported"
             case sshPublicKeyBody = "SshPublicKeyBody"
@@ -742,11 +950,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server that you start.
         public let serverId: String
 
         public init(serverId: String) {
             self.serverId = serverId
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -768,11 +981,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server that you stopped.
         public let serverId: String
 
         public init(serverId: String) {
             self.serverId = serverId
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -785,6 +1003,7 @@ extension Transfer {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: true, type: .string)
         ]
+
         /// The name assigned to the tag that you create.
         public let key: String
         /// This property contains one or more values that you assigned to the key name you create.
@@ -806,6 +1025,7 @@ extension Transfer {
             AWSShapeMember(label: "Arn", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// An Amazon Resource Name (ARN) for a specific AWS resource, such as a server, user, or role.
         public let arn: String
         /// Key-value pairs assigned to ARNs that you can use to group and search for resources by type. You can attach this metadata to user accounts for any purpose.
@@ -814,6 +1034,13 @@ extension Transfer {
         public init(arn: String, tags: [Tag]) {
             self.arn = arn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -828,6 +1055,7 @@ extension Transfer {
             AWSShapeMember(label: "UserName", required: true, type: .string), 
             AWSShapeMember(label: "UserPassword", required: false, type: .string)
         ]
+
         /// A system assigned identifier for a specific server. That server's user authentication method is tested with a user name and password.
         public let serverId: String
         /// This request parameter is name of the user account to be tested.
@@ -839,6 +1067,11 @@ extension Transfer {
             self.serverId = serverId
             self.userName = userName
             self.userPassword = userPassword
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -854,6 +1087,7 @@ extension Transfer {
             AWSShapeMember(label: "StatusCode", required: true, type: .integer), 
             AWSShapeMember(label: "Url", required: true, type: .string)
         ]
+
         /// The result of the authorization test as a message. 
         public let message: String?
         /// The HTTP status code that is the response from your API Gateway.
@@ -879,6 +1113,7 @@ extension Transfer {
             AWSShapeMember(label: "Arn", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// This is the value of the resource that will have the tag removed. An Amazon Resource Name (ARN) is an identifier for a specific AWS resource, such as a server, user, or role.
         public let arn: String
         /// TagKeys are key-value pairs assigned to ARNs that can be used to group and search for resources by type. This metadata can be attached to resources for any purpose.
@@ -887,6 +1122,13 @@ extension Transfer {
         public init(arn: String, tagKeys: [String]) {
             self.arn = arn
             self.tagKeys = tagKeys
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 20)
+            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -904,6 +1146,7 @@ extension Transfer {
             AWSShapeMember(label: "LoggingRole", required: false, type: .string), 
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// The virtual private cloud (VPC) endpoint settings that are configured for your SFTP server. With a VPC endpoint, your SFTP server isn't accessible over the public internet.
         public let endpointDetails: EndpointDetails?
         /// The type of endpoint that you want your SFTP server to connect to. You can choose to connect to the public internet or a virtual private cloud (VPC) endpoint. With a VPC endpoint, your SFTP server isn't accessible over the public internet. 
@@ -926,6 +1169,14 @@ extension Transfer {
             self.serverId = serverId
         }
 
+        public func validate() throws {
+            try endpointDetails?.validate()
+            try validate(hostKey, name:"hostKey", max: 4096)
+            try identityProviderDetails?.validate()
+            try validate(loggingRole, name:"loggingRole", pattern: "^$|arn:.*role/.*")
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endpointDetails = "EndpointDetails"
             case endpointType = "EndpointType"
@@ -940,11 +1191,16 @@ extension Transfer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ServerId", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server that the user account is assigned to.
         public let serverId: String
 
         public init(serverId: String) {
             self.serverId = serverId
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -960,6 +1216,7 @@ extension Transfer {
             AWSShapeMember(label: "ServerId", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// The HomeDirectory parameter specifies the landing directory (folder) for a user when they log in to the server using their client. An example would be: /home/username .
         public let homeDirectory: String?
         /// Allows you to supply a scope-down policy for your user so you can use the same AWS Identity and Access Management (IAM) role across multiple users. The policy scopes down users access to portions of your Amazon S3 bucket. Variables you can use inside this policy include ${Transfer:UserName}, ${Transfer:HomeDirectory}, and ${Transfer:HomeBucket}.
@@ -979,6 +1236,14 @@ extension Transfer {
             self.userName = userName
         }
 
+        public func validate() throws {
+            try validate(homeDirectory, name:"homeDirectory", max: 1024)
+            try validate(homeDirectory, name:"homeDirectory", pattern: "^$|/.*")
+            try validate(role, name:"role", pattern: "arn:.*role/.*")
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case homeDirectory = "HomeDirectory"
             case policy = "Policy"
@@ -993,6 +1258,7 @@ extension Transfer {
             AWSShapeMember(label: "ServerId", required: true, type: .string), 
             AWSShapeMember(label: "UserName", required: true, type: .string)
         ]
+
         /// A system-assigned unique identifier for an SFTP server instance that the user account is assigned to.
         public let serverId: String
         /// The unique identifier for a user that is assigned to the SFTP server instance that was specified in the request.
@@ -1001,6 +1267,11 @@ extension Transfer {
         public init(serverId: String, userName: String) {
             self.serverId = serverId
             self.userName = userName
+        }
+
+        public func validate() throws {
+            try validate(serverId, name:"serverId", pattern: "^s-([0-9a-f]{17})$")
+            try validate(userName, name:"userName", pattern: "^[a-zA-Z0-9_][a-zA-Z0-9_-]{2,31}$")
         }
 
         private enum CodingKeys: String, CodingKey {

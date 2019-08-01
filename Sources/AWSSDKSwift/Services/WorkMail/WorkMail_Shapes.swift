@@ -11,6 +11,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The member (user or group) to associate to the resource.
         public let entityId: String
         /// The organization under which the resource exists.
@@ -24,6 +25,13 @@ extension WorkMail {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(resourceId, name:"resourceId", pattern: "^r-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "EntityId"
             case organizationId = "OrganizationId"
@@ -32,6 +40,7 @@ extension WorkMail {
     }
 
     public struct AssociateDelegateToResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -44,6 +53,7 @@ extension WorkMail {
             AWSShapeMember(label: "MemberId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The group to which the member (user or group) is associated.
         public let groupId: String
         /// The member (user or group) to associate to the group.
@@ -57,6 +67,14 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(groupId, name:"groupId", max: 256)
+            try validate(groupId, name:"groupId", min: 12)
+            try validate(memberId, name:"memberId", max: 256)
+            try validate(memberId, name:"memberId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case memberId = "MemberId"
@@ -65,6 +83,7 @@ extension WorkMail {
     }
 
     public struct AssociateMemberToGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -77,6 +96,7 @@ extension WorkMail {
             AWSShapeMember(label: "AutoDeclineConflictingRequests", required: false, type: .boolean), 
             AWSShapeMember(label: "AutoDeclineRecurringRequests", required: false, type: .boolean)
         ]
+
         /// The resource's ability to automatically reply to requests. If disabled, delegates must be associated to the resource.
         public let autoAcceptRequests: Bool?
         /// The resource's ability to automatically decline any conflicting requests.
@@ -103,6 +123,7 @@ extension WorkMail {
             AWSShapeMember(label: "EntityId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The alias to add to the member set.
         public let alias: String
         /// The member (user or group) to which this alias is added.
@@ -116,6 +137,15 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(alias, name:"alias", max: 254)
+            try validate(alias, name:"alias", min: 1)
+            try validate(alias, name:"alias", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case alias = "Alias"
             case entityId = "EntityId"
@@ -124,6 +154,7 @@ extension WorkMail {
     }
 
     public struct CreateAliasResponse: AWSShape {
+
 
         public init() {
         }
@@ -135,6 +166,7 @@ extension WorkMail {
             AWSShapeMember(label: "Name", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The name of the group.
         public let name: String
         /// The organization under which the group is to be created.
@@ -143,6 +175,13 @@ extension WorkMail {
         public init(name: String, organizationId: String) {
             self.name = name
             self.organizationId = organizationId
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\u00FF]+")
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -155,11 +194,17 @@ extension WorkMail {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupId", required: false, type: .string)
         ]
+
         /// The identifier of the group.
         public let groupId: String?
 
         public init(groupId: String? = nil) {
             self.groupId = groupId
+        }
+
+        public func validate() throws {
+            try validate(groupId, name:"groupId", max: 256)
+            try validate(groupId, name:"groupId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -173,6 +218,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         /// The name of the new resource.
         public let name: String
         /// The identifier associated with the organization for which the resource is created.
@@ -186,6 +232,13 @@ extension WorkMail {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 20)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-.]+(@[a-zA-Z0-9.\\-]+\\.[a-zA-Z0-9]{2,})?")
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case organizationId = "OrganizationId"
@@ -197,11 +250,16 @@ extension WorkMail {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceId", required: false, type: .string)
         ]
+
         /// The identifier of the new resource.
         public let resourceId: String?
 
         public init(resourceId: String? = nil) {
             self.resourceId = resourceId
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", pattern: "^r-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -216,6 +274,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "Password", required: true, type: .string)
         ]
+
         /// The display name for the new user.
         public let displayName: String
         /// The name for the new user. Simple AD or AD Connector user names have a maximum length of 20. All others have a maximum length of 64.
@@ -232,6 +291,16 @@ extension WorkMail {
             self.password = password
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 256)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-.]+(@[a-zA-Z0-9.\\-]+\\.[a-zA-Z0-9]{2,})?")
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(password, name:"password", max: 256)
+            try validate(password, name:"password", pattern: "[\\u0020-\\u00FF]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case displayName = "DisplayName"
             case name = "Name"
@@ -244,11 +313,17 @@ extension WorkMail {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UserId", required: false, type: .string)
         ]
+
         /// The identifier for the new user.
         public let userId: String?
 
         public init(userId: String? = nil) {
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(userId, name:"userId", max: 256)
+            try validate(userId, name:"userId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -261,6 +336,7 @@ extension WorkMail {
             AWSShapeMember(label: "Id", required: true, type: .string), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         /// The identifier for the user or group associated as the resource's delegate.
         public let id: String
         /// The type of the delegate: user or group.
@@ -269,6 +345,10 @@ extension WorkMail {
         public init(id: String, type: MemberType) {
             self.id = id
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -283,6 +363,7 @@ extension WorkMail {
             AWSShapeMember(label: "EntityId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The aliases to be removed from the user's set of aliases. Duplicate entries in the list are collapsed into single entries (the list is transformed into a set).
         public let alias: String
         /// The identifier for the member (user or group) from which to have the aliases removed.
@@ -296,6 +377,15 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(alias, name:"alias", max: 254)
+            try validate(alias, name:"alias", min: 1)
+            try validate(alias, name:"alias", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case alias = "Alias"
             case entityId = "EntityId"
@@ -304,6 +394,7 @@ extension WorkMail {
     }
 
     public struct DeleteAliasResponse: AWSShape {
+
 
         public init() {
         }
@@ -315,6 +406,7 @@ extension WorkMail {
             AWSShapeMember(label: "GroupId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier of the group to be deleted.
         public let groupId: String
         /// The organization that contains the group.
@@ -325,6 +417,12 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(groupId, name:"groupId", max: 256)
+            try validate(groupId, name:"groupId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case organizationId = "OrganizationId"
@@ -332,6 +430,7 @@ extension WorkMail {
     }
 
     public struct DeleteGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -344,6 +443,7 @@ extension WorkMail {
             AWSShapeMember(label: "GranteeId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier of the member (user or group)that owns the mailbox.
         public let entityId: String
         /// The identifier of the member (user or group) for which to delete granted permissions.
@@ -357,6 +457,14 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(granteeId, name:"granteeId", max: 256)
+            try validate(granteeId, name:"granteeId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "EntityId"
             case granteeId = "GranteeId"
@@ -365,6 +473,7 @@ extension WorkMail {
     }
 
     public struct DeleteMailboxPermissionsResponse: AWSShape {
+
 
         public init() {
         }
@@ -376,6 +485,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The identifier associated with the organization from which the resource is deleted.
         public let organizationId: String
         /// The identifier of the resource to be deleted.
@@ -386,6 +496,11 @@ extension WorkMail {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(resourceId, name:"resourceId", pattern: "^r-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case organizationId = "OrganizationId"
             case resourceId = "ResourceId"
@@ -393,6 +508,7 @@ extension WorkMail {
     }
 
     public struct DeleteResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -404,6 +520,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The organization that contains the user to be deleted.
         public let organizationId: String
         /// The identifier of the user to be deleted.
@@ -414,6 +531,12 @@ extension WorkMail {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(userId, name:"userId", max: 256)
+            try validate(userId, name:"userId", min: 12)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case organizationId = "OrganizationId"
             case userId = "UserId"
@@ -421,6 +544,7 @@ extension WorkMail {
     }
 
     public struct DeleteUserResponse: AWSShape {
+
 
         public init() {
         }
@@ -432,6 +556,7 @@ extension WorkMail {
             AWSShapeMember(label: "EntityId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier for the member (user or group) to be updated.
         public let entityId: String
         /// The identifier for the organization under which the Amazon WorkMail entity exists.
@@ -442,6 +567,12 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "EntityId"
             case organizationId = "OrganizationId"
@@ -449,6 +580,7 @@ extension WorkMail {
     }
 
     public struct DeregisterFromWorkMailResponse: AWSShape {
+
 
         public init() {
         }
@@ -460,6 +592,7 @@ extension WorkMail {
             AWSShapeMember(label: "GroupId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier for the group to be described.
         public let groupId: String
         /// The identifier for the organization under which the group exists.
@@ -468,6 +601,12 @@ extension WorkMail {
         public init(groupId: String, organizationId: String) {
             self.groupId = groupId
             self.organizationId = organizationId
+        }
+
+        public func validate() throws {
+            try validate(groupId, name:"groupId", max: 256)
+            try validate(groupId, name:"groupId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -485,6 +624,7 @@ extension WorkMail {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The date and time when a user was deregistered from WorkMail, in UNIX epoch time format.
         public let disabledDate: TimeStamp?
         /// The email of the described group.
@@ -507,6 +647,17 @@ extension WorkMail {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(groupId, name:"groupId", max: 256)
+            try validate(groupId, name:"groupId", min: 12)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\u00FF]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case disabledDate = "DisabledDate"
             case email = "Email"
@@ -521,11 +672,16 @@ extension WorkMail {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier for the organization to be described.
         public let organizationId: String
 
         public init(organizationId: String) {
             self.organizationId = organizationId
+        }
+
+        public func validate() throws {
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -544,6 +700,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: false, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .string)
         ]
+
         /// The alias for an organization.
         public let alias: String?
         /// The date at which the organization became usable in the WorkMail context, in UNIX epoch time format.
@@ -572,6 +729,18 @@ extension WorkMail {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(alias, name:"alias", max: 62)
+            try validate(alias, name:"alias", min: 1)
+            try validate(alias, name:"alias", pattern: "^(?!d-)([\\da-zA-Z]+)([-]*[\\da-zA-Z])*")
+            try validate(defaultMailDomain, name:"defaultMailDomain", max: 256)
+            try validate(directoryId, name:"directoryId", max: 256)
+            try validate(directoryType, name:"directoryType", max: 256)
+            try validate(errorMessage, name:"errorMessage", max: 256)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(state, name:"state", max: 256)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case alias = "Alias"
             case completedDate = "CompletedDate"
@@ -589,6 +758,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The identifier associated with the organization for which the resource is described.
         public let organizationId: String
         /// The identifier of the resource to be described.
@@ -597,6 +767,11 @@ extension WorkMail {
         public init(organizationId: String, resourceId: String) {
             self.organizationId = organizationId
             self.resourceId = resourceId
+        }
+
+        public func validate() throws {
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(resourceId, name:"resourceId", pattern: "^r-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -616,6 +791,7 @@ extension WorkMail {
             AWSShapeMember(label: "State", required: false, type: .enum), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The booking options for the described resource.
         public let bookingOptions: BookingOptions?
         /// The date and time when a resource was disabled from WorkMail, in UNIX epoch time format.
@@ -644,6 +820,16 @@ extension WorkMail {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(name, name:"name", max: 20)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-.]+(@[a-zA-Z0-9.\\-]+\\.[a-zA-Z0-9]{2,})?")
+            try validate(resourceId, name:"resourceId", pattern: "^r-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bookingOptions = "BookingOptions"
             case disabledDate = "DisabledDate"
@@ -661,6 +847,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The identifier for the organization under which the user exists.
         public let organizationId: String
         /// The identifier for the user to be described.
@@ -669,6 +856,12 @@ extension WorkMail {
         public init(organizationId: String, userId: String) {
             self.organizationId = organizationId
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(userId, name:"userId", max: 256)
+            try validate(userId, name:"userId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -688,6 +881,7 @@ extension WorkMail {
             AWSShapeMember(label: "UserId", required: false, type: .string), 
             AWSShapeMember(label: "UserRole", required: false, type: .enum)
         ]
+
         /// The date and time at which the user was disabled for Amazon WorkMail usage, in UNIX epoch time format.
         public let disabledDate: TimeStamp?
         /// The display name of the user.
@@ -716,6 +910,18 @@ extension WorkMail {
             self.userRole = userRole
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 256)
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-.]+(@[a-zA-Z0-9.\\-]+\\.[a-zA-Z0-9]{2,})?")
+            try validate(userId, name:"userId", max: 256)
+            try validate(userId, name:"userId", min: 12)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case disabledDate = "DisabledDate"
             case displayName = "DisplayName"
@@ -734,6 +940,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The identifier for the member (user, group) to be removed from the resource's delegates.
         public let entityId: String
         /// The identifier for the organization under which the resource exists.
@@ -747,6 +954,13 @@ extension WorkMail {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(resourceId, name:"resourceId", pattern: "^r-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "EntityId"
             case organizationId = "OrganizationId"
@@ -755,6 +969,7 @@ extension WorkMail {
     }
 
     public struct DisassociateDelegateFromResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -767,6 +982,7 @@ extension WorkMail {
             AWSShapeMember(label: "MemberId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier for the group from which members are removed.
         public let groupId: String
         /// The identifier for the member to be removed to the group.
@@ -780,6 +996,14 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(groupId, name:"groupId", max: 256)
+            try validate(groupId, name:"groupId", min: 12)
+            try validate(memberId, name:"memberId", max: 256)
+            try validate(memberId, name:"memberId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case memberId = "MemberId"
@@ -788,6 +1012,7 @@ extension WorkMail {
     }
 
     public struct DisassociateMemberFromGroupResponse: AWSShape {
+
 
         public init() {
         }
@@ -806,6 +1031,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The identifier for the organization that contains the user whose mailbox details are being requested.
         public let organizationId: String
         /// The identifier for the user whose mailbox details are being requested.
@@ -814,6 +1040,12 @@ extension WorkMail {
         public init(organizationId: String, userId: String) {
             self.organizationId = organizationId
             self.userId = userId
+        }
+
+        public func validate() throws {
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(userId, name:"userId", max: 256)
+            try validate(userId, name:"userId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -827,6 +1059,7 @@ extension WorkMail {
             AWSShapeMember(label: "MailboxQuota", required: false, type: .integer), 
             AWSShapeMember(label: "MailboxSize", required: false, type: .double)
         ]
+
         /// The maximum allowed mailbox size, in MB, for the specified user.
         public let mailboxQuota: Int32?
         /// The current mailbox size, in MB, for the specified user.
@@ -835,6 +1068,11 @@ extension WorkMail {
         public init(mailboxQuota: Int32? = nil, mailboxSize: Double? = nil) {
             self.mailboxQuota = mailboxQuota
             self.mailboxSize = mailboxSize
+        }
+
+        public func validate() throws {
+            try validate(mailboxQuota, name:"mailboxQuota", min: 1)
+            try validate(mailboxSize, name:"mailboxSize", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -852,6 +1090,7 @@ extension WorkMail {
             AWSShapeMember(label: "Name", required: false, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .enum)
         ]
+
         /// The date indicating when the group was disabled from Amazon WorkMail use.
         public let disabledDate: TimeStamp?
         /// The email of the group.
@@ -874,6 +1113,17 @@ extension WorkMail {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(id, name:"id", max: 256)
+            try validate(id, name:"id", min: 12)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\u0020-\\u00FF]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case disabledDate = "DisabledDate"
             case email = "Email"
@@ -891,6 +1141,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier for the entity for which to list the aliases.
         public let entityId: String
         /// The maximum number of results to return in a single call.
@@ -907,6 +1158,16 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "EntityId"
             case maxResults = "MaxResults"
@@ -920,6 +1181,7 @@ extension WorkMail {
             AWSShapeMember(label: "Aliases", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The entity's paginated aliases.
         public let aliases: [String]?
         /// The token to use to retrieve the next page of results. The value is "null" when there are no more results to return.
@@ -928,6 +1190,16 @@ extension WorkMail {
         public init(aliases: [String]? = nil, nextToken: String? = nil) {
             self.aliases = aliases
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try aliases?.forEach {
+                try validate($0, name:"aliases[]", max: 254)
+                try validate($0, name:"aliases[]", min: 1)
+                try validate($0, name:"aliases[]", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -943,6 +1215,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier for the group to which the members (users or groups) are associated.
         public let groupId: String
         /// The maximum number of results to return in a single call.
@@ -959,6 +1232,16 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(groupId, name:"groupId", max: 256)
+            try validate(groupId, name:"groupId", min: 12)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case maxResults = "MaxResults"
@@ -972,6 +1255,7 @@ extension WorkMail {
             AWSShapeMember(label: "Members", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The members associated to the group.
         public let members: [Member]?
         /// The token to use to retrieve the next page of results. The first call does not contain any tokens.
@@ -980,6 +1264,14 @@ extension WorkMail {
         public init(members: [Member]? = nil, nextToken: String? = nil) {
             self.members = members
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try members?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -994,6 +1286,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The maximum number of results to return in a single call.
         public let maxResults: Int32?
         /// The token to use to retrieve the next page of results. The first call does not contain any tokens.
@@ -1005,6 +1298,14 @@ extension WorkMail {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.organizationId = organizationId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1019,6 +1320,7 @@ extension WorkMail {
             AWSShapeMember(label: "Groups", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The overview of groups for an organization.
         public let groups: [Group]?
         /// The token to use to retrieve the next page of results. The value is "null" when there are no more results to return.
@@ -1027,6 +1329,14 @@ extension WorkMail {
         public init(groups: [Group]? = nil, nextToken: String? = nil) {
             self.groups = groups
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try groups?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1042,6 +1352,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The identifier of the user, group, or resource for which to list mailbox permissions.
         public let entityId: String
         /// The maximum number of results to return in a single call.
@@ -1058,6 +1369,16 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "EntityId"
             case maxResults = "MaxResults"
@@ -1071,6 +1392,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Permissions", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next page of results. The value is "null" when there are no more results to return.
         public let nextToken: String?
         /// One page of the user, group, or resource mailbox permissions.
@@ -1079,6 +1401,14 @@ extension WorkMail {
         public init(nextToken: String? = nil, permissions: [Permission]? = nil) {
             self.nextToken = nextToken
             self.permissions = permissions
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try permissions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1092,6 +1422,7 @@ extension WorkMail {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results to return in a single call.
         public let maxResults: Int32?
         /// The token to use to retrieve the next page of results. The first call does not contain any tokens.
@@ -1100,6 +1431,13 @@ extension WorkMail {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1113,6 +1451,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationSummaries", required: false, type: .list)
         ]
+
         /// The token to use to retrieve the next page of results. The value is "null" when there are no more results to return.
         public let nextToken: String?
         /// The overview of owned organizations presented as a list of organization summaries.
@@ -1121,6 +1460,14 @@ extension WorkMail {
         public init(nextToken: String? = nil, organizationSummaries: [OrganizationSummary]? = nil) {
             self.nextToken = nextToken
             self.organizationSummaries = organizationSummaries
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try organizationSummaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1136,6 +1483,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The number of maximum results in a page.
         public let maxResults: Int32?
         /// The token used to paginate through the delegates associated with a resource.
@@ -1152,6 +1500,16 @@ extension WorkMail {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(resourceId, name:"resourceId", max: 256)
+            try validate(resourceId, name:"resourceId", min: 12)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case nextToken = "NextToken"
@@ -1165,6 +1523,7 @@ extension WorkMail {
             AWSShapeMember(label: "Delegates", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// One page of the resource's delegates.
         public let delegates: [Delegate]?
         /// The token used to paginate through the delegates associated with a resource. While results are still available, it has an associated value. When the last page is reached, the token is empty. 
@@ -1173,6 +1532,14 @@ extension WorkMail {
         public init(delegates: [Delegate]? = nil, nextToken: String? = nil) {
             self.delegates = delegates
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try delegates?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1187,6 +1554,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The maximum number of results to return in a single call.
         public let maxResults: Int32?
         /// The token to use to retrieve the next page of results. The first call does not contain any tokens.
@@ -1198,6 +1566,14 @@ extension WorkMail {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.organizationId = organizationId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1212,6 +1588,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Resources", required: false, type: .list)
         ]
+
         ///  The token used to paginate through all the organization's resources. While results are still available, it has an associated value. When the last page is reached, the token is empty.
         public let nextToken: String?
         /// One page of the organization's resource representation.
@@ -1220,6 +1597,14 @@ extension WorkMail {
         public init(nextToken: String? = nil, resources: [Resource]? = nil) {
             self.nextToken = nextToken
             self.resources = resources
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try resources?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1234,6 +1619,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The maximum number of results to return in a single call.
         public let maxResults: Int32?
         /// The token to use to retrieve the next page of results. The first call does not contain any tokens.
@@ -1245,6 +1631,14 @@ extension WorkMail {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.organizationId = organizationId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1259,6 +1653,7 @@ extension WorkMail {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Users", required: false, type: .list)
         ]
+
         ///  The token to use to retrieve the next page of results. This value is `null` when there are no more results to return.
         public let nextToken: String?
         /// The overview of users for an organization.
@@ -1267,6 +1662,14 @@ extension WorkMail {
         public init(nextToken: String? = nil, users: [User]? = nil) {
             self.nextToken = nextToken
             self.users = users
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1024)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try users?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1284,6 +1687,7 @@ extension WorkMail {
             AWSShapeMember(label: "State", required: false, type: .enum), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The date indicating when the member was disabled from Amazon WorkMail use.
         public let disabledDate: TimeStamp?
         /// The date indicating when the member was enabled for Amazon WorkMail use.
@@ -1304,6 +1708,11 @@ extension WorkMail {
             self.name = name
             self.state = state
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 256)
+            try validate(name, name:"name", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1329,6 +1738,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: false, type: .string), 
             AWSShapeMember(label: "State", required: false, type: .string)
         ]
+
         /// The alias associated with the organization.
         public let alias: String?
         /// The error message associated with the organization. It is only present if unexpected behavior has occurred with regards to the organization. It provides insight or solutions regarding unexpected behavior.
@@ -1345,6 +1755,15 @@ extension WorkMail {
             self.state = state
         }
 
+        public func validate() throws {
+            try validate(alias, name:"alias", max: 62)
+            try validate(alias, name:"alias", min: 1)
+            try validate(alias, name:"alias", pattern: "^(?!d-)([\\da-zA-Z]+)([-]*[\\da-zA-Z])*")
+            try validate(errorMessage, name:"errorMessage", max: 256)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(state, name:"state", max: 256)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case alias = "Alias"
             case errorMessage = "ErrorMessage"
@@ -1359,6 +1778,7 @@ extension WorkMail {
             AWSShapeMember(label: "GranteeType", required: true, type: .enum), 
             AWSShapeMember(label: "PermissionValues", required: true, type: .list)
         ]
+
         /// The identifier of the user, group, or resource to which the permissions are granted.
         public let granteeId: String
         /// The type of user, group, or resource referred to in GranteeId.
@@ -1370,6 +1790,11 @@ extension WorkMail {
             self.granteeId = granteeId
             self.granteeType = granteeType
             self.permissionValues = permissionValues
+        }
+
+        public func validate() throws {
+            try validate(granteeId, name:"granteeId", max: 256)
+            try validate(granteeId, name:"granteeId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1393,6 +1818,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "PermissionValues", required: true, type: .list)
         ]
+
         /// The identifier of the user, group, or resource for which to update mailbox permissions.
         public let entityId: String
         /// The identifier of the user, group, or resource to which to grant the permissions.
@@ -1409,6 +1835,14 @@ extension WorkMail {
             self.permissionValues = permissionValues
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(granteeId, name:"granteeId", max: 256)
+            try validate(granteeId, name:"granteeId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "EntityId"
             case granteeId = "GranteeId"
@@ -1418,6 +1852,7 @@ extension WorkMail {
     }
 
     public struct PutMailboxPermissionsResponse: AWSShape {
+
 
         public init() {
         }
@@ -1430,6 +1865,7 @@ extension WorkMail {
             AWSShapeMember(label: "EntityId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The email for the user, group, or resource to be updated.
         public let email: String
         /// The identifier for the user, group, or resource to be updated.
@@ -1443,6 +1879,15 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case email = "Email"
             case entityId = "EntityId"
@@ -1451,6 +1896,7 @@ extension WorkMail {
     }
 
     public struct RegisterToWorkMailResponse: AWSShape {
+
 
         public init() {
         }
@@ -1463,6 +1909,7 @@ extension WorkMail {
             AWSShapeMember(label: "Password", required: true, type: .string), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The identifier of the organization that contains the user for which the password is reset.
         public let organizationId: String
         /// The new password for the user.
@@ -1476,6 +1923,14 @@ extension WorkMail {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(password, name:"password", max: 256)
+            try validate(password, name:"password", pattern: "[\\u0020-\\u00FF]+")
+            try validate(userId, name:"userId", max: 256)
+            try validate(userId, name:"userId", min: 12)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case organizationId = "OrganizationId"
             case password = "Password"
@@ -1484,6 +1939,7 @@ extension WorkMail {
     }
 
     public struct ResetPasswordResponse: AWSShape {
+
 
         public init() {
         }
@@ -1500,6 +1956,7 @@ extension WorkMail {
             AWSShapeMember(label: "State", required: false, type: .enum), 
             AWSShapeMember(label: "Type", required: false, type: .enum)
         ]
+
         /// The date indicating when the resource was disabled from Amazon WorkMail use.
         public let disabledDate: TimeStamp?
         /// The email of the resource.
@@ -1525,6 +1982,17 @@ extension WorkMail {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(id, name:"id", max: 256)
+            try validate(id, name:"id", min: 12)
+            try validate(name, name:"name", max: 20)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-.]+(@[a-zA-Z0-9.\\-]+\\.[a-zA-Z0-9]{2,})?")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case disabledDate = "DisabledDate"
             case email = "Email"
@@ -1548,6 +2016,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "UserId", required: true, type: .string)
         ]
+
         /// The updated mailbox quota, in MB, for the specified user.
         public let mailboxQuota: Int32
         /// The identifier for the organization that contains the user for whom to update the mailbox quota.
@@ -1561,6 +2030,13 @@ extension WorkMail {
             self.userId = userId
         }
 
+        public func validate() throws {
+            try validate(mailboxQuota, name:"mailboxQuota", min: 1)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(userId, name:"userId", max: 256)
+            try validate(userId, name:"userId", min: 12)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case mailboxQuota = "MailboxQuota"
             case organizationId = "OrganizationId"
@@ -1569,6 +2045,7 @@ extension WorkMail {
     }
 
     public struct UpdateMailboxQuotaResponse: AWSShape {
+
 
         public init() {
         }
@@ -1581,6 +2058,7 @@ extension WorkMail {
             AWSShapeMember(label: "EntityId", required: true, type: .string), 
             AWSShapeMember(label: "OrganizationId", required: true, type: .string)
         ]
+
         /// The value of the email to be updated as primary.
         public let email: String
         /// The user, group, or resource to update.
@@ -1594,6 +2072,15 @@ extension WorkMail {
             self.organizationId = organizationId
         }
 
+        public func validate() throws {
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(entityId, name:"entityId", max: 256)
+            try validate(entityId, name:"entityId", min: 12)
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case email = "Email"
             case entityId = "EntityId"
@@ -1602,6 +2089,7 @@ extension WorkMail {
     }
 
     public struct UpdatePrimaryEmailAddressResponse: AWSShape {
+
 
         public init() {
         }
@@ -1615,6 +2103,7 @@ extension WorkMail {
             AWSShapeMember(label: "OrganizationId", required: true, type: .string), 
             AWSShapeMember(label: "ResourceId", required: true, type: .string)
         ]
+
         /// The resource's booking options to be updated.
         public let bookingOptions: BookingOptions?
         /// The name of the resource to be updated.
@@ -1631,6 +2120,14 @@ extension WorkMail {
             self.resourceId = resourceId
         }
 
+        public func validate() throws {
+            try validate(name, name:"name", max: 20)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-.]+(@[a-zA-Z0-9.\\-]+\\.[a-zA-Z0-9]{2,})?")
+            try validate(organizationId, name:"organizationId", pattern: "^m-[0-9a-f]{32}$")
+            try validate(resourceId, name:"resourceId", pattern: "^r-[0-9a-f]{32}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case bookingOptions = "BookingOptions"
             case name = "Name"
@@ -1640,6 +2137,7 @@ extension WorkMail {
     }
 
     public struct UpdateResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1657,6 +2155,7 @@ extension WorkMail {
             AWSShapeMember(label: "State", required: false, type: .enum), 
             AWSShapeMember(label: "UserRole", required: false, type: .enum)
         ]
+
         /// The date indicating when the user was disabled from Amazon WorkMail use.
         public let disabledDate: TimeStamp?
         /// The display name of the user.
@@ -1683,6 +2182,18 @@ extension WorkMail {
             self.name = name
             self.state = state
             self.userRole = userRole
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 256)
+            try validate(email, name:"email", max: 254)
+            try validate(email, name:"email", min: 1)
+            try validate(email, name:"email", pattern: "[a-zA-Z0-9._%+-]{1,64}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
+            try validate(id, name:"id", max: 256)
+            try validate(id, name:"id", min: 12)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "[\\w\\-.]+(@[a-zA-Z0-9.\\-]+\\.[a-zA-Z0-9]{2,})?")
         }
 
         private enum CodingKeys: String, CodingKey {

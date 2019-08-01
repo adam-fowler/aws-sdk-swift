@@ -9,11 +9,18 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "profileName", location: .uri(locationName: "profileName"), required: true, type: .string)
         ]
+
         /// The name of the signing profile to be canceled.
         public let profileName: String
 
         public init(profileName: String) {
             self.profileName = profileName
+        }
+
+        public func validate() throws {
+            try validate(profileName, name:"profileName", max: 20)
+            try validate(profileName, name:"profileName", min: 2)
+            try validate(profileName, name:"profileName", pattern: "^[a-zA-Z0-9_]{2,}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -30,6 +37,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobId", location: .uri(locationName: "jobId"), required: true, type: .string)
         ]
+
         /// The ID of the signing job on input.
         public let jobId: String
 
@@ -58,6 +66,7 @@ extension Signer {
             AWSShapeMember(label: "status", required: false, type: .enum), 
             AWSShapeMember(label: "statusReason", required: false, type: .string)
         ]
+
         /// Date and time that the signing job was completed.
         public let completedAt: TimeStamp?
         /// Date and time that the signing job was created.
@@ -101,6 +110,12 @@ extension Signer {
             self.statusReason = statusReason
         }
 
+        public func validate() throws {
+            try validate(profileName, name:"profileName", max: 20)
+            try validate(profileName, name:"profileName", min: 2)
+            try validate(profileName, name:"profileName", pattern: "^[a-zA-Z0-9_]{2,}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case completedAt = "completedAt"
             case createdAt = "createdAt"
@@ -122,6 +137,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "s3", required: false, type: .structure)
         ]
+
         /// The S3Destination object.
         public let s3: S3Destination?
 
@@ -145,6 +161,7 @@ extension Signer {
             AWSShapeMember(label: "allowedValues", required: true, type: .list), 
             AWSShapeMember(label: "defaultValue", required: true, type: .enum)
         ]
+
         /// The set of accepted encryption algorithms that are allowed in an AWS Signer job.
         public let allowedValues: [EncryptionAlgorithm]
         /// The default encryption algorithm that is used by an AWS Signer job.
@@ -165,6 +182,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "platformId", location: .uri(locationName: "platformId"), required: true, type: .string)
         ]
+
         /// The ID of the target signing platform.
         public let platformId: String
 
@@ -188,6 +206,7 @@ extension Signer {
             AWSShapeMember(label: "signingImageFormat", required: false, type: .structure), 
             AWSShapeMember(label: "target", required: false, type: .string)
         ]
+
         /// The category type of the target signing platform.
         public let category: Category?
         /// The display name of the target signing platform.
@@ -232,11 +251,18 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "profileName", location: .uri(locationName: "profileName"), required: true, type: .string)
         ]
+
         /// The name of the target signing profile.
         public let profileName: String
 
         public init(profileName: String) {
             self.profileName = profileName
+        }
+
+        public func validate() throws {
+            try validate(profileName, name:"profileName", max: 20)
+            try validate(profileName, name:"profileName", min: 2)
+            try validate(profileName, name:"profileName", pattern: "^[a-zA-Z0-9_]{2,}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -253,6 +279,7 @@ extension Signer {
             AWSShapeMember(label: "signingParameters", required: false, type: .map), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// A list of overrides applied by the target signing profile for signing operations.
         public let overrides: SigningPlatformOverrides?
         /// The ID of the platform that is used by the target signing profile.
@@ -273,6 +300,12 @@ extension Signer {
             self.signingMaterial = signingMaterial
             self.signingParameters = signingParameters
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(profileName, name:"profileName", max: 20)
+            try validate(profileName, name:"profileName", min: 2)
+            try validate(profileName, name:"profileName", pattern: "^[a-zA-Z0-9_]{2,}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -296,6 +329,7 @@ extension Signer {
             AWSShapeMember(label: "allowedValues", required: true, type: .list), 
             AWSShapeMember(label: "defaultValue", required: true, type: .enum)
         ]
+
         /// The set of accepted hash algorithms allowed in an AWS Signer job.
         public let allowedValues: [HashAlgorithm]
         /// The default hash algorithm that is used in an AWS Signer job.
@@ -325,6 +359,7 @@ extension Signer {
             AWSShapeMember(label: "requestedBy", location: .querystring(locationName: "requestedBy"), required: false, type: .string), 
             AWSShapeMember(label: "status", location: .querystring(locationName: "status"), required: false, type: .enum)
         ]
+
         /// Specifies the maximum number of items to return in the response. Use this parameter when paginating results. If additional items exist beyond the number you specify, the nextToken element is set in the response. Use the nextToken value in a subsequent request to retrieve additional items. 
         public let maxResults: Int32?
         /// String for specifying the next set of paginated results to return. After you receive a response with truncated results, use this parameter in a subsequent request. Set it to the value of nextToken from the response that you just received.
@@ -344,6 +379,11 @@ extension Signer {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 25)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "maxResults"
             case nextToken = "nextToken"
@@ -358,6 +398,7 @@ extension Signer {
             AWSShapeMember(label: "jobs", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of your signing jobs.
         public let jobs: [SigningJob]?
         /// String for specifying the next set of paginated results.
@@ -382,6 +423,7 @@ extension Signer {
             AWSShapeMember(label: "partner", location: .querystring(locationName: "partner"), required: false, type: .string), 
             AWSShapeMember(label: "target", location: .querystring(locationName: "target"), required: false, type: .string)
         ]
+
         /// The category type of a signing platform.
         public let category: String?
         /// The maximum number of results to be returned by this operation.
@@ -401,6 +443,11 @@ extension Signer {
             self.target = target
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 25)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case category = "category"
             case maxResults = "maxResults"
@@ -415,6 +462,7 @@ extension Signer {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "platforms", required: false, type: .list)
         ]
+
         /// Value for specifying the next set of paginated results to return.
         public let nextToken: String?
         /// A list of all platforms that match the request parameters.
@@ -437,6 +485,7 @@ extension Signer {
             AWSShapeMember(label: "maxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// Designates whether to include profiles with the status of CANCELED.
         public let includeCanceled: Bool?
         /// The maximum number of profiles to be returned.
@@ -448,6 +497,11 @@ extension Signer {
             self.includeCanceled = includeCanceled
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 25)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -462,6 +516,7 @@ extension Signer {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "profiles", required: false, type: .list)
         ]
+
         /// Value for specifying the next set of paginated results to return.
         public let nextToken: String?
         /// A list of profiles that are available in the AWS account. This includes profiles with the status of CANCELED if the includeCanceled parameter is set to true.
@@ -470,6 +525,12 @@ extension Signer {
         public init(nextToken: String? = nil, profiles: [SigningProfile]? = nil) {
             self.nextToken = nextToken
             self.profiles = profiles
+        }
+
+        public func validate() throws {
+            try profiles?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -486,6 +547,7 @@ extension Signer {
             AWSShapeMember(label: "signingMaterial", required: true, type: .structure), 
             AWSShapeMember(label: "signingParameters", required: false, type: .map)
         ]
+
         /// A subfield of platform. This specifies any different configuration options that you want to apply to the chosen platform (such as a different hash-algorithm or signing-algorithm).
         public let overrides: SigningPlatformOverrides?
         /// The ID of the signing profile to be created.
@@ -505,6 +567,12 @@ extension Signer {
             self.signingParameters = signingParameters
         }
 
+        public func validate() throws {
+            try validate(profileName, name:"profileName", max: 20)
+            try validate(profileName, name:"profileName", min: 2)
+            try validate(profileName, name:"profileName", pattern: "^[a-zA-Z0-9_]{2,}")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case overrides = "overrides"
             case platformId = "platformId"
@@ -518,6 +586,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "arn", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the signing profile created.
         public let arn: String?
 
@@ -535,6 +604,7 @@ extension Signer {
             AWSShapeMember(label: "bucketName", required: false, type: .string), 
             AWSShapeMember(label: "prefix", required: false, type: .string)
         ]
+
         /// Name of the S3 bucket.
         public let bucketName: String?
         /// An Amazon S3 prefix that you can use to limit responses to those that begin with the specified prefix.
@@ -556,6 +626,7 @@ extension Signer {
             AWSShapeMember(label: "bucketName", required: false, type: .string), 
             AWSShapeMember(label: "key", required: false, type: .string)
         ]
+
         /// Name of the S3 bucket.
         public let bucketName: String?
         /// Key name that uniquely identifies a signed code image in your bucket.
@@ -578,6 +649,7 @@ extension Signer {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// Name of the S3 bucket.
         public let bucketName: String
         /// Key name of the bucket object that contains your unsigned code.
@@ -602,6 +674,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "s3", required: false, type: .structure)
         ]
+
         /// The S3SignedObject.
         public let s3: S3SignedObject?
 
@@ -619,6 +692,7 @@ extension Signer {
             AWSShapeMember(label: "encryptionAlgorithmOptions", required: true, type: .structure), 
             AWSShapeMember(label: "hashAlgorithmOptions", required: true, type: .structure)
         ]
+
         /// The encryption algorithm options that are available for an AWS Signer job.
         public let encryptionAlgorithmOptions: EncryptionAlgorithmOptions
         /// The hash algorithm options that are available for an AWS Signer job.
@@ -640,6 +714,7 @@ extension Signer {
             AWSShapeMember(label: "encryptionAlgorithm", required: false, type: .enum), 
             AWSShapeMember(label: "hashAlgorithm", required: false, type: .enum)
         ]
+
         /// A specified override of the default encryption algorithm that is used in an AWS Signer job.
         public let encryptionAlgorithm: EncryptionAlgorithm?
         /// A specified override of the default hash algorithm that is used in an AWS Signer job.
@@ -661,6 +736,7 @@ extension Signer {
             AWSShapeMember(label: "defaultFormat", required: true, type: .enum), 
             AWSShapeMember(label: "supportedFormats", required: true, type: .list)
         ]
+
         /// The default format of an AWS Signer signing image.
         public let defaultFormat: ImageFormat
         /// The supported formats of an AWS Signer signing image.
@@ -686,6 +762,7 @@ extension Signer {
             AWSShapeMember(label: "source", required: false, type: .structure), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The date and time that the signing job was created.
         public let createdAt: TimeStamp?
         /// The ID of the signing job.
@@ -722,6 +799,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "certificateArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the certificates that is used to sign your code.
         public let certificateArn: String
 
@@ -745,6 +823,7 @@ extension Signer {
             AWSShapeMember(label: "signingImageFormat", required: false, type: .structure), 
             AWSShapeMember(label: "target", required: false, type: .string)
         ]
+
         /// The category of an AWS Signer platform.
         public let category: Category?
         /// The display name of an AWS Signer platform.
@@ -789,6 +868,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "signingConfiguration", required: false, type: .structure)
         ]
+
         public let signingConfiguration: SigningConfigurationOverrides?
 
         public init(signingConfiguration: SigningConfigurationOverrides? = nil) {
@@ -808,6 +888,7 @@ extension Signer {
             AWSShapeMember(label: "signingParameters", required: false, type: .map), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// The ID of a platform that is available for use by a signing profile.
         public let platformId: String?
         /// The name of the AWS Signer profile.
@@ -825,6 +906,12 @@ extension Signer {
             self.signingMaterial = signingMaterial
             self.signingParameters = signingParameters
             self.status = status
+        }
+
+        public func validate() throws {
+            try validate(profileName, name:"profileName", max: 20)
+            try validate(profileName, name:"profileName", min: 2)
+            try validate(profileName, name:"profileName", pattern: "^[a-zA-Z0-9_]{2,}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -853,6 +940,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "s3", required: false, type: .structure)
         ]
+
         /// The S3Source object.
         public let s3: S3Source?
 
@@ -872,6 +960,7 @@ extension Signer {
             AWSShapeMember(label: "profileName", required: false, type: .string), 
             AWSShapeMember(label: "source", required: true, type: .structure)
         ]
+
         /// String that identifies the signing request. All calls after the first that use this token return the same response as the first call.
         public let clientRequestToken: String
         /// The S3 bucket in which to save your signed object. The destination contains the name of your bucket and an optional prefix.
@@ -881,11 +970,17 @@ extension Signer {
         /// The S3 bucket that contains the object to sign or a BLOB that contains your raw code.
         public let source: Source
 
-        public init(clientRequestToken: String, destination: Destination, profileName: String? = nil, source: Source) {
+        public init(clientRequestToken: String = StartSigningJobRequest.idempotencyToken(), destination: Destination, profileName: String? = nil, source: Source) {
             self.clientRequestToken = clientRequestToken
             self.destination = destination
             self.profileName = profileName
             self.source = source
+        }
+
+        public func validate() throws {
+            try validate(profileName, name:"profileName", max: 20)
+            try validate(profileName, name:"profileName", min: 2)
+            try validate(profileName, name:"profileName", pattern: "^[a-zA-Z0-9_]{2,}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -900,6 +995,7 @@ extension Signer {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "jobId", required: false, type: .string)
         ]
+
         /// The ID of your signing job.
         public let jobId: String?
 

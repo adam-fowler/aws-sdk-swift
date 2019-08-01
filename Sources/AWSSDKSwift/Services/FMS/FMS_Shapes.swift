@@ -18,11 +18,18 @@ extension FMS {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AdminAccount", required: true, type: .string)
         ]
+
         /// The AWS account ID to associate with AWS Firewall Manager as the AWS Firewall Manager administrator account. This can be an AWS Organizations master account or a member account. For more information about AWS Organizations and master accounts, see Managing the AWS Accounts in Your Organization.
         public let adminAccount: String
 
         public init(adminAccount: String) {
             self.adminAccount = adminAccount
+        }
+
+        public func validate() throws {
+            try validate(adminAccount, name:"adminAccount", max: 1024)
+            try validate(adminAccount, name:"adminAccount", min: 1)
+            try validate(adminAccount, name:"adminAccount", pattern: "^[0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -36,6 +43,7 @@ extension FMS {
             AWSShapeMember(label: "ResourceType", required: false, type: .string), 
             AWSShapeMember(label: "ViolationReason", required: false, type: .enum)
         ]
+
         /// The resource ID.
         public let resourceId: String?
         /// The resource type. This is in the format shown in AWS Resource Types Reference. For example: AWS::ElasticLoadBalancingV2::LoadBalancer or AWS::CloudFront::Distribution.
@@ -47,6 +55,15 @@ extension FMS {
             self.resourceId = resourceId
             self.resourceType = resourceType
             self.violationReason = violationReason
+        }
+
+        public func validate() throws {
+            try validate(resourceId, name:"resourceId", max: 1024)
+            try validate(resourceId, name:"resourceId", min: 1)
+            try validate(resourceId, name:"resourceId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(resourceType, name:"resourceType", max: 128)
+            try validate(resourceType, name:"resourceType", min: 1)
+            try validate(resourceType, name:"resourceType", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -63,6 +80,7 @@ extension FMS {
 
     public struct DeleteNotificationChannelRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -73,6 +91,7 @@ extension FMS {
             AWSShapeMember(label: "DeleteAllPolicyResources", required: false, type: .boolean), 
             AWSShapeMember(label: "PolicyId", required: true, type: .string)
         ]
+
         /// If True, the request will also perform a clean-up process that will:   Delete rule groups created by AWS Firewall Manager   Remove web ACLs from in-scope resources   Delete web ACLs that contain no rules or rule groups   After the cleanup, in-scope resources will no longer be protected by web ACLs in this policy. Protection of out-of-scope resources will remain unchanged. Scope is determined by tags and accounts associated with the policy. When creating the policy, if you specified that only resources in specific accounts or with specific tags be protected by the policy, those resources are in-scope. All others are out of scope. If you did not specify tags or accounts, all resources are in-scope. 
         public let deleteAllPolicyResources: Bool?
         /// The ID of the policy that you want to delete. PolicyId is returned by PutPolicy and by ListPolicies.
@@ -81,6 +100,12 @@ extension FMS {
         public init(deleteAllPolicyResources: Bool? = nil, policyId: String) {
             self.deleteAllPolicyResources = deleteAllPolicyResources
             self.policyId = policyId
+        }
+
+        public func validate() throws {
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -98,6 +123,7 @@ extension FMS {
 
     public struct DisassociateAdminAccountRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -109,6 +135,7 @@ extension FMS {
             AWSShapeMember(label: "EvaluationLimitExceeded", required: false, type: .boolean), 
             AWSShapeMember(label: "ViolatorCount", required: false, type: .long)
         ]
+
         /// Describes an AWS account's compliance with the AWS Firewall Manager policy.
         public let complianceStatus: PolicyComplianceStatusType?
         /// Indicates that over 100 resources are non-compliant with the AWS Firewall Manager policy.
@@ -122,6 +149,10 @@ extension FMS {
             self.violatorCount = violatorCount
         }
 
+        public func validate() throws {
+            try validate(violatorCount, name:"violatorCount", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case complianceStatus = "ComplianceStatus"
             case evaluationLimitExceeded = "EvaluationLimitExceeded"
@@ -130,6 +161,7 @@ extension FMS {
     }
 
     public struct GetAdminAccountRequest: AWSShape {
+
 
         public init() {
         }
@@ -141,6 +173,7 @@ extension FMS {
             AWSShapeMember(label: "AdminAccount", required: false, type: .string), 
             AWSShapeMember(label: "RoleStatus", required: false, type: .enum)
         ]
+
         /// The AWS account that is set as the AWS Firewall Manager administrator.
         public let adminAccount: String?
         /// The status of the AWS account that you set as the AWS Firewall Manager administrator.
@@ -149,6 +182,12 @@ extension FMS {
         public init(adminAccount: String? = nil, roleStatus: AccountRoleStatus? = nil) {
             self.adminAccount = adminAccount
             self.roleStatus = roleStatus
+        }
+
+        public func validate() throws {
+            try validate(adminAccount, name:"adminAccount", max: 1024)
+            try validate(adminAccount, name:"adminAccount", min: 1)
+            try validate(adminAccount, name:"adminAccount", pattern: "^[0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -162,6 +201,7 @@ extension FMS {
             AWSShapeMember(label: "MemberAccount", required: true, type: .string), 
             AWSShapeMember(label: "PolicyId", required: true, type: .string)
         ]
+
         /// The AWS account that owns the resources that you want to get the details for.
         public let memberAccount: String
         /// The ID of the policy that you want to get the details for. PolicyId is returned by PutPolicy and by ListPolicies.
@@ -170,6 +210,15 @@ extension FMS {
         public init(memberAccount: String, policyId: String) {
             self.memberAccount = memberAccount
             self.policyId = policyId
+        }
+
+        public func validate() throws {
+            try validate(memberAccount, name:"memberAccount", max: 1024)
+            try validate(memberAccount, name:"memberAccount", min: 1)
+            try validate(memberAccount, name:"memberAccount", pattern: "^[0-9]+$")
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -182,11 +231,16 @@ extension FMS {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyComplianceDetail", required: false, type: .structure)
         ]
+
         /// Information about the resources and the policy that you specified in the GetComplianceDetail request.
         public let policyComplianceDetail: PolicyComplianceDetail?
 
         public init(policyComplianceDetail: PolicyComplianceDetail? = nil) {
             self.policyComplianceDetail = policyComplianceDetail
+        }
+
+        public func validate() throws {
+            try policyComplianceDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -195,6 +249,7 @@ extension FMS {
     }
 
     public struct GetNotificationChannelRequest: AWSShape {
+
 
         public init() {
         }
@@ -206,6 +261,7 @@ extension FMS {
             AWSShapeMember(label: "SnsRoleName", required: false, type: .string), 
             AWSShapeMember(label: "SnsTopicArn", required: false, type: .string)
         ]
+
         /// The IAM role that is used by AWS Firewall Manager to record activity to SNS.
         public let snsRoleName: String?
         /// The SNS topic that records AWS Firewall Manager activity. 
@@ -214,6 +270,15 @@ extension FMS {
         public init(snsRoleName: String? = nil, snsTopicArn: String? = nil) {
             self.snsRoleName = snsRoleName
             self.snsTopicArn = snsTopicArn
+        }
+
+        public func validate() throws {
+            try validate(snsRoleName, name:"snsRoleName", max: 1024)
+            try validate(snsRoleName, name:"snsRoleName", min: 1)
+            try validate(snsRoleName, name:"snsRoleName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(snsTopicArn, name:"snsTopicArn", max: 1024)
+            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
+            try validate(snsTopicArn, name:"snsTopicArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -226,11 +291,18 @@ extension FMS {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "PolicyId", required: true, type: .string)
         ]
+
         /// The ID of the AWS Firewall Manager policy that you want the details for.
         public let policyId: String
 
         public init(policyId: String) {
             self.policyId = policyId
+        }
+
+        public func validate() throws {
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -243,6 +315,7 @@ extension FMS {
             AWSShapeMember(label: "Policy", required: false, type: .structure), 
             AWSShapeMember(label: "PolicyArn", required: false, type: .string)
         ]
+
         /// Information about the specified AWS Firewall Manager policy.
         public let policy: Policy?
         /// The Amazon Resource Name (ARN) of the specified policy.
@@ -251,6 +324,13 @@ extension FMS {
         public init(policy: Policy? = nil, policyArn: String? = nil) {
             self.policy = policy
             self.policyArn = policyArn
+        }
+
+        public func validate() throws {
+            try policy?.validate()
+            try validate(policyArn, name:"policyArn", max: 1024)
+            try validate(policyArn, name:"policyArn", min: 1)
+            try validate(policyArn, name:"policyArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -268,6 +348,7 @@ extension FMS {
             AWSShapeMember(label: "PolicyId", required: true, type: .string), 
             AWSShapeMember(label: "StartTime", required: false, type: .timestamp)
         ]
+
         /// The end of the time period to query for the attacks. This is a timestamp type. The sample request above indicates a number type because the default used by AWS Firewall Manager is Unix time in seconds. However, any valid timestamp format is allowed.
         public let endTime: TimeStamp?
         /// Specifies the number of objects that you want AWS Firewall Manager to return for this request. If you have more objects than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of objects.
@@ -290,6 +371,19 @@ extension FMS {
             self.startTime = startTime
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(memberAccountId, name:"memberAccountId", max: 1024)
+            try validate(memberAccountId, name:"memberAccountId", min: 1)
+            try validate(memberAccountId, name:"memberAccountId", pattern: "^[0-9]+$")
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "EndTime"
             case maxResults = "MaxResults"
@@ -307,6 +401,7 @@ extension FMS {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "ServiceType", required: false, type: .enum)
         ]
+
         /// The ID of the AWS Firewall administrator account for this policy.
         public let adminAccountId: String?
         /// Details about the attack, including the following:   Attack type   Account ID   ARN of the resource attacked   Start time of the attack   End time of the attack (ongoing attacks will not have an end time)   The details are in JSON format. An example is shown in the Examples section below.
@@ -323,6 +418,14 @@ extension FMS {
             self.serviceType = serviceType
         }
 
+        public func validate() throws {
+            try validate(adminAccountId, name:"adminAccountId", max: 1024)
+            try validate(adminAccountId, name:"adminAccountId", min: 1)
+            try validate(adminAccountId, name:"adminAccountId", pattern: "^[0-9]+$")
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case adminAccountId = "AdminAccountId"
             case data = "Data"
@@ -337,6 +440,7 @@ extension FMS {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "PolicyId", required: true, type: .string)
         ]
+
         /// Specifies the number of PolicyComplianceStatus objects that you want AWS Firewall Manager to return for this request. If you have more PolicyComplianceStatus objects than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of PolicyComplianceStatus objects.
         public let maxResults: Int32?
         /// If you specify a value for MaxResults and you have more PolicyComplianceStatus objects than the number that you specify for MaxResults, AWS Firewall Manager returns a NextToken value in the response that allows you to list another group of PolicyComplianceStatus objects. For the second and subsequent ListComplianceStatus requests, specify the value of NextToken from the previous response to get information about another batch of PolicyComplianceStatus objects.
@@ -348,6 +452,16 @@ extension FMS {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.policyId = policyId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -362,6 +476,7 @@ extension FMS {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "PolicyComplianceStatusList", required: false, type: .list)
         ]
+
         /// If you have more PolicyComplianceStatus objects than the number that you specified for MaxResults in the request, the response includes a NextToken value. To list more PolicyComplianceStatus objects, submit another ListComplianceStatus request, and specify the NextToken value from the response in the NextToken value in the next request.
         public let nextToken: String?
         /// An array of PolicyComplianceStatus objects.
@@ -370,6 +485,14 @@ extension FMS {
         public init(nextToken: String? = nil, policyComplianceStatusList: [PolicyComplianceStatus]? = nil) {
             self.nextToken = nextToken
             self.policyComplianceStatusList = policyComplianceStatusList
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try policyComplianceStatusList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -383,6 +506,7 @@ extension FMS {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Specifies the number of member account IDs that you want AWS Firewall Manager to return for this request. If you have more IDs than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of member account IDs.
         public let maxResults: Int32?
         /// If you specify a value for MaxResults and you have more account IDs than the number that you specify for MaxResults, AWS Firewall Manager returns a NextToken value in the response that allows you to list another group of IDs. For the second and subsequent ListMemberAccountsRequest requests, specify the value of NextToken from the previous response to get information about another batch of member account IDs.
@@ -391,6 +515,13 @@ extension FMS {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -404,6 +535,7 @@ extension FMS {
             AWSShapeMember(label: "MemberAccounts", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An array of account IDs.
         public let memberAccounts: [String]?
         /// If you have more member account IDs than the number that you specified for MaxResults in the request, the response includes a NextToken value. To list more IDs, submit another ListMemberAccounts request, and specify the NextToken value from the response in the NextToken value in the next request.
@@ -412,6 +544,16 @@ extension FMS {
         public init(memberAccounts: [String]? = nil, nextToken: String? = nil) {
             self.memberAccounts = memberAccounts
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try memberAccounts?.forEach {
+                try validate($0, name:"memberAccounts[]", max: 1024)
+                try validate($0, name:"memberAccounts[]", min: 1)
+                try validate($0, name:"memberAccounts[]", pattern: "^[0-9]+$")
+            }
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -425,6 +567,7 @@ extension FMS {
             AWSShapeMember(label: "MaxResults", required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// Specifies the number of PolicySummary objects that you want AWS Firewall Manager to return for this request. If you have more PolicySummary objects than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of PolicySummary objects.
         public let maxResults: Int32?
         /// If you specify a value for MaxResults and you have more PolicySummary objects than the number that you specify for MaxResults, AWS Firewall Manager returns a NextToken value in the response that allows you to list another group of PolicySummary objects. For the second and subsequent ListPolicies requests, specify the value of NextToken from the previous response to get information about another batch of PolicySummary objects.
@@ -433,6 +576,13 @@ extension FMS {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -446,6 +596,7 @@ extension FMS {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "PolicyList", required: false, type: .list)
         ]
+
         /// If you have more PolicySummary objects than the number that you specified for MaxResults in the request, the response includes a NextToken value. To list more PolicySummary objects, submit another ListPolicies request, and specify the NextToken value from the response in the NextToken value in the next request.
         public let nextToken: String?
         /// An array of PolicySummary objects.
@@ -454,6 +605,14 @@ extension FMS {
         public init(nextToken: String? = nil, policyList: [PolicySummary]? = nil) {
             self.nextToken = nextToken
             self.policyList = policyList
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try policyList?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -476,6 +635,7 @@ extension FMS {
             AWSShapeMember(label: "ResourceTypeList", required: false, type: .list), 
             AWSShapeMember(label: "SecurityServicePolicyData", required: true, type: .structure)
         ]
+
         /// Specifies the AWS account IDs to exclude from the policy. The IncludeMap values are evaluated first, with all the appropriate account IDs added to the policy. Then the accounts listed in ExcludeMap are removed, resulting in the final list of accounts to add to the policy. The key to the map is ACCOUNT. For example, a valid ExcludeMap would be {“ACCOUNT” : [“accountID1”, “accountID2”]}.
         public let excludeMap: [CustomerPolicyScopeIdType: [String]]?
         /// If set to True, resources with the tags that are specified in the ResourceTag array are not protected by the policy. If set to False, and the ResourceTag array is not null, only resources with the specified tags are associated with the policy.
@@ -513,6 +673,32 @@ extension FMS {
             self.securityServicePolicyData = securityServicePolicyData
         }
 
+        public func validate() throws {
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyUpdateToken, name:"policyUpdateToken", max: 1024)
+            try validate(policyUpdateToken, name:"policyUpdateToken", min: 1)
+            try validate(policyUpdateToken, name:"policyUpdateToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try resourceTags?.forEach {
+                try $0.validate()
+            }
+            try validate(resourceTags, name:"resourceTags", max: 8)
+            try validate(resourceTags, name:"resourceTags", min: 0)
+            try validate(resourceType, name:"resourceType", max: 128)
+            try validate(resourceType, name:"resourceType", min: 1)
+            try validate(resourceType, name:"resourceType", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try resourceTypeList?.forEach {
+                try validate($0, name:"resourceTypeList[]", max: 128)
+                try validate($0, name:"resourceTypeList[]", min: 1)
+                try validate($0, name:"resourceTypeList[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+            try securityServicePolicyData.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case excludeMap = "ExcludeMap"
             case excludeResourceTags = "ExcludeResourceTags"
@@ -538,6 +724,7 @@ extension FMS {
             AWSShapeMember(label: "PolicyOwner", required: false, type: .string), 
             AWSShapeMember(label: "Violators", required: false, type: .list)
         ]
+
         /// Indicates if over 100 resources are non-compliant with the AWS Firewall Manager policy.
         public let evaluationLimitExceeded: Bool?
         /// A time stamp that indicates when the returned information should be considered out-of-date.
@@ -563,6 +750,21 @@ extension FMS {
             self.violators = violators
         }
 
+        public func validate() throws {
+            try validate(memberAccount, name:"memberAccount", max: 1024)
+            try validate(memberAccount, name:"memberAccount", min: 1)
+            try validate(memberAccount, name:"memberAccount", pattern: "^[0-9]+$")
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+            try validate(policyOwner, name:"policyOwner", max: 1024)
+            try validate(policyOwner, name:"policyOwner", min: 1)
+            try validate(policyOwner, name:"policyOwner", pattern: "^[0-9]+$")
+            try violators?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case evaluationLimitExceeded = "EvaluationLimitExceeded"
             case expiredAt = "ExpiredAt"
@@ -584,6 +786,7 @@ extension FMS {
             AWSShapeMember(label: "PolicyName", required: false, type: .string), 
             AWSShapeMember(label: "PolicyOwner", required: false, type: .string)
         ]
+
         /// An array of EvaluationResult objects.
         public let evaluationResults: [EvaluationResult]?
         /// Details about problems with dependent services, such as AWS WAF or AWS Config, that are causing a resource to be non-compliant. The details include the name of the dependent service and the error message received that indicates the problem with the service.
@@ -607,6 +810,24 @@ extension FMS {
             self.policyId = policyId
             self.policyName = policyName
             self.policyOwner = policyOwner
+        }
+
+        public func validate() throws {
+            try evaluationResults?.forEach {
+                try $0.validate()
+            }
+            try validate(memberAccount, name:"memberAccount", max: 1024)
+            try validate(memberAccount, name:"memberAccount", min: 1)
+            try validate(memberAccount, name:"memberAccount", pattern: "^[0-9]+$")
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyOwner, name:"policyOwner", max: 1024)
+            try validate(policyOwner, name:"policyOwner", min: 1)
+            try validate(policyOwner, name:"policyOwner", pattern: "^[0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -635,6 +856,7 @@ extension FMS {
             AWSShapeMember(label: "ResourceType", required: false, type: .string), 
             AWSShapeMember(label: "SecurityServiceType", required: false, type: .enum)
         ]
+
         /// The Amazon Resource Name (ARN) of the specified policy.
         public let policyArn: String?
         /// The ID of the specified policy.
@@ -657,6 +879,21 @@ extension FMS {
             self.securityServiceType = securityServiceType
         }
 
+        public func validate() throws {
+            try validate(policyArn, name:"policyArn", max: 1024)
+            try validate(policyArn, name:"policyArn", min: 1)
+            try validate(policyArn, name:"policyArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyId, name:"policyId", max: 36)
+            try validate(policyId, name:"policyId", min: 36)
+            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+            try validate(policyName, name:"policyName", max: 128)
+            try validate(policyName, name:"policyName", min: 1)
+            try validate(policyName, name:"policyName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(resourceType, name:"resourceType", max: 128)
+            try validate(resourceType, name:"resourceType", min: 1)
+            try validate(resourceType, name:"resourceType", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case policyArn = "PolicyArn"
             case policyId = "PolicyId"
@@ -672,6 +909,7 @@ extension FMS {
             AWSShapeMember(label: "SnsRoleName", required: true, type: .string), 
             AWSShapeMember(label: "SnsTopicArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the IAM role that allows Amazon SNS to record AWS Firewall Manager activity. 
         public let snsRoleName: String
         /// The Amazon Resource Name (ARN) of the SNS topic that collects notifications from AWS Firewall Manager.
@@ -680,6 +918,15 @@ extension FMS {
         public init(snsRoleName: String, snsTopicArn: String) {
             self.snsRoleName = snsRoleName
             self.snsTopicArn = snsTopicArn
+        }
+
+        public func validate() throws {
+            try validate(snsRoleName, name:"snsRoleName", max: 1024)
+            try validate(snsRoleName, name:"snsRoleName", min: 1)
+            try validate(snsRoleName, name:"snsRoleName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(snsTopicArn, name:"snsTopicArn", max: 1024)
+            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
+            try validate(snsTopicArn, name:"snsTopicArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -692,11 +939,16 @@ extension FMS {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Policy", required: true, type: .structure)
         ]
+
         /// The details of the AWS Firewall Manager policy to be created.
         public let policy: Policy
 
         public init(policy: Policy) {
             self.policy = policy
+        }
+
+        public func validate() throws {
+            try policy.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -709,6 +961,7 @@ extension FMS {
             AWSShapeMember(label: "Policy", required: false, type: .structure), 
             AWSShapeMember(label: "PolicyArn", required: false, type: .string)
         ]
+
         /// The details of the AWS Firewall Manager policy that was created.
         public let policy: Policy?
         /// The Amazon Resource Name (ARN) of the policy that was created.
@@ -717,6 +970,13 @@ extension FMS {
         public init(policy: Policy? = nil, policyArn: String? = nil) {
             self.policy = policy
             self.policyArn = policyArn
+        }
+
+        public func validate() throws {
+            try policy?.validate()
+            try validate(policyArn, name:"policyArn", max: 1024)
+            try validate(policyArn, name:"policyArn", min: 1)
+            try validate(policyArn, name:"policyArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -730,6 +990,7 @@ extension FMS {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// The resource tag key.
         public let key: String
         /// The resource tag value.
@@ -738,6 +999,14 @@ extension FMS {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -751,6 +1020,7 @@ extension FMS {
             AWSShapeMember(label: "ManagedServiceData", required: false, type: .string), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         /// Details about the service. This contains WAF data in JSON format, as shown in the following example:  ManagedServiceData": "{\"type\": \"WAF\", \"ruleGroups\": [{\"id\": \"12345678-1bcd-9012-efga-0987654321ab\", \"overrideAction\" : {\"type\": \"COUNT\"}}], \"defaultAction\": {\"type\": \"BLOCK\"}}  If this is a Shield Advanced policy, this string will be empty.
         public let managedServiceData: String?
         /// The service that the policy is using to protect the resources. This specifies the type of policy that is created, either a WAF policy or Shield Advanced policy.
@@ -759,6 +1029,11 @@ extension FMS {
         public init(managedServiceData: String? = nil, type: SecurityServiceType) {
             self.managedServiceData = managedServiceData
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(managedServiceData, name:"managedServiceData", max: 1024)
+            try validate(managedServiceData, name:"managedServiceData", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

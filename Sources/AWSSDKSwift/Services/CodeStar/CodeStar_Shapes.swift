@@ -13,6 +13,7 @@ extension CodeStar {
             AWSShapeMember(label: "remoteAccessAllowed", required: false, type: .boolean), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// A user- or system-generated token that identifies the entity that requested the team member association to the project. This token can be used to repeat the request.
         public let clientRequestToken: String?
         /// The ID of the project to which you will add the IAM user.
@@ -32,6 +33,19 @@ extension CodeStar {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 256)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[\\w:/-]+$")
+            try validate(projectId, name:"projectId", max: 15)
+            try validate(projectId, name:"projectId", min: 2)
+            try validate(projectId, name:"projectId", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(projectRole, name:"projectRole", pattern: "^(Owner|Viewer|Contributor)$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientRequestToken = "clientRequestToken"
             case projectId = "projectId"
@@ -45,11 +59,18 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "clientRequestToken", required: false, type: .string)
         ]
+
         /// The user- or system-generated token from the initial request that can be used to repeat the request.
         public let clientRequestToken: String?
 
         public init(clientRequestToken: String? = nil) {
             self.clientRequestToken = clientRequestToken
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 256)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[\\w:/-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -62,6 +83,7 @@ extension CodeStar {
             AWSShapeMember(label: "destination", required: true, type: .structure), 
             AWSShapeMember(label: "source", required: true, type: .structure)
         ]
+
         /// The repository to be created in AWS CodeStar. Valid values are AWS CodeCommit or GitHub. After AWS CodeStar provisions the new repository, the source code files provided with the project request are placed in the repository.
         public let destination: CodeDestination
         /// The location where the source code files provided with the project request are stored. AWS CodeStar retrieves the files during project creation.
@@ -70,6 +92,11 @@ extension CodeStar {
         public init(destination: CodeDestination, source: CodeSource) {
             self.destination = destination
             self.source = source
+        }
+
+        public func validate() throws {
+            try destination.validate()
+            try source.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -82,11 +109,18 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the AWS CodeCommit repository to be created in AWS CodeStar.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^\\S[\\w.-]*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -99,6 +133,7 @@ extension CodeStar {
             AWSShapeMember(label: "codeCommit", required: false, type: .structure), 
             AWSShapeMember(label: "gitHub", required: false, type: .structure)
         ]
+
         /// Information about the AWS CodeCommit repository to be created in AWS CodeStar. This is where the source code files provided with the project request will be uploaded after project creation.
         public let codeCommit: CodeCommitCodeDestination?
         /// Information about the GitHub repository to be created in AWS CodeStar. This is where the source code files provided with the project request will be uploaded after project creation.
@@ -107,6 +142,11 @@ extension CodeStar {
         public init(codeCommit: CodeCommitCodeDestination? = nil, gitHub: GitHubCodeDestination? = nil) {
             self.codeCommit = codeCommit
             self.gitHub = gitHub
+        }
+
+        public func validate() throws {
+            try codeCommit?.validate()
+            try gitHub?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -119,11 +159,16 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "s3", required: true, type: .structure)
         ]
+
         /// Information about the Amazon S3 location where the source code files provided with the project request are stored. 
         public let s3: S3Location
 
         public init(s3: S3Location) {
             self.s3 = s3
+        }
+
+        public func validate() throws {
+            try s3.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -141,6 +186,7 @@ extension CodeStar {
             AWSShapeMember(label: "tags", required: false, type: .map), 
             AWSShapeMember(label: "toolchain", required: false, type: .structure)
         ]
+
         /// A user- or system-generated token that identifies the entity that requested project creation. This token can be used to repeat the request.
         public let clientRequestToken: String?
         /// The description of the project, if any.
@@ -166,6 +212,24 @@ extension CodeStar {
             self.toolchain = toolchain
         }
 
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 256)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[\\w:/-]+$")
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", pattern: "^$|^\\S(.*\\S)?$")
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^\\S(.*\\S)?$")
+            try sourceCode?.forEach {
+                try $0.validate()
+            }
+            try toolchain?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case clientRequestToken = "clientRequestToken"
             case description = "description"
@@ -184,6 +248,7 @@ extension CodeStar {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "projectTemplateId", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the created project.
         public let arn: String
         /// A user- or system-generated token that identifies the entity that requested project creation.
@@ -198,6 +263,18 @@ extension CodeStar {
             self.clientRequestToken = clientRequestToken
             self.id = id
             self.projectTemplateId = projectTemplateId
+        }
+
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "^arn:aws[^:\\s]*:codestar:[^:\\s]+:[0-9]{12}:project\\/[a-z]([a-z0-9|-])+$")
+            try validate(clientRequestToken, name:"clientRequestToken", max: 256)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[\\w:/-]+$")
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(projectTemplateId, name:"projectTemplateId", min: 1)
+            try validate(projectTemplateId, name:"projectTemplateId", pattern: "^arn:aws[^:\\s]{0,5}:codestar:[^:\\s]+::project-template(\\/(github|codecommit))?\\/[a-z0-9-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -215,6 +292,7 @@ extension CodeStar {
             AWSShapeMember(label: "sshPublicKey", required: false, type: .string), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The name that will be displayed as the friendly name for the user in AWS CodeStar. 
         public let displayName: String
         /// The email address that will be displayed as part of the user's profile in AWS CodeStar.
@@ -229,6 +307,20 @@ extension CodeStar {
             self.emailAddress = emailAddress
             self.sshPublicKey = sshPublicKey
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 64)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "^\\S(.*\\S)?$")
+            try validate(emailAddress, name:"emailAddress", max: 128)
+            try validate(emailAddress, name:"emailAddress", min: 3)
+            try validate(emailAddress, name:"emailAddress", pattern: "^[\\w-.+]+@[\\w-.+]+$")
+            try validate(sshPublicKey, name:"sshPublicKey", max: 16384)
+            try validate(sshPublicKey, name:"sshPublicKey", pattern: "^[\\t\\r\\n\\u0020-\\u00FF]*$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -248,6 +340,7 @@ extension CodeStar {
             AWSShapeMember(label: "sshPublicKey", required: false, type: .string), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The date the user profile was created, in timestamp format.
         public let createdTimestamp: TimeStamp?
         /// The name that is displayed as the friendly name for the user in AWS CodeStar.
@@ -270,6 +363,20 @@ extension CodeStar {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 64)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "^\\S(.*\\S)?$")
+            try validate(emailAddress, name:"emailAddress", max: 128)
+            try validate(emailAddress, name:"emailAddress", min: 3)
+            try validate(emailAddress, name:"emailAddress", pattern: "^[\\w-.+]+@[\\w-.+]+$")
+            try validate(sshPublicKey, name:"sshPublicKey", max: 16384)
+            try validate(sshPublicKey, name:"sshPublicKey", pattern: "^[\\t\\r\\n\\u0020-\\u00FF]*$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdTimestamp = "createdTimestamp"
             case displayName = "displayName"
@@ -286,6 +393,7 @@ extension CodeStar {
             AWSShapeMember(label: "deleteStack", required: false, type: .boolean), 
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// A user- or system-generated token that identifies the entity that requested project deletion. This token can be used to repeat the request. 
         public let clientRequestToken: String?
         /// Whether to send a delete request for the primary stack in AWS CloudFormation originally used to generate the project and its resources. This option will delete all AWS resources for the project (except for any buckets in Amazon S3) as well as deleting the project itself. Recommended for most use cases.
@@ -297,6 +405,15 @@ extension CodeStar {
             self.clientRequestToken = clientRequestToken
             self.deleteStack = deleteStack
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(clientRequestToken, name:"clientRequestToken", max: 256)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[\\w:/-]+$")
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -311,6 +428,7 @@ extension CodeStar {
             AWSShapeMember(label: "projectArn", required: false, type: .string), 
             AWSShapeMember(label: "stackId", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the deleted project.
         public let projectArn: String?
         /// The ID of the primary stack in AWS CloudFormation that will be deleted as part of deleting the project and its resources.
@@ -319,6 +437,11 @@ extension CodeStar {
         public init(projectArn: String? = nil, stackId: String? = nil) {
             self.projectArn = projectArn
             self.stackId = stackId
+        }
+
+        public func validate() throws {
+            try validate(projectArn, name:"projectArn", pattern: "^arn:aws[^:\\s]*:codestar:[^:\\s]+:[0-9]{12}:project\\/[a-z]([a-z0-9|-])+$")
+            try validate(stackId, name:"stackId", pattern: "^arn:aws[^:\\s]*:cloudformation:[^:\\s]+:[0-9]{12}:stack\\/[^:\\s]+\\/[^:\\s]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -331,11 +454,18 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the user to delete from AWS CodeStar.
         public let userArn: String
 
         public init(userArn: String) {
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -347,11 +477,18 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the user deleted from AWS CodeStar.
         public let userArn: String
 
         public init(userArn: String) {
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -363,11 +500,18 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The ID of the project.
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -387,6 +531,7 @@ extension CodeStar {
             AWSShapeMember(label: "stackId", required: false, type: .string), 
             AWSShapeMember(label: "status", required: false, type: .structure)
         ]
+
         /// The Amazon Resource Name (ARN) for the project.
         public let arn: String?
         /// A user- or system-generated token that identifies the entity that requested project creation. 
@@ -418,6 +563,25 @@ extension CodeStar {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", pattern: "^arn:aws[^:\\s]*:codestar:[^:\\s]+:[0-9]{12}:project\\/[a-z]([a-z0-9|-])+$")
+            try validate(clientRequestToken, name:"clientRequestToken", max: 256)
+            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[\\w:/-]+$")
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", pattern: "^$|^\\S(.*\\S)?$")
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^\\S(.*\\S)?$")
+            try validate(projectTemplateId, name:"projectTemplateId", min: 1)
+            try validate(projectTemplateId, name:"projectTemplateId", pattern: "^arn:aws[^:\\s]{0,5}:codestar:[^:\\s]+::project-template(\\/(github|codecommit))?\\/[a-z0-9-]+$")
+            try validate(stackId, name:"stackId", pattern: "^arn:aws[^:\\s]*:cloudformation:[^:\\s]+:[0-9]{12}:stack\\/[^:\\s]+\\/[^:\\s]+$")
+            try status?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case clientRequestToken = "clientRequestToken"
@@ -435,11 +599,18 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the user.
         public let userArn: String
 
         public init(userArn: String) {
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -456,6 +627,7 @@ extension CodeStar {
             AWSShapeMember(label: "sshPublicKey", required: false, type: .string), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The date and time when the user profile was created in AWS CodeStar, in timestamp format.
         public let createdTimestamp: TimeStamp
         /// The display name shown for the user in AWS CodeStar projects. For example, this could be set to both first and last name ("Mary Major") or a single name ("Mary"). The display name is also used to generate the initial icon associated with the user in AWS CodeStar projects. If spaces are included in the display name, the first character that appears after the space will be used as the second character in the user initial icon. The initial icon displays a maximum of two characters, so a display name with more than one space (for example "Mary Jane Major") would generate an initial icon using the first character and the first character after the space ("MJ", not "MM").
@@ -478,6 +650,20 @@ extension CodeStar {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 64)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "^\\S(.*\\S)?$")
+            try validate(emailAddress, name:"emailAddress", max: 128)
+            try validate(emailAddress, name:"emailAddress", min: 3)
+            try validate(emailAddress, name:"emailAddress", pattern: "^[\\w-.+]+@[\\w-.+]+$")
+            try validate(sshPublicKey, name:"sshPublicKey", max: 16384)
+            try validate(sshPublicKey, name:"sshPublicKey", pattern: "^[\\t\\r\\n\\u0020-\\u00FF]*$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdTimestamp = "createdTimestamp"
             case displayName = "displayName"
@@ -493,6 +679,7 @@ extension CodeStar {
             AWSShapeMember(label: "projectId", required: true, type: .string), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The ID of the AWS CodeStar project from which you want to remove a team member.
         public let projectId: String
         /// The Amazon Resource Name (ARN) of the IAM user or group whom you want to remove from the project.
@@ -503,6 +690,15 @@ extension CodeStar {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(projectId, name:"projectId", max: 15)
+            try validate(projectId, name:"projectId", min: 2)
+            try validate(projectId, name:"projectId", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case projectId = "projectId"
             case userArn = "userArn"
@@ -510,6 +706,7 @@ extension CodeStar {
     }
 
     public struct DisassociateTeamMemberResult: AWSShape {
+
 
         public init() {
         }
@@ -526,6 +723,7 @@ extension CodeStar {
             AWSShapeMember(label: "token", required: true, type: .string), 
             AWSShapeMember(label: "type", required: true, type: .string)
         ]
+
         /// Description for the GitHub repository to be created in AWS CodeStar. This description displays in GitHub after the repository is created.
         public let description: String?
         /// Whether to enable issues for the GitHub repository.
@@ -551,6 +749,20 @@ extension CodeStar {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 1000)
+            try validate(description, name:"description", min: 1)
+            try validate(description, name:"description", pattern: "^\\S(.*\\S)?$")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^\\S[\\w.-]*$")
+            try validate(owner, name:"owner", max: 100)
+            try validate(owner, name:"owner", min: 1)
+            try validate(owner, name:"owner", pattern: "^\\S(.*\\S)?$")
+            try validate(token, name:"token", min: 1)
+            try validate(`type`, name:"`type`", pattern: "^(user|organization|User|Organization)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case issuesEnabled = "issuesEnabled"
@@ -567,6 +779,7 @@ extension CodeStar {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The maximum amount of data that can be contained in a single set of results.
         public let maxResults: Int32?
         /// The continuation token to be used to return the next set of results, if the results cannot be returned in one response.
@@ -575,6 +788,14 @@ extension CodeStar {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -588,6 +809,7 @@ extension CodeStar {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "projects", required: true, type: .list)
         ]
+
         /// The continuation token to use when requesting the next set of results, if there are more results to be returned.
         public let nextToken: String?
         /// A list of projects.
@@ -596,6 +818,15 @@ extension CodeStar {
         public init(nextToken: String? = nil, projects: [ProjectSummary]) {
             self.nextToken = nextToken
             self.projects = projects
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
+            try projects.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -610,6 +841,7 @@ extension CodeStar {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "projectId", required: true, type: .string)
         ]
+
         /// The maximum amount of data that can be contained in a single set of results.
         public let maxResults: Int32?
         /// The continuation token for the next set of results, if the results cannot be returned in one response.
@@ -621,6 +853,17 @@ extension CodeStar {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.projectId = projectId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
+            try validate(projectId, name:"projectId", max: 15)
+            try validate(projectId, name:"projectId", min: 2)
+            try validate(projectId, name:"projectId", pattern: "^[a-z][a-z0-9-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -635,6 +878,7 @@ extension CodeStar {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "resources", required: false, type: .list)
         ]
+
         /// The continuation token to use when requesting the next set of results, if there are more results to be returned.
         public let nextToken: String?
         /// An array of resources associated with the project. 
@@ -643,6 +887,15 @@ extension CodeStar {
         public init(nextToken: String? = nil, resources: [Resource]? = nil) {
             self.nextToken = nextToken
             self.resources = resources
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
+            try resources?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -657,6 +910,7 @@ extension CodeStar {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ID of the project to get tags for.
         public let id: String
         /// Reserved for future use.
@@ -668,6 +922,17 @@ extension CodeStar {
             self.id = id
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -682,6 +947,7 @@ extension CodeStar {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .map)
         ]
+
         /// Reserved for future use.
         public let nextToken: String?
         /// The tags for the project.
@@ -690,6 +956,12 @@ extension CodeStar {
         public init(nextToken: String? = nil, tags: [String: String]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -704,6 +976,7 @@ extension CodeStar {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "projectId", required: true, type: .string)
         ]
+
         /// The maximum number of team members you want returned in a response.
         public let maxResults: Int32?
         /// The continuation token for the next set of results, if the results cannot be returned in one response.
@@ -715,6 +988,17 @@ extension CodeStar {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.projectId = projectId
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
+            try validate(projectId, name:"projectId", max: 15)
+            try validate(projectId, name:"projectId", min: 2)
+            try validate(projectId, name:"projectId", pattern: "^[a-z][a-z0-9-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -729,6 +1013,7 @@ extension CodeStar {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "teamMembers", required: true, type: .list)
         ]
+
         /// The continuation token to use when requesting the next set of results, if there are more results to be returned.
         public let nextToken: String?
         /// A list of team member objects for the project.
@@ -737,6 +1022,15 @@ extension CodeStar {
         public init(nextToken: String? = nil, teamMembers: [TeamMember]) {
             self.nextToken = nextToken
             self.teamMembers = teamMembers
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
+            try teamMembers.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -750,6 +1044,7 @@ extension CodeStar {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The maximum number of results to return in a response.
         public let maxResults: Int32?
         /// The continuation token for the next set of results, if the results cannot be returned in one response.
@@ -758,6 +1053,14 @@ extension CodeStar {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 100)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -771,6 +1074,7 @@ extension CodeStar {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "userProfiles", required: true, type: .list)
         ]
+
         /// The continuation token to use when requesting the next set of results, if there are more results to be returned.
         public let nextToken: String?
         /// All the user profiles configured in AWS CodeStar for an AWS account.
@@ -779,6 +1083,15 @@ extension CodeStar {
         public init(nextToken: String? = nil, userProfiles: [UserProfileSummary]) {
             self.nextToken = nextToken
             self.userProfiles = userProfiles
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 512)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(nextToken, name:"nextToken", pattern: "^[\\w/+=]+$")
+            try userProfiles.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -792,6 +1105,7 @@ extension CodeStar {
             AWSShapeMember(label: "reason", required: false, type: .string), 
             AWSShapeMember(label: "state", required: true, type: .string)
         ]
+
         /// In the case of a project creation or deletion failure, a reason for the failure.
         public let reason: String?
         /// The phase of completion for a project creation or deletion.
@@ -800,6 +1114,12 @@ extension CodeStar {
         public init(reason: String? = nil, state: String) {
             self.reason = reason
             self.state = state
+        }
+
+        public func validate() throws {
+            try validate(reason, name:"reason", max: 1024)
+            try validate(reason, name:"reason", pattern: "^$|^\\S(.*\\S)?$")
+            try validate(state, name:"state", pattern: "^(CreateInProgress|CreateComplete|CreateFailed|DeleteComplete|DeleteFailed|DeleteInProgress|UpdateComplete|UpdateInProgress|UpdateFailed|Unknown)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -813,6 +1133,7 @@ extension CodeStar {
             AWSShapeMember(label: "projectArn", required: false, type: .string), 
             AWSShapeMember(label: "projectId", required: false, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the project.
         public let projectArn: String?
         /// The ID of the project.
@@ -821,6 +1142,13 @@ extension CodeStar {
         public init(projectArn: String? = nil, projectId: String? = nil) {
             self.projectArn = projectArn
             self.projectId = projectId
+        }
+
+        public func validate() throws {
+            try validate(projectArn, name:"projectArn", pattern: "^arn:aws[^:\\s]*:codestar:[^:\\s]+:[0-9]{12}:project\\/[a-z]([a-z0-9|-])+$")
+            try validate(projectId, name:"projectId", max: 15)
+            try validate(projectId, name:"projectId", min: 2)
+            try validate(projectId, name:"projectId", pattern: "^[a-z][a-z0-9-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -833,11 +1161,17 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource.
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", min: 11)
+            try validate(id, name:"id", pattern: "^arn\\:aws\\:\\S.*\\:.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -850,6 +1184,7 @@ extension CodeStar {
             AWSShapeMember(label: "bucketKey", required: false, type: .string), 
             AWSShapeMember(label: "bucketName", required: false, type: .string)
         ]
+
         /// The Amazon S3 object key where the source code files provided with the project request are stored.
         public let bucketKey: String?
         /// The Amazon S3 bucket name where the source code files provided with the project request are stored.
@@ -858,6 +1193,11 @@ extension CodeStar {
         public init(bucketKey: String? = nil, bucketName: String? = nil) {
             self.bucketKey = bucketKey
             self.bucketName = bucketName
+        }
+
+        public func validate() throws {
+            try validate(bucketName, name:"bucketName", max: 63)
+            try validate(bucketName, name:"bucketName", min: 3)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -871,6 +1211,7 @@ extension CodeStar {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .map)
         ]
+
         /// The ID of the project you want to add a tag to.
         public let id: String
         /// The tags you want to add to the project.
@@ -879,6 +1220,12 @@ extension CodeStar {
         public init(id: String, tags: [String: String]) {
             self.id = id
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -891,6 +1238,7 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tags", required: false, type: .map)
         ]
+
         /// The tags for the project.
         public let tags: [String: String]?
 
@@ -909,6 +1257,7 @@ extension CodeStar {
             AWSShapeMember(label: "remoteAccessAllowed", required: false, type: .boolean), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The role assigned to the user in the project. Project roles have different levels of access. For more information, see Working with Teams in the AWS CodeStar User Guide. 
         public let projectRole: String
         /// Whether the user is allowed to remotely access project resources using an SSH public/private key pair.
@@ -920,6 +1269,13 @@ extension CodeStar {
             self.projectRole = projectRole
             self.remoteAccessAllowed = remoteAccessAllowed
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(projectRole, name:"projectRole", pattern: "^(Owner|Viewer|Contributor)$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -935,6 +1291,7 @@ extension CodeStar {
             AWSShapeMember(label: "source", required: true, type: .structure), 
             AWSShapeMember(label: "stackParameters", required: false, type: .map)
         ]
+
         /// The service role ARN for AWS CodeStar to use for the toolchain template during stack provisioning.
         public let roleArn: String?
         /// The Amazon S3 location where the toolchain template file provided with the project request is stored. AWS CodeStar retrieves the file during project creation.
@@ -948,6 +1305,12 @@ extension CodeStar {
             self.stackParameters = stackParameters
         }
 
+        public func validate() throws {
+            try validate(roleArn, name:"roleArn", max: 1224)
+            try validate(roleArn, name:"roleArn", min: 1)
+            try source.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case roleArn = "roleArn"
             case source = "source"
@@ -959,11 +1322,16 @@ extension CodeStar {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "s3", required: true, type: .structure)
         ]
+
         /// The Amazon S3 bucket where the toolchain template file provided with the project request is stored.
         public let s3: S3Location
 
         public init(s3: S3Location) {
             self.s3 = s3
+        }
+
+        public func validate() throws {
+            try s3.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -976,6 +1344,7 @@ extension CodeStar {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The ID of the project to remove tags from.
         public let id: String
         /// The tags to remove from the project.
@@ -986,6 +1355,17 @@ extension CodeStar {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
+            try tags.forEach {
+                try validate($0, name:"tags[]", max: 128)
+                try validate($0, name:"tags[]", min: 1)
+                try validate($0, name:"tags[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case id = "id"
             case tags = "tags"
@@ -993,6 +1373,7 @@ extension CodeStar {
     }
 
     public struct UntagProjectResult: AWSShape {
+
 
         public init() {
         }
@@ -1005,6 +1386,7 @@ extension CodeStar {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "name", required: false, type: .string)
         ]
+
         /// The description of the project, if any.
         public let description: String?
         /// The ID of the project you want to update.
@@ -1018,6 +1400,17 @@ extension CodeStar {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 1024)
+            try validate(description, name:"description", pattern: "^$|^\\S(.*\\S)?$")
+            try validate(id, name:"id", max: 15)
+            try validate(id, name:"id", min: 2)
+            try validate(id, name:"id", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(name, name:"name", max: 100)
+            try validate(name, name:"name", min: 1)
+            try validate(name, name:"name", pattern: "^\\S(.*\\S)?$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case description = "description"
             case id = "id"
@@ -1026,6 +1419,7 @@ extension CodeStar {
     }
 
     public struct UpdateProjectResult: AWSShape {
+
 
         public init() {
         }
@@ -1039,6 +1433,7 @@ extension CodeStar {
             AWSShapeMember(label: "remoteAccessAllowed", required: false, type: .boolean), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The ID of the project.
         public let projectId: String
         /// The role assigned to the user in the project. Project roles have different levels of access. For more information, see Working with Teams in the AWS CodeStar User Guide.
@@ -1055,6 +1450,16 @@ extension CodeStar {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(projectId, name:"projectId", max: 15)
+            try validate(projectId, name:"projectId", min: 2)
+            try validate(projectId, name:"projectId", pattern: "^[a-z][a-z0-9-]+$")
+            try validate(projectRole, name:"projectRole", pattern: "^(Owner|Viewer|Contributor)$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case projectId = "projectId"
             case projectRole = "projectRole"
@@ -1069,6 +1474,7 @@ extension CodeStar {
             AWSShapeMember(label: "remoteAccessAllowed", required: false, type: .boolean), 
             AWSShapeMember(label: "userArn", required: false, type: .string)
         ]
+
         /// The project role granted to the user.
         public let projectRole: String?
         /// Whether a team member is allowed to remotely access project resources using the SSH public key associated with the user's profile.
@@ -1080,6 +1486,13 @@ extension CodeStar {
             self.projectRole = projectRole
             self.remoteAccessAllowed = remoteAccessAllowed
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(projectRole, name:"projectRole", pattern: "^(Owner|Viewer|Contributor)$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1096,6 +1509,7 @@ extension CodeStar {
             AWSShapeMember(label: "sshPublicKey", required: false, type: .string), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The name that is displayed as the friendly name for the user in AWS CodeStar.
         public let displayName: String?
         /// The email address that is displayed as part of the user's profile in AWS CodeStar.
@@ -1110,6 +1524,20 @@ extension CodeStar {
             self.emailAddress = emailAddress
             self.sshPublicKey = sshPublicKey
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 64)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "^\\S(.*\\S)?$")
+            try validate(emailAddress, name:"emailAddress", max: 128)
+            try validate(emailAddress, name:"emailAddress", min: 3)
+            try validate(emailAddress, name:"emailAddress", pattern: "^[\\w-.+]+@[\\w-.+]+$")
+            try validate(sshPublicKey, name:"sshPublicKey", max: 16384)
+            try validate(sshPublicKey, name:"sshPublicKey", pattern: "^[\\t\\r\\n\\u0020-\\u00FF]*$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1129,6 +1557,7 @@ extension CodeStar {
             AWSShapeMember(label: "sshPublicKey", required: false, type: .string), 
             AWSShapeMember(label: "userArn", required: true, type: .string)
         ]
+
         /// The date the user profile was created, in timestamp format.
         public let createdTimestamp: TimeStamp?
         /// The name that is displayed as the friendly name for the user in AWS CodeStar.
@@ -1151,6 +1580,20 @@ extension CodeStar {
             self.userArn = userArn
         }
 
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 64)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "^\\S(.*\\S)?$")
+            try validate(emailAddress, name:"emailAddress", max: 128)
+            try validate(emailAddress, name:"emailAddress", min: 3)
+            try validate(emailAddress, name:"emailAddress", pattern: "^[\\w-.+]+@[\\w-.+]+$")
+            try validate(sshPublicKey, name:"sshPublicKey", max: 16384)
+            try validate(sshPublicKey, name:"sshPublicKey", pattern: "^[\\t\\r\\n\\u0020-\\u00FF]*$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdTimestamp = "createdTimestamp"
             case displayName = "displayName"
@@ -1168,6 +1611,7 @@ extension CodeStar {
             AWSShapeMember(label: "sshPublicKey", required: false, type: .string), 
             AWSShapeMember(label: "userArn", required: false, type: .string)
         ]
+
         /// The display name of a user in AWS CodeStar. For example, this could be set to both first and last name ("Mary Major") or a single name ("Mary"). The display name is also used to generate the initial icon associated with the user in AWS CodeStar projects. If spaces are included in the display name, the first character that appears after the space will be used as the second character in the user initial icon. The initial icon displays a maximum of two characters, so a display name with more than one space (for example "Mary Jane Major") would generate an initial icon using the first character and the first character after the space ("MJ", not "MM").
         public let displayName: String?
         /// The email address associated with the user.
@@ -1182,6 +1626,20 @@ extension CodeStar {
             self.emailAddress = emailAddress
             self.sshPublicKey = sshPublicKey
             self.userArn = userArn
+        }
+
+        public func validate() throws {
+            try validate(displayName, name:"displayName", max: 64)
+            try validate(displayName, name:"displayName", min: 1)
+            try validate(displayName, name:"displayName", pattern: "^\\S(.*\\S)?$")
+            try validate(emailAddress, name:"emailAddress", max: 128)
+            try validate(emailAddress, name:"emailAddress", min: 3)
+            try validate(emailAddress, name:"emailAddress", pattern: "^[\\w-.+]+@[\\w-.+]+$")
+            try validate(sshPublicKey, name:"sshPublicKey", max: 16384)
+            try validate(sshPublicKey, name:"sshPublicKey", pattern: "^[\\t\\r\\n\\u0020-\\u00FF]*$")
+            try validate(userArn, name:"userArn", max: 95)
+            try validate(userArn, name:"userArn", min: 32)
+            try validate(userArn, name:"userArn", pattern: "^arn:aws:iam::\\d{12}:user(?:(\\u002F)|(\\u002F[\\u0021-\\u007E]+\\u002F))[\\w+=,.@-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {

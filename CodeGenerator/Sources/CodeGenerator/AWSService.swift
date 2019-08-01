@@ -9,6 +9,23 @@
 import Foundation
 import SwiftyJSON
 
+/*
+ List of model tags we are currently not processing:
+ exception: This appears to be used to tag errors returned by AWS
+ synthetic: not dealt with, always seems to pair up with "exception"
+ error: details http return status for error, also can include a "code" and flag "senderFault"
+ fault: not sure how this is different from "exception". Looks to be server issues, most return 5xx http status
+ sensitive: indicates sensitive data
+ wrapper: not sure what this is
+ box: not sure what this is
+ streaming:
+ eventstream:
+ event: pairs with "eventstream"
+ xmlOrder: defines order of members in xml (GetMetricStatisticsInput,PutMetricAlarmInput)
+ timestampFormat: need to deal with "unixTimestamp" for MediaConvert
+ documentation: additional documentation, only used once in apigateway
+ */
+
 enum AWSServiceError: Error {
     case eventStreamingCodeGenerationsAreUnsupported
 }
@@ -122,7 +139,9 @@ struct AWSService {
             let shapeJSON = apiJSON["shapes"][json["member"]["shape"].stringValue]
             let _type = try shapeType(from: shapeJSON, level: level+1)
             let shape = Shape(name: json["member"]["shape"].stringValue, type: _type)
-            type = .list(shape)
+            let max = json["max"].int
+            let min = json["min"].int
+            type = .list(shape, max: max, min: min)
 
         case "structure":
             // Note that we need to do some extra preprocessing to clean up the formatting of the structure. Sometimes we have a "flattened" object which does not have extra fields (typically named `members`) wrapping the contents. Other times we do, and need to clear that out.
@@ -174,6 +193,14 @@ struct AWSService {
                     location = Location(json: shapeJSON["member"])
                     locationName = memberLocationName
                 }
+                var options : Member.Options = []
+                if memberJSON["streaming"].bool == true {
+                    options.insert(.streaming)
+                }
+                if memberJSON["idempotencyToken"].bool == true {
+                    options.insert(.idempotencyToken)
+                }
+                
                 return Member(
                     name: name,
                     required: requireds.contains(name),
@@ -182,7 +209,7 @@ struct AWSService {
                     locationName: locationName,
                     shapeEncoding: encoding,
                     xmlNamespace: XMLNamespace(dictionary: memberDict),
-                    isStreaming: memberJSON["streaming"].bool ?? false
+                    options: options
                 )
             }.sorted{ $0.name.lowercased() < $1.name.lowercased() }
 

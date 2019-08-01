@@ -14,6 +14,7 @@ extension SWF {
             AWSShapeMember(label: "taskToken", required: true, type: .string), 
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure)
         ]
+
         /// The unique ID of the task.
         public let activityId: String
         /// The type of this activity task.
@@ -36,6 +37,16 @@ extension SWF {
             self.workflowExecution = workflowExecution
         }
 
+        public func validate() throws {
+            try validate(activityId, name:"activityId", max: 256)
+            try validate(activityId, name:"activityId", min: 1)
+            try activityType.validate()
+            try validate(input, name:"input", max: 32768)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
+            try workflowExecution.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activityId = "activityId"
             case activityType = "activityType"
@@ -51,6 +62,7 @@ extension SWF {
             AWSShapeMember(label: "activityId", required: true, type: .string), 
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long)
         ]
+
         /// The unique ID of the task.
         public let activityId: String
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the RequestCancelActivityTask decision for this cancellation request. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -59,6 +71,11 @@ extension SWF {
         public init(activityId: String, decisionTaskCompletedEventId: Int64) {
             self.activityId = activityId
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
+        }
+
+        public func validate() throws {
+            try validate(activityId, name:"activityId", max: 256)
+            try validate(activityId, name:"activityId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -74,6 +91,7 @@ extension SWF {
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long), 
             AWSShapeMember(label: "startedEventId", required: true, type: .long)
         ]
+
         /// Details of the cancellation.
         public let details: String?
         /// If set, contains the ID of the last ActivityTaskCancelRequested event recorded for this activity task. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -90,6 +108,10 @@ extension SWF {
             self.startedEventId = startedEventId
         }
 
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case details = "details"
             case latestCancelRequestedEventId = "latestCancelRequestedEventId"
@@ -104,6 +126,7 @@ extension SWF {
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long), 
             AWSShapeMember(label: "startedEventId", required: true, type: .long)
         ]
+
         /// The results of the activity task.
         public let result: String?
         /// The ID of the ActivityTaskScheduled event that was recorded when this activity task was scheduled. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -115,6 +138,10 @@ extension SWF {
             self.result = result
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
+        }
+
+        public func validate() throws {
+            try validate(result, name:"result", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -131,6 +158,7 @@ extension SWF {
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long), 
             AWSShapeMember(label: "startedEventId", required: true, type: .long)
         ]
+
         /// The details of the failure.
         public let details: String?
         /// The reason provided for the failure.
@@ -145,6 +173,11 @@ extension SWF {
             self.reason = reason
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(reason, name:"reason", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -169,6 +202,7 @@ extension SWF {
             AWSShapeMember(label: "taskList", required: true, type: .structure), 
             AWSShapeMember(label: "taskPriority", required: false, type: .string)
         ]
+
         /// The unique ID of the activity task.
         public let activityId: String
         /// The type of the activity task.
@@ -206,6 +240,19 @@ extension SWF {
             self.taskPriority = taskPriority
         }
 
+        public func validate() throws {
+            try validate(activityId, name:"activityId", max: 256)
+            try validate(activityId, name:"activityId", min: 1)
+            try activityType.validate()
+            try validate(control, name:"control", max: 32768)
+            try validate(heartbeatTimeout, name:"heartbeatTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(scheduleToCloseTimeout, name:"scheduleToCloseTimeout", max: 8)
+            try validate(scheduleToStartTimeout, name:"scheduleToStartTimeout", max: 8)
+            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
+            try taskList.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activityId = "activityId"
             case activityType = "activityType"
@@ -226,6 +273,7 @@ extension SWF {
             AWSShapeMember(label: "identity", required: false, type: .string), 
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long)
         ]
+
         /// Identity of the worker that was assigned this task. This aids diagnostics when problems arise. The form of this identity is user defined.
         public let identity: String?
         /// The ID of the ActivityTaskScheduled event that was recorded when this activity task was scheduled. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -234,6 +282,10 @@ extension SWF {
         public init(identity: String? = nil, scheduledEventId: Int64) {
             self.identity = identity
             self.scheduledEventId = scheduledEventId
+        }
+
+        public func validate() throws {
+            try validate(identity, name:"identity", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -246,6 +298,7 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "cancelRequested", required: true, type: .boolean)
         ]
+
         /// Set to true if cancellation of the task is requested.
         public let cancelRequested: Bool
 
@@ -265,6 +318,7 @@ extension SWF {
             AWSShapeMember(label: "startedEventId", required: true, type: .long), 
             AWSShapeMember(label: "timeoutType", required: true, type: .enum)
         ]
+
         /// Contains the content of the details parameter for the last call made by the activity to RecordActivityTaskHeartbeat.
         public let details: String?
         /// The ID of the ActivityTaskScheduled event that was recorded when this activity task was scheduled. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -279,6 +333,10 @@ extension SWF {
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
             self.timeoutType = timeoutType
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -302,6 +360,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// The name of this activity.  The combination of activity type name and version must be unique within a domain. 
         public let name: String
         /// The version of this activity.  The combination of activity type name and version must be unique with in a domain. 
@@ -310,6 +369,13 @@ extension SWF {
         public init(name: String, version: String) {
             self.name = name
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(version, name:"version", max: 64)
+            try validate(version, name:"version", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -327,6 +393,7 @@ extension SWF {
             AWSShapeMember(label: "defaultTaskScheduleToStartTimeout", required: false, type: .string), 
             AWSShapeMember(label: "defaultTaskStartToCloseTimeout", required: false, type: .string)
         ]
+
         ///  The default maximum time, in seconds, before which a worker processing a task must report progress by calling RecordActivityTaskHeartbeat. You can specify this value only when registering an activity type. The registered default value can be overridden when you schedule a task through the ScheduleActivityTask Decision. If the activity worker subsequently attempts to record a heartbeat or returns a result, the activity worker receives an UnknownResource fault. In this case, Amazon SWF no longer considers the activity task to be valid; the activity worker should clean up the activity task. The duration is specified in seconds, an integer greater than or equal to 0. You can use NONE to specify unlimited duration.
         public let defaultTaskHeartbeatTimeout: String?
         ///  The default task list specified for this activity type at registration. This default is used if a task list isn't provided when a task is scheduled through the ScheduleActivityTask Decision. You can override the default registered task list when scheduling a task through the ScheduleActivityTask Decision.
@@ -349,6 +416,14 @@ extension SWF {
             self.defaultTaskStartToCloseTimeout = defaultTaskStartToCloseTimeout
         }
 
+        public func validate() throws {
+            try validate(defaultTaskHeartbeatTimeout, name:"defaultTaskHeartbeatTimeout", max: 8)
+            try defaultTaskList?.validate()
+            try validate(defaultTaskScheduleToCloseTimeout, name:"defaultTaskScheduleToCloseTimeout", max: 8)
+            try validate(defaultTaskScheduleToStartTimeout, name:"defaultTaskScheduleToStartTimeout", max: 8)
+            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultTaskHeartbeatTimeout = "defaultTaskHeartbeatTimeout"
             case defaultTaskList = "defaultTaskList"
@@ -364,6 +439,7 @@ extension SWF {
             AWSShapeMember(label: "configuration", required: true, type: .structure), 
             AWSShapeMember(label: "typeInfo", required: true, type: .structure)
         ]
+
         /// The configuration settings registered with the activity type.
         public let configuration: ActivityTypeConfiguration
         /// General information about the activity type. The status of activity type (returned in the ActivityTypeInfo structure) can be one of the following.    REGISTERED – The type is registered and available. Workers supporting this type should be running.     DEPRECATED – The type was deprecated using DeprecateActivityType, but is still in use. You should keep workers supporting this type running. You cannot create new tasks of this type.   
@@ -372,6 +448,11 @@ extension SWF {
         public init(configuration: ActivityTypeConfiguration, typeInfo: ActivityTypeInfo) {
             self.configuration = configuration
             self.typeInfo = typeInfo
+        }
+
+        public func validate() throws {
+            try configuration.validate()
+            try typeInfo.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -388,6 +469,7 @@ extension SWF {
             AWSShapeMember(label: "description", required: false, type: .string), 
             AWSShapeMember(label: "status", required: true, type: .enum)
         ]
+
         /// The ActivityType type structure representing the activity type.
         public let activityType: ActivityType
         /// The date and time this activity type was created through RegisterActivityType.
@@ -407,6 +489,11 @@ extension SWF {
             self.status = status
         }
 
+        public func validate() throws {
+            try activityType.validate()
+            try validate(description, name:"description", max: 1024)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activityType = "activityType"
             case creationDate = "creationDate"
@@ -421,6 +508,7 @@ extension SWF {
             AWSShapeMember(label: "nextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "typeInfos", required: true, type: .list)
         ]
+
         /// If a NextPageToken was returned by a previous call, there are more results available. To retrieve the next page of results, make the call again using the returned token in nextPageToken. Keep all other arguments unchanged. The configured maximumPageSize determines how many results can be returned in a single call.
         public let nextPageToken: String?
         /// List of activity type information.
@@ -429,6 +517,13 @@ extension SWF {
         public init(nextPageToken: String? = nil, typeInfos: [ActivityTypeInfo]) {
             self.nextPageToken = nextPageToken
             self.typeInfos = typeInfos
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+            try typeInfos.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -441,11 +536,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "timerId", required: true, type: .string)
         ]
+
         ///  The unique ID of the timer to cancel.
         public let timerId: String
 
         public init(timerId: String) {
             self.timerId = timerId
+        }
+
+        public func validate() throws {
+            try validate(timerId, name:"timerId", max: 256)
+            try validate(timerId, name:"timerId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -465,6 +566,7 @@ extension SWF {
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long), 
             AWSShapeMember(label: "timerId", required: true, type: .string)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: CancelTimerFailedCause
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the CancelTimer decision to cancel this timer. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -478,6 +580,11 @@ extension SWF {
             self.timerId = timerId
         }
 
+        public func validate() throws {
+            try validate(timerId, name:"timerId", max: 256)
+            try validate(timerId, name:"timerId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -489,11 +596,16 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "details", required: false, type: .string)
         ]
+
         ///  Details of the cancellation.
         public let details: String?
 
         public init(details: String? = nil) {
             self.details = details
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -512,6 +624,7 @@ extension SWF {
             AWSShapeMember(label: "cause", required: true, type: .enum), 
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: CancelWorkflowExecutionFailedCause
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the CancelWorkflowExecution decision for this cancellation request. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -543,6 +656,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// Details of the cancellation (if provided).
         public let details: String?
         /// The ID of the StartChildWorkflowExecutionInitiated event corresponding to the StartChildWorkflowExecution Decision to start this child workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -562,6 +676,12 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try workflowExecution.validate()
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case details = "details"
             case initiatedEventId = "initiatedEventId"
@@ -579,6 +699,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The ID of the StartChildWorkflowExecutionInitiated event corresponding to the StartChildWorkflowExecution Decision to start this child workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let initiatedEventId: Int64
         /// The result of the child workflow execution.
@@ -596,6 +717,12 @@ extension SWF {
             self.startedEventId = startedEventId
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try validate(result, name:"result", max: 32768)
+            try workflowExecution.validate()
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -616,6 +743,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The details of the failure (if provided).
         public let details: String?
         /// The ID of the StartChildWorkflowExecutionInitiated event corresponding to the StartChildWorkflowExecution Decision to start this child workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -638,6 +766,13 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(reason, name:"reason", max: 256)
+            try workflowExecution.validate()
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case details = "details"
             case initiatedEventId = "initiatedEventId"
@@ -654,6 +789,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The ID of the StartChildWorkflowExecutionInitiated event corresponding to the StartChildWorkflowExecution Decision to start this child workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let initiatedEventId: Int64
         /// The child workflow execution that was started.
@@ -665,6 +801,11 @@ extension SWF {
             self.initiatedEventId = initiatedEventId
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try workflowExecution.validate()
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -681,6 +822,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The ID of the StartChildWorkflowExecutionInitiated event corresponding to the StartChildWorkflowExecution Decision to start this child workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let initiatedEventId: Int64
         /// The ID of the ChildWorkflowExecutionStarted event recorded when this child workflow execution was started. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -695,6 +837,11 @@ extension SWF {
             self.startedEventId = startedEventId
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try workflowExecution.validate()
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -713,6 +860,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The ID of the StartChildWorkflowExecutionInitiated event corresponding to the StartChildWorkflowExecution Decision to start this child workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let initiatedEventId: Int64
         /// The ID of the ChildWorkflowExecutionStarted event recorded when this child workflow execution was started. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -730,6 +878,11 @@ extension SWF {
             self.timeoutType = timeoutType
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try workflowExecution.validate()
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -755,6 +908,7 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "status", required: true, type: .enum)
         ]
+
         ///  The close status that must match the close status of an execution for it to meet the criteria of this filter.
         public let status: CloseStatus
 
@@ -771,11 +925,16 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "result", required: false, type: .string)
         ]
+
         /// The result of the workflow execution. The form of the result is implementation defined.
         public let result: String?
 
         public init(result: String? = nil) {
             self.result = result
+        }
+
+        public func validate() throws {
+            try validate(result, name:"result", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -794,6 +953,7 @@ extension SWF {
             AWSShapeMember(label: "cause", required: true, type: .enum), 
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: CompleteWorkflowExecutionFailedCause
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the CompleteWorkflowExecution decision to complete this execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -822,6 +982,7 @@ extension SWF {
             AWSShapeMember(label: "taskStartToCloseTimeout", required: false, type: .string), 
             AWSShapeMember(label: "workflowTypeVersion", required: false, type: .string)
         ]
+
         /// If set, specifies the policy to use for the child workflow executions of the new execution if it is terminated by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. This policy overrides the default child policy specified when registering the workflow type using RegisterWorkflowType. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.    A child policy for this workflow execution must be specified either as a default for the workflow type or through this parameter. If neither this parameter is set nor a default child policy was specified at registration time then a fault is returned. 
         public let childPolicy: ChildPolicy?
         /// If set, specifies the total duration for this workflow execution. This overrides the defaultExecutionStartToCloseTimeout specified when registering the workflow type. The duration is specified in seconds, an integer greater than or equal to 0. You can use NONE to specify unlimited duration.  An execution start-to-close timeout for this workflow execution must be specified either as a default for the workflow type or through this field. If neither this field is set nor a default execution start-to-close timeout was specified at registration time then a fault is returned. 
@@ -851,6 +1012,22 @@ extension SWF {
             self.taskPriority = taskPriority
             self.taskStartToCloseTimeout = taskStartToCloseTimeout
             self.workflowTypeVersion = workflowTypeVersion
+        }
+
+        public func validate() throws {
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", min: 1)
+            try tagList?.forEach {
+                try validate($0, name:"tagList[]", max: 256)
+                try validate($0, name:"tagList[]", min: 0)
+            }
+            try validate(tagList, name:"tagList", max: 5)
+            try taskList?.validate()
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
+            try validate(workflowTypeVersion, name:"workflowTypeVersion", max: 64)
+            try validate(workflowTypeVersion, name:"workflowTypeVersion", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -884,6 +1061,7 @@ extension SWF {
             AWSShapeMember(label: "cause", required: true, type: .enum), 
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: ContinueAsNewWorkflowExecutionFailedCause
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the ContinueAsNewWorkflowExecution decision that started this execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -910,6 +1088,7 @@ extension SWF {
             AWSShapeMember(label: "tagFilter", required: false, type: .structure), 
             AWSShapeMember(label: "typeFilter", required: false, type: .structure)
         ]
+
         /// If specified, only workflow executions that match this close status are counted. This filter has an affect only if executionStatus is specified as CLOSED.   closeStatusFilter, executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
         public let closeStatusFilter: CloseStatusFilter?
         /// If specified, only workflow executions that meet the close time criteria of the filter are counted.   startTimeFilter and closeTimeFilter are mutually exclusive. You must specify one of these in a request but not both. 
@@ -935,6 +1114,14 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try executionFilter?.validate()
+            try tagFilter?.validate()
+            try typeFilter?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case closeStatusFilter = "closeStatusFilter"
             case closeTimeFilter = "closeTimeFilter"
@@ -954,6 +1141,7 @@ extension SWF {
             AWSShapeMember(label: "tagFilter", required: false, type: .structure), 
             AWSShapeMember(label: "typeFilter", required: false, type: .structure)
         ]
+
         /// The name of the domain containing the workflow executions to count.
         public let domain: String
         /// If specified, only workflow executions matching the WorkflowId in the filter are counted.   executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
@@ -973,6 +1161,14 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try executionFilter?.validate()
+            try tagFilter?.validate()
+            try typeFilter?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domain = "domain"
             case executionFilter = "executionFilter"
@@ -987,6 +1183,7 @@ extension SWF {
             AWSShapeMember(label: "domain", required: true, type: .string), 
             AWSShapeMember(label: "taskList", required: true, type: .structure)
         ]
+
         /// The name of the domain that contains the task list.
         public let domain: String
         /// The name of the task list.
@@ -995,6 +1192,12 @@ extension SWF {
         public init(domain: String, taskList: TaskList) {
             self.domain = domain
             self.taskList = taskList
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try taskList.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1008,6 +1211,7 @@ extension SWF {
             AWSShapeMember(label: "domain", required: true, type: .string), 
             AWSShapeMember(label: "taskList", required: true, type: .structure)
         ]
+
         /// The name of the domain that contains the task list.
         public let domain: String
         /// The name of the task list.
@@ -1016,6 +1220,12 @@ extension SWF {
         public init(domain: String, taskList: TaskList) {
             self.domain = domain
             self.taskList = taskList
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try taskList.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1041,6 +1251,7 @@ extension SWF {
             AWSShapeMember(label: "startChildWorkflowExecutionDecisionAttributes", required: false, type: .structure), 
             AWSShapeMember(label: "startTimerDecisionAttributes", required: false, type: .structure)
         ]
+
         /// Provides the details of the CancelTimer decision. It isn't set for other decision types.
         public let cancelTimerDecisionAttributes: CancelTimerDecisionAttributes?
         /// Provides the details of the CancelWorkflowExecution decision. It isn't set for other decision types.
@@ -1087,6 +1298,22 @@ extension SWF {
             self.startTimerDecisionAttributes = startTimerDecisionAttributes
         }
 
+        public func validate() throws {
+            try cancelTimerDecisionAttributes?.validate()
+            try cancelWorkflowExecutionDecisionAttributes?.validate()
+            try completeWorkflowExecutionDecisionAttributes?.validate()
+            try continueAsNewWorkflowExecutionDecisionAttributes?.validate()
+            try failWorkflowExecutionDecisionAttributes?.validate()
+            try recordMarkerDecisionAttributes?.validate()
+            try requestCancelActivityTaskDecisionAttributes?.validate()
+            try requestCancelExternalWorkflowExecutionDecisionAttributes?.validate()
+            try scheduleActivityTaskDecisionAttributes?.validate()
+            try scheduleLambdaFunctionDecisionAttributes?.validate()
+            try signalExternalWorkflowExecutionDecisionAttributes?.validate()
+            try startChildWorkflowExecutionDecisionAttributes?.validate()
+            try startTimerDecisionAttributes?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cancelTimerDecisionAttributes = "cancelTimerDecisionAttributes"
             case cancelWorkflowExecutionDecisionAttributes = "cancelWorkflowExecutionDecisionAttributes"
@@ -1115,6 +1342,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// A paginated list of history events of the workflow execution. The decider uses this during the processing of the decision task.
         public let events: [HistoryEvent]
         /// If a NextPageToken was returned by a previous call, there are more results available. To retrieve the next page of results, make the call again using the returned token in nextPageToken. Keep all other arguments unchanged. The configured maximumPageSize determines how many results can be returned in a single call.
@@ -1140,6 +1368,17 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try events.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
+            try workflowExecution.validate()
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case events = "events"
             case nextPageToken = "nextPageToken"
@@ -1157,6 +1396,7 @@ extension SWF {
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long), 
             AWSShapeMember(label: "startedEventId", required: true, type: .long)
         ]
+
         /// User defined context for the workflow execution.
         public let executionContext: String?
         /// The ID of the DecisionTaskScheduled event that was recorded when this decision task was scheduled. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -1168,6 +1408,10 @@ extension SWF {
             self.executionContext = executionContext
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
+        }
+
+        public func validate() throws {
+            try validate(executionContext, name:"executionContext", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1183,6 +1427,7 @@ extension SWF {
             AWSShapeMember(label: "taskList", required: true, type: .structure), 
             AWSShapeMember(label: "taskPriority", required: false, type: .string)
         ]
+
         /// The maximum duration for this decision task. The task is considered timed out if it doesn't completed within this duration. The duration is specified in seconds, an integer greater than or equal to 0. You can use NONE to specify unlimited duration.
         public let startToCloseTimeout: String?
         /// The name of the task list in which the decision task was scheduled.
@@ -1194,6 +1439,11 @@ extension SWF {
             self.startToCloseTimeout = startToCloseTimeout
             self.taskList = taskList
             self.taskPriority = taskPriority
+        }
+
+        public func validate() throws {
+            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
+            try taskList.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1208,6 +1458,7 @@ extension SWF {
             AWSShapeMember(label: "identity", required: false, type: .string), 
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long)
         ]
+
         /// Identity of the decider making the request. This enables diagnostic tracing when problems arise. The form of this identity is user defined.
         public let identity: String?
         /// The ID of the DecisionTaskScheduled event that was recorded when this decision task was scheduled. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -1216,6 +1467,10 @@ extension SWF {
         public init(identity: String? = nil, scheduledEventId: Int64) {
             self.identity = identity
             self.scheduledEventId = scheduledEventId
+        }
+
+        public func validate() throws {
+            try validate(identity, name:"identity", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1230,6 +1485,7 @@ extension SWF {
             AWSShapeMember(label: "startedEventId", required: true, type: .long), 
             AWSShapeMember(label: "timeoutType", required: true, type: .enum)
         ]
+
         /// The ID of the DecisionTaskScheduled event that was recorded when this decision task was scheduled. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let scheduledEventId: Int64
         /// The ID of the DecisionTaskStarted event recorded when this decision task was started. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -1277,6 +1533,7 @@ extension SWF {
             AWSShapeMember(label: "activityType", required: true, type: .structure), 
             AWSShapeMember(label: "domain", required: true, type: .string)
         ]
+
         /// The activity type to deprecate.
         public let activityType: ActivityType
         /// The name of the domain in which the activity type is registered.
@@ -1285,6 +1542,12 @@ extension SWF {
         public init(activityType: ActivityType, domain: String) {
             self.activityType = activityType
             self.domain = domain
+        }
+
+        public func validate() throws {
+            try activityType.validate()
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1297,11 +1560,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the domain to deprecate.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1314,6 +1583,7 @@ extension SWF {
             AWSShapeMember(label: "domain", required: true, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The name of the domain in which the workflow type is registered.
         public let domain: String
         /// The workflow type to deprecate.
@@ -1322,6 +1592,12 @@ extension SWF {
         public init(domain: String, workflowType: WorkflowType) {
             self.domain = domain
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1335,6 +1611,7 @@ extension SWF {
             AWSShapeMember(label: "activityType", required: true, type: .structure), 
             AWSShapeMember(label: "domain", required: true, type: .string)
         ]
+
         /// The activity type to get information about. Activity types are identified by the name and version that were supplied when the activity was registered.
         public let activityType: ActivityType
         /// The name of the domain in which the activity type is registered.
@@ -1343,6 +1620,12 @@ extension SWF {
         public init(activityType: ActivityType, domain: String) {
             self.activityType = activityType
             self.domain = domain
+        }
+
+        public func validate() throws {
+            try activityType.validate()
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1355,11 +1638,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the domain to describe.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1372,6 +1661,7 @@ extension SWF {
             AWSShapeMember(label: "domain", required: true, type: .string), 
             AWSShapeMember(label: "execution", required: true, type: .structure)
         ]
+
         /// The name of the domain containing the workflow execution.
         public let domain: String
         /// The workflow execution to describe.
@@ -1380,6 +1670,12 @@ extension SWF {
         public init(domain: String, execution: WorkflowExecution) {
             self.domain = domain
             self.execution = execution
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try execution.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1393,6 +1689,7 @@ extension SWF {
             AWSShapeMember(label: "domain", required: true, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The name of the domain in which this workflow type is registered.
         public let domain: String
         /// The workflow type to describe.
@@ -1401,6 +1698,12 @@ extension SWF {
         public init(domain: String, workflowType: WorkflowType) {
             self.domain = domain
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1413,11 +1716,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "workflowExecutionRetentionPeriodInDays", required: true, type: .string)
         ]
+
         /// The retention period for workflow executions in this domain.
         public let workflowExecutionRetentionPeriodInDays: String
 
         public init(workflowExecutionRetentionPeriodInDays: String) {
             self.workflowExecutionRetentionPeriodInDays = workflowExecutionRetentionPeriodInDays
+        }
+
+        public func validate() throws {
+            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", max: 8)
+            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1430,6 +1739,7 @@ extension SWF {
             AWSShapeMember(label: "configuration", required: true, type: .structure), 
             AWSShapeMember(label: "domainInfo", required: true, type: .structure)
         ]
+
         /// The domain configuration. Currently, this includes only the domain's retention period.
         public let configuration: DomainConfiguration
         /// The basic information about a domain, such as its name, status, and description.
@@ -1438,6 +1748,11 @@ extension SWF {
         public init(configuration: DomainConfiguration, domainInfo: DomainInfo) {
             self.configuration = configuration
             self.domainInfo = domainInfo
+        }
+
+        public func validate() throws {
+            try configuration.validate()
+            try domainInfo.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1453,6 +1768,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "status", required: true, type: .enum)
         ]
+
         /// The ARN of the domain.
         public let arn: String?
         /// The description of the domain provided through RegisterDomain.
@@ -1469,6 +1785,14 @@ extension SWF {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(arn, name:"arn", max: 1600)
+            try validate(arn, name:"arn", min: 1)
+            try validate(description, name:"description", max: 1024)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case description = "description"
@@ -1482,6 +1806,7 @@ extension SWF {
             AWSShapeMember(label: "domainInfos", required: true, type: .list), 
             AWSShapeMember(label: "nextPageToken", required: false, type: .string)
         ]
+
         /// A list of DomainInfo structures.
         public let domainInfos: [DomainInfo]
         /// If a NextPageToken was returned by a previous call, there are more results available. To retrieve the next page of results, make the call again using the returned token in nextPageToken. Keep all other arguments unchanged. The configured maximumPageSize determines how many results can be returned in a single call.
@@ -1490,6 +1815,13 @@ extension SWF {
         public init(domainInfos: [DomainInfo], nextPageToken: String? = nil) {
             self.domainInfos = domainInfos
             self.nextPageToken = nextPageToken
+        }
+
+        public func validate() throws {
+            try domainInfos.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1567,6 +1899,7 @@ extension SWF {
             AWSShapeMember(label: "latestDate", required: false, type: .timestamp), 
             AWSShapeMember(label: "oldestDate", required: true, type: .timestamp)
         ]
+
         /// Specifies the latest start or close date and time to return.
         public let latestDate: TimeStamp?
         /// Specifies the oldest start or close date and time to return.
@@ -1588,6 +1921,7 @@ extension SWF {
             AWSShapeMember(label: "initiatedEventId", required: true, type: .long), 
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure)
         ]
+
         /// The ID of the RequestCancelExternalWorkflowExecutionInitiated event corresponding to the RequestCancelExternalWorkflowExecution decision to cancel this external workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let initiatedEventId: Int64
         /// The external workflow execution to which the cancellation request was delivered.
@@ -1596,6 +1930,10 @@ extension SWF {
         public init(initiatedEventId: Int64, workflowExecution: WorkflowExecution) {
             self.initiatedEventId = initiatedEventId
             self.workflowExecution = workflowExecution
+        }
+
+        public func validate() throws {
+            try workflowExecution.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1609,6 +1947,7 @@ extension SWF {
             AWSShapeMember(label: "initiatedEventId", required: true, type: .long), 
             AWSShapeMember(label: "workflowExecution", required: true, type: .structure)
         ]
+
         /// The ID of the SignalExternalWorkflowExecutionInitiated event corresponding to the SignalExternalWorkflowExecution decision to request this signal. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let initiatedEventId: Int64
         /// The external workflow execution that the signal was delivered to.
@@ -1617,6 +1956,10 @@ extension SWF {
         public init(initiatedEventId: Int64, workflowExecution: WorkflowExecution) {
             self.initiatedEventId = initiatedEventId
             self.workflowExecution = workflowExecution
+        }
+
+        public func validate() throws {
+            try workflowExecution.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1630,6 +1973,7 @@ extension SWF {
             AWSShapeMember(label: "details", required: false, type: .string), 
             AWSShapeMember(label: "reason", required: false, type: .string)
         ]
+
         ///  Details of the failure.
         public let details: String?
         /// A descriptive reason for the failure that may help in diagnostics.
@@ -1638,6 +1982,11 @@ extension SWF {
         public init(details: String? = nil, reason: String? = nil) {
             self.details = details
             self.reason = reason
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(reason, name:"reason", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1657,6 +2006,7 @@ extension SWF {
             AWSShapeMember(label: "cause", required: true, type: .enum), 
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: FailWorkflowExecutionFailedCause
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the FailWorkflowExecution decision to fail this execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -1681,6 +2031,7 @@ extension SWF {
             AWSShapeMember(label: "nextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "reverseOrder", required: false, type: .boolean)
         ]
+
         /// The name of the domain containing the workflow execution.
         public let domain: String
         /// Specifies the workflow execution for which to return the history.
@@ -1700,6 +2051,15 @@ extension SWF {
             self.reverseOrder = reverseOrder
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try execution.validate()
+            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domain = "domain"
             case execution = "execution"
@@ -1714,6 +2074,7 @@ extension SWF {
             AWSShapeMember(label: "events", required: true, type: .list), 
             AWSShapeMember(label: "nextPageToken", required: false, type: .string)
         ]
+
         /// The list of history events.
         public let events: [HistoryEvent]
         /// If a NextPageToken was returned by a previous call, there are more results available. To retrieve the next page of results, make the call again using the returned token in nextPageToken. Keep all other arguments unchanged. The configured maximumPageSize determines how many results can be returned in a single call.
@@ -1722,6 +2083,13 @@ extension SWF {
         public init(events: [HistoryEvent], nextPageToken: String? = nil) {
             self.events = events
             self.nextPageToken = nextPageToken
+        }
+
+        public func validate() throws {
+            try events.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1790,6 +2158,7 @@ extension SWF {
             AWSShapeMember(label: "workflowExecutionTerminatedEventAttributes", required: false, type: .structure), 
             AWSShapeMember(label: "workflowExecutionTimedOutEventAttributes", required: false, type: .structure)
         ]
+
         /// If the event is of type ActivityTaskCanceled then this member is set and provides detailed information about the event. It isn't set for other event types.
         public let activityTaskCanceledEventAttributes: ActivityTaskCanceledEventAttributes?
         /// If the event is of type ActivityTaskcancelRequested then this member is set and provides detailed information about the event. It isn't set for other event types.
@@ -1965,6 +2334,55 @@ extension SWF {
             self.workflowExecutionTimedOutEventAttributes = workflowExecutionTimedOutEventAttributes
         }
 
+        public func validate() throws {
+            try activityTaskCanceledEventAttributes?.validate()
+            try activityTaskCancelRequestedEventAttributes?.validate()
+            try activityTaskCompletedEventAttributes?.validate()
+            try activityTaskFailedEventAttributes?.validate()
+            try activityTaskScheduledEventAttributes?.validate()
+            try activityTaskStartedEventAttributes?.validate()
+            try activityTaskTimedOutEventAttributes?.validate()
+            try cancelTimerFailedEventAttributes?.validate()
+            try childWorkflowExecutionCanceledEventAttributes?.validate()
+            try childWorkflowExecutionCompletedEventAttributes?.validate()
+            try childWorkflowExecutionFailedEventAttributes?.validate()
+            try childWorkflowExecutionStartedEventAttributes?.validate()
+            try childWorkflowExecutionTerminatedEventAttributes?.validate()
+            try childWorkflowExecutionTimedOutEventAttributes?.validate()
+            try decisionTaskCompletedEventAttributes?.validate()
+            try decisionTaskScheduledEventAttributes?.validate()
+            try decisionTaskStartedEventAttributes?.validate()
+            try externalWorkflowExecutionCancelRequestedEventAttributes?.validate()
+            try externalWorkflowExecutionSignaledEventAttributes?.validate()
+            try lambdaFunctionCompletedEventAttributes?.validate()
+            try lambdaFunctionFailedEventAttributes?.validate()
+            try lambdaFunctionScheduledEventAttributes?.validate()
+            try markerRecordedEventAttributes?.validate()
+            try recordMarkerFailedEventAttributes?.validate()
+            try requestCancelActivityTaskFailedEventAttributes?.validate()
+            try requestCancelExternalWorkflowExecutionFailedEventAttributes?.validate()
+            try requestCancelExternalWorkflowExecutionInitiatedEventAttributes?.validate()
+            try scheduleActivityTaskFailedEventAttributes?.validate()
+            try scheduleLambdaFunctionFailedEventAttributes?.validate()
+            try signalExternalWorkflowExecutionFailedEventAttributes?.validate()
+            try signalExternalWorkflowExecutionInitiatedEventAttributes?.validate()
+            try startChildWorkflowExecutionFailedEventAttributes?.validate()
+            try startChildWorkflowExecutionInitiatedEventAttributes?.validate()
+            try startLambdaFunctionFailedEventAttributes?.validate()
+            try startTimerFailedEventAttributes?.validate()
+            try timerCanceledEventAttributes?.validate()
+            try timerFiredEventAttributes?.validate()
+            try timerStartedEventAttributes?.validate()
+            try workflowExecutionCanceledEventAttributes?.validate()
+            try workflowExecutionCancelRequestedEventAttributes?.validate()
+            try workflowExecutionCompletedEventAttributes?.validate()
+            try workflowExecutionContinuedAsNewEventAttributes?.validate()
+            try workflowExecutionFailedEventAttributes?.validate()
+            try workflowExecutionSignaledEventAttributes?.validate()
+            try workflowExecutionStartedEventAttributes?.validate()
+            try workflowExecutionTerminatedEventAttributes?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activityTaskCanceledEventAttributes = "activityTaskCanceledEventAttributes"
             case activityTaskCancelRequestedEventAttributes = "activityTaskCancelRequestedEventAttributes"
@@ -2032,6 +2450,7 @@ extension SWF {
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long), 
             AWSShapeMember(label: "startedEventId", required: true, type: .long)
         ]
+
         /// The results of the Lambda task.
         public let result: String?
         /// The ID of the LambdaFunctionScheduled event that was recorded when this Lambda task was scheduled. To help diagnose issues, use this information to trace back the chain of events leading up to this event.
@@ -2043,6 +2462,10 @@ extension SWF {
             self.result = result
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
+        }
+
+        public func validate() throws {
+            try validate(result, name:"result", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2059,6 +2482,7 @@ extension SWF {
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long), 
             AWSShapeMember(label: "startedEventId", required: true, type: .long)
         ]
+
         /// The details of the failure.
         public let details: String?
         /// The reason provided for the failure.
@@ -2073,6 +2497,11 @@ extension SWF {
             self.reason = reason
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(reason, name:"reason", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2092,6 +2521,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "startToCloseTimeout", required: false, type: .string)
         ]
+
         /// Data attached to the event that the decider can use in subsequent workflow tasks. This data isn't sent to the Lambda task.
         public let control: String?
         /// The ID of the LambdaFunctionCompleted event corresponding to the decision that resulted in scheduling this activity task. To help diagnose issues, use this information to trace back the chain of events leading up to this event.
@@ -2114,6 +2544,17 @@ extension SWF {
             self.startToCloseTimeout = startToCloseTimeout
         }
 
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(id, name:"id", max: 256)
+            try validate(id, name:"id", min: 1)
+            try validate(input, name:"input", max: 32768)
+            try validate(input, name:"input", min: 0)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case control = "control"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -2128,6 +2569,7 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "scheduledEventId", required: true, type: .long)
         ]
+
         /// The ID of the LambdaFunctionScheduled event that was recorded when this activity task was scheduled. To help diagnose issues, use this information to trace back the chain of events leading up to this event.
         public let scheduledEventId: Int64
 
@@ -2146,6 +2588,7 @@ extension SWF {
             AWSShapeMember(label: "startedEventId", required: true, type: .long), 
             AWSShapeMember(label: "timeoutType", required: false, type: .enum)
         ]
+
         /// The ID of the LambdaFunctionScheduled event that was recorded when this activity task was scheduled. To help diagnose issues, use this information to trace back the chain of events leading up to this event.
         public let scheduledEventId: Int64
         /// The ID of the ActivityTaskStarted event that was recorded when this activity task started. To help diagnose issues, use this information to trace back the chain of events leading up to this event.
@@ -2180,6 +2623,7 @@ extension SWF {
             AWSShapeMember(label: "registrationStatus", required: true, type: .enum), 
             AWSShapeMember(label: "reverseOrder", required: false, type: .boolean)
         ]
+
         /// The name of the domain in which the activity types have been registered.
         public let domain: String
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
@@ -2200,6 +2644,16 @@ extension SWF {
             self.nextPageToken = nextPageToken
             self.registrationStatus = registrationStatus
             self.reverseOrder = reverseOrder
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2225,6 +2679,7 @@ extension SWF {
             AWSShapeMember(label: "tagFilter", required: false, type: .structure), 
             AWSShapeMember(label: "typeFilter", required: false, type: .structure)
         ]
+
         /// If specified, only workflow executions that match this close status are listed. For example, if TERMINATED is specified, then only TERMINATED workflow executions are listed.   closeStatusFilter, executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
         public let closeStatusFilter: CloseStatusFilter?
         /// If specified, the workflow executions are included in the returned results based on whether their close times are within the range specified by this filter. Also, if this parameter is specified, the returned results are ordered by their close times.   startTimeFilter and closeTimeFilter are mutually exclusive. You must specify one of these in a request but not both. 
@@ -2259,6 +2714,17 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try executionFilter?.validate()
+            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+            try tagFilter?.validate()
+            try typeFilter?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case closeStatusFilter = "closeStatusFilter"
             case closeTimeFilter = "closeTimeFilter"
@@ -2280,6 +2746,7 @@ extension SWF {
             AWSShapeMember(label: "registrationStatus", required: true, type: .enum), 
             AWSShapeMember(label: "reverseOrder", required: false, type: .boolean)
         ]
+
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
         public let maximumPageSize: Int32?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call. 
@@ -2294,6 +2761,12 @@ extension SWF {
             self.nextPageToken = nextPageToken
             self.registrationStatus = registrationStatus
             self.reverseOrder = reverseOrder
+        }
+
+        public func validate() throws {
+            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2315,6 +2788,7 @@ extension SWF {
             AWSShapeMember(label: "tagFilter", required: false, type: .structure), 
             AWSShapeMember(label: "typeFilter", required: false, type: .structure)
         ]
+
         /// The name of the domain that contains the workflow executions to list.
         public let domain: String
         /// If specified, only workflow executions matching the workflow ID specified in the filter are returned.   executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
@@ -2343,6 +2817,17 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try executionFilter?.validate()
+            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+            try tagFilter?.validate()
+            try typeFilter?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domain = "domain"
             case executionFilter = "executionFilter"
@@ -2359,11 +2844,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "resourceArn", required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) for the Amazon SWF domain.
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 1600)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2375,11 +2866,18 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// An array of tags associated with the domain.
         public let tags: [ResourceTag]?
 
         public init(tags: [ResourceTag]? = nil) {
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2396,6 +2894,7 @@ extension SWF {
             AWSShapeMember(label: "registrationStatus", required: true, type: .enum), 
             AWSShapeMember(label: "reverseOrder", required: false, type: .boolean)
         ]
+
         /// The name of the domain in which the workflow types have been registered.
         public let domain: String
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
@@ -2418,6 +2917,16 @@ extension SWF {
             self.reverseOrder = reverseOrder
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domain = "domain"
             case maximumPageSize = "maximumPageSize"
@@ -2434,6 +2943,7 @@ extension SWF {
             AWSShapeMember(label: "details", required: false, type: .string), 
             AWSShapeMember(label: "markerName", required: true, type: .string)
         ]
+
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the RecordMarker decision that requested this marker. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let decisionTaskCompletedEventId: Int64
         /// The details of the marker.
@@ -2445,6 +2955,12 @@ extension SWF {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.details = details
             self.markerName = markerName
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(markerName, name:"markerName", max: 256)
+            try validate(markerName, name:"markerName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2459,6 +2975,7 @@ extension SWF {
             AWSShapeMember(label: "count", required: true, type: .integer), 
             AWSShapeMember(label: "truncated", required: false, type: .boolean)
         ]
+
         /// The number of tasks in the task list.
         public let count: Int32
         /// If set to true, indicates that the actual count was more than the maximum supported by this API and the count returned is the truncated value.
@@ -2467,6 +2984,10 @@ extension SWF {
         public init(count: Int32, truncated: Bool? = nil) {
             self.count = count
             self.truncated = truncated
+        }
+
+        public func validate() throws {
+            try validate(count, name:"count", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2481,6 +3002,7 @@ extension SWF {
             AWSShapeMember(label: "identity", required: false, type: .string), 
             AWSShapeMember(label: "taskList", required: true, type: .structure)
         ]
+
         /// The name of the domain that contains the task lists being polled.
         public let domain: String
         /// Identity of the worker making the request, recorded in the ActivityTaskStarted event in the workflow history. This enables diagnostic tracing when problems arise. The form of this identity is user defined.
@@ -2492,6 +3014,13 @@ extension SWF {
             self.domain = domain
             self.identity = identity
             self.taskList = taskList
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(identity, name:"identity", max: 256)
+            try taskList.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2510,6 +3039,7 @@ extension SWF {
             AWSShapeMember(label: "reverseOrder", required: false, type: .boolean), 
             AWSShapeMember(label: "taskList", required: true, type: .structure)
         ]
+
         /// The name of the domain containing the task lists to poll.
         public let domain: String
         /// Identity of the decider making the request, which is recorded in the DecisionTaskStarted event in the workflow history. This enables diagnostic tracing when problems arise. The form of this identity is user defined.
@@ -2532,6 +3062,16 @@ extension SWF {
             self.taskList = taskList
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(identity, name:"identity", max: 256)
+            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+            try taskList.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case domain = "domain"
             case identity = "identity"
@@ -2547,6 +3087,7 @@ extension SWF {
             AWSShapeMember(label: "details", required: false, type: .string), 
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         /// If specified, contains details about the progress of the task.
         public let details: String?
         /// The taskToken of the ActivityTask.   taskToken is generated by the service and should be treated as an opaque value. If the task is passed to another process, its taskToken must also be passed. This enables it to provide its progress and respond with results.  
@@ -2555,6 +3096,12 @@ extension SWF {
         public init(details: String? = nil, taskToken: String) {
             self.details = details
             self.taskToken = taskToken
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 2048)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2568,6 +3115,7 @@ extension SWF {
             AWSShapeMember(label: "details", required: false, type: .string), 
             AWSShapeMember(label: "markerName", required: true, type: .string)
         ]
+
         ///  The details of the marker.
         public let details: String?
         ///  The name of the marker.
@@ -2576,6 +3124,12 @@ extension SWF {
         public init(details: String? = nil, markerName: String) {
             self.details = details
             self.markerName = markerName
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(markerName, name:"markerName", max: 256)
+            try validate(markerName, name:"markerName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2595,6 +3149,7 @@ extension SWF {
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long), 
             AWSShapeMember(label: "markerName", required: true, type: .string)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: RecordMarkerFailedCause
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the RecordMarkerFailed decision for this cancellation request. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -2606,6 +3161,11 @@ extension SWF {
             self.cause = cause
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.markerName = markerName
+        }
+
+        public func validate() throws {
+            try validate(markerName, name:"markerName", max: 256)
+            try validate(markerName, name:"markerName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2628,6 +3188,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// If set, specifies the default maximum time before which a worker processing a task of this type must report progress by calling RecordActivityTaskHeartbeat. If the timeout is exceeded, the activity task is automatically timed out. This default can be overridden when scheduling an activity task using the ScheduleActivityTask Decision. If the activity worker subsequently attempts to record a heartbeat or returns a result, the activity worker receives an UnknownResource fault. In this case, Amazon SWF no longer considers the activity task to be valid; the activity worker should clean up the activity task. The duration is specified in seconds, an integer greater than or equal to 0. You can use NONE to specify unlimited duration.
         public let defaultTaskHeartbeatTimeout: String?
         /// If set, specifies the default task list to use for scheduling tasks of this activity type. This default task list is used if a task list isn't provided when a task is scheduled through the ScheduleActivityTask Decision.
@@ -2662,6 +3223,21 @@ extension SWF {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(defaultTaskHeartbeatTimeout, name:"defaultTaskHeartbeatTimeout", max: 8)
+            try defaultTaskList?.validate()
+            try validate(defaultTaskScheduleToCloseTimeout, name:"defaultTaskScheduleToCloseTimeout", max: 8)
+            try validate(defaultTaskScheduleToStartTimeout, name:"defaultTaskScheduleToStartTimeout", max: 8)
+            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
+            try validate(description, name:"description", max: 1024)
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(version, name:"version", max: 64)
+            try validate(version, name:"version", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultTaskHeartbeatTimeout = "defaultTaskHeartbeatTimeout"
             case defaultTaskList = "defaultTaskList"
@@ -2683,6 +3259,7 @@ extension SWF {
             AWSShapeMember(label: "tags", required: false, type: .list), 
             AWSShapeMember(label: "workflowExecutionRetentionPeriodInDays", required: true, type: .string)
         ]
+
         /// A text description of the domain.
         public let description: String?
         /// Name of the domain to register. The name must be unique in the region that the domain is registered in. The specified string must not start or end with whitespace. It must not contain a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it must not be the literal string arn.
@@ -2697,6 +3274,17 @@ extension SWF {
             self.name = name
             self.tags = tags
             self.workflowExecutionRetentionPeriodInDays = workflowExecutionRetentionPeriodInDays
+        }
+
+        public func validate() throws {
+            try validate(description, name:"description", max: 1024)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", max: 8)
+            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2720,6 +3308,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         /// If set, specifies the default policy to use for the child workflow executions when a workflow execution of this type is terminated, by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. This default can be overridden when starting a workflow execution using the StartWorkflowExecution action or the StartChildWorkflowExecution Decision. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
         public let defaultChildPolicy: ChildPolicy?
         /// If set, specifies the default maximum duration for executions of this workflow type. You can override this default when starting an execution through the StartWorkflowExecution Action or StartChildWorkflowExecution Decision. The duration is specified in seconds; an integer greater than or equal to 0. Unlike some of the other timeout parameters in Amazon SWF, you cannot specify a value of "NONE" for defaultExecutionStartToCloseTimeout; there is a one-year max limit on the time that a workflow execution can run. Exceeding this limit always causes the workflow execution to time out.
@@ -2754,6 +3343,21 @@ extension SWF {
             self.version = version
         }
 
+        public func validate() throws {
+            try validate(defaultExecutionStartToCloseTimeout, name:"defaultExecutionStartToCloseTimeout", max: 8)
+            try validate(defaultLambdaRole, name:"defaultLambdaRole", max: 1600)
+            try validate(defaultLambdaRole, name:"defaultLambdaRole", min: 1)
+            try defaultTaskList?.validate()
+            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
+            try validate(description, name:"description", max: 1024)
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(version, name:"version", max: 64)
+            try validate(version, name:"version", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultChildPolicy = "defaultChildPolicy"
             case defaultExecutionStartToCloseTimeout = "defaultExecutionStartToCloseTimeout"
@@ -2778,11 +3382,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "activityId", required: true, type: .string)
         ]
+
         /// The activityId of the activity task to be canceled.
         public let activityId: String
 
         public init(activityId: String) {
             self.activityId = activityId
+        }
+
+        public func validate() throws {
+            try validate(activityId, name:"activityId", max: 256)
+            try validate(activityId, name:"activityId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2802,6 +3412,7 @@ extension SWF {
             AWSShapeMember(label: "cause", required: true, type: .enum), 
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long)
         ]
+
         /// The activityId provided in the RequestCancelActivityTask decision that failed.
         public let activityId: String
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
@@ -2813,6 +3424,11 @@ extension SWF {
             self.activityId = activityId
             self.cause = cause
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
+        }
+
+        public func validate() throws {
+            try validate(activityId, name:"activityId", max: 256)
+            try validate(activityId, name:"activityId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2828,6 +3444,7 @@ extension SWF {
             AWSShapeMember(label: "runId", required: false, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// The data attached to the event that can be used by the decider in subsequent workflow tasks.
         public let control: String?
         /// The runId of the external workflow execution to cancel.
@@ -2839,6 +3456,13 @@ extension SWF {
             self.control = control
             self.runId = runId
             self.workflowId = workflowId
+        }
+
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(runId, name:"runId", max: 64)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2864,6 +3488,7 @@ extension SWF {
             AWSShapeMember(label: "runId", required: false, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: RequestCancelExternalWorkflowExecutionFailedCause
         /// The data attached to the event that the decider can use in subsequent workflow tasks. This data isn't sent to the workflow execution.
@@ -2886,6 +3511,13 @@ extension SWF {
             self.workflowId = workflowId
         }
 
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(runId, name:"runId", max: 64)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case control = "control"
@@ -2903,6 +3535,7 @@ extension SWF {
             AWSShapeMember(label: "runId", required: false, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// Data attached to the event that can be used by the decider in subsequent workflow tasks.
         public let control: String?
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the RequestCancelExternalWorkflowExecution decision for this cancellation request. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -2919,6 +3552,13 @@ extension SWF {
             self.workflowId = workflowId
         }
 
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(runId, name:"runId", max: 64)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case control = "control"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -2933,6 +3573,7 @@ extension SWF {
             AWSShapeMember(label: "runId", required: false, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// The name of the domain containing the workflow execution to cancel.
         public let domain: String
         /// The runId of the workflow execution to cancel.
@@ -2944,6 +3585,14 @@ extension SWF {
             self.domain = domain
             self.runId = runId
             self.workflowId = workflowId
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(runId, name:"runId", max: 64)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2958,6 +3607,7 @@ extension SWF {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "value", required: false, type: .string)
         ]
+
         /// The key of a tag.
         public let key: String
         /// The value of a tag.
@@ -2966,6 +3616,12 @@ extension SWF {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2979,6 +3635,7 @@ extension SWF {
             AWSShapeMember(label: "details", required: false, type: .string), 
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         ///  Information about the cancellation.
         public let details: String?
         /// The taskToken of the ActivityTask.   taskToken is generated by the service and should be treated as an opaque value. If the task is passed to another process, its taskToken must also be passed. This enables it to provide its progress and respond with results. 
@@ -2987,6 +3644,12 @@ extension SWF {
         public init(details: String? = nil, taskToken: String) {
             self.details = details
             self.taskToken = taskToken
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3000,6 +3663,7 @@ extension SWF {
             AWSShapeMember(label: "result", required: false, type: .string), 
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         /// The result of the activity task. It is a free form string that is implementation specific.
         public let result: String?
         /// The taskToken of the ActivityTask.   taskToken is generated by the service and should be treated as an opaque value. If the task is passed to another process, its taskToken must also be passed. This enables it to provide its progress and respond with results. 
@@ -3008,6 +3672,12 @@ extension SWF {
         public init(result: String? = nil, taskToken: String) {
             self.result = result
             self.taskToken = taskToken
+        }
+
+        public func validate() throws {
+            try validate(result, name:"result", max: 32768)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3022,6 +3692,7 @@ extension SWF {
             AWSShapeMember(label: "reason", required: false, type: .string), 
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         ///  Detailed information about the failure.
         public let details: String?
         /// Description of the error that may assist in diagnostics.
@@ -3033,6 +3704,13 @@ extension SWF {
             self.details = details
             self.reason = reason
             self.taskToken = taskToken
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(reason, name:"reason", max: 256)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3048,6 +3726,7 @@ extension SWF {
             AWSShapeMember(label: "executionContext", required: false, type: .string), 
             AWSShapeMember(label: "taskToken", required: true, type: .string)
         ]
+
         /// The list of decisions (possibly empty) made by the decider while processing this decision task. See the docs for the Decision structure for details.
         public let decisions: [Decision]?
         /// User defined context to add to workflow execution.
@@ -3061,6 +3740,15 @@ extension SWF {
             self.taskToken = taskToken
         }
 
+        public func validate() throws {
+            try decisions?.forEach {
+                try $0.validate()
+            }
+            try validate(executionContext, name:"executionContext", max: 32768)
+            try validate(taskToken, name:"taskToken", max: 1024)
+            try validate(taskToken, name:"taskToken", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case decisions = "decisions"
             case executionContext = "executionContext"
@@ -3072,11 +3760,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "runId", required: false, type: .string)
         ]
+
         /// The runId of a workflow execution. This ID is generated by the service and can be used to uniquely identify the workflow execution within a domain.
         public let runId: String?
 
         public init(runId: String? = nil) {
             self.runId = runId
+        }
+
+        public func validate() throws {
+            try validate(runId, name:"runId", max: 64)
+            try validate(runId, name:"runId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3097,6 +3791,7 @@ extension SWF {
             AWSShapeMember(label: "taskList", required: false, type: .structure), 
             AWSShapeMember(label: "taskPriority", required: false, type: .string)
         ]
+
         ///  The activityId of the activity task. The specified string must not start or end with whitespace. It must not contain a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it must not contain the literal string arn.
         public let activityId: String
         ///  The type of the activity task to schedule.
@@ -3129,6 +3824,19 @@ extension SWF {
             self.startToCloseTimeout = startToCloseTimeout
             self.taskList = taskList
             self.taskPriority = taskPriority
+        }
+
+        public func validate() throws {
+            try validate(activityId, name:"activityId", max: 256)
+            try validate(activityId, name:"activityId", min: 1)
+            try activityType.validate()
+            try validate(control, name:"control", max: 32768)
+            try validate(heartbeatTimeout, name:"heartbeatTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(scheduleToCloseTimeout, name:"scheduleToCloseTimeout", max: 8)
+            try validate(scheduleToStartTimeout, name:"scheduleToStartTimeout", max: 8)
+            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
+            try taskList?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3167,6 +3875,7 @@ extension SWF {
             AWSShapeMember(label: "cause", required: true, type: .enum), 
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long)
         ]
+
         /// The activityId provided in the ScheduleActivityTask decision that failed.
         public let activityId: String
         /// The activity type provided in the ScheduleActivityTask decision that failed.
@@ -3181,6 +3890,12 @@ extension SWF {
             self.activityType = activityType
             self.cause = cause
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
+        }
+
+        public func validate() throws {
+            try validate(activityId, name:"activityId", max: 256)
+            try validate(activityId, name:"activityId", min: 1)
+            try activityType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3199,6 +3914,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "startToCloseTimeout", required: false, type: .string)
         ]
+
         /// The data attached to the event that the decider can use in subsequent workflow tasks. This data isn't sent to the Lambda task.
         public let control: String?
         /// A string that identifies the Lambda function execution in the event history.
@@ -3216,6 +3932,17 @@ extension SWF {
             self.input = input
             self.name = name
             self.startToCloseTimeout = startToCloseTimeout
+        }
+
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(id, name:"id", max: 256)
+            try validate(id, name:"id", min: 1)
+            try validate(input, name:"input", max: 32768)
+            try validate(input, name:"input", min: 0)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
+            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3242,6 +3969,7 @@ extension SWF {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The cause of the failure. To help diagnose issues, use this information to trace back the chain of events leading up to this event.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: ScheduleLambdaFunctionFailedCause
         /// The ID of the LambdaFunctionCompleted event corresponding to the decision that resulted in scheduling this Lambda task. To help diagnose issues, use this information to trace back the chain of events leading up to this event.
@@ -3256,6 +3984,13 @@ extension SWF {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.id = id
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 256)
+            try validate(id, name:"id", min: 1)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3274,6 +4009,7 @@ extension SWF {
             AWSShapeMember(label: "signalName", required: true, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// The data attached to the event that can be used by the decider in subsequent decision tasks.
         public let control: String?
         ///  The input data to be provided with the signal. The target workflow execution uses the signal name and input data to process the signal.
@@ -3291,6 +4027,16 @@ extension SWF {
             self.runId = runId
             self.signalName = signalName
             self.workflowId = workflowId
+        }
+
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(input, name:"input", max: 32768)
+            try validate(runId, name:"runId", max: 64)
+            try validate(signalName, name:"signalName", max: 256)
+            try validate(signalName, name:"signalName", min: 1)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3318,6 +4064,7 @@ extension SWF {
             AWSShapeMember(label: "runId", required: false, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: SignalExternalWorkflowExecutionFailedCause
         /// The data attached to the event that the decider can use in subsequent workflow tasks. This data isn't sent to the workflow execution.
@@ -3340,6 +4087,13 @@ extension SWF {
             self.workflowId = workflowId
         }
 
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(runId, name:"runId", max: 64)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case control = "control"
@@ -3359,6 +4113,7 @@ extension SWF {
             AWSShapeMember(label: "signalName", required: true, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// Data attached to the event that can be used by the decider in subsequent decision tasks.
         public let control: String?
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the SignalExternalWorkflowExecution decision for this signal. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -3381,6 +4136,16 @@ extension SWF {
             self.workflowId = workflowId
         }
 
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(input, name:"input", max: 32768)
+            try validate(runId, name:"runId", max: 64)
+            try validate(signalName, name:"signalName", max: 256)
+            try validate(signalName, name:"signalName", min: 1)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case control = "control"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -3399,6 +4164,7 @@ extension SWF {
             AWSShapeMember(label: "signalName", required: true, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// The name of the domain containing the workflow execution to signal.
         public let domain: String
         /// Data to attach to the WorkflowExecutionSignaled event in the target workflow execution's history.
@@ -3416,6 +4182,17 @@ extension SWF {
             self.runId = runId
             self.signalName = signalName
             self.workflowId = workflowId
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(input, name:"input", max: 32768)
+            try validate(runId, name:"runId", max: 64)
+            try validate(signalName, name:"signalName", max: 256)
+            try validate(signalName, name:"signalName", min: 1)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3441,6 +4218,7 @@ extension SWF {
             AWSShapeMember(label: "workflowId", required: true, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         ///  If set, specifies the policy to use for the child workflow executions if the workflow execution being started is terminated by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. This policy overrides the default child policy specified when registering the workflow type using RegisterWorkflowType. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.    A child policy for this workflow execution must be specified either as a default for the workflow type or through this parameter. If neither this parameter is set nor a default child policy was specified at registration time then a fault is returned. 
         public let childPolicy: ChildPolicy?
         /// The data attached to the event that can be used by the decider in subsequent workflow tasks. This data isn't sent to the child workflow execution.
@@ -3476,6 +4254,24 @@ extension SWF {
             self.taskStartToCloseTimeout = taskStartToCloseTimeout
             self.workflowId = workflowId
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", min: 1)
+            try tagList?.forEach {
+                try validate($0, name:"tagList[]", max: 256)
+                try validate($0, name:"tagList[]", min: 0)
+            }
+            try validate(tagList, name:"tagList", max: 5)
+            try taskList?.validate()
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3517,6 +4313,7 @@ extension SWF {
             AWSShapeMember(label: "workflowId", required: true, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  When cause is set to OPERATION_NOT_PERMITTED, the decision fails because it lacks sufficient permissions. For details and example IAM policies, see  Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: StartChildWorkflowExecutionFailedCause
         /// The data attached to the event that the decider can use in subsequent workflow tasks. This data isn't sent to the child workflow execution.
@@ -3537,6 +4334,13 @@ extension SWF {
             self.initiatedEventId = initiatedEventId
             self.workflowId = workflowId
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3564,6 +4368,7 @@ extension SWF {
             AWSShapeMember(label: "workflowId", required: true, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The policy to use for the child workflow executions if this execution gets terminated by explicitly calling the TerminateWorkflowExecution action or due to an expired timeout. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
         public let childPolicy: ChildPolicy
         /// Data attached to the event that can be used by the decider in subsequent decision tasks. This data isn't sent to the activity.
@@ -3604,6 +4409,24 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", min: 1)
+            try tagList?.forEach {
+                try validate($0, name:"tagList[]", max: 256)
+                try validate($0, name:"tagList[]", min: 0)
+            }
+            try validate(tagList, name:"tagList", max: 5)
+            try taskList.validate()
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case control = "control"
@@ -3631,6 +4454,7 @@ extension SWF {
             AWSShapeMember(label: "message", required: false, type: .string), 
             AWSShapeMember(label: "scheduledEventId", required: false, type: .long)
         ]
+
         /// The cause of the failure. To help diagnose issues, use this information to trace back the chain of events leading up to this event.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because the IAM role attached to the execution lacked sufficient permissions. For details and example IAM policies, see Lambda Tasks in the Amazon SWF Developer Guide. 
         public let cause: StartLambdaFunctionFailedCause?
         /// A description that can help diagnose the cause of the fault.
@@ -3642,6 +4466,10 @@ extension SWF {
             self.cause = cause
             self.message = message
             self.scheduledEventId = scheduledEventId
+        }
+
+        public func validate() throws {
+            try validate(message, name:"message", max: 1728)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3657,6 +4485,7 @@ extension SWF {
             AWSShapeMember(label: "startToFireTimeout", required: true, type: .string), 
             AWSShapeMember(label: "timerId", required: true, type: .string)
         ]
+
         /// The data attached to the event that can be used by the decider in subsequent workflow tasks.
         public let control: String?
         ///  The duration to wait before firing the timer. The duration is specified in seconds, an integer greater than or equal to 0.
@@ -3668,6 +4497,14 @@ extension SWF {
             self.control = control
             self.startToFireTimeout = startToFireTimeout
             self.timerId = timerId
+        }
+
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(startToFireTimeout, name:"startToFireTimeout", max: 8)
+            try validate(startToFireTimeout, name:"startToFireTimeout", min: 1)
+            try validate(timerId, name:"timerId", max: 256)
+            try validate(timerId, name:"timerId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3691,6 +4528,7 @@ extension SWF {
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long), 
             AWSShapeMember(label: "timerId", required: true, type: .string)
         ]
+
         /// The cause of the failure. This information is generated by the system and can be useful for diagnostic purposes.  If cause is set to OPERATION_NOT_PERMITTED, the decision failed because it lacked sufficient permissions. For details and example IAM policies, see Using IAM to Manage Access to Amazon SWF Workflows in the Amazon SWF Developer Guide. 
         public let cause: StartTimerFailedCause
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the StartTimer decision for this activity task. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -3702,6 +4540,11 @@ extension SWF {
             self.cause = cause
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.timerId = timerId
+        }
+
+        public func validate() throws {
+            try validate(timerId, name:"timerId", max: 256)
+            try validate(timerId, name:"timerId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3725,6 +4568,7 @@ extension SWF {
             AWSShapeMember(label: "workflowId", required: true, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// If set, specifies the policy to use for the child workflow executions of this workflow execution if it is terminated, by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. This policy overrides the default child policy specified when registering the workflow type using RegisterWorkflowType. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.    A child policy for this workflow execution must be specified either as a default for the workflow type or through this parameter. If neither this parameter is set nor a default child policy was specified at registration time then a fault is returned. 
         public let childPolicy: ChildPolicy?
         /// The name of the domain in which the workflow execution is created.
@@ -3762,6 +4606,25 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", min: 1)
+            try tagList?.forEach {
+                try validate($0, name:"tagList[]", max: 256)
+                try validate($0, name:"tagList[]", min: 0)
+            }
+            try validate(tagList, name:"tagList", max: 5)
+            try taskList?.validate()
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case domain = "domain"
@@ -3781,11 +4644,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "tag", required: true, type: .string)
         ]
+
         ///  Specifies the tag that must be associated with the execution for it to meet the filter criteria. Tags may only contain unicode letters, digits, whitespace, or these symbols: _ . : / = + - @.
         public let tag: String
 
         public init(tag: String) {
             self.tag = tag
+        }
+
+        public func validate() throws {
+            try validate(tag, name:"tag", max: 256)
+            try validate(tag, name:"tag", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3798,6 +4667,7 @@ extension SWF {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the Amazon SWF domain.
         public let resourceArn: String
         /// The list of tags to add to a domain.  Tags may only contain unicode letters, digits, whitespace, or these symbols: _ . : / = + - @.
@@ -3806,6 +4676,14 @@ extension SWF {
         public init(resourceArn: String, tags: [ResourceTag]) {
             self.resourceArn = resourceArn
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 1600)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3818,11 +4696,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the task list.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3839,6 +4723,7 @@ extension SWF {
             AWSShapeMember(label: "runId", required: false, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// If set, specifies the policy to use for the child workflow executions of the workflow execution being terminated. This policy overrides the child policy specified for the workflow execution at registration time or when starting the execution. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.    A child policy for this workflow execution must be specified either as a default for the workflow type or through this parameter. If neither this parameter is set nor a default child policy was specified at registration time then a fault is returned. 
         public let childPolicy: ChildPolicy?
         ///  Details for terminating the workflow execution.
@@ -3861,6 +4746,16 @@ extension SWF {
             self.workflowId = workflowId
         }
 
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try validate(reason, name:"reason", max: 256)
+            try validate(runId, name:"runId", max: 64)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case details = "details"
@@ -3877,6 +4772,7 @@ extension SWF {
             AWSShapeMember(label: "startedEventId", required: true, type: .long), 
             AWSShapeMember(label: "timerId", required: true, type: .string)
         ]
+
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the CancelTimer decision to cancel this timer. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let decisionTaskCompletedEventId: Int64
         /// The ID of the TimerStarted event that was recorded when this timer was started. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -3888,6 +4784,11 @@ extension SWF {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.startedEventId = startedEventId
             self.timerId = timerId
+        }
+
+        public func validate() throws {
+            try validate(timerId, name:"timerId", max: 256)
+            try validate(timerId, name:"timerId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3902,6 +4803,7 @@ extension SWF {
             AWSShapeMember(label: "startedEventId", required: true, type: .long), 
             AWSShapeMember(label: "timerId", required: true, type: .string)
         ]
+
         /// The ID of the TimerStarted event that was recorded when this timer was started. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let startedEventId: Int64
         /// The unique ID of the timer that fired.
@@ -3910,6 +4812,11 @@ extension SWF {
         public init(startedEventId: Int64, timerId: String) {
             self.startedEventId = startedEventId
             self.timerId = timerId
+        }
+
+        public func validate() throws {
+            try validate(timerId, name:"timerId", max: 256)
+            try validate(timerId, name:"timerId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3925,6 +4832,7 @@ extension SWF {
             AWSShapeMember(label: "startToFireTimeout", required: true, type: .string), 
             AWSShapeMember(label: "timerId", required: true, type: .string)
         ]
+
         /// Data attached to the event that can be used by the decider in subsequent workflow tasks.
         public let control: String?
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the StartTimer decision for this activity task. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -3941,6 +4849,14 @@ extension SWF {
             self.timerId = timerId
         }
 
+        public func validate() throws {
+            try validate(control, name:"control", max: 32768)
+            try validate(startToFireTimeout, name:"startToFireTimeout", max: 8)
+            try validate(startToFireTimeout, name:"startToFireTimeout", min: 1)
+            try validate(timerId, name:"timerId", max: 256)
+            try validate(timerId, name:"timerId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case control = "control"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -3954,6 +4870,7 @@ extension SWF {
             AWSShapeMember(label: "activityType", required: true, type: .structure), 
             AWSShapeMember(label: "domain", required: true, type: .string)
         ]
+
         /// The activity type to undeprecate.
         public let activityType: ActivityType
         /// The name of the domain of the deprecated activity type.
@@ -3962,6 +4879,12 @@ extension SWF {
         public init(activityType: ActivityType, domain: String) {
             self.activityType = activityType
             self.domain = domain
+        }
+
+        public func validate() throws {
+            try activityType.validate()
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3974,11 +4897,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "name", required: true, type: .string)
         ]
+
         /// The name of the domain of the deprecated workflow type.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3991,6 +4920,7 @@ extension SWF {
             AWSShapeMember(label: "domain", required: true, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The name of the domain of the deprecated workflow type.
         public let domain: String
         /// The name of the domain of the deprecated workflow type.
@@ -3999,6 +4929,12 @@ extension SWF {
         public init(domain: String, workflowType: WorkflowType) {
             self.domain = domain
             self.workflowType = workflowType
+        }
+
+        public func validate() throws {
+            try validate(domain, name:"domain", max: 256)
+            try validate(domain, name:"domain", min: 1)
+            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4012,6 +4948,7 @@ extension SWF {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tagKeys", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the Amazon SWF domain.
         public let resourceArn: String
         /// The list of tags to remove from the Amazon SWF domain.
@@ -4020,6 +4957,15 @@ extension SWF {
         public init(resourceArn: String, tagKeys: [String]) {
             self.resourceArn = resourceArn
             self.tagKeys = tagKeys
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 1600)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4033,6 +4979,7 @@ extension SWF {
             AWSShapeMember(label: "runId", required: true, type: .string), 
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// A system-generated unique identifier for the workflow execution.
         public let runId: String
         /// The user defined identifier associated with the workflow execution.
@@ -4041,6 +4988,13 @@ extension SWF {
         public init(runId: String, workflowId: String) {
             self.runId = runId
             self.workflowId = workflowId
+        }
+
+        public func validate() throws {
+            try validate(runId, name:"runId", max: 64)
+            try validate(runId, name:"runId", min: 1)
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4060,6 +5014,7 @@ extension SWF {
             AWSShapeMember(label: "externalInitiatedEventId", required: false, type: .long), 
             AWSShapeMember(label: "externalWorkflowExecution", required: false, type: .structure)
         ]
+
         /// If set, indicates that the request to cancel the workflow execution was automatically generated, and specifies the cause. This happens if the parent workflow execution times out or is terminated, and the child policy is set to cancel child executions.
         public let cause: WorkflowExecutionCancelRequestedCause?
         /// The ID of the RequestCancelExternalWorkflowExecutionInitiated event corresponding to the RequestCancelExternalWorkflowExecution decision to cancel this workflow execution.The source event with this ID can be found in the history of the source workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -4071,6 +5026,10 @@ extension SWF {
             self.cause = cause
             self.externalInitiatedEventId = externalInitiatedEventId
             self.externalWorkflowExecution = externalWorkflowExecution
+        }
+
+        public func validate() throws {
+            try externalWorkflowExecution?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4085,6 +5044,7 @@ extension SWF {
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long), 
             AWSShapeMember(label: "details", required: false, type: .string)
         ]
+
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the CancelWorkflowExecution decision for this cancellation request. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let decisionTaskCompletedEventId: Int64
         /// The details of the cancellation.
@@ -4093,6 +5053,10 @@ extension SWF {
         public init(decisionTaskCompletedEventId: Int64, details: String? = nil) {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.details = details
+        }
+
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4106,6 +5070,7 @@ extension SWF {
             AWSShapeMember(label: "decisionTaskCompletedEventId", required: true, type: .long), 
             AWSShapeMember(label: "result", required: false, type: .string)
         ]
+
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the CompleteWorkflowExecution decision to complete this execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let decisionTaskCompletedEventId: Int64
         /// The result produced by the workflow execution upon successful completion.
@@ -4114,6 +5079,10 @@ extension SWF {
         public init(decisionTaskCompletedEventId: Int64, result: String? = nil) {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.result = result
+        }
+
+        public func validate() throws {
+            try validate(result, name:"result", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4131,6 +5100,7 @@ extension SWF {
             AWSShapeMember(label: "taskPriority", required: false, type: .string), 
             AWSShapeMember(label: "taskStartToCloseTimeout", required: true, type: .string)
         ]
+
         /// The policy to use for the child workflow executions if this workflow execution is terminated, by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
         public let childPolicy: ChildPolicy
         /// The total duration for this workflow execution. The duration is specified in seconds, an integer greater than or equal to 0. You can use NONE to specify unlimited duration.
@@ -4151,6 +5121,16 @@ extension SWF {
             self.taskList = taskList
             self.taskPriority = taskPriority
             self.taskStartToCloseTimeout = taskStartToCloseTimeout
+        }
+
+        public func validate() throws {
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", min: 1)
+            try validate(lambdaRole, name:"lambdaRole", max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", min: 1)
+            try taskList.validate()
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4177,6 +5157,7 @@ extension SWF {
             AWSShapeMember(label: "taskStartToCloseTimeout", required: false, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The policy to use for the child workflow executions of the new execution if it is terminated by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
         public let childPolicy: ChildPolicy
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the ContinueAsNewWorkflowExecution decision that started this execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
@@ -4214,6 +5195,23 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", min: 1)
+            try validate(newExecutionRunId, name:"newExecutionRunId", max: 64)
+            try validate(newExecutionRunId, name:"newExecutionRunId", min: 1)
+            try tagList?.forEach {
+                try validate($0, name:"tagList[]", max: 256)
+                try validate($0, name:"tagList[]", min: 0)
+            }
+            try validate(tagList, name:"tagList", max: 5)
+            try taskList.validate()
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -4234,6 +5232,7 @@ extension SWF {
             AWSShapeMember(label: "count", required: true, type: .integer), 
             AWSShapeMember(label: "truncated", required: false, type: .boolean)
         ]
+
         /// The number of workflow executions.
         public let count: Int32
         /// If set to true, indicates that the actual count was more than the maximum supported by this API and the count returned is the truncated value.
@@ -4242,6 +5241,10 @@ extension SWF {
         public init(count: Int32, truncated: Bool? = nil) {
             self.count = count
             self.truncated = truncated
+        }
+
+        public func validate() throws {
+            try validate(count, name:"count", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4258,6 +5261,7 @@ extension SWF {
             AWSShapeMember(label: "latestExecutionContext", required: false, type: .string), 
             AWSShapeMember(label: "openCounts", required: true, type: .structure)
         ]
+
         /// The configuration settings for this workflow execution including timeout values, tasklist etc.
         public let executionConfiguration: WorkflowExecutionConfiguration
         /// Information about the workflow execution.
@@ -4277,6 +5281,13 @@ extension SWF {
             self.openCounts = openCounts
         }
 
+        public func validate() throws {
+            try executionConfiguration.validate()
+            try executionInfo.validate()
+            try validate(latestExecutionContext, name:"latestExecutionContext", max: 32768)
+            try openCounts.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case executionConfiguration = "executionConfiguration"
             case executionInfo = "executionInfo"
@@ -4292,6 +5303,7 @@ extension SWF {
             AWSShapeMember(label: "details", required: false, type: .string), 
             AWSShapeMember(label: "reason", required: false, type: .string)
         ]
+
         /// The ID of the DecisionTaskCompleted event corresponding to the decision task that resulted in the FailWorkflowExecution decision to fail this execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event.
         public let decisionTaskCompletedEventId: Int64
         /// The details of the failure.
@@ -4305,6 +5317,11 @@ extension SWF {
             self.reason = reason
         }
 
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(reason, name:"reason", max: 256)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
             case details = "details"
@@ -4316,11 +5333,17 @@ extension SWF {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "workflowId", required: true, type: .string)
         ]
+
         /// The workflowId to pass of match the criteria of this filter.
         public let workflowId: String
 
         public init(workflowId: String) {
             self.workflowId = workflowId
+        }
+
+        public func validate() throws {
+            try validate(workflowId, name:"workflowId", max: 256)
+            try validate(workflowId, name:"workflowId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4340,6 +5363,7 @@ extension SWF {
             AWSShapeMember(label: "tagList", required: false, type: .list), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// Set to true if a cancellation is requested for this workflow execution.
         public let cancelRequested: Bool?
         /// If the execution status is closed then this specifies how the execution was closed:    COMPLETED – the execution was successfully completed.    CANCELED – the execution was canceled.Cancellation allows the implementation to gracefully clean up before the execution is closed.    TERMINATED – the execution was force terminated.    FAILED – the execution failed to complete.    TIMED_OUT – the execution did not complete in the alloted time and was automatically timed out.    CONTINUED_AS_NEW – the execution is logically continued. This means the current execution was completed and a new execution was started to carry on the workflow.  
@@ -4371,6 +5395,17 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try execution.validate()
+            try parent?.validate()
+            try tagList?.forEach {
+                try validate($0, name:"tagList[]", max: 256)
+                try validate($0, name:"tagList[]", min: 0)
+            }
+            try validate(tagList, name:"tagList", max: 5)
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cancelRequested = "cancelRequested"
             case closeStatus = "closeStatus"
@@ -4389,6 +5424,7 @@ extension SWF {
             AWSShapeMember(label: "executionInfos", required: true, type: .list), 
             AWSShapeMember(label: "nextPageToken", required: false, type: .string)
         ]
+
         /// The list of workflow information structures.
         public let executionInfos: [WorkflowExecutionInfo]
         /// If a NextPageToken was returned by a previous call, there are more results available. To retrieve the next page of results, make the call again using the returned token in nextPageToken. Keep all other arguments unchanged. The configured maximumPageSize determines how many results can be returned in a single call.
@@ -4397,6 +5433,13 @@ extension SWF {
         public init(executionInfos: [WorkflowExecutionInfo], nextPageToken: String? = nil) {
             self.executionInfos = executionInfos
             self.nextPageToken = nextPageToken
+        }
+
+        public func validate() throws {
+            try executionInfos.forEach {
+                try $0.validate()
+            }
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4413,6 +5456,7 @@ extension SWF {
             AWSShapeMember(label: "openLambdaFunctions", required: false, type: .integer), 
             AWSShapeMember(label: "openTimers", required: true, type: .integer)
         ]
+
         /// The count of activity tasks whose status is OPEN.
         public let openActivityTasks: Int32
         /// The count of child workflow executions whose status is OPEN.
@@ -4432,6 +5476,15 @@ extension SWF {
             self.openTimers = openTimers
         }
 
+        public func validate() throws {
+            try validate(openActivityTasks, name:"openActivityTasks", min: 0)
+            try validate(openChildWorkflowExecutions, name:"openChildWorkflowExecutions", min: 0)
+            try validate(openDecisionTasks, name:"openDecisionTasks", max: 1)
+            try validate(openDecisionTasks, name:"openDecisionTasks", min: 0)
+            try validate(openLambdaFunctions, name:"openLambdaFunctions", min: 0)
+            try validate(openTimers, name:"openTimers", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case openActivityTasks = "openActivityTasks"
             case openChildWorkflowExecutions = "openChildWorkflowExecutions"
@@ -4448,6 +5501,7 @@ extension SWF {
             AWSShapeMember(label: "input", required: false, type: .string), 
             AWSShapeMember(label: "signalName", required: true, type: .string)
         ]
+
         /// The ID of the SignalExternalWorkflowExecutionInitiated event corresponding to the SignalExternalWorkflow decision to signal this workflow execution.The source event with this ID can be found in the history of the source workflow execution. This information can be useful for diagnosing problems by tracing back the chain of events leading up to this event. This field is set only if the signal was initiated by another workflow execution.
         public let externalInitiatedEventId: Int64?
         /// The workflow execution that sent the signal. This is set only of the signal was sent by another workflow execution.
@@ -4462,6 +5516,13 @@ extension SWF {
             self.externalWorkflowExecution = externalWorkflowExecution
             self.input = input
             self.signalName = signalName
+        }
+
+        public func validate() throws {
+            try externalWorkflowExecution?.validate()
+            try validate(input, name:"input", max: 32768)
+            try validate(signalName, name:"signalName", max: 256)
+            try validate(signalName, name:"signalName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4487,6 +5548,7 @@ extension SWF {
             AWSShapeMember(label: "taskStartToCloseTimeout", required: false, type: .string), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The policy to use for the child workflow executions if this workflow execution is terminated, by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
         public let childPolicy: ChildPolicy
         /// If this workflow execution was started due to a ContinueAsNewWorkflowExecution decision, then it contains the runId of the previous workflow execution that was closed and continued as this execution.
@@ -4527,6 +5589,23 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try validate(continuedExecutionRunId, name:"continuedExecutionRunId", max: 64)
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
+            try validate(input, name:"input", max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", min: 1)
+            try parentWorkflowExecution?.validate()
+            try tagList?.forEach {
+                try validate($0, name:"tagList[]", max: 256)
+                try validate($0, name:"tagList[]", min: 0)
+            }
+            try validate(tagList, name:"tagList", max: 5)
+            try taskList.validate()
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case continuedExecutionRunId = "continuedExecutionRunId"
@@ -4557,6 +5636,7 @@ extension SWF {
             AWSShapeMember(label: "details", required: false, type: .string), 
             AWSShapeMember(label: "reason", required: false, type: .string)
         ]
+
         /// If set, indicates that the workflow execution was automatically terminated, and specifies the cause. This happens if the parent workflow execution times out or is terminated and the child policy is set to terminate child executions.
         public let cause: WorkflowExecutionTerminatedCause?
         /// The policy used for the child workflow executions of this workflow execution. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
@@ -4573,6 +5653,11 @@ extension SWF {
             self.reason = reason
         }
 
+        public func validate() throws {
+            try validate(details, name:"details", max: 32768)
+            try validate(reason, name:"reason", max: 256)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case childPolicy = "childPolicy"
@@ -4586,6 +5671,7 @@ extension SWF {
             AWSShapeMember(label: "childPolicy", required: true, type: .enum), 
             AWSShapeMember(label: "timeoutType", required: true, type: .enum)
         ]
+
         /// The policy used for the child workflow executions of this workflow execution. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
         public let childPolicy: ChildPolicy
         /// The type of timeout that caused this event.
@@ -4612,6 +5698,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "version", required: true, type: .string)
         ]
+
         ///  The name of the workflow type.  The combination of workflow type name and version must be unique with in a domain. 
         public let name: String
         ///  The version of the workflow type.  The combination of workflow type name and version must be unique with in a domain. 
@@ -4620,6 +5707,13 @@ extension SWF {
         public init(name: String, version: String) {
             self.name = name
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(version, name:"version", max: 64)
+            try validate(version, name:"version", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4637,6 +5731,7 @@ extension SWF {
             AWSShapeMember(label: "defaultTaskPriority", required: false, type: .string), 
             AWSShapeMember(label: "defaultTaskStartToCloseTimeout", required: false, type: .string)
         ]
+
         ///  The default policy to use for the child workflow executions when a workflow execution of this type is terminated, by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. This default can be overridden when starting a workflow execution using the StartWorkflowExecution action or the StartChildWorkflowExecution Decision. The supported child policies are:    TERMINATE – The child executions are terminated.    REQUEST_CANCEL – A request to cancel is attempted for each child execution by recording a WorkflowExecutionCancelRequested event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.    ABANDON – No action is taken. The child executions continue to run.  
         public let defaultChildPolicy: ChildPolicy?
         ///  The default maximum duration, specified when registering the workflow type, for executions of this workflow type. This default can be overridden when starting a workflow execution using the StartWorkflowExecution action or the StartChildWorkflowExecution Decision. The duration is specified in seconds, an integer greater than or equal to 0. You can use NONE to specify unlimited duration.
@@ -4659,6 +5754,14 @@ extension SWF {
             self.defaultTaskStartToCloseTimeout = defaultTaskStartToCloseTimeout
         }
 
+        public func validate() throws {
+            try validate(defaultExecutionStartToCloseTimeout, name:"defaultExecutionStartToCloseTimeout", max: 8)
+            try validate(defaultLambdaRole, name:"defaultLambdaRole", max: 1600)
+            try validate(defaultLambdaRole, name:"defaultLambdaRole", min: 1)
+            try defaultTaskList?.validate()
+            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case defaultChildPolicy = "defaultChildPolicy"
             case defaultExecutionStartToCloseTimeout = "defaultExecutionStartToCloseTimeout"
@@ -4674,6 +5777,7 @@ extension SWF {
             AWSShapeMember(label: "configuration", required: true, type: .structure), 
             AWSShapeMember(label: "typeInfo", required: true, type: .structure)
         ]
+
         /// Configuration settings of the workflow type registered through RegisterWorkflowType 
         public let configuration: WorkflowTypeConfiguration
         /// General information about the workflow type. The status of the workflow type (returned in the WorkflowTypeInfo structure) can be one of the following.    REGISTERED – The type is registered and available. Workers supporting this type should be running.    DEPRECATED – The type was deprecated using DeprecateWorkflowType, but is still in use. You should keep workers supporting this type running. You cannot create new workflow executions of this type.  
@@ -4682,6 +5786,11 @@ extension SWF {
         public init(configuration: WorkflowTypeConfiguration, typeInfo: WorkflowTypeInfo) {
             self.configuration = configuration
             self.typeInfo = typeInfo
+        }
+
+        public func validate() throws {
+            try configuration.validate()
+            try typeInfo.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4695,6 +5804,7 @@ extension SWF {
             AWSShapeMember(label: "name", required: true, type: .string), 
             AWSShapeMember(label: "version", required: false, type: .string)
         ]
+
         ///  Name of the workflow type.
         public let name: String
         /// Version of the workflow type.
@@ -4703,6 +5813,12 @@ extension SWF {
         public init(name: String, version: String? = nil) {
             self.name = name
             self.version = version
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 256)
+            try validate(name, name:"name", min: 1)
+            try validate(version, name:"version", max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4719,6 +5835,7 @@ extension SWF {
             AWSShapeMember(label: "status", required: true, type: .enum), 
             AWSShapeMember(label: "workflowType", required: true, type: .structure)
         ]
+
         /// The date when this type was registered.
         public let creationDate: TimeStamp
         /// If the type is in deprecated state, then it is set to the date when the type was deprecated.
@@ -4738,6 +5855,11 @@ extension SWF {
             self.workflowType = workflowType
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 1024)
+            try workflowType.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case creationDate = "creationDate"
             case deprecationDate = "deprecationDate"
@@ -4752,6 +5874,7 @@ extension SWF {
             AWSShapeMember(label: "nextPageToken", required: false, type: .string), 
             AWSShapeMember(label: "typeInfos", required: true, type: .list)
         ]
+
         /// If a NextPageToken was returned by a previous call, there are more results available. To retrieve the next page of results, make the call again using the returned token in nextPageToken. Keep all other arguments unchanged. The configured maximumPageSize determines how many results can be returned in a single call.
         public let nextPageToken: String?
         /// The list of workflow type information.
@@ -4760,6 +5883,13 @@ extension SWF {
         public init(nextPageToken: String? = nil, typeInfos: [WorkflowTypeInfo]) {
             self.nextPageToken = nextPageToken
             self.typeInfos = typeInfos
+        }
+
+        public func validate() throws {
+            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+            try typeInfos.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {

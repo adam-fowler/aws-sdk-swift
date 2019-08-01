@@ -11,6 +11,7 @@ extension GuardDuty {
             AWSShapeMember(label: "InvitationId", location: .body(locationName: "invitationId"), required: true, type: .string), 
             AWSShapeMember(label: "MasterId", location: .body(locationName: "masterId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector of the GuardDuty member account.
         public let detectorId: String
         /// This value is used to validate the master account to the member account.
@@ -24,6 +25,11 @@ extension GuardDuty {
             self.masterId = masterId
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case invitationId = "invitationId"
@@ -32,6 +38,7 @@ extension GuardDuty {
     }
 
     public struct AcceptInvitationResponse: AWSShape {
+
 
         public init() {
         }
@@ -45,6 +52,7 @@ extension GuardDuty {
             AWSShapeMember(label: "UserName", location: .body(locationName: "userName"), required: false, type: .string), 
             AWSShapeMember(label: "UserType", location: .body(locationName: "userType"), required: false, type: .string)
         ]
+
         /// Access key ID of the user.
         public let accessKeyId: String?
         /// The principal ID of the user.
@@ -74,6 +82,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountId", location: .body(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "Email", location: .body(locationName: "email"), required: true, type: .string)
         ]
+
         /// Member account ID.
         public let accountId: String
         /// Member account's email address.
@@ -82,6 +91,13 @@ extension GuardDuty {
         public init(accountId: String, email: String) {
             self.accountId = accountId
             self.email = email
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(email, name:"email", max: 64)
+            try validate(email, name:"email", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -98,6 +114,7 @@ extension GuardDuty {
             AWSShapeMember(label: "NetworkConnectionAction", location: .body(locationName: "networkConnectionAction"), required: false, type: .structure), 
             AWSShapeMember(label: "PortProbeAction", location: .body(locationName: "portProbeAction"), required: false, type: .structure)
         ]
+
         /// GuardDuty Finding activity type.
         public let actionType: String?
         /// Information about the AWS_API_CALL action described in this finding.
@@ -131,6 +148,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "FindingIds", location: .body(locationName: "findingIds"), required: true, type: .list)
         ]
+
         /// The ID of the detector that specifies the GuardDuty service whose findings you want to archive.
         public let detectorId: String
         /// IDs of the findings that you want to archive.
@@ -141,6 +159,17 @@ extension GuardDuty {
             self.findingIds = findingIds
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try findingIds.forEach {
+                try validate($0, name:"findingIds[]", max: 300)
+                try validate($0, name:"findingIds[]", min: 1)
+            }
+            try validate(findingIds, name:"findingIds", max: 50)
+            try validate(findingIds, name:"findingIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case findingIds = "findingIds"
@@ -148,6 +177,7 @@ extension GuardDuty {
     }
 
     public struct ArchiveFindingsResponse: AWSShape {
+
 
         public init() {
         }
@@ -162,6 +192,7 @@ extension GuardDuty {
             AWSShapeMember(label: "RemoteIpDetails", location: .body(locationName: "remoteIpDetails"), required: false, type: .structure), 
             AWSShapeMember(label: "ServiceName", location: .body(locationName: "serviceName"), required: false, type: .string)
         ]
+
         /// AWS API name.
         public let api: String?
         /// AWS API caller type.
@@ -194,6 +225,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CityName", location: .body(locationName: "cityName"), required: false, type: .string)
         ]
+
         /// City name of the remote IP address.
         public let cityName: String?
 
@@ -215,6 +247,7 @@ extension GuardDuty {
             AWSShapeMember(label: "LessThanOrEqual", location: .body(locationName: "lessThanOrEqual"), required: false, type: .long), 
             AWSShapeMember(label: "NotEquals", location: .body(locationName: "notEquals"), required: false, type: .list)
         ]
+
         public let equals: [String]?
         /// Represents a greater than condition to be applied to a single field when querying for findings.
         public let greaterThan: Int64?
@@ -250,6 +283,7 @@ extension GuardDuty {
             AWSShapeMember(label: "CountryCode", location: .body(locationName: "countryCode"), required: false, type: .string), 
             AWSShapeMember(label: "CountryName", location: .body(locationName: "countryName"), required: false, type: .string)
         ]
+
         /// Country code of the remote IP address.
         public let countryCode: String?
         /// Country name of the remote IP address.
@@ -273,6 +307,7 @@ extension GuardDuty {
             AWSShapeMember(label: "FindingPublishingFrequency", location: .body(locationName: "findingPublishingFrequency"), required: false, type: .enum), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// The idempotency token for the create request.
         public let clientToken: String?
         /// A boolean value that specifies whether the detector is to be enabled.
@@ -282,11 +317,16 @@ extension GuardDuty {
         /// The tags to be added to a new detector resource.
         public let tags: [String: String]?
 
-        public init(clientToken: String? = nil, enable: Bool, findingPublishingFrequency: FindingPublishingFrequency? = nil, tags: [String: String]? = nil) {
+        public init(clientToken: String? = CreateDetectorRequest.idempotencyToken(), enable: Bool, findingPublishingFrequency: FindingPublishingFrequency? = nil, tags: [String: String]? = nil) {
             self.clientToken = clientToken
             self.enable = enable
             self.findingPublishingFrequency = findingPublishingFrequency
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -301,11 +341,17 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DetectorId", location: .body(locationName: "detectorId"), required: false, type: .string)
         ]
+
         /// The unique ID of the created detector.
         public let detectorId: String?
 
         public init(detectorId: String? = nil) {
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -324,6 +370,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Rank", location: .body(locationName: "rank"), required: false, type: .integer), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// Specifies the action that is to be applied to the findings that match the filter.
         public let action: FilterAction?
         /// The idempotency token for the create request.
@@ -341,7 +388,7 @@ extension GuardDuty {
         /// The tags to be added to a new filter resource.
         public let tags: [String: String]?
 
-        public init(action: FilterAction? = nil, clientToken: String? = nil, description: String? = nil, detectorId: String, findingCriteria: FindingCriteria, name: String, rank: Int32? = nil, tags: [String: String]? = nil) {
+        public init(action: FilterAction? = nil, clientToken: String? = CreateFilterRequest.idempotencyToken(), description: String? = nil, detectorId: String, findingCriteria: FindingCriteria, name: String, rank: Int32? = nil, tags: [String: String]? = nil) {
             self.action = action
             self.clientToken = clientToken
             self.description = description
@@ -350,6 +397,19 @@ extension GuardDuty {
             self.name = name
             self.rank = rank
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 0)
+            try validate(description, name:"description", max: 512)
+            try validate(description, name:"description", min: 0)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 3)
+            try validate(rank, name:"rank", max: 100)
+            try validate(rank, name:"rank", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -368,11 +428,17 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .body(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the successfully created filter.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 3)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -390,6 +456,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Name", location: .body(locationName: "name"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// A boolean value that indicates whether GuardDuty is to start using the uploaded IPSet.
         public let activate: Bool
         /// The idempotency token for the create request.
@@ -405,7 +472,7 @@ extension GuardDuty {
         /// The tags to be added to a new IP set resource.
         public let tags: [String: String]?
 
-        public init(activate: Bool, clientToken: String? = nil, detectorId: String, format: IpSetFormat, location: String, name: String, tags: [String: String]? = nil) {
+        public init(activate: Bool, clientToken: String? = CreateIPSetRequest.idempotencyToken(), detectorId: String, format: IpSetFormat, location: String, name: String, tags: [String: String]? = nil) {
             self.activate = activate
             self.clientToken = clientToken
             self.detectorId = detectorId
@@ -413,6 +480,17 @@ extension GuardDuty {
             self.location = location
             self.name = name
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 0)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(location, name:"location", max: 300)
+            try validate(location, name:"location", min: 1)
+            try validate(name, name:"name", max: 300)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -430,6 +508,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "IpSetId", location: .body(locationName: "ipSetId"), required: true, type: .string)
         ]
+
         /// The ID of the IPSet resource.
         public let ipSetId: String
 
@@ -447,6 +526,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountDetails", location: .body(locationName: "accountDetails"), required: true, type: .list), 
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// A list of account ID and email address pairs of the accounts that you want to associate with the master GuardDuty account.
         public let accountDetails: [AccountDetail]
         /// The unique ID of the detector of the GuardDuty account with which you want to associate member accounts.
@@ -455,6 +535,16 @@ extension GuardDuty {
         public init(accountDetails: [AccountDetail], detectorId: String) {
             self.accountDetails = accountDetails
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try accountDetails.forEach {
+                try $0.validate()
+            }
+            try validate(accountDetails, name:"accountDetails", max: 50)
+            try validate(accountDetails, name:"accountDetails", min: 1)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -467,11 +557,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -484,6 +583,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "FindingTypes", location: .body(locationName: "findingTypes"), required: false, type: .list)
         ]
+
         /// The ID of the detector to create sample findings for.
         public let detectorId: String
         /// Types of sample findings that you want to generate.
@@ -494,6 +594,17 @@ extension GuardDuty {
             self.findingTypes = findingTypes
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try findingTypes?.forEach {
+                try validate($0, name:"findingTypes[]", max: 50)
+                try validate($0, name:"findingTypes[]", min: 1)
+            }
+            try validate(findingTypes, name:"findingTypes", max: 50)
+            try validate(findingTypes, name:"findingTypes", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case findingTypes = "findingTypes"
@@ -501,6 +612,7 @@ extension GuardDuty {
     }
 
     public struct CreateSampleFindingsResponse: AWSShape {
+
 
         public init() {
         }
@@ -517,6 +629,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Name", location: .body(locationName: "name"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// A boolean value that indicates whether GuardDuty is to start using the uploaded ThreatIntelSet.
         public let activate: Bool
         /// The idempotency token for the create request.
@@ -532,7 +645,7 @@ extension GuardDuty {
         /// The tags to be added to a new Threat List resource.
         public let tags: [String: String]?
 
-        public init(activate: Bool, clientToken: String? = nil, detectorId: String, format: ThreatIntelSetFormat, location: String, name: String, tags: [String: String]? = nil) {
+        public init(activate: Bool, clientToken: String? = CreateThreatIntelSetRequest.idempotencyToken(), detectorId: String, format: ThreatIntelSetFormat, location: String, name: String, tags: [String: String]? = nil) {
             self.activate = activate
             self.clientToken = clientToken
             self.detectorId = detectorId
@@ -540,6 +653,17 @@ extension GuardDuty {
             self.location = location
             self.name = name
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(clientToken, name:"clientToken", max: 64)
+            try validate(clientToken, name:"clientToken", min: 0)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(location, name:"location", max: 300)
+            try validate(location, name:"location", min: 1)
+            try validate(name, name:"name", max: 300)
+            try validate(name, name:"name", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -557,6 +681,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ThreatIntelSetId", location: .body(locationName: "threatIntelSetId"), required: true, type: .string)
         ]
+
         /// The ID of the ThreatIntelSet resource.
         public let threatIntelSetId: String
 
@@ -573,11 +698,21 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountIds", location: .body(locationName: "accountIds"), required: true, type: .list)
         ]
+
         /// A list of account IDs of the AWS accounts that sent invitations to the current member account that you want to decline invitations from.
         public let accountIds: [String]
 
         public init(accountIds: [String]) {
             self.accountIds = accountIds
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -589,11 +724,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -605,11 +749,17 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector that you want to delete.
         public let detectorId: String
 
         public init(detectorId: String) {
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -618,6 +768,7 @@ extension GuardDuty {
     }
 
     public struct DeleteDetectorResponse: AWSShape {
+
 
         public init() {
         }
@@ -629,6 +780,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "FilterName", location: .uri(locationName: "filterName"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector the filter is associated with.
         public let detectorId: String
         /// The name of the filter you want to delete.
@@ -639,6 +791,11 @@ extension GuardDuty {
             self.filterName = filterName
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case filterName = "filterName"
@@ -646,6 +803,7 @@ extension GuardDuty {
     }
 
     public struct DeleteFilterResponse: AWSShape {
+
 
         public init() {
         }
@@ -657,6 +815,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "IpSetId", location: .uri(locationName: "ipSetId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector the ipSet is associated with.
         public let detectorId: String
         /// The unique ID of the ipSet you want to delete.
@@ -667,6 +826,11 @@ extension GuardDuty {
             self.ipSetId = ipSetId
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case ipSetId = "ipSetId"
@@ -674,6 +838,7 @@ extension GuardDuty {
     }
 
     public struct DeleteIPSetResponse: AWSShape {
+
 
         public init() {
         }
@@ -684,11 +849,21 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "AccountIds", location: .body(locationName: "accountIds"), required: true, type: .list)
         ]
+
         /// A list of account IDs of the AWS accounts that sent invitations to the current member account that you want to delete invitations from.
         public let accountIds: [String]
 
         public init(accountIds: [String]) {
             self.accountIds = accountIds
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -700,11 +875,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -717,6 +901,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountIds", location: .body(locationName: "accountIds"), required: true, type: .list), 
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// A list of account IDs of the GuardDuty member accounts that you want to delete.
         public let accountIds: [String]
         /// The unique ID of the detector of the GuardDuty account whose members you want to delete.
@@ -725,6 +910,17 @@ extension GuardDuty {
         public init(accountIds: [String], detectorId: String) {
             self.accountIds = accountIds
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -737,11 +933,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -754,6 +959,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "ThreatIntelSetId", location: .uri(locationName: "threatIntelSetId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector the threatIntelSet is associated with.
         public let detectorId: String
         /// The unique ID of the threatIntelSet you want to delete.
@@ -764,6 +970,11 @@ extension GuardDuty {
             self.threatIntelSetId = threatIntelSetId
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case threatIntelSetId = "threatIntelSetId"
@@ -771,6 +982,7 @@ extension GuardDuty {
     }
 
     public struct DeleteThreatIntelSetResponse: AWSShape {
+
 
         public init() {
         }
@@ -787,11 +999,17 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector of the GuardDuty member account.
         public let detectorId: String
 
         public init(detectorId: String) {
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -800,6 +1018,7 @@ extension GuardDuty {
     }
 
     public struct DisassociateFromMasterAccountResponse: AWSShape {
+
 
         public init() {
         }
@@ -811,6 +1030,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountIds", location: .body(locationName: "accountIds"), required: true, type: .list), 
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// A list of account IDs of the GuardDuty member accounts that you want to disassociate from master.
         public let accountIds: [String]
         /// The unique ID of the detector of the GuardDuty account whose members you want to disassociate from master.
@@ -819,6 +1039,17 @@ extension GuardDuty {
         public init(accountIds: [String], detectorId: String) {
             self.accountIds = accountIds
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -831,11 +1062,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -847,6 +1087,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Domain", location: .body(locationName: "domain"), required: false, type: .string)
         ]
+
         /// Domain information for the DNS request.
         public let domain: String?
 
@@ -863,6 +1104,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Domain", location: .body(locationName: "domain"), required: false, type: .string)
         ]
+
         /// Domain information for the AWS API call.
         public let domain: String?
 
@@ -905,6 +1147,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Type", location: .body(locationName: "type"), required: true, type: .string), 
             AWSShapeMember(label: "UpdatedAt", location: .body(locationName: "updatedAt"), required: true, type: .string)
         ]
+
         /// AWS account ID where the activity occurred that prompted GuardDuty to generate a finding.
         public let accountId: String
         /// The ARN of a finding described by the action.
@@ -954,6 +1197,12 @@ extension GuardDuty {
             self.updatedAt = updatedAt
         }
 
+        public func validate() throws {
+            try service?.validate()
+            try validate(`type`, name:"`type`", max: 50)
+            try validate(`type`, name:"`type`", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case arn = "arn"
@@ -977,6 +1226,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Criterion", location: .body(locationName: "criterion"), required: false, type: .map)
         ]
+
         /// Represents a map of finding properties that match specified conditions and values when querying findings.
         public let criterion: [String: Condition]?
 
@@ -1005,6 +1255,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "CountBySeverity", location: .body(locationName: "countBySeverity"), required: false, type: .map)
         ]
+
         /// Represents a map of severity to count statistic for a set of findings
         public let countBySeverity: [String: Int32]?
 
@@ -1022,6 +1273,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Lat", location: .body(locationName: "lat"), required: false, type: .double), 
             AWSShapeMember(label: "Lon", location: .body(locationName: "lon"), required: false, type: .double)
         ]
+
         /// Latitude information of remote IP address.
         public let lat: Double?
         /// Longitude information of remote IP address.
@@ -1042,11 +1294,17 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector that you want to get.
         public let detectorId: String
 
         public init(detectorId: String) {
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1063,6 +1321,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map), 
             AWSShapeMember(label: "UpdatedAt", location: .body(locationName: "updatedAt"), required: false, type: .string)
         ]
+
         /// Detector creation timestamp.
         public let createdAt: String?
         /// Finding publishing frequency.
@@ -1100,6 +1359,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "FilterName", location: .uri(locationName: "filterName"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector the filter is associated with.
         public let detectorId: String
         /// The name of the filter you want to get.
@@ -1108,6 +1368,11 @@ extension GuardDuty {
         public init(detectorId: String, filterName: String) {
             self.detectorId = detectorId
             self.filterName = filterName
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1125,6 +1390,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Rank", location: .body(locationName: "rank"), required: false, type: .integer), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// Specifies the action that is to be applied to the findings that match the filter.
         public let action: FilterAction
         /// The description of the filter.
@@ -1147,6 +1413,15 @@ extension GuardDuty {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 512)
+            try validate(description, name:"description", min: 0)
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 3)
+            try validate(rank, name:"rank", max: 100)
+            try validate(rank, name:"rank", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case action = "action"
             case description = "description"
@@ -1163,6 +1438,7 @@ extension GuardDuty {
             AWSShapeMember(label: "FindingIds", location: .body(locationName: "findingIds"), required: true, type: .list), 
             AWSShapeMember(label: "SortCriteria", location: .body(locationName: "sortCriteria"), required: false, type: .structure)
         ]
+
         /// The ID of the detector that specifies the GuardDuty service whose findings you want to retrieve.
         public let detectorId: String
         /// IDs of the findings that you want to retrieve.
@@ -1176,6 +1452,17 @@ extension GuardDuty {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try findingIds.forEach {
+                try validate($0, name:"findingIds[]", max: 300)
+                try validate($0, name:"findingIds[]", min: 1)
+            }
+            try validate(findingIds, name:"findingIds", max: 50)
+            try validate(findingIds, name:"findingIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case findingIds = "findingIds"
@@ -1187,11 +1474,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Findings", location: .body(locationName: "findings"), required: true, type: .list)
         ]
+
         /// A list of findings.
         public let findings: [Finding]
 
         public init(findings: [Finding]) {
             self.findings = findings
+        }
+
+        public func validate() throws {
+            try findings.forEach {
+                try $0.validate()
+            }
+            try validate(findings, name:"findings", max: 50)
+            try validate(findings, name:"findings", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1205,6 +1501,7 @@ extension GuardDuty {
             AWSShapeMember(label: "FindingCriteria", location: .body(locationName: "findingCriteria"), required: false, type: .structure), 
             AWSShapeMember(label: "FindingStatisticTypes", location: .body(locationName: "findingStatisticTypes"), required: true, type: .list)
         ]
+
         /// The ID of the detector that specifies the GuardDuty service whose findings' statistics you want to retrieve.
         public let detectorId: String
         /// Represents the criteria used for querying findings.
@@ -1218,6 +1515,13 @@ extension GuardDuty {
             self.findingStatisticTypes = findingStatisticTypes
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(findingStatisticTypes, name:"findingStatisticTypes", max: 10)
+            try validate(findingStatisticTypes, name:"findingStatisticTypes", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case findingCriteria = "findingCriteria"
@@ -1229,6 +1533,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "FindingStatistics", location: .body(locationName: "findingStatistics"), required: true, type: .structure)
         ]
+
         /// Finding statistics object.
         public let findingStatistics: FindingStatistics
 
@@ -1246,6 +1551,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "IpSetId", location: .uri(locationName: "ipSetId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector the ipSet is associated with.
         public let detectorId: String
         /// The unique ID of the ipSet you want to get.
@@ -1254,6 +1560,11 @@ extension GuardDuty {
         public init(detectorId: String, ipSetId: String) {
             self.detectorId = detectorId
             self.ipSetId = ipSetId
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1270,6 +1581,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Status", location: .body(locationName: "status"), required: true, type: .enum), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// The format of the file that contains the IPSet.
         public let format: IpSetFormat
         /// The URI of the file that contains the IPSet. For example (https://s3.us-west-2.amazonaws.com/my-bucket/my-object-key)
@@ -1289,6 +1601,13 @@ extension GuardDuty {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(location, name:"location", max: 300)
+            try validate(location, name:"location", min: 1)
+            try validate(name, name:"name", max: 300)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case format = "format"
             case location = "location"
@@ -1300,6 +1619,7 @@ extension GuardDuty {
 
     public struct GetInvitationsCountRequest: AWSShape {
 
+
         public init() {
         }
 
@@ -1309,6 +1629,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "InvitationsCount", location: .body(locationName: "invitationsCount"), required: false, type: .integer)
         ]
+
         /// The number of received invitations.
         public let invitationsCount: Int32?
 
@@ -1325,11 +1646,17 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector of the GuardDuty member account.
         public let detectorId: String
 
         public init(detectorId: String) {
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1341,11 +1668,16 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Master", location: .body(locationName: "master"), required: true, type: .structure)
         ]
+
         /// Master account details.
         public let master: Master
 
         public init(master: Master) {
             self.master = master
+        }
+
+        public func validate() throws {
+            try master.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1358,6 +1690,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountIds", location: .body(locationName: "accountIds"), required: true, type: .list), 
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// A list of account IDs of the GuardDuty member accounts that you want to describe.
         public let accountIds: [String]
         /// The unique ID of the detector of the GuardDuty account whose members you want to retrieve.
@@ -1366,6 +1699,17 @@ extension GuardDuty {
         public init(accountIds: [String], detectorId: String) {
             self.accountIds = accountIds
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1379,6 +1723,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Members", location: .body(locationName: "members"), required: true, type: .list), 
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of members.
         public let members: [Member]
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
@@ -1387,6 +1732,19 @@ extension GuardDuty {
         public init(members: [Member], unprocessedAccounts: [UnprocessedAccount]) {
             self.members = members
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try members.forEach {
+                try $0.validate()
+            }
+            try validate(members, name:"members", max: 50)
+            try validate(members, name:"members", min: 0)
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1400,6 +1758,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "ThreatIntelSetId", location: .uri(locationName: "threatIntelSetId"), required: true, type: .string)
         ]
+
         /// The unique ID of the detector the threatIntelSet is associated with.
         public let detectorId: String
         /// The unique ID of the threatIntelSet you want to get.
@@ -1408,6 +1767,11 @@ extension GuardDuty {
         public init(detectorId: String, threatIntelSetId: String) {
             self.detectorId = detectorId
             self.threatIntelSetId = threatIntelSetId
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1424,6 +1788,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Status", location: .body(locationName: "status"), required: true, type: .enum), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         /// The format of the threatIntelSet.
         public let format: ThreatIntelSetFormat
         /// The URI of the file that contains the ThreatIntelSet. For example (https://s3.us-west-2.amazonaws.com/my-bucket/my-object-key).
@@ -1443,6 +1808,13 @@ extension GuardDuty {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(location, name:"location", max: 300)
+            try validate(location, name:"location", min: 1)
+            try validate(name, name:"name", max: 300)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case format = "format"
             case location = "location"
@@ -1457,6 +1829,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Arn", location: .body(locationName: "arn"), required: false, type: .string), 
             AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string)
         ]
+
         /// AWS EC2 instance profile ARN.
         public let arn: String?
         /// AWS EC2 instance profile ID.
@@ -1488,6 +1861,7 @@ extension GuardDuty {
             AWSShapeMember(label: "ProductCodes", location: .body(locationName: "productCodes"), required: false, type: .list), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .list)
         ]
+
         /// The availability zone of the EC2 instance.
         public let availabilityZone: String?
         /// The profile information of the EC2 instance.
@@ -1551,6 +1925,7 @@ extension GuardDuty {
             AWSShapeMember(label: "InvitedAt", location: .body(locationName: "invitedAt"), required: false, type: .string), 
             AWSShapeMember(label: "RelationshipStatus", location: .body(locationName: "relationshipStatus"), required: false, type: .string)
         ]
+
         /// Inviter account ID
         public let accountId: String?
         /// This value is used to validate the inviter account to the member account.
@@ -1565,6 +1940,11 @@ extension GuardDuty {
             self.invitationId = invitationId
             self.invitedAt = invitedAt
             self.relationshipStatus = relationshipStatus
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1582,6 +1962,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DisableEmailNotification", location: .body(locationName: "disableEmailNotification"), required: false, type: .boolean), 
             AWSShapeMember(label: "Message", location: .body(locationName: "message"), required: false, type: .string)
         ]
+
         /// A list of account IDs of the accounts that you want to invite to GuardDuty as members.
         public let accountIds: [String]
         /// The unique ID of the detector of the GuardDuty account with which you want to invite members.
@@ -1598,6 +1979,17 @@ extension GuardDuty {
             self.message = message
         }
 
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountIds = "accountIds"
             case detectorId = "detectorId"
@@ -1610,11 +2002,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1648,6 +2049,7 @@ extension GuardDuty {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 50. The maximum value is 50.
         public let maxResults: Int32?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the list action. For subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
@@ -1656,6 +2058,11 @@ extension GuardDuty {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1669,6 +2076,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorIds", location: .body(locationName: "detectorIds"), required: true, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// A list of detector Ids.
         public let detectorIds: [String]
         /// Pagination parameter to be used on the next list operation to retrieve more items.
@@ -1677,6 +2085,15 @@ extension GuardDuty {
         public init(detectorIds: [String], nextToken: String? = nil) {
             self.detectorIds = detectorIds
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try detectorIds.forEach {
+                try validate($0, name:"detectorIds[]", max: 300)
+                try validate($0, name:"detectorIds[]", min: 1)
+            }
+            try validate(detectorIds, name:"detectorIds", max: 50)
+            try validate(detectorIds, name:"detectorIds", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1691,6 +2108,7 @@ extension GuardDuty {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The unique ID of the detector the filter is associated with.
         public let detectorId: String
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 50. The maximum value is 50.
@@ -1702,6 +2120,13 @@ extension GuardDuty {
             self.detectorId = detectorId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1716,6 +2141,7 @@ extension GuardDuty {
             AWSShapeMember(label: "FilterNames", location: .body(locationName: "filterNames"), required: true, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// A list of filter names
         public let filterNames: [String]
         /// Pagination parameter to be used on the next list operation to retrieve more items.
@@ -1724,6 +2150,15 @@ extension GuardDuty {
         public init(filterNames: [String], nextToken: String? = nil) {
             self.filterNames = filterNames
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filterNames.forEach {
+                try validate($0, name:"filterNames[]", max: 64)
+                try validate($0, name:"filterNames[]", min: 3)
+            }
+            try validate(filterNames, name:"filterNames", max: 50)
+            try validate(filterNames, name:"filterNames", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1740,6 +2175,7 @@ extension GuardDuty {
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "SortCriteria", location: .body(locationName: "sortCriteria"), required: false, type: .structure)
         ]
+
         /// The ID of the detector that specifies the GuardDuty service whose findings you want to list.
         public let detectorId: String
         /// Represents the criteria used for querying findings.
@@ -1759,6 +2195,13 @@ extension GuardDuty {
             self.sortCriteria = sortCriteria
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case findingCriteria = "findingCriteria"
@@ -1773,6 +2216,7 @@ extension GuardDuty {
             AWSShapeMember(label: "FindingIds", location: .body(locationName: "findingIds"), required: true, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The IDs of the findings you are listing.
         public let findingIds: [String]
         /// Pagination parameter to be used on the next list operation to retrieve more items.
@@ -1781,6 +2225,15 @@ extension GuardDuty {
         public init(findingIds: [String], nextToken: String? = nil) {
             self.findingIds = findingIds
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try findingIds.forEach {
+                try validate($0, name:"findingIds[]", max: 300)
+                try validate($0, name:"findingIds[]", min: 1)
+            }
+            try validate(findingIds, name:"findingIds", max: 50)
+            try validate(findingIds, name:"findingIds", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1795,6 +2248,7 @@ extension GuardDuty {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The unique ID of the detector the ipSet is associated with.
         public let detectorId: String
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 50. The maximum value is 50.
@@ -1806,6 +2260,13 @@ extension GuardDuty {
             self.detectorId = detectorId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1820,6 +2281,7 @@ extension GuardDuty {
             AWSShapeMember(label: "IpSetIds", location: .body(locationName: "ipSetIds"), required: true, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The IDs of the IPSet resources.
         public let ipSetIds: [String]
         /// Pagination parameter to be used on the next list operation to retrieve more items.
@@ -1828,6 +2290,11 @@ extension GuardDuty {
         public init(ipSetIds: [String], nextToken: String? = nil) {
             self.ipSetIds = ipSetIds
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(ipSetIds, name:"ipSetIds", max: 50)
+            try validate(ipSetIds, name:"ipSetIds", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1841,6 +2308,7 @@ extension GuardDuty {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 50. The maximum value is 50.
         public let maxResults: Int32?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the list action. For subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
@@ -1849,6 +2317,11 @@ extension GuardDuty {
         public init(maxResults: Int32? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1862,6 +2335,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Invitations", location: .body(locationName: "invitations"), required: false, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// A list of invitation descriptions.
         public let invitations: [Invitation]?
         /// Pagination parameter to be used on the next list operation to retrieve more items.
@@ -1870,6 +2344,14 @@ extension GuardDuty {
         public init(invitations: [Invitation]? = nil, nextToken: String? = nil) {
             self.invitations = invitations
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try invitations?.forEach {
+                try $0.validate()
+            }
+            try validate(invitations, name:"invitations", max: 50)
+            try validate(invitations, name:"invitations", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1885,6 +2367,7 @@ extension GuardDuty {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "OnlyAssociated", location: .querystring(locationName: "onlyAssociated"), required: false, type: .string)
         ]
+
         /// The unique ID of the detector the member is associated with.
         public let detectorId: String
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 50. The maximum value is 50.
@@ -1901,6 +2384,13 @@ extension GuardDuty {
             self.onlyAssociated = onlyAssociated
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case maxResults = "maxResults"
@@ -1914,6 +2404,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Members", location: .body(locationName: "members"), required: false, type: .list), 
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// A list of members.
         public let members: [Member]?
         /// Pagination parameter to be used on the next list operation to retrieve more items.
@@ -1922,6 +2413,14 @@ extension GuardDuty {
         public init(members: [Member]? = nil, nextToken: String? = nil) {
             self.members = members
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try members?.forEach {
+                try $0.validate()
+            }
+            try validate(members, name:"members", max: 50)
+            try validate(members, name:"members", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1934,11 +2433,16 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ResourceArn", location: .uri(locationName: "resourceArn"), required: true, type: .string)
         ]
+
         /// The Amazon Resource Name (ARN) for the given GuardDuty resource 
         public let resourceArn: String
 
         public init(resourceArn: String) {
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:[A-Za-z_.-]{1,20}:guardduty:[A-Za-z0-9_/.-]{0,63}:\\d+:detector/[A-Za-z0-9_/.-]{32,264}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1950,6 +2454,7 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
         ]
+
         public let tags: [String: String]?
 
         public init(tags: [String: String]? = nil) {
@@ -1967,6 +2472,7 @@ extension GuardDuty {
             AWSShapeMember(label: "MaxResults", location: .querystring(locationName: "maxResults"), required: false, type: .integer), 
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
+
         /// The unique ID of the detector the threatIntelSet is associated with.
         public let detectorId: String
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 50. The maximum value is 50.
@@ -1978,6 +2484,13 @@ extension GuardDuty {
             self.detectorId = detectorId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(maxResults, name:"maxResults", max: 50)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1992,6 +2505,7 @@ extension GuardDuty {
             AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
             AWSShapeMember(label: "ThreatIntelSetIds", location: .body(locationName: "threatIntelSetIds"), required: true, type: .list)
         ]
+
         /// Pagination parameter to be used on the next list operation to retrieve more items.
         public let nextToken: String?
         /// The IDs of the ThreatIntelSet resources.
@@ -2000,6 +2514,11 @@ extension GuardDuty {
         public init(nextToken: String? = nil, threatIntelSetIds: [String]) {
             self.nextToken = nextToken
             self.threatIntelSetIds = threatIntelSetIds
+        }
+
+        public func validate() throws {
+            try validate(threatIntelSetIds, name:"threatIntelSetIds", max: 50)
+            try validate(threatIntelSetIds, name:"threatIntelSetIds", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2013,6 +2532,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Port", location: .body(locationName: "port"), required: false, type: .integer), 
             AWSShapeMember(label: "PortName", location: .body(locationName: "portName"), required: false, type: .string)
         ]
+
         /// Port number of the local connection.
         public let port: Int32?
         /// Port name of the local connection.
@@ -2036,6 +2556,7 @@ extension GuardDuty {
             AWSShapeMember(label: "InvitedAt", location: .body(locationName: "invitedAt"), required: false, type: .string), 
             AWSShapeMember(label: "RelationshipStatus", location: .body(locationName: "relationshipStatus"), required: false, type: .string)
         ]
+
         /// Master account ID
         public let accountId: String?
         /// This value is used to validate the master account to the member account.
@@ -2050,6 +2571,11 @@ extension GuardDuty {
             self.invitationId = invitationId
             self.invitedAt = invitedAt
             self.relationshipStatus = relationshipStatus
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2070,6 +2596,7 @@ extension GuardDuty {
             AWSShapeMember(label: "RelationshipStatus", location: .body(locationName: "relationshipStatus"), required: true, type: .string), 
             AWSShapeMember(label: "UpdatedAt", location: .body(locationName: "updatedAt"), required: true, type: .string)
         ]
+
         /// Member account ID.
         public let accountId: String
         /// Member account's detector ID.
@@ -2095,6 +2622,15 @@ extension GuardDuty {
             self.updatedAt = updatedAt
         }
 
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(email, name:"email", max: 64)
+            try validate(email, name:"email", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case detectorId = "detectorId"
@@ -2115,6 +2651,7 @@ extension GuardDuty {
             AWSShapeMember(label: "RemoteIpDetails", location: .body(locationName: "remoteIpDetails"), required: false, type: .structure), 
             AWSShapeMember(label: "RemotePortDetails", location: .body(locationName: "remotePortDetails"), required: false, type: .structure)
         ]
+
         /// Network connection blocked information.
         public let blocked: Bool?
         /// Network connection direction.
@@ -2160,6 +2697,7 @@ extension GuardDuty {
             AWSShapeMember(label: "SubnetId", location: .body(locationName: "subnetId"), required: false, type: .string), 
             AWSShapeMember(label: "VpcId", location: .body(locationName: "vpcId"), required: false, type: .string)
         ]
+
         /// A list of EC2 instance IPv6 address information.
         public let ipv6Addresses: [String]?
         /// The ID of the network interface
@@ -2221,6 +2759,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Isp", location: .body(locationName: "isp"), required: false, type: .string), 
             AWSShapeMember(label: "Org", location: .body(locationName: "org"), required: false, type: .string)
         ]
+
         /// Autonomous system number of the internet provider of the remote IP address.
         public let asn: String?
         /// Organization that registered this ASN.
@@ -2250,6 +2789,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Blocked", location: .body(locationName: "blocked"), required: false, type: .boolean), 
             AWSShapeMember(label: "PortProbeDetails", location: .body(locationName: "portProbeDetails"), required: false, type: .list)
         ]
+
         /// Port probe blocked information.
         public let blocked: Bool?
         /// A list of port probe details objects.
@@ -2271,6 +2811,7 @@ extension GuardDuty {
             AWSShapeMember(label: "LocalPortDetails", location: .body(locationName: "localPortDetails"), required: false, type: .structure), 
             AWSShapeMember(label: "RemoteIpDetails", location: .body(locationName: "remoteIpDetails"), required: false, type: .structure)
         ]
+
         /// Local port information of the connection.
         public let localPortDetails: LocalPortDetails?
         /// Remote IP information of the connection.
@@ -2292,6 +2833,7 @@ extension GuardDuty {
             AWSShapeMember(label: "PrivateDnsName", location: .body(locationName: "privateDnsName"), required: false, type: .string), 
             AWSShapeMember(label: "PrivateIpAddress", location: .body(locationName: "privateIpAddress"), required: false, type: .string)
         ]
+
         /// Private DNS name of the EC2 instance.
         public let privateDnsName: String?
         /// Private IP address of the EC2 instance.
@@ -2313,6 +2855,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Code", location: .body(locationName: "code"), required: false, type: .string), 
             AWSShapeMember(label: "ProductType", location: .body(locationName: "productType"), required: false, type: .string)
         ]
+
         /// Product code information.
         public let code: String?
         /// Product code type.
@@ -2337,6 +2880,7 @@ extension GuardDuty {
             AWSShapeMember(label: "IpAddressV4", location: .body(locationName: "ipAddressV4"), required: false, type: .string), 
             AWSShapeMember(label: "Organization", location: .body(locationName: "organization"), required: false, type: .structure)
         ]
+
         /// City information of the remote IP address.
         public let city: City?
         /// Country code of the remote IP address.
@@ -2370,6 +2914,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Port", location: .body(locationName: "port"), required: false, type: .integer), 
             AWSShapeMember(label: "PortName", location: .body(locationName: "portName"), required: false, type: .string)
         ]
+
         /// Port number of the remote connection.
         public let port: Int32?
         /// Port name of the remote connection.
@@ -2392,6 +2937,7 @@ extension GuardDuty {
             AWSShapeMember(label: "InstanceDetails", location: .body(locationName: "instanceDetails"), required: false, type: .structure), 
             AWSShapeMember(label: "ResourceType", location: .body(locationName: "resourceType"), required: false, type: .string)
         ]
+
         /// The IAM access key details (IAM user information) of a user that engaged in the activity that prompted GuardDuty to generate a finding.
         public let accessKeyDetails: AccessKeyDetails?
         /// The information about the EC2 instance associated with the activity that prompted GuardDuty to generate a finding.
@@ -2417,6 +2963,7 @@ extension GuardDuty {
             AWSShapeMember(label: "GroupId", location: .body(locationName: "groupId"), required: false, type: .string), 
             AWSShapeMember(label: "GroupName", location: .body(locationName: "groupName"), required: false, type: .string)
         ]
+
         /// EC2 instance's security group ID.
         public let groupId: String?
         /// EC2 instance's security group name.
@@ -2445,6 +2992,7 @@ extension GuardDuty {
             AWSShapeMember(label: "ServiceName", location: .body(locationName: "serviceName"), required: false, type: .string), 
             AWSShapeMember(label: "UserFeedback", location: .body(locationName: "userFeedback"), required: false, type: .string)
         ]
+
         /// Information about the activity described in a finding.
         public let action: Action?
         /// Indicates whether this finding is archived.
@@ -2476,6 +3024,11 @@ extension GuardDuty {
             self.userFeedback = userFeedback
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case action = "action"
             case archived = "archived"
@@ -2494,6 +3047,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AttributeName", location: .body(locationName: "attributeName"), required: false, type: .string), 
             AWSShapeMember(label: "OrderBy", location: .body(locationName: "orderBy"), required: false, type: .enum)
         ]
+
         /// Represents the finding attribute (for example, accountId) by which to sort findings.
         public let attributeName: String?
         /// Order by which the sorted findings are to be displayed.
@@ -2515,6 +3069,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountIds", location: .body(locationName: "accountIds"), required: true, type: .list), 
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// A list of account IDs of the GuardDuty member accounts whose findings you want the master account to monitor.
         public let accountIds: [String]
         /// The unique ID of the detector of the GuardDuty account whom you want to re-enable to monitor members' findings.
@@ -2523,6 +3078,17 @@ extension GuardDuty {
         public init(accountIds: [String], detectorId: String) {
             self.accountIds = accountIds
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2535,11 +3101,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2552,6 +3127,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountIds", location: .body(locationName: "accountIds"), required: true, type: .list), 
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string)
         ]
+
         /// A list of account IDs of the GuardDuty member accounts whose findings you want the master account to stop monitoring.
         public let accountIds: [String]
         /// The unique ID of the detector of the GuardDuty account that you want to stop from monitor members' findings.
@@ -2560,6 +3136,17 @@ extension GuardDuty {
         public init(accountIds: [String], detectorId: String) {
             self.accountIds = accountIds
             self.detectorId = detectorId
+        }
+
+        public func validate() throws {
+            try accountIds.forEach {
+                try validate($0, name:"accountIds[]", max: 12)
+                try validate($0, name:"accountIds[]", min: 12)
+            }
+            try validate(accountIds, name:"accountIds", max: 50)
+            try validate(accountIds, name:"accountIds", min: 1)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2572,11 +3159,20 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "UnprocessedAccounts", location: .body(locationName: "unprocessedAccounts"), required: true, type: .list)
         ]
+
         /// A list of objects containing the unprocessed account and a result string explaining why it was unprocessed.
         public let unprocessedAccounts: [UnprocessedAccount]
 
         public init(unprocessedAccounts: [UnprocessedAccount]) {
             self.unprocessedAccounts = unprocessedAccounts
+        }
+
+        public func validate() throws {
+            try unprocessedAccounts.forEach {
+                try $0.validate()
+            }
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", max: 50)
+            try validate(unprocessedAccounts, name:"unprocessedAccounts", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2589,6 +3185,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Key", location: .body(locationName: "key"), required: false, type: .string), 
             AWSShapeMember(label: "Value", location: .body(locationName: "value"), required: false, type: .string)
         ]
+
         /// EC2 instance tag key.
         public let key: String?
         /// EC2 instance tag value.
@@ -2610,6 +3207,7 @@ extension GuardDuty {
             AWSShapeMember(label: "ResourceArn", location: .uri(locationName: "resourceArn"), required: true, type: .string), 
             AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: true, type: .map)
         ]
+
         /// The Amazon Resource Name (ARN) for the given GuardDuty resource 
         public let resourceArn: String
         /// The tags to be added to a resource.
@@ -2620,6 +3218,10 @@ extension GuardDuty {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:[A-Za-z_.-]{1,20}:guardduty:[A-Za-z0-9_/.-]{0,63}:\\d+:detector/[A-Za-z0-9_/.-]{32,264}$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tags = "tags"
@@ -2627,6 +3229,7 @@ extension GuardDuty {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -2659,6 +3262,7 @@ extension GuardDuty {
             AWSShapeMember(label: "DetectorId", location: .uri(locationName: "detectorId"), required: true, type: .string), 
             AWSShapeMember(label: "FindingIds", location: .body(locationName: "findingIds"), required: true, type: .list)
         ]
+
         /// The ID of the detector that specifies the GuardDuty service whose findings you want to unarchive.
         public let detectorId: String
         /// IDs of the findings that you want to unarchive.
@@ -2669,6 +3273,17 @@ extension GuardDuty {
             self.findingIds = findingIds
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try findingIds.forEach {
+                try validate($0, name:"findingIds[]", max: 300)
+                try validate($0, name:"findingIds[]", min: 1)
+            }
+            try validate(findingIds, name:"findingIds", max: 50)
+            try validate(findingIds, name:"findingIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case findingIds = "findingIds"
@@ -2676,6 +3291,7 @@ extension GuardDuty {
     }
 
     public struct UnarchiveFindingsResponse: AWSShape {
+
 
         public init() {
         }
@@ -2687,6 +3303,7 @@ extension GuardDuty {
             AWSShapeMember(label: "AccountId", location: .body(locationName: "accountId"), required: true, type: .string), 
             AWSShapeMember(label: "Result", location: .body(locationName: "result"), required: true, type: .string)
         ]
+
         /// AWS Account ID.
         public let accountId: String
         /// A reason why the account hasn't been processed.
@@ -2695,6 +3312,11 @@ extension GuardDuty {
         public init(accountId: String, result: String) {
             self.accountId = accountId
             self.result = result
+        }
+
+        public func validate() throws {
+            try validate(accountId, name:"accountId", max: 12)
+            try validate(accountId, name:"accountId", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2708,6 +3330,7 @@ extension GuardDuty {
             AWSShapeMember(label: "ResourceArn", location: .uri(locationName: "resourceArn"), required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", location: .querystring(locationName: "tagKeys"), required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) for the given GuardDuty resource 
         public let resourceArn: String
         /// The tag keys to remove from a resource.
@@ -2718,6 +3341,17 @@ extension GuardDuty {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", pattern: "^arn:[A-Za-z_.-]{1,20}:guardduty:[A-Za-z0-9_/.-]{0,63}:\\d+:detector/[A-Za-z0-9_/.-]{32,264}$")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name:"tagKeys[]", pattern: "^(?!aws:)[a-zA-Z+-=._:/]+$")
+            }
+            try validate(tagKeys, name:"tagKeys", max: 200)
+            try validate(tagKeys, name:"tagKeys", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tagKeys = "tagKeys"
@@ -2725,6 +3359,7 @@ extension GuardDuty {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -2737,6 +3372,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Enable", location: .body(locationName: "enable"), required: false, type: .boolean), 
             AWSShapeMember(label: "FindingPublishingFrequency", location: .body(locationName: "findingPublishingFrequency"), required: false, type: .enum)
         ]
+
         /// The unique ID of the detector that you want to update.
         public let detectorId: String
         /// Updated boolean value for the detector that specifies whether the detector is enabled.
@@ -2750,6 +3386,11 @@ extension GuardDuty {
             self.findingPublishingFrequency = findingPublishingFrequency
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case detectorId = "detectorId"
             case enable = "enable"
@@ -2758,6 +3399,7 @@ extension GuardDuty {
     }
 
     public struct UpdateDetectorResponse: AWSShape {
+
 
         public init() {
         }
@@ -2773,6 +3415,7 @@ extension GuardDuty {
             AWSShapeMember(label: "FindingCriteria", location: .body(locationName: "findingCriteria"), required: false, type: .structure), 
             AWSShapeMember(label: "Rank", location: .body(locationName: "rank"), required: false, type: .integer)
         ]
+
         /// Specifies the action that is to be applied to the findings that match the filter.
         public let action: FilterAction?
         /// The description of the filter.
@@ -2795,6 +3438,15 @@ extension GuardDuty {
             self.rank = rank
         }
 
+        public func validate() throws {
+            try validate(description, name:"description", max: 512)
+            try validate(description, name:"description", min: 0)
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(rank, name:"rank", max: 100)
+            try validate(rank, name:"rank", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case action = "action"
             case description = "description"
@@ -2809,11 +3461,17 @@ extension GuardDuty {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Name", location: .body(locationName: "name"), required: true, type: .string)
         ]
+
         /// The name of the filter.
         public let name: String
 
         public init(name: String) {
             self.name = name
+        }
+
+        public func validate() throws {
+            try validate(name, name:"name", max: 64)
+            try validate(name, name:"name", min: 3)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2828,6 +3486,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Feedback", location: .body(locationName: "feedback"), required: true, type: .enum), 
             AWSShapeMember(label: "FindingIds", location: .body(locationName: "findingIds"), required: true, type: .list)
         ]
+
         /// Additional feedback about the GuardDuty findings.
         public let comments: String?
         /// The ID of the detector that specifies the GuardDuty service whose findings you want to mark as useful or not useful.
@@ -2844,6 +3503,17 @@ extension GuardDuty {
             self.findingIds = findingIds
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try findingIds.forEach {
+                try validate($0, name:"findingIds[]", max: 300)
+                try validate($0, name:"findingIds[]", min: 1)
+            }
+            try validate(findingIds, name:"findingIds", max: 50)
+            try validate(findingIds, name:"findingIds", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case comments = "comments"
             case detectorId = "detectorId"
@@ -2853,6 +3523,7 @@ extension GuardDuty {
     }
 
     public struct UpdateFindingsFeedbackResponse: AWSShape {
+
 
         public init() {
         }
@@ -2867,6 +3538,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Location", location: .body(locationName: "location"), required: false, type: .string), 
             AWSShapeMember(label: "Name", location: .body(locationName: "name"), required: false, type: .string)
         ]
+
         /// The updated boolean value that specifies whether the IPSet is active or not.
         public let activate: Bool?
         /// The detectorID that specifies the GuardDuty service whose IPSet you want to update.
@@ -2886,6 +3558,15 @@ extension GuardDuty {
             self.name = name
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(location, name:"location", max: 300)
+            try validate(location, name:"location", min: 1)
+            try validate(name, name:"name", max: 300)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activate = "activate"
             case detectorId = "detectorId"
@@ -2896,6 +3577,7 @@ extension GuardDuty {
     }
 
     public struct UpdateIPSetResponse: AWSShape {
+
 
         public init() {
         }
@@ -2910,6 +3592,7 @@ extension GuardDuty {
             AWSShapeMember(label: "Name", location: .body(locationName: "name"), required: false, type: .string), 
             AWSShapeMember(label: "ThreatIntelSetId", location: .uri(locationName: "threatIntelSetId"), required: true, type: .string)
         ]
+
         /// The updated boolean value that specifies whether the ThreateIntelSet is active or not.
         public let activate: Bool?
         /// The detectorID that specifies the GuardDuty service whose ThreatIntelSet you want to update.
@@ -2929,6 +3612,15 @@ extension GuardDuty {
             self.threatIntelSetId = threatIntelSetId
         }
 
+        public func validate() throws {
+            try validate(detectorId, name:"detectorId", max: 300)
+            try validate(detectorId, name:"detectorId", min: 1)
+            try validate(location, name:"location", max: 300)
+            try validate(location, name:"location", min: 1)
+            try validate(name, name:"name", max: 300)
+            try validate(name, name:"name", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case activate = "activate"
             case detectorId = "detectorId"
@@ -2939,6 +3631,7 @@ extension GuardDuty {
     }
 
     public struct UpdateThreatIntelSetResponse: AWSShape {
+
 
         public init() {
         }

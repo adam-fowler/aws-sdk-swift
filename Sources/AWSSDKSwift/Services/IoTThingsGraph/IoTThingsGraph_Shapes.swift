@@ -11,6 +11,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "namespaceVersion", required: false, type: .long), 
             AWSShapeMember(label: "thingName", required: true, type: .string)
         ]
+
         /// The ID of the device to be associated with the thing. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:device:DEVICENAME 
         public let entityId: String
         /// The version of the user's namespace. Defaults to the latest version of the user's namespace.
@@ -24,6 +25,14 @@ extension IoTThingsGraph {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 160)
+            try validate(entityId, name:"entityId", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "entityId"
             case namespaceVersion = "namespaceVersion"
@@ -32,6 +41,7 @@ extension IoTThingsGraph {
     }
 
     public struct AssociateEntityToThingResponse: AWSShape {
+
 
         public init() {
         }
@@ -43,6 +53,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "compatibleNamespaceVersion", required: false, type: .long), 
             AWSShapeMember(label: "definition", required: true, type: .structure)
         ]
+
         /// The namespace version in which the workflow is to be created. If no value is specified, the latest version is used by default.
         public let compatibleNamespaceVersion: Int64?
         /// The workflow DefinitionDocument.
@@ -51,6 +62,10 @@ extension IoTThingsGraph {
         public init(compatibleNamespaceVersion: Int64? = nil, definition: DefinitionDocument) {
             self.compatibleNamespaceVersion = compatibleNamespaceVersion
             self.definition = definition
+        }
+
+        public func validate() throws {
+            try definition.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -63,11 +78,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "summary", required: false, type: .structure)
         ]
+
         /// The summary object that describes the created workflow.
         public let summary: FlowTemplateSummary?
 
         public init(summary: FlowTemplateSummary? = nil) {
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -85,6 +105,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "tags", required: false, type: .list), 
             AWSShapeMember(label: "target", required: true, type: .enum)
         ]
+
         public let definition: DefinitionDocument
         /// The ARN of the IAM role that AWS IoT Things Graph will assume when it executes the flow. This role must have read and write access to AWS Lambda and AWS IoT and any other AWS services that the flow uses when it executes. This value is required if the value of the target parameter is CLOUD.
         public let flowActionsRoleArn: String?
@@ -108,6 +129,18 @@ extension IoTThingsGraph {
             self.target = target
         }
 
+        public func validate() throws {
+            try definition.validate()
+            try validate(flowActionsRoleArn, name:"flowActionsRoleArn", max: 2048)
+            try validate(flowActionsRoleArn, name:"flowActionsRoleArn", min: 20)
+            try metricsConfiguration?.validate()
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case definition = "definition"
             case flowActionsRoleArn = "flowActionsRoleArn"
@@ -123,11 +156,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "summary", required: false, type: .structure)
         ]
+
         /// The summary object that describes the new system instance.
         public let summary: SystemInstanceSummary?
 
         public init(summary: SystemInstanceSummary? = nil) {
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -140,6 +178,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "compatibleNamespaceVersion", required: false, type: .long), 
             AWSShapeMember(label: "definition", required: true, type: .structure)
         ]
+
         /// The namespace version in which the system is to be created. If no value is specified, the latest version is used by default.
         public let compatibleNamespaceVersion: Int64?
         /// The DefinitionDocument used to create the system.
@@ -148,6 +187,10 @@ extension IoTThingsGraph {
         public init(compatibleNamespaceVersion: Int64? = nil, definition: DefinitionDocument) {
             self.compatibleNamespaceVersion = compatibleNamespaceVersion
             self.definition = definition
+        }
+
+        public func validate() throws {
+            try definition.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -160,11 +203,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "summary", required: false, type: .structure)
         ]
+
         /// The summary object that describes the created system.
         public let summary: SystemTemplateSummary?
 
         public init(summary: SystemTemplateSummary? = nil) {
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -177,6 +225,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "language", required: true, type: .enum), 
             AWSShapeMember(label: "text", required: true, type: .string)
         ]
+
         /// The language used to define the entity. GRAPHQL is the only valid value.
         public let language: DefinitionLanguage
         /// The GraphQL text that defines the entity.
@@ -185,6 +234,10 @@ extension IoTThingsGraph {
         public init(language: DefinitionLanguage, text: String) {
             self.language = language
             self.text = text
+        }
+
+        public func validate() throws {
+            try validate(text, name:"text", max: 1048576)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -202,11 +255,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The ID of the workflow to be deleted. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:workflow:WORKFLOWNAME 
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -216,12 +275,14 @@ extension IoTThingsGraph {
 
     public struct DeleteFlowTemplateResponse: AWSShape {
 
+
         public init() {
         }
 
     }
 
     public struct DeleteNamespaceRequest: AWSShape {
+
 
         public init() {
         }
@@ -233,6 +294,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "namespaceArn", required: false, type: .string), 
             AWSShapeMember(label: "namespaceName", required: false, type: .string)
         ]
+
         /// The ARN of the namespace to be deleted.
         public let namespaceArn: String?
         /// The name of the namespace to be deleted.
@@ -241,6 +303,10 @@ extension IoTThingsGraph {
         public init(namespaceArn: String? = nil, namespaceName: String? = nil) {
             self.namespaceArn = namespaceArn
             self.namespaceName = namespaceName
+        }
+
+        public func validate() throws {
+            try validate(namespaceName, name:"namespaceName", max: 128)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -253,11 +319,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: false, type: .string)
         ]
+
         /// The ID of the system instance to be deleted.
         public let id: String?
 
         public init(id: String? = nil) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -266,6 +338,7 @@ extension IoTThingsGraph {
     }
 
     public struct DeleteSystemInstanceResponse: AWSShape {
+
 
         public init() {
         }
@@ -276,11 +349,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The ID of the system to be deleted. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:system:SYSTEMNAME 
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -289,6 +368,7 @@ extension IoTThingsGraph {
     }
 
     public struct DeleteSystemTemplateResponse: AWSShape {
+
 
         public init() {
         }
@@ -300,6 +380,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "id", required: false, type: .string), 
             AWSShapeMember(label: "revisionNumber", required: false, type: .long)
         ]
+
         /// The ID of the workflow or system.
         public let id: String?
         /// The revision number of the workflow or system.
@@ -308,6 +389,11 @@ extension IoTThingsGraph {
         public init(id: String? = nil, revisionNumber: Int64? = nil) {
             self.id = id
             self.revisionNumber = revisionNumber
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -320,11 +406,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: false, type: .string)
         ]
+
         /// The ID of the system instance. This value is returned by the CreateSystemInstance action. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:deployment:DEPLOYMENTNAME 
         public let id: String?
 
         public init(id: String? = nil) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -337,6 +429,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "greengrassDeploymentId", required: false, type: .string), 
             AWSShapeMember(label: "summary", required: true, type: .structure)
         ]
+
         /// The ID of the Greengrass deployment used to deploy the system instance.
         public let greengrassDeploymentId: String?
         /// An object that contains summary information about a system instance that was deployed. 
@@ -345,6 +438,10 @@ extension IoTThingsGraph {
         public init(greengrassDeploymentId: String? = nil, summary: SystemInstanceSummary) {
             self.greengrassDeploymentId = greengrassDeploymentId
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try summary.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -363,11 +460,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The ID of the workflow to be deleted. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:workflow:WORKFLOWNAME 
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -376,6 +479,7 @@ extension IoTThingsGraph {
     }
 
     public struct DeprecateFlowTemplateResponse: AWSShape {
+
 
         public init() {
         }
@@ -386,11 +490,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The ID of the system to delete. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:system:SYSTEMNAME 
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -399,6 +509,7 @@ extension IoTThingsGraph {
     }
 
     public struct DeprecateSystemTemplateResponse: AWSShape {
+
 
         public init() {
         }
@@ -409,11 +520,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "namespaceName", required: false, type: .string)
         ]
+
         /// The name of the user's namespace. Set this to aws to get the public namespace.
         public let namespaceName: String?
 
         public init(namespaceName: String? = nil) {
             self.namespaceName = namespaceName
+        }
+
+        public func validate() throws {
+            try validate(namespaceName, name:"namespaceName", max: 128)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -429,6 +545,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "trackingNamespaceName", required: false, type: .string), 
             AWSShapeMember(label: "trackingNamespaceVersion", required: false, type: .long)
         ]
+
         /// The ARN of the namespace.
         public let namespaceArn: String?
         /// The name of the namespace.
@@ -448,6 +565,11 @@ extension IoTThingsGraph {
             self.trackingNamespaceVersion = trackingNamespaceVersion
         }
 
+        public func validate() throws {
+            try validate(namespaceName, name:"namespaceName", max: 128)
+            try validate(trackingNamespaceName, name:"trackingNamespaceName", max: 128)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case namespaceArn = "namespaceArn"
             case namespaceName = "namespaceName"
@@ -462,6 +584,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "entityType", required: true, type: .enum), 
             AWSShapeMember(label: "thingName", required: true, type: .string)
         ]
+
         /// The entity type from which to disassociate the thing.
         public let entityType: EntityType
         /// The name of the thing to disassociate.
@@ -472,6 +595,12 @@ extension IoTThingsGraph {
             self.thingName = thingName
         }
 
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityType = "entityType"
             case thingName = "thingName"
@@ -479,6 +608,7 @@ extension IoTThingsGraph {
     }
 
     public struct DissociateEntityFromThingResponse: AWSShape {
+
 
         public init() {
         }
@@ -493,6 +623,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "id", required: false, type: .string), 
             AWSShapeMember(label: "type", required: false, type: .enum)
         ]
+
         /// The entity ARN.
         public let arn: String?
         /// The time at which the entity was created.
@@ -512,6 +643,12 @@ extension IoTThingsGraph {
             self.`type` = `type`
         }
 
+        public func validate() throws {
+            try definition?.validate()
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdAt = "createdAt"
@@ -526,6 +663,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "name", required: false, type: .enum), 
             AWSShapeMember(label: "value", required: false, type: .list)
         ]
+
         /// The name of the entity search filter field. REFERENCED_ENTITY_ID filters on entities that are used by the entity in the result set. For example, you can filter on the ID of a property that is used in a state.
         public let name: EntityFilterName?
         /// An array of string values for the search filter field. Multiple values function as AND criteria in the search.
@@ -592,6 +730,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "payload", required: false, type: .string), 
             AWSShapeMember(label: "timestamp", required: false, type: .timestamp)
         ]
+
         /// The type of flow event .
         public let eventType: FlowExecutionEventType?
         /// The unique identifier of the message.
@@ -633,6 +772,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "systemInstanceId", required: false, type: .string), 
             AWSShapeMember(label: "updatedAt", required: false, type: .timestamp)
         ]
+
         /// The date and time when the flow execution summary was created.
         public let createdAt: TimeStamp?
         /// The ID of the flow execution.
@@ -655,6 +795,13 @@ extension IoTThingsGraph {
             self.updatedAt = updatedAt
         }
 
+        public func validate() throws {
+            try validate(flowTemplateId, name:"flowTemplateId", max: 160)
+            try validate(flowTemplateId, name:"flowTemplateId", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            try validate(systemInstanceId, name:"systemInstanceId", max: 160)
+            try validate(systemInstanceId, name:"systemInstanceId", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdAt = "createdAt"
             case flowExecutionId = "flowExecutionId"
@@ -671,6 +818,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "summary", required: false, type: .structure), 
             AWSShapeMember(label: "validatedNamespaceVersion", required: false, type: .long)
         ]
+
         /// A workflow's definition document.
         public let definition: DefinitionDocument?
         /// An object that contains summary information about a workflow.
@@ -682,6 +830,11 @@ extension IoTThingsGraph {
             self.definition = definition
             self.summary = summary
             self.validatedNamespaceVersion = validatedNamespaceVersion
+        }
+
+        public func validate() throws {
+            try definition?.validate()
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -696,6 +849,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "name", required: true, type: .enum), 
             AWSShapeMember(label: "value", required: true, type: .list)
         ]
+
         /// The name of the search filter field.
         public let name: FlowTemplateFilterName
         /// An array of string values for the search filter field. Multiple values function as AND criteria in the search.
@@ -704,6 +858,12 @@ extension IoTThingsGraph {
         public init(name: FlowTemplateFilterName, value: [String]) {
             self.name = name
             self.value = value
+        }
+
+        public func validate() throws {
+            try value.forEach {
+                try validate($0, name:"value[]", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -724,6 +884,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "id", required: false, type: .string), 
             AWSShapeMember(label: "revisionNumber", required: false, type: .long)
         ]
+
         /// The ARN of the workflow.
         public let arn: String?
         /// The date when the workflow was created.
@@ -740,6 +901,11 @@ extension IoTThingsGraph {
             self.revisionNumber = revisionNumber
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdAt = "createdAt"
@@ -753,6 +919,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "ids", required: true, type: .list), 
             AWSShapeMember(label: "namespaceVersion", required: false, type: .long)
         ]
+
         /// An array of entity IDs. The IDs should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:device:DEVICENAME 
         public let ids: [String]
         /// The version of the user's namespace. Defaults to the latest version of the user's namespace.
@@ -761,6 +928,15 @@ extension IoTThingsGraph {
         public init(ids: [String], namespaceVersion: Int64? = nil) {
             self.ids = ids
             self.namespaceVersion = namespaceVersion
+        }
+
+        public func validate() throws {
+            try ids.forEach {
+                try validate($0, name:"ids[]", max: 160)
+                try validate($0, name:"ids[]", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            }
+            try validate(ids, name:"ids", max: 25)
+            try validate(ids, name:"ids", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -773,11 +949,18 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "descriptions", required: false, type: .list)
         ]
+
         /// An array of descriptions for the specified entities.
         public let descriptions: [EntityDescription]?
 
         public init(descriptions: [EntityDescription]? = nil) {
             self.descriptions = descriptions
+        }
+
+        public func validate() throws {
+            try descriptions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -790,6 +973,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "revisionNumber", required: false, type: .long)
         ]
+
         /// The ID of the workflow. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:workflow:WORKFLOWNAME 
         public let id: String
         /// The number of the workflow revision to retrieve.
@@ -798,6 +982,11 @@ extension IoTThingsGraph {
         public init(id: String, revisionNumber: Int64? = nil) {
             self.id = id
             self.revisionNumber = revisionNumber
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -810,11 +999,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "description", required: false, type: .structure)
         ]
+
         /// The object that describes the specified workflow.
         public let description: FlowTemplateDescription?
 
         public init(description: FlowTemplateDescription? = nil) {
             self.description = description
+        }
+
+        public func validate() throws {
+            try description?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -828,6 +1022,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ID of the workflow. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:workflow:WORKFLOWNAME 
         public let id: String
         /// The maximum number of results to return in the response.
@@ -839,6 +1034,13 @@ extension IoTThingsGraph {
             self.id = id
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -853,6 +1055,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "summaries", required: false, type: .list)
         ]
+
         /// The string to specify as nextToken when you request the next page of results.
         public let nextToken: String?
         /// An array of objects that provide summary data about each revision.
@@ -863,6 +1066,12 @@ extension IoTThingsGraph {
             self.summaries = summaries
         }
 
+        public func validate() throws {
+            try summaries?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case nextToken = "nextToken"
             case summaries = "summaries"
@@ -870,6 +1079,7 @@ extension IoTThingsGraph {
     }
 
     public struct GetNamespaceDeletionStatusRequest: AWSShape {
+
 
         public init() {
         }
@@ -884,6 +1094,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "namespaceName", required: false, type: .string), 
             AWSShapeMember(label: "status", required: false, type: .enum)
         ]
+
         /// An error code returned by the namespace deletion task.
         public let errorCode: NamespaceDeletionStatusErrorCodes?
         /// An error code returned by the namespace deletion task.
@@ -903,6 +1114,10 @@ extension IoTThingsGraph {
             self.status = status
         }
 
+        public func validate() throws {
+            try validate(namespaceName, name:"namespaceName", max: 128)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case errorCode = "errorCode"
             case errorMessage = "errorMessage"
@@ -916,11 +1131,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The ID of the system deployment instance. This value is returned by CreateSystemInstance. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:deployment:DEPLOYMENTNAME 
         public let id: String
 
         public init(id: String) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -932,11 +1153,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "description", required: false, type: .structure)
         ]
+
         /// An object that describes the system instance.
         public let description: SystemInstanceDescription?
 
         public init(description: SystemInstanceDescription? = nil) {
             self.description = description
+        }
+
+        public func validate() throws {
+            try description?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -949,6 +1175,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "id", required: true, type: .string), 
             AWSShapeMember(label: "revisionNumber", required: false, type: .long)
         ]
+
         /// The ID of the system to get. This ID must be in the user's namespace. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:system:SYSTEMNAME 
         public let id: String
         /// The number that specifies the revision of the system to get.
@@ -957,6 +1184,11 @@ extension IoTThingsGraph {
         public init(id: String, revisionNumber: Int64? = nil) {
             self.id = id
             self.revisionNumber = revisionNumber
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -969,11 +1201,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "description", required: false, type: .structure)
         ]
+
         /// An object that contains summary data about the system.
         public let description: SystemTemplateDescription?
 
         public init(description: SystemTemplateDescription? = nil) {
             self.description = description
+        }
+
+        public func validate() throws {
+            try description?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -987,6 +1224,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ID of the system template. The ID should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:system:SYSTEMNAME 
         public let id: String
         /// The maximum number of results to return in the response.
@@ -998,6 +1236,13 @@ extension IoTThingsGraph {
             self.id = id
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1012,6 +1257,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "summaries", required: false, type: .list)
         ]
+
         /// The string to specify as nextToken when you request the next page of results. 
         public let nextToken: String?
         /// An array of objects that contain summary data about the system template revisions.
@@ -1020,6 +1266,12 @@ extension IoTThingsGraph {
         public init(nextToken: String? = nil, summaries: [SystemTemplateSummary]? = nil) {
             self.nextToken = nextToken
             self.summaries = summaries
+        }
+
+        public func validate() throws {
+            try summaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1032,11 +1284,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "uploadId", required: true, type: .string)
         ]
+
         /// The ID of the upload. This value is returned by the UploadEntityDefinitions action.
         public let uploadId: String
 
         public init(uploadId: String) {
             self.uploadId = uploadId
+        }
+
+        public func validate() throws {
+            try validate(uploadId, name:"uploadId", max: 40)
+            try validate(uploadId, name:"uploadId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1054,6 +1312,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "uploadId", required: true, type: .string), 
             AWSShapeMember(label: "uploadStatus", required: true, type: .enum)
         ]
+
         /// The date at which the upload was created.
         public let createdDate: TimeStamp
         /// The reason for an upload failure.
@@ -1079,6 +1338,12 @@ extension IoTThingsGraph {
             self.uploadStatus = uploadStatus
         }
 
+        public func validate() throws {
+            try validate(namespaceName, name:"namespaceName", max: 128)
+            try validate(uploadId, name:"uploadId", max: 40)
+            try validate(uploadId, name:"uploadId", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case createdDate = "createdDate"
             case failureReason = "failureReason"
@@ -1096,6 +1361,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ID of the flow execution.
         public let flowExecutionId: String
         /// The maximum number of results to return in the response.
@@ -1107,6 +1373,11 @@ extension IoTThingsGraph {
             self.flowExecutionId = flowExecutionId
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1121,6 +1392,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "messages", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// A list of objects that contain information about events in the specified flow execution.
         public let messages: [FlowExecutionMessage]?
         /// The string to specify as nextToken when you request the next page of results. 
@@ -1143,6 +1415,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "resourceArn", required: true, type: .string)
         ]
+
         /// The maximum number of tags to return.
         public let maxResults: Int32?
         /// The token that specifies the next page of results to return.
@@ -1154,6 +1427,13 @@ extension IoTThingsGraph {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceArn = resourceArn
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(resourceArn, name:"resourceArn", max: 2048)
+            try validate(resourceArn, name:"resourceArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1168,6 +1448,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "tags", required: false, type: .list)
         ]
+
         /// The token that specifies the next page of results to return.
         public let nextToken: String?
         /// List of tags returned by the ListTagsForResource operation.
@@ -1176,6 +1457,14 @@ extension IoTThingsGraph {
         public init(nextToken: String? = nil, tags: [Tag]? = nil) {
             self.nextToken = nextToken
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags?.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1189,6 +1478,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "cloudMetricEnabled", required: false, type: .boolean), 
             AWSShapeMember(label: "metricRuleRoleArn", required: false, type: .string)
         ]
+
         /// A Boolean that specifies whether cloud metrics are collected.
         public let cloudMetricEnabled: Bool?
         /// The ARN of the role that is used to collect cloud metrics.
@@ -1197,6 +1487,11 @@ extension IoTThingsGraph {
         public init(cloudMetricEnabled: Bool? = nil, metricRuleRoleArn: String? = nil) {
             self.cloudMetricEnabled = cloudMetricEnabled
             self.metricRuleRoleArn = metricRuleRoleArn
+        }
+
+        public func validate() throws {
+            try validate(metricRuleRoleArn, name:"metricRuleRoleArn", max: 2048)
+            try validate(metricRuleRoleArn, name:"metricRuleRoleArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1225,6 +1520,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "namespaceVersion", required: false, type: .long), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The entity types for which to search.
         public let entityTypes: [EntityType]
         /// Optional filter to apply to the search. Valid filters are NAME NAMESPACE, SEMANTIC_TYPE_PATH and REFERENCED_ENTITY_ID. REFERENCED_ENTITY_ID filters on entities that are used by the entity in the result set. For example, you can filter on the ID of a property that is used in a state. Multiple filters function as OR criteria in the query. Multiple values passed inside the filter function as AND criteria.
@@ -1244,6 +1540,11 @@ extension IoTThingsGraph {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityTypes = "entityTypes"
             case filters = "filters"
@@ -1258,6 +1559,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "descriptions", required: false, type: .list), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// An array of descriptions for each entity returned in the search result.
         public let descriptions: [EntityDescription]?
         /// The string to specify as nextToken when you request the next page of results.
@@ -1266,6 +1568,12 @@ extension IoTThingsGraph {
         public init(descriptions: [EntityDescription]? = nil, nextToken: String? = nil) {
             self.descriptions = descriptions
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try descriptions?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1283,6 +1591,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "startTime", required: false, type: .timestamp), 
             AWSShapeMember(label: "systemInstanceId", required: true, type: .string)
         ]
+
         /// The date and time of the latest flow execution to return.
         public let endTime: TimeStamp?
         /// The ID of a flow execution.
@@ -1305,6 +1614,13 @@ extension IoTThingsGraph {
             self.systemInstanceId = systemInstanceId
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(systemInstanceId, name:"systemInstanceId", max: 160)
+            try validate(systemInstanceId, name:"systemInstanceId", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case endTime = "endTime"
             case flowExecutionId = "flowExecutionId"
@@ -1320,6 +1636,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "summaries", required: false, type: .list)
         ]
+
         /// The string to specify as nextToken when you request the next page of results.
         public let nextToken: String?
         /// An array of objects that contain summary information about each workflow execution in the result set.
@@ -1328,6 +1645,12 @@ extension IoTThingsGraph {
         public init(nextToken: String? = nil, summaries: [FlowExecutionSummary]? = nil) {
             self.nextToken = nextToken
             self.summaries = summaries
+        }
+
+        public func validate() throws {
+            try summaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1342,6 +1665,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// An array of objects that limit the result set. The only valid filter is DEVICE_MODEL_ID.
         public let filters: [FlowTemplateFilter]?
         /// The maximum number of results to return in the response.
@@ -1353,6 +1677,14 @@ extension IoTThingsGraph {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1367,6 +1699,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "summaries", required: false, type: .list)
         ]
+
         /// The string to specify as nextToken when you request the next page of results.
         public let nextToken: String?
         /// An array of objects that contain summary information about each workflow in the result set.
@@ -1375,6 +1708,12 @@ extension IoTThingsGraph {
         public init(nextToken: String? = nil, summaries: [FlowTemplateSummary]? = nil) {
             self.nextToken = nextToken
             self.summaries = summaries
+        }
+
+        public func validate() throws {
+            try summaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1389,6 +1728,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// Optional filter to apply to the search. Valid filters are SYSTEM_TEMPLATE_ID, STATUS, and GREENGRASS_GROUP_NAME. Multiple filters function as OR criteria in the query. Multiple values passed inside the filter function as AND criteria.
         public let filters: [SystemInstanceFilter]?
         /// The maximum number of results to return in the response.
@@ -1400,6 +1740,11 @@ extension IoTThingsGraph {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1414,6 +1759,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "summaries", required: false, type: .list)
         ]
+
         /// The string to specify as nextToken when you request the next page of results. 
         public let nextToken: String?
         /// An array of objects that contain summary data abour the system instances in the result set.
@@ -1422,6 +1768,12 @@ extension IoTThingsGraph {
         public init(nextToken: String? = nil, summaries: [SystemInstanceSummary]? = nil) {
             self.nextToken = nextToken
             self.summaries = summaries
+        }
+
+        public func validate() throws {
+            try summaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1436,6 +1788,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// An array of filters that limit the result set. The only valid filter is FLOW_TEMPLATE_ID.
         public let filters: [SystemTemplateFilter]?
         /// The maximum number of results to return in the response.
@@ -1447,6 +1800,14 @@ extension IoTThingsGraph {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try filters?.forEach {
+                try $0.validate()
+            }
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1461,6 +1822,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "summaries", required: false, type: .list)
         ]
+
         /// The string to specify as nextToken when you request the next page of results.
         public let nextToken: String?
         /// An array of objects that contain summary information about each system deployment in the result set.
@@ -1469,6 +1831,12 @@ extension IoTThingsGraph {
         public init(nextToken: String? = nil, summaries: [SystemTemplateSummary]? = nil) {
             self.nextToken = nextToken
             self.summaries = summaries
+        }
+
+        public func validate() throws {
+            try summaries?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1484,6 +1852,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "namespaceVersion", required: false, type: .long), 
             AWSShapeMember(label: "nextToken", required: false, type: .string)
         ]
+
         /// The ID of the entity to which the things are associated. The IDs should be in the following format.  urn:tdm:REGION/ACCOUNT ID/default:device:DEVICENAME 
         public let entityId: String
         /// The maximum number of results to return in the response.
@@ -1500,6 +1869,13 @@ extension IoTThingsGraph {
             self.nextToken = nextToken
         }
 
+        public func validate() throws {
+            try validate(entityId, name:"entityId", max: 160)
+            try validate(entityId, name:"entityId", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            try validate(maxResults, name:"maxResults", max: 250)
+            try validate(maxResults, name:"maxResults", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case entityId = "entityId"
             case maxResults = "maxResults"
@@ -1513,6 +1889,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "nextToken", required: false, type: .string), 
             AWSShapeMember(label: "things", required: false, type: .list)
         ]
+
         /// The string to specify as nextToken when you request the next page of results.
         public let nextToken: String?
         /// An array of things in the result set.
@@ -1521,6 +1898,12 @@ extension IoTThingsGraph {
         public init(nextToken: String? = nil, things: [Thing]? = nil) {
             self.nextToken = nextToken
             self.things = things
+        }
+
+        public func validate() throws {
+            try things?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1551,6 +1934,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "validatedDependencyRevisions", required: false, type: .list), 
             AWSShapeMember(label: "validatedNamespaceVersion", required: false, type: .long)
         ]
+
         public let definition: DefinitionDocument?
         /// The AWS Identity and Access Management (IAM) role that AWS IoT Things Graph assumes during flow execution in a cloud deployment. This role must have read and write permissionss to AWS Lambda and AWS IoT and to any other AWS services that the flow uses.
         public let flowActionsRoleArn: String?
@@ -1574,6 +1958,17 @@ extension IoTThingsGraph {
             self.validatedNamespaceVersion = validatedNamespaceVersion
         }
 
+        public func validate() throws {
+            try definition?.validate()
+            try validate(flowActionsRoleArn, name:"flowActionsRoleArn", max: 2048)
+            try validate(flowActionsRoleArn, name:"flowActionsRoleArn", min: 20)
+            try metricsConfiguration?.validate()
+            try summary?.validate()
+            try validatedDependencyRevisions?.forEach {
+                try $0.validate()
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case definition = "definition"
             case flowActionsRoleArn = "flowActionsRoleArn"
@@ -1590,6 +1985,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "name", required: false, type: .enum), 
             AWSShapeMember(label: "value", required: false, type: .list)
         ]
+
         /// The name of the search filter field.
         public let name: SystemInstanceFilterName?
         /// An array of string values for the search filter field. Multiple values function as AND criteria in the search. 
@@ -1625,6 +2021,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "target", required: false, type: .enum), 
             AWSShapeMember(label: "updatedAt", required: false, type: .timestamp)
         ]
+
         /// The ARN of the system instance.
         public let arn: String?
         /// The date when the system instance was created.
@@ -1656,6 +2053,11 @@ extension IoTThingsGraph {
             self.updatedAt = updatedAt
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdAt = "createdAt"
@@ -1675,6 +2077,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "summary", required: false, type: .structure), 
             AWSShapeMember(label: "validatedNamespaceVersion", required: false, type: .long)
         ]
+
         /// The definition document of a system.
         public let definition: DefinitionDocument?
         /// An object that contains summary information about a system.
@@ -1686,6 +2089,11 @@ extension IoTThingsGraph {
             self.definition = definition
             self.summary = summary
             self.validatedNamespaceVersion = validatedNamespaceVersion
+        }
+
+        public func validate() throws {
+            try definition?.validate()
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1700,6 +2108,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "name", required: true, type: .enum), 
             AWSShapeMember(label: "value", required: true, type: .list)
         ]
+
         /// The name of the system search filter field.
         public let name: SystemTemplateFilterName
         /// An array of string values for the search filter field. Multiple values function as AND criteria in the search.
@@ -1708,6 +2117,12 @@ extension IoTThingsGraph {
         public init(name: SystemTemplateFilterName, value: [String]) {
             self.name = name
             self.value = value
+        }
+
+        public func validate() throws {
+            try value.forEach {
+                try validate($0, name:"value[]", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1728,6 +2143,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "id", required: false, type: .string), 
             AWSShapeMember(label: "revisionNumber", required: false, type: .long)
         ]
+
         /// The ARN of the system.
         public let arn: String?
         /// The date when the system was created.
@@ -1744,6 +2160,11 @@ extension IoTThingsGraph {
             self.revisionNumber = revisionNumber
         }
 
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdAt = "createdAt"
@@ -1757,6 +2178,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "key", required: true, type: .string), 
             AWSShapeMember(label: "value", required: true, type: .string)
         ]
+
         /// The required name of the tag. The string value can be from 1 to 128 Unicode characters in length.
         public let key: String
         /// The optional value of the tag. The string value can be from 1 to 256 Unicode characters in length.
@@ -1765,6 +2187,14 @@ extension IoTThingsGraph {
         public init(key: String, value: String) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1778,6 +2208,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tags", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource whose tags are returned.
         public let resourceArn: String
         /// A list of tags to add to the resource.&gt;
@@ -1788,6 +2219,16 @@ extension IoTThingsGraph {
             self.tags = tags
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 2048)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", min: 0)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tags = "tags"
@@ -1795,6 +2236,7 @@ extension IoTThingsGraph {
     }
 
     public struct TagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1806,6 +2248,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "thingArn", required: false, type: .string), 
             AWSShapeMember(label: "thingName", required: false, type: .string)
         ]
+
         /// The ARN of the thing.
         public let thingArn: String?
         /// The name of the thing.
@@ -1814,6 +2257,12 @@ extension IoTThingsGraph {
         public init(thingArn: String? = nil, thingName: String? = nil) {
             self.thingArn = thingArn
             self.thingName = thingName
+        }
+
+        public func validate() throws {
+            try validate(thingName, name:"thingName", max: 128)
+            try validate(thingName, name:"thingName", min: 1)
+            try validate(thingName, name:"thingName", pattern: "[a-zA-Z0-9:_-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1826,11 +2275,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "id", required: false, type: .string)
         ]
+
         /// The ID of the system instance to remove from its target.
         public let id: String?
 
         public init(id: String? = nil) {
             self.id = id
+        }
+
+        public func validate() throws {
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1842,11 +2297,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "summary", required: false, type: .structure)
         ]
+
         /// An object that contains summary information about the system instance that was removed from its target.
         public let summary: SystemInstanceSummary?
 
         public init(summary: SystemInstanceSummary? = nil) {
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1859,6 +2319,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "resourceArn", required: true, type: .string), 
             AWSShapeMember(label: "tagKeys", required: true, type: .list)
         ]
+
         /// The Amazon Resource Name (ARN) of the resource whose tags are to be removed.
         public let resourceArn: String
         /// A list of tag key names to remove from the resource. You don't specify the value. Both the key and its associated value are removed.  This parameter to the API requires a JSON text string argument. For information on how to format a JSON parameter for the various command line tool environments, see Using JSON for Parameters in the AWS CLI User Guide. 
@@ -1869,6 +2330,18 @@ extension IoTThingsGraph {
             self.tagKeys = tagKeys
         }
 
+        public func validate() throws {
+            try validate(resourceArn, name:"resourceArn", max: 2048)
+            try validate(resourceArn, name:"resourceArn", min: 1)
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name:"tagKeys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
+            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", min: 1)
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tagKeys = "tagKeys"
@@ -1876,6 +2349,7 @@ extension IoTThingsGraph {
     }
 
     public struct UntagResourceResponse: AWSShape {
+
 
         public init() {
         }
@@ -1888,6 +2362,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "definition", required: true, type: .structure), 
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The version of the user's namespace. If no value is specified, the latest version is used by default. Use the GetFlowTemplateRevisions if you want to find earlier revisions of the flow to update.
         public let compatibleNamespaceVersion: Int64?
         /// The DefinitionDocument that contains the updated workflow definition.
@@ -1901,6 +2376,12 @@ extension IoTThingsGraph {
             self.id = id
         }
 
+        public func validate() throws {
+            try definition.validate()
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case compatibleNamespaceVersion = "compatibleNamespaceVersion"
             case definition = "definition"
@@ -1912,11 +2393,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "summary", required: false, type: .structure)
         ]
+
         /// An object containing summary information about the updated workflow.
         public let summary: FlowTemplateSummary?
 
         public init(summary: FlowTemplateSummary? = nil) {
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1930,6 +2416,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "definition", required: true, type: .structure), 
             AWSShapeMember(label: "id", required: true, type: .string)
         ]
+
         /// The version of the user's namespace. Defaults to the latest version of the user's namespace. If no value is specified, the latest version is used by default.
         public let compatibleNamespaceVersion: Int64?
         /// The DefinitionDocument that contains the updated system definition.
@@ -1943,6 +2430,12 @@ extension IoTThingsGraph {
             self.id = id
         }
 
+        public func validate() throws {
+            try definition.validate()
+            try validate(id, name:"id", max: 160)
+            try validate(id, name:"id", pattern: "^urn:tdm:(([a-z]{2}-(gov-)?[a-z]{4,9}-[0-9]{1,3}/[0-9]+/)*[\\p{Alnum}_]+(/[\\p{Alnum}_]+)*):([\\p{Alpha}]*):([\\p{Alnum}_]+(/[\\p{Alnum}_]+)*)$")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case compatibleNamespaceVersion = "compatibleNamespaceVersion"
             case definition = "definition"
@@ -1954,11 +2447,16 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "summary", required: false, type: .structure)
         ]
+
         /// An object containing summary information about the updated system.
         public let summary: SystemTemplateSummary?
 
         public init(summary: SystemTemplateSummary? = nil) {
             self.summary = summary
+        }
+
+        public func validate() throws {
+            try summary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1972,6 +2470,7 @@ extension IoTThingsGraph {
             AWSShapeMember(label: "document", required: false, type: .structure), 
             AWSShapeMember(label: "syncWithPublicNamespace", required: false, type: .boolean)
         ]
+
         /// A Boolean that specifies whether to deprecate all entities in the latest version before uploading the new DefinitionDocument. If set to true, the upload will create a new namespace version.
         public let deprecateExistingEntities: Bool?
         /// The DefinitionDocument that defines the updated entities.
@@ -1985,6 +2484,10 @@ extension IoTThingsGraph {
             self.syncWithPublicNamespace = syncWithPublicNamespace
         }
 
+        public func validate() throws {
+            try document?.validate()
+        }
+
         private enum CodingKeys: String, CodingKey {
             case deprecateExistingEntities = "deprecateExistingEntities"
             case document = "document"
@@ -1996,11 +2499,17 @@ extension IoTThingsGraph {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "uploadId", required: true, type: .string)
         ]
+
         /// The ID that specifies the upload action. You can use this to track the status of the upload.
         public let uploadId: String
 
         public init(uploadId: String) {
             self.uploadId = uploadId
+        }
+
+        public func validate() throws {
+            try validate(uploadId, name:"uploadId", max: 40)
+            try validate(uploadId, name:"uploadId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

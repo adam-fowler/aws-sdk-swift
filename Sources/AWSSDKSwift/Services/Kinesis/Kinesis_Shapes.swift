@@ -10,6 +10,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamName", required: true, type: .string), 
             AWSShapeMember(label: "Tags", required: true, type: .map)
         ]
+
         /// The name of the stream.
         public let streamName: String
         /// A set of up to 10 key-value pairs to use to create the tags.
@@ -18,6 +19,12 @@ extension Kinesis {
         public init(streamName: String, tags: [String: String]) {
             self.streamName = streamName
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -33,6 +40,7 @@ extension Kinesis {
             AWSShapeMember(label: "ConsumerName", required: true, type: .string), 
             AWSShapeMember(label: "ConsumerStatus", required: true, type: .enum)
         ]
+
         /// When you register a consumer, Kinesis Data Streams generates an ARN for it. You need this ARN to be able to call SubscribeToShard. If you delete a consumer and then create a new one with the same name, it won't have the same ARN. That's because consumer ARNs contain the creation timestamp. This is important to keep in mind if you have IAM policies that reference consumer ARNs.
         public let consumerARN: String
         public let consumerCreationTimestamp: TimeStamp
@@ -46,6 +54,15 @@ extension Kinesis {
             self.consumerCreationTimestamp = consumerCreationTimestamp
             self.consumerName = consumerName
             self.consumerStatus = consumerStatus
+        }
+
+        public func validate() throws {
+            try validate(consumerARN, name:"consumerARN", max: 2048)
+            try validate(consumerARN, name:"consumerARN", min: 1)
+            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(consumerName, name:"consumerName", max: 128)
+            try validate(consumerName, name:"consumerName", min: 1)
+            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -64,6 +81,7 @@ extension Kinesis {
             AWSShapeMember(label: "ConsumerStatus", required: true, type: .enum), 
             AWSShapeMember(label: "StreamARN", required: true, type: .string)
         ]
+
         /// When you register a consumer, Kinesis Data Streams generates an ARN for it. You need this ARN to be able to call SubscribeToShard. If you delete a consumer and then create a new one with the same name, it won't have the same ARN. That's because consumer ARNs contain the creation timestamp. This is important to keep in mind if you have IAM policies that reference consumer ARNs.
         public let consumerARN: String
         public let consumerCreationTimestamp: TimeStamp
@@ -80,6 +98,18 @@ extension Kinesis {
             self.consumerName = consumerName
             self.consumerStatus = consumerStatus
             self.streamARN = streamARN
+        }
+
+        public func validate() throws {
+            try validate(consumerARN, name:"consumerARN", max: 2048)
+            try validate(consumerARN, name:"consumerARN", min: 1)
+            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(consumerName, name:"consumerName", max: 128)
+            try validate(consumerName, name:"consumerName", min: 1)
+            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamARN, name:"streamARN", max: 2048)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -103,6 +133,7 @@ extension Kinesis {
             AWSShapeMember(label: "ShardCount", required: true, type: .integer), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The number of shards that the stream will use. The throughput of the stream is a function of the number of shards; more shards are required for greater provisioned throughput. DefaultShardLimit;
         public let shardCount: Int32
         /// A name to identify the stream. The stream name is scoped to the AWS account used by the application that creates the stream. It is also scoped by AWS Region. That is, two streams in two different AWS accounts can have the same name. Two streams in the same AWS account but in two different Regions can also have the same name.
@@ -111,6 +142,14 @@ extension Kinesis {
         public init(shardCount: Int32, streamName: String) {
             self.shardCount = shardCount
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(shardCount, name:"shardCount", max: 100000)
+            try validate(shardCount, name:"shardCount", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -124,6 +163,7 @@ extension Kinesis {
             AWSShapeMember(label: "RetentionPeriodHours", required: true, type: .integer), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The new retention period of the stream, in hours. Must be less than the current retention period.
         public let retentionPeriodHours: Int32
         /// The name of the stream to modify.
@@ -132,6 +172,14 @@ extension Kinesis {
         public init(retentionPeriodHours: Int32, streamName: String) {
             self.retentionPeriodHours = retentionPeriodHours
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 168)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -145,6 +193,7 @@ extension Kinesis {
             AWSShapeMember(label: "EnforceConsumerDeletion", required: false, type: .boolean), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// If this parameter is unset (null) or if you set it to false, and the stream has registered consumers, the call to DeleteStream fails with a ResourceInUseException. 
         public let enforceConsumerDeletion: Bool?
         /// The name of the stream to delete.
@@ -153,6 +202,12 @@ extension Kinesis {
         public init(enforceConsumerDeletion: Bool? = nil, streamName: String) {
             self.enforceConsumerDeletion = enforceConsumerDeletion
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -167,6 +222,7 @@ extension Kinesis {
             AWSShapeMember(label: "ConsumerName", required: false, type: .string), 
             AWSShapeMember(label: "StreamARN", required: false, type: .string)
         ]
+
         /// The ARN returned by Kinesis Data Streams when you registered the consumer. If you don't know the ARN of the consumer that you want to deregister, you can use the ListStreamConsumers operation to get a list of the descriptions of all the consumers that are currently registered with a given data stream. The description of a consumer contains its ARN.
         public let consumerARN: String?
         /// The name that you gave to the consumer.
@@ -180,6 +236,18 @@ extension Kinesis {
             self.streamARN = streamARN
         }
 
+        public func validate() throws {
+            try validate(consumerARN, name:"consumerARN", max: 2048)
+            try validate(consumerARN, name:"consumerARN", min: 1)
+            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(consumerName, name:"consumerName", max: 128)
+            try validate(consumerName, name:"consumerName", min: 1)
+            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamARN, name:"streamARN", max: 2048)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case consumerARN = "ConsumerARN"
             case consumerName = "ConsumerName"
@@ -188,6 +256,7 @@ extension Kinesis {
     }
 
     public struct DescribeLimitsInput: AWSShape {
+
 
         public init() {
         }
@@ -199,6 +268,7 @@ extension Kinesis {
             AWSShapeMember(label: "OpenShardCount", required: true, type: .integer), 
             AWSShapeMember(label: "ShardLimit", required: true, type: .integer)
         ]
+
         /// The number of open shards.
         public let openShardCount: Int32
         /// The maximum number of shards.
@@ -207,6 +277,13 @@ extension Kinesis {
         public init(openShardCount: Int32, shardLimit: Int32) {
             self.openShardCount = openShardCount
             self.shardLimit = shardLimit
+        }
+
+        public func validate() throws {
+            try validate(openShardCount, name:"openShardCount", max: 1000000)
+            try validate(openShardCount, name:"openShardCount", min: 0)
+            try validate(shardLimit, name:"shardLimit", max: 1000000)
+            try validate(shardLimit, name:"shardLimit", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -221,6 +298,7 @@ extension Kinesis {
             AWSShapeMember(label: "ConsumerName", required: false, type: .string), 
             AWSShapeMember(label: "StreamARN", required: false, type: .string)
         ]
+
         /// The ARN returned by Kinesis Data Streams when you registered the consumer.
         public let consumerARN: String?
         /// The name that you gave to the consumer.
@@ -234,6 +312,18 @@ extension Kinesis {
             self.streamARN = streamARN
         }
 
+        public func validate() throws {
+            try validate(consumerARN, name:"consumerARN", max: 2048)
+            try validate(consumerARN, name:"consumerARN", min: 1)
+            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(consumerName, name:"consumerName", max: 128)
+            try validate(consumerName, name:"consumerName", min: 1)
+            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamARN, name:"streamARN", max: 2048)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case consumerARN = "ConsumerARN"
             case consumerName = "ConsumerName"
@@ -245,11 +335,16 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConsumerDescription", required: true, type: .structure)
         ]
+
         /// An object that represents the details of the consumer.
         public let consumerDescription: ConsumerDescription
 
         public init(consumerDescription: ConsumerDescription) {
             self.consumerDescription = consumerDescription
+        }
+
+        public func validate() throws {
+            try consumerDescription.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -263,6 +358,7 @@ extension Kinesis {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The shard ID of the shard to start with.
         public let exclusiveStartShardId: String?
         /// The maximum number of shards to return in a single call. The default value is 100. If you specify a value greater than 100, at most 100 shards are returned.
@@ -276,6 +372,17 @@ extension Kinesis {
             self.streamName = streamName
         }
 
+        public func validate() throws {
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", max: 128)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", min: 1)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", max: 10000)
+            try validate(limit, name:"limit", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case exclusiveStartShardId = "ExclusiveStartShardId"
             case limit = "Limit"
@@ -287,11 +394,16 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StreamDescription", required: true, type: .structure)
         ]
+
         /// The current status of the stream, the stream Amazon Resource Name (ARN), an array of shard objects that comprise the stream, and whether there are more shards available.
         public let streamDescription: StreamDescription
 
         public init(streamDescription: StreamDescription) {
             self.streamDescription = streamDescription
+        }
+
+        public func validate() throws {
+            try streamDescription.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -303,11 +415,18 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The name of the stream to describe.
         public let streamName: String
 
         public init(streamName: String) {
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -319,11 +438,16 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "StreamDescriptionSummary", required: true, type: .structure)
         ]
+
         /// A StreamDescriptionSummary containing information about the stream.
         public let streamDescriptionSummary: StreamDescriptionSummary
 
         public init(streamDescriptionSummary: StreamDescriptionSummary) {
             self.streamDescriptionSummary = streamDescriptionSummary
+        }
+
+        public func validate() throws {
+            try streamDescriptionSummary.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -336,6 +460,7 @@ extension Kinesis {
             AWSShapeMember(label: "ShardLevelMetrics", required: true, type: .list), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// List of shard-level metrics to disable. The following are the valid shard-level metrics. The value "ALL" disables every metric.    IncomingBytes     IncomingRecords     OutgoingBytes     OutgoingRecords     WriteProvisionedThroughputExceeded     ReadProvisionedThroughputExceeded     IteratorAgeMilliseconds     ALL    For more information, see Monitoring the Amazon Kinesis Data Streams Service with Amazon CloudWatch in the Amazon Kinesis Data Streams Developer Guide.
         public let shardLevelMetrics: [MetricsName]
         /// The name of the Kinesis data stream for which to disable enhanced monitoring.
@@ -344,6 +469,14 @@ extension Kinesis {
         public init(shardLevelMetrics: [MetricsName], streamName: String) {
             self.shardLevelMetrics = shardLevelMetrics
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", max: 7)
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -357,6 +490,7 @@ extension Kinesis {
             AWSShapeMember(label: "ShardLevelMetrics", required: true, type: .list), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// List of shard-level metrics to enable. The following are the valid shard-level metrics. The value "ALL" enables every metric.    IncomingBytes     IncomingRecords     OutgoingBytes     OutgoingRecords     WriteProvisionedThroughputExceeded     ReadProvisionedThroughputExceeded     IteratorAgeMilliseconds     ALL    For more information, see Monitoring the Amazon Kinesis Data Streams Service with Amazon CloudWatch in the Amazon Kinesis Data Streams Developer Guide.
         public let shardLevelMetrics: [MetricsName]
         /// The name of the stream for which to enable enhanced monitoring.
@@ -365,6 +499,14 @@ extension Kinesis {
         public init(shardLevelMetrics: [MetricsName], streamName: String) {
             self.shardLevelMetrics = shardLevelMetrics
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", max: 7)
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -383,11 +525,17 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ShardLevelMetrics", required: false, type: .list)
         ]
+
         /// List of shard-level metrics. The following are the valid shard-level metrics. The value "ALL" enhances every metric.    IncomingBytes     IncomingRecords     OutgoingBytes     OutgoingRecords     WriteProvisionedThroughputExceeded     ReadProvisionedThroughputExceeded     IteratorAgeMilliseconds     ALL    For more information, see Monitoring the Amazon Kinesis Data Streams Service with Amazon CloudWatch in the Amazon Kinesis Data Streams Developer Guide.
         public let shardLevelMetrics: [MetricsName]?
 
         public init(shardLevelMetrics: [MetricsName]? = nil) {
             self.shardLevelMetrics = shardLevelMetrics
+        }
+
+        public func validate() throws {
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", max: 7)
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -401,6 +549,7 @@ extension Kinesis {
             AWSShapeMember(label: "DesiredShardLevelMetrics", required: false, type: .list), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// Represents the current state of the metrics that are in the enhanced state before the operation.
         public let currentShardLevelMetrics: [MetricsName]?
         /// Represents the list of all the metrics that would be in the enhanced state after the operation.
@@ -412,6 +561,16 @@ extension Kinesis {
             self.currentShardLevelMetrics = currentShardLevelMetrics
             self.desiredShardLevelMetrics = desiredShardLevelMetrics
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(currentShardLevelMetrics, name:"currentShardLevelMetrics", max: 7)
+            try validate(currentShardLevelMetrics, name:"currentShardLevelMetrics", min: 1)
+            try validate(desiredShardLevelMetrics, name:"desiredShardLevelMetrics", max: 7)
+            try validate(desiredShardLevelMetrics, name:"desiredShardLevelMetrics", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -426,6 +585,7 @@ extension Kinesis {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "ShardIterator", required: true, type: .string)
         ]
+
         /// The maximum number of records to return. Specify a value of up to 10,000. If you specify a value that is greater than 10,000, GetRecords throws InvalidArgumentException.
         public let limit: Int32?
         /// The position in the shard from which you want to start sequentially reading data records. A shard iterator specifies this position using the sequence number of a data record in the shard.
@@ -434,6 +594,13 @@ extension Kinesis {
         public init(limit: Int32? = nil, shardIterator: String) {
             self.limit = limit
             self.shardIterator = shardIterator
+        }
+
+        public func validate() throws {
+            try validate(limit, name:"limit", max: 10000)
+            try validate(limit, name:"limit", min: 1)
+            try validate(shardIterator, name:"shardIterator", max: 512)
+            try validate(shardIterator, name:"shardIterator", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -448,6 +615,7 @@ extension Kinesis {
             AWSShapeMember(label: "NextShardIterator", required: false, type: .string), 
             AWSShapeMember(label: "Records", required: true, type: .list)
         ]
+
         /// The number of milliseconds the GetRecords response is from the tip of the stream, indicating how far behind current time the consumer is. A value of zero indicates that record processing is caught up, and there are no new records to process at this moment.
         public let millisBehindLatest: Int64?
         /// The next position in the shard from which to start sequentially reading data records. If set to null, the shard has been closed and the requested iterator does not return any more data. 
@@ -459,6 +627,15 @@ extension Kinesis {
             self.millisBehindLatest = millisBehindLatest
             self.nextShardIterator = nextShardIterator
             self.records = records
+        }
+
+        public func validate() throws {
+            try validate(millisBehindLatest, name:"millisBehindLatest", min: 0)
+            try validate(nextShardIterator, name:"nextShardIterator", max: 512)
+            try validate(nextShardIterator, name:"nextShardIterator", min: 1)
+            try records.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -476,6 +653,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamName", required: true, type: .string), 
             AWSShapeMember(label: "Timestamp", required: false, type: .timestamp)
         ]
+
         /// The shard ID of the Kinesis Data Streams shard to get the iterator for.
         public let shardId: String
         /// Determines how the shard iterator is used to start reading data records from the shard. The following are the valid Amazon Kinesis shard iterator types:   AT_SEQUENCE_NUMBER - Start reading from the position denoted by a specific sequence number, provided in the value StartingSequenceNumber.   AFTER_SEQUENCE_NUMBER - Start reading right after the position denoted by a specific sequence number, provided in the value StartingSequenceNumber.   AT_TIMESTAMP - Start reading from the position denoted by a specific time stamp, provided in the value Timestamp.   TRIM_HORIZON - Start reading at the last untrimmed record in the shard in the system, which is the oldest data record in the shard.   LATEST - Start reading just after the most recent record in the shard, so that you always read the most recent data in the shard.  
@@ -495,6 +673,16 @@ extension Kinesis {
             self.timestamp = timestamp
         }
 
+        public func validate() throws {
+            try validate(shardId, name:"shardId", max: 128)
+            try validate(shardId, name:"shardId", min: 1)
+            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(startingSequenceNumber, name:"startingSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case shardId = "ShardId"
             case shardIteratorType = "ShardIteratorType"
@@ -508,11 +696,17 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ShardIterator", required: false, type: .string)
         ]
+
         /// The position in the shard from which to start reading data records sequentially. A shard iterator specifies this position using the sequence number of a data record in a shard.
         public let shardIterator: String?
 
         public init(shardIterator: String? = nil) {
             self.shardIterator = shardIterator
+        }
+
+        public func validate() throws {
+            try validate(shardIterator, name:"shardIterator", max: 512)
+            try validate(shardIterator, name:"shardIterator", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -525,6 +719,7 @@ extension Kinesis {
             AWSShapeMember(label: "EndingHashKey", required: true, type: .string), 
             AWSShapeMember(label: "StartingHashKey", required: true, type: .string)
         ]
+
         /// The ending hash key of the hash key range.
         public let endingHashKey: String
         /// The starting hash key of the hash key range.
@@ -533,6 +728,11 @@ extension Kinesis {
         public init(endingHashKey: String, startingHashKey: String) {
             self.endingHashKey = endingHashKey
             self.startingHashKey = startingHashKey
+        }
+
+        public func validate() throws {
+            try validate(endingHashKey, name:"endingHashKey", pattern: "0|([1-9]\\d{0,38})")
+            try validate(startingHashKey, name:"startingHashKey", pattern: "0|([1-9]\\d{0,38})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -546,6 +746,7 @@ extension Kinesis {
             AWSShapeMember(label: "RetentionPeriodHours", required: true, type: .integer), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The new retention period of the stream, in hours. Must be more than the current retention period.
         public let retentionPeriodHours: Int32
         /// The name of the stream to modify.
@@ -554,6 +755,14 @@ extension Kinesis {
         public init(retentionPeriodHours: Int32, streamName: String) {
             self.retentionPeriodHours = retentionPeriodHours
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 168)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -566,6 +775,7 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "message", required: false, type: .string)
         ]
+
         public let message: String?
 
         public init(message: String? = nil) {
@@ -585,6 +795,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamCreationTimestamp", required: false, type: .timestamp), 
             AWSShapeMember(label: "StreamName", required: false, type: .string)
         ]
+
         /// Specify this parameter to indicate that you want to list the shards starting with the shard whose ID immediately follows ExclusiveStartShardId. If you don't specify this parameter, the default behavior is for ListShards to list the shards starting with the first one in the stream. You cannot specify this parameter if you specify NextToken.
         public let exclusiveStartShardId: String?
         /// The maximum number of shards to return in a single call to ListShards. The minimum value you can specify for this parameter is 1, and the maximum is 1,000, which is also the default. When the number of shards to be listed is greater than the value of MaxResults, the response contains a NextToken value that you can use in a subsequent call to ListShards to list the next set of shards.
@@ -604,6 +815,19 @@ extension Kinesis {
             self.streamName = streamName
         }
 
+        public func validate() throws {
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", max: 128)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", min: 1)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(maxResults, name:"maxResults", max: 10000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1048576)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case exclusiveStartShardId = "ExclusiveStartShardId"
             case maxResults = "MaxResults"
@@ -618,6 +842,7 @@ extension Kinesis {
             AWSShapeMember(label: "NextToken", required: false, type: .string), 
             AWSShapeMember(label: "Shards", required: false, type: .list)
         ]
+
         /// When the number of shards in the data stream is greater than the default value for the MaxResults parameter, or if you explicitly specify a value for MaxResults that is less than the number of shards in the data stream, the response includes a pagination token named NextToken. You can specify this NextToken value in a subsequent call to ListShards to list the next set of shards. For more information about the use of this pagination token when calling the ListShards operation, see ListShardsInput$NextToken.  Tokens expire after 300 seconds. When you obtain a value for NextToken in the response to a call to ListShards, you have 300 seconds to use that value. If you specify an expired token in a call to ListShards, you get ExpiredNextTokenException. 
         public let nextToken: String?
         /// An array of JSON objects. Each object represents one shard and specifies the IDs of the shard, the shard's parent, and the shard that's adjacent to the shard's parent. Each object also contains the starting and ending hash keys and the starting and ending sequence numbers for the shard.
@@ -626,6 +851,14 @@ extension Kinesis {
         public init(nextToken: String? = nil, shards: [Shard]? = nil) {
             self.nextToken = nextToken
             self.shards = shards
+        }
+
+        public func validate() throws {
+            try validate(nextToken, name:"nextToken", max: 1048576)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try shards?.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -641,6 +874,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamARN", required: true, type: .string), 
             AWSShapeMember(label: "StreamCreationTimestamp", required: false, type: .timestamp)
         ]
+
         /// The maximum number of consumers that you want a single call of ListStreamConsumers to return.
         public let maxResults: Int32?
         /// When the number of consumers that are registered with the data stream is greater than the default value for the MaxResults parameter, or if you explicitly specify a value for MaxResults that is less than the number of consumers that are registered with the data stream, the response includes a pagination token named NextToken. You can specify this NextToken value in a subsequent call to ListStreamConsumers to list the next set of registered consumers. Don't specify StreamName or StreamCreationTimestamp if you specify NextToken because the latter unambiguously identifies the stream. You can optionally specify a value for the MaxResults parameter when you specify NextToken. If you specify a MaxResults value that is less than the number of consumers that the operation returns if you don't specify MaxResults, the response will contain a new NextToken value. You can use the new NextToken value in a subsequent call to the ListStreamConsumers operation to list the next set of consumers.  Tokens expire after 300 seconds. When you obtain a value for NextToken in the response to a call to ListStreamConsumers, you have 300 seconds to use that value. If you specify an expired token in a call to ListStreamConsumers, you get ExpiredNextTokenException. 
@@ -657,6 +891,16 @@ extension Kinesis {
             self.streamCreationTimestamp = streamCreationTimestamp
         }
 
+        public func validate() throws {
+            try validate(maxResults, name:"maxResults", max: 10000)
+            try validate(maxResults, name:"maxResults", min: 1)
+            try validate(nextToken, name:"nextToken", max: 1048576)
+            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(streamARN, name:"streamARN", max: 2048)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case maxResults = "MaxResults"
             case nextToken = "NextToken"
@@ -670,6 +914,7 @@ extension Kinesis {
             AWSShapeMember(label: "Consumers", required: false, type: .list), 
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
+
         /// An array of JSON objects. Each object represents one registered consumer.
         public let consumers: [Consumer]?
         /// When the number of consumers that are registered with the data stream is greater than the default value for the MaxResults parameter, or if you explicitly specify a value for MaxResults that is less than the number of registered consumers, the response includes a pagination token named NextToken. You can specify this NextToken value in a subsequent call to ListStreamConsumers to list the next set of registered consumers. For more information about the use of this pagination token when calling the ListStreamConsumers operation, see ListStreamConsumersInput$NextToken.  Tokens expire after 300 seconds. When you obtain a value for NextToken in the response to a call to ListStreamConsumers, you have 300 seconds to use that value. If you specify an expired token in a call to ListStreamConsumers, you get ExpiredNextTokenException. 
@@ -678,6 +923,14 @@ extension Kinesis {
         public init(consumers: [Consumer]? = nil, nextToken: String? = nil) {
             self.consumers = consumers
             self.nextToken = nextToken
+        }
+
+        public func validate() throws {
+            try consumers?.forEach {
+                try $0.validate()
+            }
+            try validate(nextToken, name:"nextToken", max: 1048576)
+            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -691,6 +944,7 @@ extension Kinesis {
             AWSShapeMember(label: "ExclusiveStartStreamName", required: false, type: .string), 
             AWSShapeMember(label: "Limit", required: false, type: .integer)
         ]
+
         /// The name of the stream to start the list with.
         public let exclusiveStartStreamName: String?
         /// The maximum number of streams to list.
@@ -699,6 +953,14 @@ extension Kinesis {
         public init(exclusiveStartStreamName: String? = nil, limit: Int32? = nil) {
             self.exclusiveStartStreamName = exclusiveStartStreamName
             self.limit = limit
+        }
+
+        public func validate() throws {
+            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", max: 128)
+            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", min: 1)
+            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", max: 10000)
+            try validate(limit, name:"limit", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -712,6 +974,7 @@ extension Kinesis {
             AWSShapeMember(label: "HasMoreStreams", required: true, type: .boolean), 
             AWSShapeMember(label: "StreamNames", required: true, type: .list)
         ]
+
         /// If set to true, there are more streams available to list.
         public let hasMoreStreams: Bool
         /// The names of the streams that are associated with the AWS account making the ListStreams request.
@@ -720,6 +983,14 @@ extension Kinesis {
         public init(hasMoreStreams: Bool, streamNames: [String]) {
             self.hasMoreStreams = hasMoreStreams
             self.streamNames = streamNames
+        }
+
+        public func validate() throws {
+            try streamNames.forEach {
+                try validate($0, name:"streamNames[]", max: 128)
+                try validate($0, name:"streamNames[]", min: 1)
+                try validate($0, name:"streamNames[]", pattern: "[a-zA-Z0-9_.-]+")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -734,6 +1005,7 @@ extension Kinesis {
             AWSShapeMember(label: "Limit", required: false, type: .integer), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The key to use as the starting point for the list of tags. If this parameter is set, ListTagsForStream gets all tags that occur after ExclusiveStartTagKey. 
         public let exclusiveStartTagKey: String?
         /// The number of tags to return. If this number is less than the total number of tags associated with the stream, HasMoreTags is set to true. To list additional tags, set ExclusiveStartTagKey to the last key in the response.
@@ -745,6 +1017,16 @@ extension Kinesis {
             self.exclusiveStartTagKey = exclusiveStartTagKey
             self.limit = limit
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(exclusiveStartTagKey, name:"exclusiveStartTagKey", max: 128)
+            try validate(exclusiveStartTagKey, name:"exclusiveStartTagKey", min: 1)
+            try validate(limit, name:"limit", max: 50)
+            try validate(limit, name:"limit", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -759,6 +1041,7 @@ extension Kinesis {
             AWSShapeMember(label: "HasMoreTags", required: true, type: .boolean), 
             AWSShapeMember(label: "Tags", required: true, type: .list)
         ]
+
         /// If set to true, more tags are available. To request additional tags, set ExclusiveStartTagKey to the key of the last tag returned.
         public let hasMoreTags: Bool
         /// A list of tags associated with StreamName, starting with the first tag after ExclusiveStartTagKey and up to the specified Limit. 
@@ -767,6 +1050,13 @@ extension Kinesis {
         public init(hasMoreTags: Bool, tags: [Tag]) {
             self.hasMoreTags = hasMoreTags
             self.tags = tags
+        }
+
+        public func validate() throws {
+            try tags.forEach {
+                try $0.validate()
+            }
+            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -781,6 +1071,7 @@ extension Kinesis {
             AWSShapeMember(label: "ShardToMerge", required: true, type: .string), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The shard ID of the adjacent shard for the merge.
         public let adjacentShardToMerge: String
         /// The shard ID of the shard to combine with the adjacent shard for the merge.
@@ -792,6 +1083,18 @@ extension Kinesis {
             self.adjacentShardToMerge = adjacentShardToMerge
             self.shardToMerge = shardToMerge
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", max: 128)
+            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", min: 1)
+            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(shardToMerge, name:"shardToMerge", max: 128)
+            try validate(shardToMerge, name:"shardToMerge", min: 1)
+            try validate(shardToMerge, name:"shardToMerge", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -821,6 +1124,7 @@ extension Kinesis {
             AWSShapeMember(label: "SequenceNumberForOrdering", required: false, type: .string), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The data blob to put into the record, which is base64-encoded when the blob is serialized. When the data blob (the payload before base64-encoding) is added to the partition key size, the total size must not exceed the maximum record size (1 MB).
         public let data: Data
         /// The hash value used to explicitly determine the shard the data record is assigned to by overriding the partition key hash.
@@ -840,6 +1144,18 @@ extension Kinesis {
             self.streamName = streamName
         }
 
+        public func validate() throws {
+            try validate(data, name:"data", max: 1048576)
+            try validate(data, name:"data", min: 0)
+            try validate(explicitHashKey, name:"explicitHashKey", pattern: "0|([1-9]\\d{0,38})")
+            try validate(partitionKey, name:"partitionKey", max: 256)
+            try validate(partitionKey, name:"partitionKey", min: 1)
+            try validate(sequenceNumberForOrdering, name:"sequenceNumberForOrdering", pattern: "0|([1-9]\\d{0,128})")
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case data = "Data"
             case explicitHashKey = "ExplicitHashKey"
@@ -855,6 +1171,7 @@ extension Kinesis {
             AWSShapeMember(label: "SequenceNumber", required: true, type: .string), 
             AWSShapeMember(label: "ShardId", required: true, type: .string)
         ]
+
         /// The encryption type to use on the record. This parameter can be one of the following values:    NONE: Do not encrypt the records in the stream.    KMS: Use server-side encryption on the records in the stream using a customer-managed AWS KMS key.  
         public let encryptionType: EncryptionType?
         /// The sequence number identifier that was assigned to the put data record. The sequence number for the record is unique across all records in the stream. A sequence number is the identifier associated with every record put into the stream.
@@ -866,6 +1183,13 @@ extension Kinesis {
             self.encryptionType = encryptionType
             self.sequenceNumber = sequenceNumber
             self.shardId = shardId
+        }
+
+        public func validate() throws {
+            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
+            try validate(shardId, name:"shardId", max: 128)
+            try validate(shardId, name:"shardId", min: 1)
+            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -880,6 +1204,7 @@ extension Kinesis {
             AWSShapeMember(label: "Records", required: true, type: .list), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The records associated with the request.
         public let records: [PutRecordsRequestEntry]
         /// The stream name associated with the request.
@@ -888,6 +1213,17 @@ extension Kinesis {
         public init(records: [PutRecordsRequestEntry], streamName: String) {
             self.records = records
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try records.forEach {
+                try $0.validate()
+            }
+            try validate(records, name:"records", max: 500)
+            try validate(records, name:"records", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -902,6 +1238,7 @@ extension Kinesis {
             AWSShapeMember(label: "FailedRecordCount", required: false, type: .integer), 
             AWSShapeMember(label: "Records", required: true, type: .list)
         ]
+
         /// The encryption type used on the records. This parameter can be one of the following values:    NONE: Do not encrypt the records.    KMS: Use server-side encryption on the records using a customer-managed AWS KMS key.  
         public let encryptionType: EncryptionType?
         /// The number of unsuccessfully processed records in a PutRecords request.
@@ -913,6 +1250,16 @@ extension Kinesis {
             self.encryptionType = encryptionType
             self.failedRecordCount = failedRecordCount
             self.records = records
+        }
+
+        public func validate() throws {
+            try validate(failedRecordCount, name:"failedRecordCount", max: 100000)
+            try validate(failedRecordCount, name:"failedRecordCount", min: 1)
+            try records.forEach {
+                try $0.validate()
+            }
+            try validate(records, name:"records", max: 500)
+            try validate(records, name:"records", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -928,6 +1275,7 @@ extension Kinesis {
             AWSShapeMember(label: "ExplicitHashKey", required: false, type: .string), 
             AWSShapeMember(label: "PartitionKey", required: true, type: .string)
         ]
+
         /// The data blob to put into the record, which is base64-encoded when the blob is serialized. When the data blob (the payload before base64-encoding) is added to the partition key size, the total size must not exceed the maximum record size (1 MB).
         public let data: Data
         /// The hash value used to determine explicitly the shard that the data record is assigned to by overriding the partition key hash.
@@ -939,6 +1287,14 @@ extension Kinesis {
             self.data = data
             self.explicitHashKey = explicitHashKey
             self.partitionKey = partitionKey
+        }
+
+        public func validate() throws {
+            try validate(data, name:"data", max: 1048576)
+            try validate(data, name:"data", min: 0)
+            try validate(explicitHashKey, name:"explicitHashKey", pattern: "0|([1-9]\\d{0,38})")
+            try validate(partitionKey, name:"partitionKey", max: 256)
+            try validate(partitionKey, name:"partitionKey", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -955,6 +1311,7 @@ extension Kinesis {
             AWSShapeMember(label: "SequenceNumber", required: false, type: .string), 
             AWSShapeMember(label: "ShardId", required: false, type: .string)
         ]
+
         /// The error code for an individual record result. ErrorCodes can be either ProvisionedThroughputExceededException or InternalFailure.
         public let errorCode: String?
         /// The error message for an individual record result. An ErrorCode value of ProvisionedThroughputExceededException has an error message that includes the account ID, stream name, and shard ID. An ErrorCode value of InternalFailure has the error message "Internal Service Failure".
@@ -969,6 +1326,13 @@ extension Kinesis {
             self.errorMessage = errorMessage
             self.sequenceNumber = sequenceNumber
             self.shardId = shardId
+        }
+
+        public func validate() throws {
+            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
+            try validate(shardId, name:"shardId", max: 128)
+            try validate(shardId, name:"shardId", min: 1)
+            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -987,6 +1351,7 @@ extension Kinesis {
             AWSShapeMember(label: "PartitionKey", required: true, type: .string), 
             AWSShapeMember(label: "SequenceNumber", required: true, type: .string)
         ]
+
         /// The approximate time that the record was inserted into the stream.
         public let approximateArrivalTimestamp: TimeStamp?
         /// The data blob. The data in the blob is both opaque and immutable to Kinesis Data Streams, which does not inspect, interpret, or change the data in the blob in any way. When the data blob (the payload before base64-encoding) is added to the partition key size, the total size must not exceed the maximum record size (1 MB).
@@ -1006,6 +1371,14 @@ extension Kinesis {
             self.sequenceNumber = sequenceNumber
         }
 
+        public func validate() throws {
+            try validate(data, name:"data", max: 1048576)
+            try validate(data, name:"data", min: 0)
+            try validate(partitionKey, name:"partitionKey", max: 256)
+            try validate(partitionKey, name:"partitionKey", min: 1)
+            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case approximateArrivalTimestamp = "ApproximateArrivalTimestamp"
             case data = "Data"
@@ -1020,6 +1393,7 @@ extension Kinesis {
             AWSShapeMember(label: "ConsumerName", required: true, type: .string), 
             AWSShapeMember(label: "StreamARN", required: true, type: .string)
         ]
+
         /// For a given Kinesis data stream, each consumer must have a unique name. However, consumer names don't have to be unique across data streams.
         public let consumerName: String
         /// The ARN of the Kinesis data stream that you want to register the consumer with. For more info, see Amazon Resource Names (ARNs) and AWS Service Namespaces.
@@ -1028,6 +1402,15 @@ extension Kinesis {
         public init(consumerName: String, streamARN: String) {
             self.consumerName = consumerName
             self.streamARN = streamARN
+        }
+
+        public func validate() throws {
+            try validate(consumerName, name:"consumerName", max: 128)
+            try validate(consumerName, name:"consumerName", min: 1)
+            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamARN, name:"streamARN", max: 2048)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1040,11 +1423,16 @@ extension Kinesis {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Consumer", required: true, type: .structure)
         ]
+
         /// An object that represents the details of the consumer you registered. When you register a consumer, it gets an ARN that is generated by Kinesis Data Streams.
         public let consumer: Consumer
 
         public init(consumer: Consumer) {
             self.consumer = consumer
+        }
+
+        public func validate() throws {
+            try consumer.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1057,6 +1445,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamName", required: true, type: .string), 
             AWSShapeMember(label: "TagKeys", required: true, type: .list)
         ]
+
         /// The name of the stream.
         public let streamName: String
         /// A list of tag keys. Each corresponding tag is removed from the stream.
@@ -1065,6 +1454,18 @@ extension Kinesis {
         public init(streamName: String, tagKeys: [String]) {
             self.streamName = streamName
             self.tagKeys = tagKeys
+        }
+
+        public func validate() throws {
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+            try tagKeys.forEach {
+                try validate($0, name:"tagKeys[]", max: 128)
+                try validate($0, name:"tagKeys[]", min: 1)
+            }
+            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1083,6 +1484,7 @@ extension Kinesis {
             AWSShapeMember(label: "EndingSequenceNumber", required: false, type: .string), 
             AWSShapeMember(label: "StartingSequenceNumber", required: true, type: .string)
         ]
+
         /// The ending sequence number for the range. Shards that are in the OPEN state have an ending sequence number of null.
         public let endingSequenceNumber: String?
         /// The starting sequence number for the range.
@@ -1091,6 +1493,11 @@ extension Kinesis {
         public init(endingSequenceNumber: String? = nil, startingSequenceNumber: String) {
             self.endingSequenceNumber = endingSequenceNumber
             self.startingSequenceNumber = startingSequenceNumber
+        }
+
+        public func validate() throws {
+            try validate(endingSequenceNumber, name:"endingSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
+            try validate(startingSequenceNumber, name:"startingSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1107,6 +1514,7 @@ extension Kinesis {
             AWSShapeMember(label: "SequenceNumberRange", required: true, type: .structure), 
             AWSShapeMember(label: "ShardId", required: true, type: .string)
         ]
+
         /// The shard ID of the shard adjacent to the shard's parent.
         public let adjacentParentShardId: String?
         /// The range of possible hash key values for the shard, which is a set of ordered contiguous positive integers.
@@ -1124,6 +1532,20 @@ extension Kinesis {
             self.parentShardId = parentShardId
             self.sequenceNumberRange = sequenceNumberRange
             self.shardId = shardId
+        }
+
+        public func validate() throws {
+            try validate(adjacentParentShardId, name:"adjacentParentShardId", max: 128)
+            try validate(adjacentParentShardId, name:"adjacentParentShardId", min: 1)
+            try validate(adjacentParentShardId, name:"adjacentParentShardId", pattern: "[a-zA-Z0-9_.-]+")
+            try hashKeyRange.validate()
+            try validate(parentShardId, name:"parentShardId", max: 128)
+            try validate(parentShardId, name:"parentShardId", min: 1)
+            try validate(parentShardId, name:"parentShardId", pattern: "[a-zA-Z0-9_.-]+")
+            try sequenceNumberRange.validate()
+            try validate(shardId, name:"shardId", max: 128)
+            try validate(shardId, name:"shardId", min: 1)
+            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1150,6 +1572,7 @@ extension Kinesis {
             AWSShapeMember(label: "ShardToSplit", required: true, type: .string), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// A hash key value for the starting hash key of one of the child shards created by the split. The hash key range for a given shard constitutes a set of ordered contiguous positive integers. The value for NewStartingHashKey must be in the range of hash keys being mapped into the shard. The NewStartingHashKey hash key value and all higher hash key values in hash key range are distributed to one of the child shards. All the lower hash key values in the range are distributed to the other child shard.
         public let newStartingHashKey: String
         /// The shard ID of the shard to split.
@@ -1161,6 +1584,16 @@ extension Kinesis {
             self.newStartingHashKey = newStartingHashKey
             self.shardToSplit = shardToSplit
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(newStartingHashKey, name:"newStartingHashKey", pattern: "0|([1-9]\\d{0,38})")
+            try validate(shardToSplit, name:"shardToSplit", max: 128)
+            try validate(shardToSplit, name:"shardToSplit", min: 1)
+            try validate(shardToSplit, name:"shardToSplit", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1176,6 +1609,7 @@ extension Kinesis {
             AWSShapeMember(label: "KeyId", required: true, type: .string), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The encryption type to use. The only valid value is KMS.
         public let encryptionType: EncryptionType
         /// The GUID for the customer-managed AWS KMS key to use for encryption. This value can be a globally unique identifier, a fully specified Amazon Resource Name (ARN) to either an alias or a key, or an alias name prefixed by "alias/".You can also use a master key owned by Kinesis Data Streams by specifying the alias aws/kinesis.   Key ARN example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012    Alias ARN example: arn:aws:kms:us-east-1:123456789012:alias/MyAliasName    Globally unique key ID example: 12345678-1234-1234-1234-123456789012    Alias name example: alias/MyAliasName    Master key owned by Kinesis Data Streams: alias/aws/kinesis   
@@ -1187,6 +1621,14 @@ extension Kinesis {
             self.encryptionType = encryptionType
             self.keyId = keyId
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(keyId, name:"keyId", max: 2048)
+            try validate(keyId, name:"keyId", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1202,6 +1644,7 @@ extension Kinesis {
             AWSShapeMember(label: "Timestamp", required: false, type: .timestamp), 
             AWSShapeMember(label: "Type", required: true, type: .enum)
         ]
+
         public let sequenceNumber: String?
         public let timestamp: TimeStamp?
         public let `type`: ShardIteratorType
@@ -1210,6 +1653,10 @@ extension Kinesis {
             self.sequenceNumber = sequenceNumber
             self.timestamp = timestamp
             self.`type` = `type`
+        }
+
+        public func validate() throws {
+            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1225,6 +1672,7 @@ extension Kinesis {
             AWSShapeMember(label: "KeyId", required: true, type: .string), 
             AWSShapeMember(label: "StreamName", required: true, type: .string)
         ]
+
         /// The encryption type. The only valid value is KMS.
         public let encryptionType: EncryptionType
         /// The GUID for the customer-managed AWS KMS key to use for encryption. This value can be a globally unique identifier, a fully specified Amazon Resource Name (ARN) to either an alias or a key, or an alias name prefixed by "alias/".You can also use a master key owned by Kinesis Data Streams by specifying the alias aws/kinesis.   Key ARN example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012    Alias ARN example: arn:aws:kms:us-east-1:123456789012:alias/MyAliasName    Globally unique key ID example: 12345678-1234-1234-1234-123456789012    Alias name example: alias/MyAliasName    Master key owned by Kinesis Data Streams: alias/aws/kinesis   
@@ -1236,6 +1684,14 @@ extension Kinesis {
             self.encryptionType = encryptionType
             self.keyId = keyId
             self.streamName = streamName
+        }
+
+        public func validate() throws {
+            try validate(keyId, name:"keyId", max: 2048)
+            try validate(keyId, name:"keyId", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1258,6 +1714,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamName", required: true, type: .string), 
             AWSShapeMember(label: "StreamStatus", required: true, type: .enum)
         ]
+
         /// The server-side encryption type used on the stream. This parameter can be one of the following values:    NONE: Do not encrypt the records in the stream.    KMS: Use server-side encryption on the records in the stream using a customer-managed AWS KMS key.  
         public let encryptionType: EncryptionType?
         /// Represents the current enhanced monitoring settings of the stream.
@@ -1292,6 +1749,25 @@ extension Kinesis {
             self.streamStatus = streamStatus
         }
 
+        public func validate() throws {
+            try enhancedMonitoring.forEach {
+                try $0.validate()
+            }
+            try validate(keyId, name:"keyId", max: 2048)
+            try validate(keyId, name:"keyId", min: 1)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 168)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
+            try shards.forEach {
+                try $0.validate()
+            }
+            try validate(streamARN, name:"streamARN", max: 2048)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case encryptionType = "EncryptionType"
             case enhancedMonitoring = "EnhancedMonitoring"
@@ -1319,6 +1795,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamName", required: true, type: .string), 
             AWSShapeMember(label: "StreamStatus", required: true, type: .enum)
         ]
+
         /// The number of enhanced fan-out consumers registered with the stream.
         public let consumerCount: Int32?
         /// The encryption type used. This value is one of the following:    KMS     NONE   
@@ -1353,6 +1830,26 @@ extension Kinesis {
             self.streamStatus = streamStatus
         }
 
+        public func validate() throws {
+            try validate(consumerCount, name:"consumerCount", max: 1000000)
+            try validate(consumerCount, name:"consumerCount", min: 0)
+            try enhancedMonitoring.forEach {
+                try $0.validate()
+            }
+            try validate(keyId, name:"keyId", max: 2048)
+            try validate(keyId, name:"keyId", min: 1)
+            try validate(openShardCount, name:"openShardCount", max: 1000000)
+            try validate(openShardCount, name:"openShardCount", min: 0)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 100000)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
+            try validate(streamARN, name:"streamARN", max: 2048)
+            try validate(streamARN, name:"streamARN", min: 1)
+            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        }
+
         private enum CodingKeys: String, CodingKey {
             case consumerCount = "ConsumerCount"
             case encryptionType = "EncryptionType"
@@ -1381,6 +1878,7 @@ extension Kinesis {
             AWSShapeMember(label: "MillisBehindLatest", required: true, type: .long), 
             AWSShapeMember(label: "Records", required: true, type: .list)
         ]
+
         /// Use this as StartingSequenceNumber in the next call to SubscribeToShard.
         public let continuationSequenceNumber: String
         /// The number of milliseconds the read records are from the tip of the stream, indicating how far behind current time the consumer is. A value of zero indicates that record processing is caught up, and there are no new records to process at this moment.
@@ -1391,6 +1889,14 @@ extension Kinesis {
             self.continuationSequenceNumber = continuationSequenceNumber
             self.millisBehindLatest = millisBehindLatest
             self.records = records
+        }
+
+        public func validate() throws {
+            try validate(continuationSequenceNumber, name:"continuationSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
+            try validate(millisBehindLatest, name:"millisBehindLatest", min: 0)
+            try records.forEach {
+                try $0.validate()
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1406,6 +1912,7 @@ extension Kinesis {
             AWSShapeMember(label: "ShardId", required: true, type: .string), 
             AWSShapeMember(label: "StartingPosition", required: true, type: .structure)
         ]
+
         /// For this parameter, use the value you obtained when you called RegisterStreamConsumer.
         public let consumerARN: String
         /// The ID of the shard you want to subscribe to. To see a list of all the shards for a given stream, use ListShards.
@@ -1416,6 +1923,16 @@ extension Kinesis {
             self.consumerARN = consumerARN
             self.shardId = shardId
             self.startingPosition = startingPosition
+        }
+
+        public func validate() throws {
+            try validate(consumerARN, name:"consumerARN", max: 2048)
+            try validate(consumerARN, name:"consumerARN", min: 1)
+            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(shardId, name:"shardId", max: 128)
+            try validate(shardId, name:"shardId", min: 1)
+            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
+            try startingPosition.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1430,6 +1947,7 @@ extension Kinesis {
             AWSShapeMember(label: "Key", required: true, type: .string), 
             AWSShapeMember(label: "Value", required: false, type: .string)
         ]
+
         /// A unique identifier for the tag. Maximum length: 128 characters. Valid characters: Unicode letters, digits, white space, _ . / = + - % @
         public let key: String
         /// An optional string, typically used to describe or define the tag. Maximum length: 256 characters. Valid characters: Unicode letters, digits, white space, _ . / = + - % @
@@ -1438,6 +1956,13 @@ extension Kinesis {
         public init(key: String, value: String? = nil) {
             self.key = key
             self.value = value
+        }
+
+        public func validate() throws {
+            try validate(key, name:"key", max: 128)
+            try validate(key, name:"key", min: 1)
+            try validate(value, name:"value", max: 256)
+            try validate(value, name:"value", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1452,6 +1977,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamName", required: true, type: .string), 
             AWSShapeMember(label: "TargetShardCount", required: true, type: .integer)
         ]
+
         /// The scaling type. Uniform scaling creates shards of equal size.
         public let scalingType: ScalingType
         /// The name of the stream.
@@ -1463,6 +1989,14 @@ extension Kinesis {
             self.scalingType = scalingType
             self.streamName = streamName
             self.targetShardCount = targetShardCount
+        }
+
+        public func validate() throws {
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(targetShardCount, name:"targetShardCount", max: 100000)
+            try validate(targetShardCount, name:"targetShardCount", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1478,6 +2012,7 @@ extension Kinesis {
             AWSShapeMember(label: "StreamName", required: false, type: .string), 
             AWSShapeMember(label: "TargetShardCount", required: false, type: .integer)
         ]
+
         /// The current number of shards.
         public let currentShardCount: Int32?
         /// The name of the stream.
@@ -1489,6 +2024,16 @@ extension Kinesis {
             self.currentShardCount = currentShardCount
             self.streamName = streamName
             self.targetShardCount = targetShardCount
+        }
+
+        public func validate() throws {
+            try validate(currentShardCount, name:"currentShardCount", max: 100000)
+            try validate(currentShardCount, name:"currentShardCount", min: 1)
+            try validate(streamName, name:"streamName", max: 128)
+            try validate(streamName, name:"streamName", min: 1)
+            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(targetShardCount, name:"targetShardCount", max: 100000)
+            try validate(targetShardCount, name:"targetShardCount", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
