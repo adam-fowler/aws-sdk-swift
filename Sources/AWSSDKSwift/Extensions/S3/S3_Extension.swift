@@ -53,15 +53,15 @@ public extension S3 {
     /// - parameters:
     ///     - input: The GetObjectRequest shape that contains the details of the object request.
     ///     - partSize: Size of each part to be downloaded
-    ///     - outputStream: Function to be called for each downloaded part
+    ///     - outputStream: Function to be called for each downloaded part. Called with data block and file size
     /// - returns: A future that will receive the complete file size once the multipart download has finished.
-    func multipartDownload(_ input: GetObjectRequest, partSize: Int = 5*1024*1024, outputStream: @escaping (Data) throws -> ()) throws -> Future<Int64> {
+    func multipartDownload(_ input: GetObjectRequest, partSize: Int = 5*1024*1024, outputStream: @escaping (Data, Int64) throws -> ()) throws -> Future<Int64> {
         // function downloading part of a file
         func multipartDownloadPart(fileSize: Int64, offset: Int64, body: Data? = nil) throws -> Future<Int64> {
             // output the data uploaded previously
             let outputBody = AWSClient.eventGroup.next().submit { ()->Int64 in
                 if let body = body {
-                    try outputStream(body)
+                    try outputStream(body, fileSize)
                 }
                 return fileSize
             }
@@ -183,12 +183,12 @@ public extension S3 {
     ///     - partSize: Size of each part to be downloaded
     ///     - filename: Filename to save download to
     /// - returns: A future that will receive the complete file size once the multipart download has finished.
-    func multipartDownload(_ input: GetObjectRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Int64) throws->() = {_ in}) throws -> Future<Int64> {
+    func multipartDownload(_ input: GetObjectRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Double) throws->() = {_ in}) throws -> Future<Int64> {
         if let outputStream = OutputStream(toFileAtPath: filename, append: false) {
             outputStream.open()
             
             var progressValue : Int64 = 0
-            let download = try self.multipartDownload(input, partSize: partSize, outputStream:{ data in
+            let download = try self.multipartDownload(input, partSize: partSize, outputStream:{ data, fileSize in
                 let bytesWritten = data.withUnsafeBytes { (ptr : UnsafeRawBufferPointer) -> Int in
                     if let bytes = ptr.baseAddress?.assumingMemoryBound(to: UInt8.self) {
                         // write chunk
@@ -202,7 +202,7 @@ public extension S3 {
                 }
                 // update progress
                 progressValue += Int64(data.count)
-                try progress(progressValue)
+                try progress(Double(progressValue)/Double(fileSize))
             })
             download.whenComplete { _ in
                 outputStream.close()
@@ -221,13 +221,14 @@ public extension S3 {
     ///     - filename: Name of file to upload
     ///
     /// - returns: A Future that will receive a CompleteMultipartUploadOutput once the multipart upload has finished.
-    func multipartUpload(_ input: CreateMultipartUploadRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Int64) throws->() = { _ in }) throws -> Future<CompleteMultipartUploadOutput> {
+    func multipartUpload(_ input: CreateMultipartUploadRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Double) throws->() = { _ in }) throws -> Future<CompleteMultipartUploadOutput> {
+        let fileSize = try (FileManager.default.attributesOfItem(atPath: filename) as NSDictionary).fileSize()
         if let inputStream = InputStream(fileAtPath: filename) {
             inputStream.open()
 
             var progressAmount : Int64 = 0
             let upload = try self.multipartUpload(input, inputStream:{
-                try progress(progressAmount)
+                try progress(Double(progressAmount) / Double(fileSize))
                 
                 var data = Data(count:partSize)
                 let bytesRead = data.withUnsafeMutableBytes { (ptr : UnsafeMutableRawBufferPointer) -> Int in
