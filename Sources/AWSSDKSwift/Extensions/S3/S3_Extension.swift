@@ -70,7 +70,7 @@ public extension S3 {
             let request = S3.GetObjectRequest(bucket: input.bucket, key: input.key, range: range, sSECustomerAlgorithm: input.sSECustomerAlgorithm, sSECustomerKey: input.sSECustomerKey, sSECustomerKeyMD5: input.sSECustomerKeyMD5, versionId: input.versionId)
             let result = try getObject(request)
                 .and(outputBody)
-                .then { (output,_) -> Future<Int64> in
+                .flatMap { (output,_) -> Future<Int64> in
                     do {
                         // should never happen
                         guard let body = output.body else {
@@ -82,7 +82,7 @@ public extension S3 {
                         let newOffset = offset + Int64(partSize)
                         return try multipartDownloadPart(fileSize: fileSize, offset: newOffset, body: body)
                     } catch {
-                        return AWSClient.eventGroup.next().newFailedFuture(error: error)
+                        return AWSClient.eventGroup.next().makeFailedFuture(error)
                     }
             }
             return result
@@ -91,7 +91,7 @@ public extension S3 {
         // get object size before downloading
         let request = S3.HeadObjectRequest(bucket: input.bucket, ifMatch: input.ifMatch, ifModifiedSince: input.ifModifiedSince, ifNoneMatch: input.ifNoneMatch, ifUnmodifiedSince: input.ifUnmodifiedSince, key: input.key, requestPayer: input.requestPayer, sSECustomerAlgorithm: input.sSECustomerAlgorithm, sSECustomerKey: input.sSECustomerKey, sSECustomerKeyMD5: input.sSECustomerKeyMD5, versionId: input.versionId)
         let result = try headObject(request)
-            .then { object -> Future<Int64> in
+            .flatMap { object -> Future<Int64> in
                 do {
                     guard let contentLength = object.contentLength else {
                         throw S3ErrorType.multipart.downloadEmpty(message: "Content length is unexpectedly zero")
@@ -99,7 +99,7 @@ public extension S3 {
                     // download file
                     return try multipartDownloadPart(fileSize: contentLength, offset: 0)
                 } catch {
-                    return AWSClient.eventGroup.next().newFailedFuture(error: error)
+                    return AWSClient.eventGroup.next().makeFailedFuture(error)
                 }
         }
         return result
@@ -127,7 +127,7 @@ public extension S3 {
                     return completedParts
                 }
             } else {
-                uploadResult = AWSClient.eventGroup.next().newSucceededFuture(result: [])
+                uploadResult = AWSClient.eventGroup.next().makeSucceededFuture([])
             }
             
             // load data future
@@ -136,41 +136,41 @@ public extension S3 {
                 }
                 .and(uploadResult)
                 // upload data
-                .then { (data, parts) -> Future<[S3.CompletedPart]> in
-                    guard let data = data else { return AWSClient.eventGroup.next().newSucceededFuture(result: parts)}
+                .flatMap { (data, parts) -> Future<[S3.CompletedPart]> in
+                    guard let data = data else { return AWSClient.eventGroup.next().makeSucceededFuture(parts)}
                     do {
                         return try multipartUploadPart(partNumber: partNumber+1, uploadId: uploadId, body: data)
                     } catch {
-                        return AWSClient.eventGroup.next().newFailedFuture(error: error)
+                        return AWSClient.eventGroup.next().makeFailedFuture(error)
                     }
             }
             return result
         }
         
         // initialize multipart upload
-        let result = try createMultipartUpload(input).then { upload -> Future<CompleteMultipartUploadOutput> in
-            guard let uploadId = upload.uploadId else { return AWSClient.eventGroup.next().newFailedFuture(error: S3ErrorType.multipart.noUploadId) }
+        let result = try createMultipartUpload(input).flatMap { upload -> Future<CompleteMultipartUploadOutput> in
+            guard let uploadId = upload.uploadId else { return AWSClient.eventGroup.next().makeFailedFuture(S3ErrorType.multipart.noUploadId) }
             do {
                 // upload all the parts
                 return try multipartUploadPart(partNumber: 1, uploadId: uploadId)
-                    .then { parts -> Future<CompleteMultipartUploadOutput> in
+                    .flatMap { parts -> Future<CompleteMultipartUploadOutput> in
                         // if success then complete the multipart upload
                         do {
                             let request = S3.CompleteMultipartUploadRequest(bucket: input.bucket, key:input.key, multipartUpload: S3.CompletedMultipartUpload(parts:parts), requestPayer: input.requestPayer, uploadId: uploadId)
                             let result = try self.completeMultipartUpload(request)
                             return result
                         } catch {
-                            return AWSClient.eventGroup.next().newFailedFuture(error: error)
+                            return AWSClient.eventGroup.next().makeFailedFuture(error)
                         }
                     }
-                    .thenIfErrorThrowing { error in
+                    .flatMapErrorThrowing { error in
                         // if failure then abort the multipart upload
                         let request = S3.AbortMultipartUploadRequest(bucket: input.bucket, key: input.key, requestPayer: input.requestPayer, uploadId: uploadId)
                         _ = try self.abortMultipartUpload(request)
                         throw error
                 }
             } catch {
-                return AWSClient.eventGroup.next().newFailedFuture(error: error)
+                return AWSClient.eventGroup.next().makeFailedFuture(error)
             }
         }
         return result
@@ -200,7 +200,7 @@ public extension S3 {
                 progressValue += Int64(data.count)
                 try progress(progressValue)
             })
-            download.whenComplete {
+            download.whenComplete { _ in
                 outputStream.close()
             }
             return download
@@ -243,7 +243,7 @@ public extension S3 {
                 }
                 return data
             })
-            upload.whenComplete {
+            upload.whenComplete { _ in
                 inputStream.close()
             }
             return upload
