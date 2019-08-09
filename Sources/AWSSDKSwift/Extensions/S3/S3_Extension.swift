@@ -33,7 +33,7 @@ public extension S3 {
         let presignedURL = signer.signedURL(url: urlToSign,  method: "GET", date: Date(), expires: expires)
         return presignedURL
     }
-    
+
     ///  Creates pre-signed URL for uploading object to Amazon S3.
     ///
     /// - parameters:
@@ -47,7 +47,7 @@ public extension S3 {
         let presignedURL = signer.signedURL(url: urlToSign,  method: "PUT", date: Date(), expires: expires)
         return presignedURL
     }
-    
+
     /// Multipart download of a file from S3.
     ///
     /// - parameters:
@@ -87,7 +87,7 @@ public extension S3 {
             }
             return result
         }
-        
+
         // get object size before downloading
         let request = S3.HeadObjectRequest(bucket: input.bucket, ifMatch: input.ifMatch, ifModifiedSince: input.ifModifiedSince, ifNoneMatch: input.ifNoneMatch, ifUnmodifiedSince: input.ifUnmodifiedSince, key: input.key, requestPayer: input.requestPayer, sSECustomerAlgorithm: input.sSECustomerAlgorithm, sSECustomerKey: input.sSECustomerKey, sSECustomerKeyMD5: input.sSECustomerKeyMD5, versionId: input.versionId)
         let result = try headObject(request)
@@ -104,7 +104,7 @@ public extension S3 {
         }
         return result
     }
-    
+
     /// Multipart upload of file to S3.
     ///
     /// - parameters:
@@ -113,7 +113,7 @@ public extension S3 {
     /// - returns: A Future that will receive a CompleteMultipartUploadOutput once the multipart upload has finished.
     func multipartUpload(_ input: CreateMultipartUploadRequest, inputStream: @escaping () throws -> Data?) throws -> Future<CompleteMultipartUploadOutput> {
         var completedParts: [S3.CompletedPart] = []
-        
+
         // function uploading part of a file and queueing up upload of the next part
         func multipartUploadPart(partNumber: Int32, uploadId: String, body: Data? = nil) throws -> Future<[S3.CompletedPart]> {
             // create upload data future, if there is no data to load because this is the first time this is called create a succeeded future
@@ -129,7 +129,7 @@ public extension S3 {
             } else {
                 uploadResult = AWSClient.eventGroup.next().makeSucceededFuture([])
             }
-            
+
             // load data future
             let result = AWSClient.eventGroup.next().submit { ()->Data? in
                 return try inputStream()
@@ -146,7 +146,7 @@ public extension S3 {
             }
             return result
         }
-        
+
         // initialize multipart upload
         let result = try createMultipartUpload(input).flatMap { upload -> Future<CompleteMultipartUploadOutput> in
             guard let uploadId = upload.uploadId else { return AWSClient.eventGroup.next().makeFailedFuture(S3ErrorType.multipart.noUploadId) }
@@ -182,11 +182,12 @@ public extension S3 {
     ///     - input: The GetObjectRequest shape that contains the details of the object request.
     ///     - partSize: Size of each part to be downloaded
     ///     - filename: Filename to save download to
+    ///     - progress: Callback that returns the progress of the download. It is called after each part is downloaded with a value between 0.0 and 1.0 indicating how far the download is complete (1.0 meaning finished).
     /// - returns: A future that will receive the complete file size once the multipart download has finished.
     func multipartDownload(_ input: GetObjectRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Double) throws->() = {_ in}) throws -> Future<Int64> {
         if let outputStream = OutputStream(toFileAtPath: filename, append: false) {
             outputStream.open()
-            
+
             var progressValue : Int64 = 0
             let download = try self.multipartDownload(input, partSize: partSize, outputStream:{ data, fileSize in
                 let bytesWritten = data.withUnsafeBytes { (ptr : UnsafeRawBufferPointer) -> Int in
@@ -219,17 +220,17 @@ public extension S3 {
     ///     - input: The CreateMultipartUploadRequest structure that contains the details about the upload
     ///     - partSize: Size of each part to upload. This has to be at least 5MB
     ///     - filename: Name of file to upload
-    ///
+    ///     - progress: Callback that returns the progress of the upload. It is called after each part is uploaded with a value between 0.0 and 1.0 indicating how far the upload is complete (1.0 meaning finished).
     /// - returns: A Future that will receive a CompleteMultipartUploadOutput once the multipart upload has finished.
     func multipartUpload(_ input: CreateMultipartUploadRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Double) throws->() = { _ in }) throws -> Future<CompleteMultipartUploadOutput> {
-        let fileSize = try (FileManager.default.attributesOfItem(atPath: filename) as NSDictionary).fileSize()
+        let fileSize = try FileManager.default.attributesOfItem(atPath: filename)[.size] as? UInt64 ?? UInt64.max
         if let inputStream = InputStream(fileAtPath: filename) {
             inputStream.open()
 
             var progressAmount : Int64 = 0
             let upload = try self.multipartUpload(input, inputStream:{
                 try progress(Double(progressAmount) / Double(fileSize))
-                
+
                 var data = Data(count:partSize)
                 let bytesRead = data.withUnsafeMutableBytes { (ptr : UnsafeMutableRawBufferPointer) -> Int in
                     if let bytes = ptr.bindMemory(to: UInt8.self).baseAddress {
@@ -245,9 +246,9 @@ public extension S3 {
                 if bytesRead == -1 {
                     throw S3ErrorType.multipart.failedToRead(file: filename)
                 }
-                
+
                 progressAmount += Int64(bytesRead)
-                
+
                 if bytesRead != data.count {
                     data.removeSubrange(bytesRead..<partSize)
                 }
