@@ -189,9 +189,13 @@ public extension S3 {
             
             var progressValue : Int64 = 0
             let download = try self.multipartDownload(input, partSize: partSize, outputStream:{ data in
-                let bytesWritten = data.withUnsafeBytes { (bytes : UnsafePointer<UInt8>) -> Int in
-                    // read chunk
-                    return outputStream.write(bytes, maxLength: data.count)
+                let bytesWritten = data.withUnsafeBytes { (ptr : UnsafeRawBufferPointer) -> Int in
+                    if let bytes = ptr.baseAddress?.assumingMemoryBound(to: UInt8.self) {
+                        // write chunk
+                        return outputStream.write(bytes, maxLength: data.count)
+                    } else {
+                        return -1
+                    }
                 }
                 if bytesWritten != data.count {
                     throw S3ErrorType.multipart.failedToWrite(file: filename)
@@ -226,8 +230,13 @@ public extension S3 {
                 try progress(progressAmount)
                 
                 var data = Data(count:partSize)
-                let bytesRead = data.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<UInt8>) -> Int in
-                    return inputStream.read(bytes, maxLength: partSize)
+                let bytesRead = data.withUnsafeMutableBytes { (ptr : UnsafeMutableRawBufferPointer) -> Int in
+                    if let bytes = ptr.bindMemory(to: UInt8.self).baseAddress {
+                        // read chunk
+                        return inputStream.read(bytes, maxLength: partSize)
+                    } else {
+                        return -1
+                    }
                 }
                 if bytesRead == 0 {
                     return nil
