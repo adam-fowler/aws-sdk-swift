@@ -183,7 +183,7 @@ public extension S3 {
     ///     - partSize: Size of each part to be downloaded
     ///     - filename: Filename to save download to
     /// - returns: A future that will receive the complete file size once the multipart download has finished.
-    func multipartDownload(_ input: GetObjectRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Int64)->() = {_ in}) throws -> Future<Int64> {
+    func multipartDownload(_ input: GetObjectRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Int64) throws->() = {_ in}) throws -> Future<Int64> {
         if let outputStream = OutputStream(toFileAtPath: filename, append: false) {
             outputStream.open()
             
@@ -198,7 +198,7 @@ public extension S3 {
                 }
                 // update progress
                 progressValue += Int64(data.count)
-                progress(progressValue)
+                try progress(progressValue)
             })
             download.whenComplete {
                 outputStream.close()
@@ -217,13 +217,13 @@ public extension S3 {
     ///     - filename: Name of file to upload
     ///
     /// - returns: A Future that will receive a CompleteMultipartUploadOutput once the multipart upload has finished.
-    func multipartUpload(_ input: CreateMultipartUploadRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Int64)->() = { _ in }) throws -> Future<CompleteMultipartUploadOutput> {
+    func multipartUpload(_ input: CreateMultipartUploadRequest, partSize: Int = 5*1024*1024, filename: String, progress: @escaping (Int64) throws->() = { _ in }) throws -> Future<CompleteMultipartUploadOutput> {
         if let inputStream = InputStream(fileAtPath: filename) {
             inputStream.open()
 
             var progressAmount : Int64 = 0
             let upload = try self.multipartUpload(input, inputStream:{
-                progress(progressAmount)
+                try progress(progressAmount)
                 
                 var data = Data(count:partSize)
                 let bytesRead = data.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<UInt8>) -> Int in
