@@ -17,8 +17,8 @@ extension Organizations {
             self.handshakeId = handshakeId
         }
 
-        public func validate() throws {
-            try validate(handshakeId, name:"handshakeId", pattern: "^h-[0-9a-z]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(handshakeId, name:"handshakeId", parent: name, pattern: "^h-[0-9a-z]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -38,18 +38,9 @@ extension Organizations {
             self.handshake = handshake
         }
 
-        public func validate() throws {
-            try handshake?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case handshake = "Handshake"
         }
-    }
-
-    public enum AccessDeniedForDependencyExceptionReason: String, CustomStringConvertible, Codable {
-        case accessDeniedDuringCreateServiceLinkedRole = "ACCESS_DENIED_DURING_CREATE_SERVICE_LINKED_ROLE"
-        public var description: String { return self.rawValue }
     }
 
     public struct Account: AWSShape {
@@ -86,17 +77,6 @@ extension Organizations {
             self.joinedTimestamp = joinedTimestamp
             self.name = name
             self.status = status
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:organizations::\\d{12}:account\\/o-[a-z0-9]{10,32}\\/\\d{12}")
-            try validate(email, name:"email", max: 64)
-            try validate(email, name:"email", min: 6)
-            try validate(email, name:"email", pattern: "[^\\s@]+@[^\\s@]+\\.[^\\s@]+")
-            try validate(id, name:"id", pattern: "^\\d{12}$")
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\u0020-\\u007E]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -146,9 +126,9 @@ extension Organizations {
             self.targetId = targetId
         }
 
-        public func validate() throws {
-            try validate(policyId, name:"policyId", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
-            try validate(targetId, name:"targetId", pattern: "^(r-[0-9a-z]{4,32})|(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(policyId, name:"policyId", parent: name, pattern: "^p-[0-9a-zA-Z_]{8,128}$")
+            try validate(targetId, name:"targetId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -169,8 +149,8 @@ extension Organizations {
             self.handshakeId = handshakeId
         }
 
-        public func validate() throws {
-            try validate(handshakeId, name:"handshakeId", pattern: "^h-[0-9a-z]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(handshakeId, name:"handshakeId", parent: name, pattern: "^h-[0-9a-z]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -188,10 +168,6 @@ extension Organizations {
 
         public init(handshake: Handshake? = nil) {
             self.handshake = handshake
-        }
-
-        public func validate() throws {
-            try handshake?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -215,10 +191,6 @@ extension Organizations {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case id = "Id"
             case `type` = "Type"
@@ -228,32 +200,6 @@ extension Organizations {
     public enum ChildType: String, CustomStringConvertible, Codable {
         case account = "ACCOUNT"
         case organizationalUnit = "ORGANIZATIONAL_UNIT"
-        public var description: String { return self.rawValue }
-    }
-
-    public enum ConstraintViolationExceptionReason: String, CustomStringConvertible, Codable {
-        case accountNumberLimitExceeded = "ACCOUNT_NUMBER_LIMIT_EXCEEDED"
-        case handshakeRateLimitExceeded = "HANDSHAKE_RATE_LIMIT_EXCEEDED"
-        case ouNumberLimitExceeded = "OU_NUMBER_LIMIT_EXCEEDED"
-        case ouDepthLimitExceeded = "OU_DEPTH_LIMIT_EXCEEDED"
-        case policyNumberLimitExceeded = "POLICY_NUMBER_LIMIT_EXCEEDED"
-        case maxPolicyTypeAttachmentLimitExceeded = "MAX_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED"
-        case minPolicyTypeAttachmentLimitExceeded = "MIN_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED"
-        case accountCannotLeaveOrganization = "ACCOUNT_CANNOT_LEAVE_ORGANIZATION"
-        case accountCannotLeaveWithoutEula = "ACCOUNT_CANNOT_LEAVE_WITHOUT_EULA"
-        case accountCannotLeaveWithoutPhoneVerification = "ACCOUNT_CANNOT_LEAVE_WITHOUT_PHONE_VERIFICATION"
-        case masterAccountPaymentInstrumentRequired = "MASTER_ACCOUNT_PAYMENT_INSTRUMENT_REQUIRED"
-        case memberAccountPaymentInstrumentRequired = "MEMBER_ACCOUNT_PAYMENT_INSTRUMENT_REQUIRED"
-        case accountCreationRateLimitExceeded = "ACCOUNT_CREATION_RATE_LIMIT_EXCEEDED"
-        case masterAccountAddressDoesNotMatchMarketplace = "MASTER_ACCOUNT_ADDRESS_DOES_NOT_MATCH_MARKETPLACE"
-        case masterAccountMissingContactInfo = "MASTER_ACCOUNT_MISSING_CONTACT_INFO"
-        case masterAccountNotGovcloudEnabled = "MASTER_ACCOUNT_NOT_GOVCLOUD_ENABLED"
-        case organizationNotInAllFeaturesMode = "ORGANIZATION_NOT_IN_ALL_FEATURES_MODE"
-        case createOrganizationInBillingModeUnsupportedRegion = "CREATE_ORGANIZATION_IN_BILLING_MODE_UNSUPPORTED_REGION"
-        case emailVerificationCodeExpired = "EMAIL_VERIFICATION_CODE_EXPIRED"
-        case waitPeriodActive = "WAIT_PERIOD_ACTIVE"
-        case maxTagLimitExceeded = "MAX_TAG_LIMIT_EXCEEDED"
-        case tagPolicyViolation = "TAG_POLICY_VIOLATION"
         public var description: String { return self.rawValue }
     }
 
@@ -291,14 +237,14 @@ extension Organizations {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(accountName, name:"accountName", max: 50)
-            try validate(accountName, name:"accountName", min: 1)
-            try validate(accountName, name:"accountName", pattern: "[\\u0020-\\u007E]+")
-            try validate(email, name:"email", max: 64)
-            try validate(email, name:"email", min: 6)
-            try validate(email, name:"email", pattern: "[^\\s@]+@[^\\s@]+\\.[^\\s@]+")
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]{1,64}")
+        public func validate(name: String) throws {
+            try validate(accountName, name:"accountName", parent: name, max: 50)
+            try validate(accountName, name:"accountName", parent: name, min: 1)
+            try validate(accountName, name:"accountName", parent: name, pattern: "[\\u0020-\\u007E]+")
+            try validate(email, name:"email", parent: name, max: 64)
+            try validate(email, name:"email", parent: name, min: 6)
+            try validate(email, name:"email", parent: name, pattern: "[^\\s@]+@[^\\s@]+\\.[^\\s@]+")
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]{1,64}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -319,10 +265,6 @@ extension Organizations {
 
         public init(createAccountStatus: CreateAccountStatus? = nil) {
             self.createAccountStatus = createAccountStatus
-        }
-
-        public func validate() throws {
-            try createAccountStatus?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -377,15 +319,6 @@ extension Organizations {
             self.state = state
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: "^\\d{12}$")
-            try validate(accountName, name:"accountName", max: 50)
-            try validate(accountName, name:"accountName", min: 1)
-            try validate(accountName, name:"accountName", pattern: "[\\u0020-\\u007E]+")
-            try validate(govCloudAccountId, name:"govCloudAccountId", pattern: "^\\d{12}$")
-            try validate(id, name:"id", pattern: "^car-[a-z0-9]{8,32}$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case accountName = "AccountName"
@@ -422,14 +355,14 @@ extension Organizations {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(accountName, name:"accountName", max: 50)
-            try validate(accountName, name:"accountName", min: 1)
-            try validate(accountName, name:"accountName", pattern: "[\\u0020-\\u007E]+")
-            try validate(email, name:"email", max: 64)
-            try validate(email, name:"email", min: 6)
-            try validate(email, name:"email", pattern: "[^\\s@]+@[^\\s@]+\\.[^\\s@]+")
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]{1,64}")
+        public func validate(name: String) throws {
+            try validate(accountName, name:"accountName", parent: name, max: 50)
+            try validate(accountName, name:"accountName", parent: name, min: 1)
+            try validate(accountName, name:"accountName", parent: name, pattern: "[\\u0020-\\u007E]+")
+            try validate(email, name:"email", parent: name, max: 64)
+            try validate(email, name:"email", parent: name, min: 6)
+            try validate(email, name:"email", parent: name, pattern: "[^\\s@]+@[^\\s@]+\\.[^\\s@]+")
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]{1,64}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -449,10 +382,6 @@ extension Organizations {
 
         public init(createAccountStatus: CreateAccountStatus? = nil) {
             self.createAccountStatus = createAccountStatus
-        }
-
-        public func validate() throws {
-            try createAccountStatus?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -489,10 +418,6 @@ extension Organizations {
             self.organization = organization
         }
 
-        public func validate() throws {
-            try organization?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case organization = "Organization"
         }
@@ -514,10 +439,10 @@ extension Organizations {
             self.parentId = parentId
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(parentId, name:"parentId", pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 128)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(parentId, name:"parentId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -536,10 +461,6 @@ extension Organizations {
 
         public init(organizationalUnit: OrganizationalUnit? = nil) {
             self.organizationalUnit = organizationalUnit
-        }
-
-        public func validate() throws {
-            try organizationalUnit?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -571,12 +492,12 @@ extension Organizations {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(content, name:"content", max: 1000000)
-            try validate(content, name:"content", min: 1)
-            try validate(description, name:"description", max: 512)
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(content, name:"content", parent: name, max: 1000000)
+            try validate(content, name:"content", parent: name, min: 1)
+            try validate(description, name:"description", parent: name, max: 512)
+            try validate(name, name:"name", parent: name, max: 128)
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -599,10 +520,6 @@ extension Organizations {
             self.policy = policy
         }
 
-        public func validate() throws {
-            try policy?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case policy = "Policy"
         }
@@ -620,8 +537,8 @@ extension Organizations {
             self.handshakeId = handshakeId
         }
 
-        public func validate() throws {
-            try validate(handshakeId, name:"handshakeId", pattern: "^h-[0-9a-z]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(handshakeId, name:"handshakeId", parent: name, pattern: "^h-[0-9a-z]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -641,10 +558,6 @@ extension Organizations {
             self.handshake = handshake
         }
 
-        public func validate() throws {
-            try handshake?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case handshake = "Handshake"
         }
@@ -662,8 +575,8 @@ extension Organizations {
             self.organizationalUnitId = organizationalUnitId
         }
 
-        public func validate() throws {
-            try validate(organizationalUnitId, name:"organizationalUnitId", pattern: "^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(organizationalUnitId, name:"organizationalUnitId", parent: name, pattern: "^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -683,8 +596,8 @@ extension Organizations {
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(policyId, name:"policyId", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
+        public func validate(name: String) throws {
+            try validate(policyId, name:"policyId", parent: name, pattern: "^p-[0-9a-zA-Z_]{8,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -704,8 +617,8 @@ extension Organizations {
             self.accountId = accountId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: "^\\d{12}$")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: "^\\d{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -725,10 +638,6 @@ extension Organizations {
             self.account = account
         }
 
-        public func validate() throws {
-            try account?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case account = "Account"
         }
@@ -746,8 +655,8 @@ extension Organizations {
             self.createAccountRequestId = createAccountRequestId
         }
 
-        public func validate() throws {
-            try validate(createAccountRequestId, name:"createAccountRequestId", pattern: "^car-[a-z0-9]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(createAccountRequestId, name:"createAccountRequestId", parent: name, pattern: "^car-[a-z0-9]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -767,10 +676,6 @@ extension Organizations {
             self.createAccountStatus = createAccountStatus
         }
 
-        public func validate() throws {
-            try createAccountStatus?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createAccountStatus = "CreateAccountStatus"
         }
@@ -788,8 +693,8 @@ extension Organizations {
             self.handshakeId = handshakeId
         }
 
-        public func validate() throws {
-            try validate(handshakeId, name:"handshakeId", pattern: "^h-[0-9a-z]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(handshakeId, name:"handshakeId", parent: name, pattern: "^h-[0-9a-z]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -809,10 +714,6 @@ extension Organizations {
             self.handshake = handshake
         }
 
-        public func validate() throws {
-            try handshake?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case handshake = "Handshake"
         }
@@ -828,10 +729,6 @@ extension Organizations {
 
         public init(organization: Organization? = nil) {
             self.organization = organization
-        }
-
-        public func validate() throws {
-            try organization?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -851,8 +748,8 @@ extension Organizations {
             self.organizationalUnitId = organizationalUnitId
         }
 
-        public func validate() throws {
-            try validate(organizationalUnitId, name:"organizationalUnitId", pattern: "^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(organizationalUnitId, name:"organizationalUnitId", parent: name, pattern: "^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -872,10 +769,6 @@ extension Organizations {
             self.organizationalUnit = organizationalUnit
         }
 
-        public func validate() throws {
-            try organizationalUnit?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case organizationalUnit = "OrganizationalUnit"
         }
@@ -893,8 +786,8 @@ extension Organizations {
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(policyId, name:"policyId", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
+        public func validate(name: String) throws {
+            try validate(policyId, name:"policyId", parent: name, pattern: "^p-[0-9a-zA-Z_]{8,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -912,10 +805,6 @@ extension Organizations {
 
         public init(policy: Policy? = nil) {
             self.policy = policy
-        }
-
-        public func validate() throws {
-            try policy?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -939,9 +828,9 @@ extension Organizations {
             self.targetId = targetId
         }
 
-        public func validate() throws {
-            try validate(policyId, name:"policyId", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
-            try validate(targetId, name:"targetId", pattern: "^(r-[0-9a-z]{4,32})|(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(policyId, name:"policyId", parent: name, pattern: "^p-[0-9a-zA-Z_]{8,128}$")
+            try validate(targetId, name:"targetId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -962,10 +851,10 @@ extension Organizations {
             self.servicePrincipal = servicePrincipal
         }
 
-        public func validate() throws {
-            try validate(servicePrincipal, name:"servicePrincipal", max: 128)
-            try validate(servicePrincipal, name:"servicePrincipal", min: 1)
-            try validate(servicePrincipal, name:"servicePrincipal", pattern: "[\\w+=,.@-]*")
+        public func validate(name: String) throws {
+            try validate(servicePrincipal, name:"servicePrincipal", parent: name, max: 128)
+            try validate(servicePrincipal, name:"servicePrincipal", parent: name, min: 1)
+            try validate(servicePrincipal, name:"servicePrincipal", parent: name, pattern: "[\\w+=,.@-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -989,8 +878,8 @@ extension Organizations {
             self.rootId = rootId
         }
 
-        public func validate() throws {
-            try validate(rootId, name:"rootId", pattern: "^r-[0-9a-z]{4,32}$")
+        public func validate(name: String) throws {
+            try validate(rootId, name:"rootId", parent: name, pattern: "^r-[0-9a-z]{4,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1011,10 +900,6 @@ extension Organizations {
             self.root = root
         }
 
-        public func validate() throws {
-            try root?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case root = "Root"
         }
@@ -1032,10 +917,10 @@ extension Organizations {
             self.servicePrincipal = servicePrincipal
         }
 
-        public func validate() throws {
-            try validate(servicePrincipal, name:"servicePrincipal", max: 128)
-            try validate(servicePrincipal, name:"servicePrincipal", min: 1)
-            try validate(servicePrincipal, name:"servicePrincipal", pattern: "[\\w+=,.@-]*")
+        public func validate(name: String) throws {
+            try validate(servicePrincipal, name:"servicePrincipal", parent: name, max: 128)
+            try validate(servicePrincipal, name:"servicePrincipal", parent: name, min: 1)
+            try validate(servicePrincipal, name:"servicePrincipal", parent: name, pattern: "[\\w+=,.@-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1063,10 +948,6 @@ extension Organizations {
             self.handshake = handshake
         }
 
-        public func validate() throws {
-            try handshake?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case handshake = "Handshake"
         }
@@ -1088,8 +969,8 @@ extension Organizations {
             self.rootId = rootId
         }
 
-        public func validate() throws {
-            try validate(rootId, name:"rootId", pattern: "^r-[0-9a-z]{4,32}$")
+        public func validate(name: String) throws {
+            try validate(rootId, name:"rootId", parent: name, pattern: "^r-[0-9a-z]{4,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1108,10 +989,6 @@ extension Organizations {
 
         public init(root: Root? = nil) {
             self.root = root
-        }
-
-        public func validate() throws {
-            try root?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1133,12 +1010,6 @@ extension Organizations {
         public init(dateEnabled: TimeStamp? = nil, servicePrincipal: String? = nil) {
             self.dateEnabled = dateEnabled
             self.servicePrincipal = servicePrincipal
-        }
-
-        public func validate() throws {
-            try validate(servicePrincipal, name:"servicePrincipal", max: 128)
-            try validate(servicePrincipal, name:"servicePrincipal", min: 1)
-            try validate(servicePrincipal, name:"servicePrincipal", pattern: "[\\w+=,.@-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1187,14 +1058,6 @@ extension Organizations {
             self.state = state
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:organizations::\\d{12}:handshake\\/o-[a-z0-9]{10,32}\\/[a-z_]{1,32}\\/h-[0-9a-z]{8,32}")
-            try validate(id, name:"id", pattern: "^h-[0-9a-z]{8,32}$")
-            try parties?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case action = "Action"
             case arn = "Arn"
@@ -1205,18 +1068,6 @@ extension Organizations {
             case resources = "Resources"
             case state = "State"
         }
-    }
-
-    public enum HandshakeConstraintViolationExceptionReason: String, CustomStringConvertible, Codable {
-        case accountNumberLimitExceeded = "ACCOUNT_NUMBER_LIMIT_EXCEEDED"
-        case handshakeRateLimitExceeded = "HANDSHAKE_RATE_LIMIT_EXCEEDED"
-        case alreadyInAnOrganization = "ALREADY_IN_AN_ORGANIZATION"
-        case organizationAlreadyHasAllFeatures = "ORGANIZATION_ALREADY_HAS_ALL_FEATURES"
-        case inviteDisabledDuringEnableAllFeatures = "INVITE_DISABLED_DURING_ENABLE_ALL_FEATURES"
-        case paymentInstrumentRequired = "PAYMENT_INSTRUMENT_REQUIRED"
-        case organizationFromDifferentSellerOfRecord = "ORGANIZATION_FROM_DIFFERENT_SELLER_OF_RECORD"
-        case organizationMembershipChangeRateLimitExceeded = "ORGANIZATION_MEMBERSHIP_CHANGE_RATE_LIMIT_EXCEEDED"
-        public var description: String { return self.rawValue }
     }
 
     public struct HandshakeFilter: AWSShape {
@@ -1235,8 +1086,8 @@ extension Organizations {
             self.parentHandshakeId = parentHandshakeId
         }
 
-        public func validate() throws {
-            try validate(parentHandshakeId, name:"parentHandshakeId", pattern: "^h-[0-9a-z]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(parentHandshakeId, name:"parentHandshakeId", parent: name, pattern: "^h-[0-9a-z]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1261,9 +1112,9 @@ extension Organizations {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 64)
-            try validate(id, name:"id", min: 1)
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, max: 64)
+            try validate(id, name:"id", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1334,30 +1185,6 @@ extension Organizations {
         public var description: String { return self.rawValue }
     }
 
-    public enum InvalidInputExceptionReason: String, CustomStringConvertible, Codable {
-        case invalidPartyTypeTarget = "INVALID_PARTY_TYPE_TARGET"
-        case invalidSyntaxOrganizationArn = "INVALID_SYNTAX_ORGANIZATION_ARN"
-        case invalidSyntaxPolicyId = "INVALID_SYNTAX_POLICY_ID"
-        case invalidEnum = "INVALID_ENUM"
-        case invalidListMember = "INVALID_LIST_MEMBER"
-        case maxLengthExceeded = "MAX_LENGTH_EXCEEDED"
-        case maxValueExceeded = "MAX_VALUE_EXCEEDED"
-        case minLengthExceeded = "MIN_LENGTH_EXCEEDED"
-        case minValueExceeded = "MIN_VALUE_EXCEEDED"
-        case immutablePolicy = "IMMUTABLE_POLICY"
-        case invalidPattern = "INVALID_PATTERN"
-        case invalidPatternTargetId = "INVALID_PATTERN_TARGET_ID"
-        case inputRequired = "INPUT_REQUIRED"
-        case invalidNextToken = "INVALID_NEXT_TOKEN"
-        case maxLimitExceededFilter = "MAX_LIMIT_EXCEEDED_FILTER"
-        case movingAccountBetweenDifferentRoots = "MOVING_ACCOUNT_BETWEEN_DIFFERENT_ROOTS"
-        case invalidFullNameTarget = "INVALID_FULL_NAME_TARGET"
-        case unrecognizedServicePrincipal = "UNRECOGNIZED_SERVICE_PRINCIPAL"
-        case invalidRoleName = "INVALID_ROLE_NAME"
-        case invalidSystemTagsParameter = "INVALID_SYSTEM_TAGS_PARAMETER"
-        public var description: String { return self.rawValue }
-    }
-
     public struct InviteAccountToOrganizationRequest: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Notes", required: false, type: .string), 
@@ -1374,9 +1201,9 @@ extension Organizations {
             self.target = target
         }
 
-        public func validate() throws {
-            try validate(notes, name:"notes", max: 1024)
-            try target.validate()
+        public func validate(name: String) throws {
+            try validate(notes, name:"notes", parent: name, max: 1024)
+            try target.validate(name: "\(name).target")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1397,10 +1224,6 @@ extension Organizations {
             self.handshake = handshake
         }
 
-        public func validate() throws {
-            try handshake?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case handshake = "Handshake"
         }
@@ -1413,18 +1236,18 @@ extension Organizations {
         ]
 
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1449,12 +1272,6 @@ extension Organizations {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try enabledServicePrincipals?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case enabledServicePrincipals = "EnabledServicePrincipals"
             case nextToken = "NextToken"
@@ -1469,22 +1286,22 @@ extension Organizations {
         ]
 
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// The unique identifier (ID) for the parent root or organization unit (OU) whose accounts you want to list.
         public let parentId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, parentId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, parentId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.parentId = parentId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(parentId, name:"parentId", pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(parentId, name:"parentId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1510,12 +1327,6 @@ extension Organizations {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try accounts?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accounts = "Accounts"
             case nextToken = "NextToken"
@@ -1529,18 +1340,18 @@ extension Organizations {
         ]
 
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1565,12 +1376,6 @@ extension Organizations {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try accounts?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accounts = "Accounts"
             case nextToken = "NextToken"
@@ -1588,23 +1393,23 @@ extension Organizations {
         /// Filters the output to include only the specified child type.
         public let childType: ChildType
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// The unique identifier (ID) for the parent root or OU whose children you want to list. The regex pattern for a parent ID string requires one of the following:   Root: a string that begins with "r-" followed by from 4 to 32 lower-case letters or digits.   Organizational unit (OU): a string that begins with "ou-" followed by from 4 to 32 lower-case letters or digits (the ID of the root that the OU is in) followed by a second "-" dash and from 8 to 32 additional lower-case letters or digits.  
         public let parentId: String
 
-        public init(childType: ChildType, maxResults: Int32? = nil, nextToken: String? = nil, parentId: String) {
+        public init(childType: ChildType, maxResults: Int? = nil, nextToken: String? = nil, parentId: String) {
             self.childType = childType
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.parentId = parentId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(parentId, name:"parentId", pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(parentId, name:"parentId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1631,12 +1436,6 @@ extension Organizations {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try children?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case children = "Children"
             case nextToken = "NextToken"
@@ -1651,21 +1450,21 @@ extension Organizations {
         ]
 
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// A list of one or more states that you want included in the response. If this parameter isn't present, all requests are included in the response.
         public let states: [CreateAccountState]?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, states: [CreateAccountState]? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, states: [CreateAccountState]? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.states = states
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1691,12 +1490,6 @@ extension Organizations {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try createAccountStatuses?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createAccountStatuses = "CreateAccountStatuses"
             case nextToken = "NextToken"
@@ -1713,20 +1506,20 @@ extension Organizations {
         /// Filters the handshakes that you want included in the response. The default is all types. Use the ActionType element to limit the output to only a specified type, such as INVITE, ENABLE_ALL_FEATURES, or APPROVE_ALL_FEATURES. Alternatively, for the ENABLE_ALL_FEATURES handshake that generates a separate child handshake for each member account, you can specify ParentHandshakeId to see only the handshakes that were generated by that parent request.
         public let filter: HandshakeFilter?
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(filter: HandshakeFilter? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filter: HandshakeFilter? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try filter?.validate()
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try filter?.validate(name: "\(name).filter")
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1752,12 +1545,6 @@ extension Organizations {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try handshakes?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case handshakes = "Handshakes"
             case nextToken = "NextToken"
@@ -1774,20 +1561,20 @@ extension Organizations {
         /// A filter of the handshakes that you want included in the response. The default is all types. Use the ActionType element to limit the output to only a specified type, such as INVITE, ENABLE-ALL-FEATURES, or APPROVE-ALL-FEATURES. Alternatively, for the ENABLE-ALL-FEATURES handshake that generates a separate child handshake for each member account, you can specify the ParentHandshakeId to see only the handshakes that were generated by that parent request.
         public let filter: HandshakeFilter?
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(filter: HandshakeFilter? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filter: HandshakeFilter? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try filter?.validate()
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try filter?.validate(name: "\(name).filter")
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1813,12 +1600,6 @@ extension Organizations {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try handshakes?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case handshakes = "Handshakes"
             case nextToken = "NextToken"
@@ -1833,22 +1614,22 @@ extension Organizations {
         ]
 
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// The unique identifier (ID) of the root or OU whose child OUs you want to list. The regex pattern for a parent ID string requires one of the following:   Root: a string that begins with "r-" followed by from 4 to 32 lower-case letters or digits.   Organizational unit (OU): a string that begins with "ou-" followed by from 4 to 32 lower-case letters or digits (the ID of the root that the OU is in) followed by a second "-" dash and from 8 to 32 additional lower-case letters or digits.  
         public let parentId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, parentId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, parentId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.parentId = parentId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(parentId, name:"parentId", pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(parentId, name:"parentId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1874,12 +1655,6 @@ extension Organizations {
             self.organizationalUnits = organizationalUnits
         }
 
-        public func validate() throws {
-            try organizationalUnits?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case organizationalUnits = "OrganizationalUnits"
@@ -1896,20 +1671,20 @@ extension Organizations {
         /// The unique identifier (ID) of the OU or account whose parent containers you want to list. Don't specify a root. The regex pattern for a child ID string requires one of the following:   Account: a string that consists of exactly 12 digits.   Organizational unit (OU): a string that begins with "ou-" followed by from 4 to 32 lower-case letters or digits (the ID of the root that contains the OU) followed by a second "-" dash and from 8 to 32 additional lower-case letters or digits.  
         public let childId: String
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(childId: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(childId: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.childId = childId
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(childId, name:"childId", pattern: "^(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(childId, name:"childId", parent: name, pattern: "^(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1935,12 +1710,6 @@ extension Organizations {
             self.parents = parents
         }
 
-        public func validate() throws {
-            try parents?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case parents = "Parents"
@@ -1958,23 +1727,23 @@ extension Organizations {
         /// The type of policy that you want to include in the returned list.
         public let filter: PolicyType
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// The unique identifier (ID) of the root, organizational unit, or account whose policies you want to list. The regex pattern for a target ID string requires one of the following:   Root: a string that begins with "r-" followed by from 4 to 32 lower-case letters or digits.   Account: a string that consists of exactly 12 digits.   Organizational unit (OU): a string that begins with "ou-" followed by from 4 to 32 lower-case letters or digits (the ID of the root that the OU is in) followed by a second "-" dash and from 8 to 32 additional lower-case letters or digits.  
         public let targetId: String
 
-        public init(filter: PolicyType, maxResults: Int32? = nil, nextToken: String? = nil, targetId: String) {
+        public init(filter: PolicyType, maxResults: Int? = nil, nextToken: String? = nil, targetId: String) {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.targetId = targetId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(targetId, name:"targetId", pattern: "^(r-[0-9a-z]{4,32})|(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(targetId, name:"targetId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2001,12 +1770,6 @@ extension Organizations {
             self.policies = policies
         }
 
-        public func validate() throws {
-            try policies?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case policies = "Policies"
@@ -2023,19 +1786,19 @@ extension Organizations {
         /// Specifies the type of policy that you want to include in the response.
         public let filter: PolicyType
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(filter: PolicyType, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filter: PolicyType, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2061,12 +1824,6 @@ extension Organizations {
             self.policies = policies
         }
 
-        public func validate() throws {
-            try policies?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case policies = "Policies"
@@ -2080,18 +1837,18 @@ extension Organizations {
         ]
 
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2116,12 +1873,6 @@ extension Organizations {
             self.roots = roots
         }
 
-        public func validate() throws {
-            try roots?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case roots = "Roots"
@@ -2144,8 +1895,8 @@ extension Organizations {
             self.resourceId = resourceId
         }
 
-        public func validate() throws {
-            try validate(resourceId, name:"resourceId", pattern: "^\\d{12}$")
+        public func validate(name: String) throws {
+            try validate(resourceId, name:"resourceId", parent: name, pattern: "^\\d{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2170,12 +1921,6 @@ extension Organizations {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try tags?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case tags = "Tags"
@@ -2190,22 +1935,22 @@ extension Organizations {
         ]
 
         /// (Optional) Use this to limit the number of results you want included per page in the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the NextToken response element is present and has a value (is not null). Include that value as the NextToken request parameter in the next call to the operation to get the next part of the results. Note that Organizations might return fewer results than the maximum even when there are more results available. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Use this parameter if you receive a NextToken response in a previous request that indicates that there is more output available. Set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// The unique identifier (ID) of the policy whose attachments you want to know. The regex pattern for a policy ID string requires "p-" followed by from 8 to 128 lower-case letters or digits.
         public let policyId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, policyId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, policyId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(policyId, name:"policyId", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^p-[0-9a-zA-Z_]{8,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2229,12 +1974,6 @@ extension Organizations {
         public init(nextToken: String? = nil, targets: [PolicyTargetSummary]? = nil) {
             self.nextToken = nextToken
             self.targets = targets
-        }
-
-        public func validate() throws {
-            try targets?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2263,10 +2002,10 @@ extension Organizations {
             self.sourceParentId = sourceParentId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: "^\\d{12}$")
-            try validate(destinationParentId, name:"destinationParentId", pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
-            try validate(sourceParentId, name:"sourceParentId", pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: "^\\d{12}$")
+            try validate(destinationParentId, name:"destinationParentId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
+            try validate(sourceParentId, name:"sourceParentId", parent: name, pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2312,16 +2051,6 @@ extension Organizations {
             self.masterAccountId = masterAccountId
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:organizations::\\d{12}:organization\\/o-[a-z0-9]{10,32}")
-            try validate(id, name:"id", pattern: "^o-[a-z0-9]{10,32}$")
-            try validate(masterAccountArn, name:"masterAccountArn", pattern: "^arn:aws:organizations::\\d{12}:account\\/o-[a-z0-9]{10,32}\\/\\d{12}")
-            try validate(masterAccountEmail, name:"masterAccountEmail", max: 64)
-            try validate(masterAccountEmail, name:"masterAccountEmail", min: 6)
-            try validate(masterAccountEmail, name:"masterAccountEmail", pattern: "[^\\s@]+@[^\\s@]+\\.[^\\s@]+")
-            try validate(masterAccountId, name:"masterAccountId", pattern: "^\\d{12}$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case availablePolicyTypes = "AvailablePolicyTypes"
@@ -2359,13 +2088,6 @@ extension Organizations {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:organizations::\\d{12}:ou\\/o-[a-z0-9]{10,32}\\/ou-[0-9a-z]{4,32}-[0-9a-z]{8,32}")
-            try validate(id, name:"id", pattern: "^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$")
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case id = "Id"
@@ -2387,10 +2109,6 @@ extension Organizations {
         public init(id: String? = nil, type: ParentType? = nil) {
             self.id = id
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^(r-[0-9a-z]{4,32})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2419,12 +2137,6 @@ extension Organizations {
         public init(content: String? = nil, policySummary: PolicySummary? = nil) {
             self.content = content
             self.policySummary = policySummary
-        }
-
-        public func validate() throws {
-            try validate(content, name:"content", max: 1000000)
-            try validate(content, name:"content", min: 1)
-            try policySummary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2465,14 +2177,6 @@ extension Organizations {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^(arn:aws:organizations::\\d{12}:policy\\/o-[a-z0-9]{10,32}\\/[0-9a-z_]+\\/p-[0-9a-z]{10,32})|(arn:aws:organizations::aws:policy\\/[0-9a-z_]+\\/p-[0-9a-zA-Z_]{10,128})")
-            try validate(description, name:"description", max: 512)
-            try validate(id, name:"id", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case awsManaged = "AwsManaged"
@@ -2505,13 +2209,6 @@ extension Organizations {
             self.name = name
             self.targetId = targetId
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:organizations::.+:.+")
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(targetId, name:"targetId", pattern: "^(r-[0-9a-z]{4,32})|(\\d{12})|(ou-[0-9a-z]{4,32}-[a-z0-9]{8,32})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2568,8 +2265,8 @@ extension Organizations {
             self.accountId = accountId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: "^\\d{12}$")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: "^\\d{12}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2601,13 +2298,6 @@ extension Organizations {
             self.policyTypes = policyTypes
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:organizations::\\d{12}:root\\/o-[a-z0-9]{10,32}\\/r-[0-9a-z]{4,32}")
-            try validate(id, name:"id", pattern: "^r-[0-9a-z]{4,32}$")
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case id = "Id"
@@ -2632,13 +2322,13 @@ extension Organizations {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 0)
-            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(key, name:"key", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, min: 0)
+            try validate(value, name:"value", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2663,10 +2353,10 @@ extension Organizations {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(resourceId, name:"resourceId", pattern: "^\\d{12}$")
+        public func validate(name: String) throws {
+            try validate(resourceId, name:"resourceId", parent: name, pattern: "^\\d{12}$")
             try tags.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
         }
 
@@ -2699,12 +2389,12 @@ extension Organizations {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
-            try validate(resourceId, name:"resourceId", pattern: "^\\d{12}$")
+        public func validate(name: String) throws {
+            try validate(resourceId, name:"resourceId", parent: name, pattern: "^\\d{12}$")
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
-                try validate($0, name:"tagKeys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
             }
         }
 
@@ -2730,10 +2420,10 @@ extension Organizations {
             self.organizationalUnitId = organizationalUnitId
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(organizationalUnitId, name:"organizationalUnitId", pattern: "^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 128)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(organizationalUnitId, name:"organizationalUnitId", parent: name, pattern: "^ou-[0-9a-z]{4,32}-[a-z0-9]{8,32}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2752,10 +2442,6 @@ extension Organizations {
 
         public init(organizationalUnit: OrganizationalUnit? = nil) {
             self.organizationalUnit = organizationalUnit
-        }
-
-        public func validate() throws {
-            try organizationalUnit?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2787,13 +2473,13 @@ extension Organizations {
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(content, name:"content", max: 1000000)
-            try validate(content, name:"content", min: 1)
-            try validate(description, name:"description", max: 512)
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(policyId, name:"policyId", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
+        public func validate(name: String) throws {
+            try validate(content, name:"content", parent: name, max: 1000000)
+            try validate(content, name:"content", parent: name, min: 1)
+            try validate(description, name:"description", parent: name, max: 512)
+            try validate(name, name:"name", parent: name, max: 128)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^p-[0-9a-zA-Z_]{8,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2814,10 +2500,6 @@ extension Organizations {
 
         public init(policy: Policy? = nil) {
             self.policy = policy
-        }
-
-        public func validate() throws {
-            try policy?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

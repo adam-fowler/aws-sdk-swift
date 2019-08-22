@@ -479,18 +479,18 @@ extension ApplicationInsights {
         ]
 
         /// The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned NextToken value.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to request the next page of results.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 40)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 40)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -529,21 +529,21 @@ extension ApplicationInsights {
         ]
 
         /// The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned NextToken value.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to request the next page of results.
         public let nextToken: String?
         /// The name of the resource group.
         public let resourceGroupName: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, resourceGroupName: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, resourceGroupName: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceGroupName = resourceGroupName
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 40)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 40)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -587,7 +587,7 @@ extension ApplicationInsights {
         /// The time when the problem ended, in epoch seconds. If not specified, problems within the past seven days are returned.
         public let endTime: TimeStamp?
         /// The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned NextToken value.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to request the next page of results.
         public let nextToken: String?
         /// The name of the resource group.
@@ -595,7 +595,7 @@ extension ApplicationInsights {
         /// The time when the problem was detected, in epoch seconds. If you don't specify a time frame for the request, problems within the past seven days are returned.
         public let startTime: TimeStamp?
 
-        public init(endTime: TimeStamp? = nil, maxResults: Int32? = nil, nextToken: String? = nil, resourceGroupName: String? = nil, startTime: TimeStamp? = nil) {
+        public init(endTime: TimeStamp? = nil, maxResults: Int? = nil, nextToken: String? = nil, resourceGroupName: String? = nil, startTime: TimeStamp? = nil) {
             self.endTime = endTime
             self.maxResults = maxResults
             self.nextToken = nextToken
@@ -603,9 +603,9 @@ extension ApplicationInsights {
             self.startTime = startTime
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 40)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 40)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

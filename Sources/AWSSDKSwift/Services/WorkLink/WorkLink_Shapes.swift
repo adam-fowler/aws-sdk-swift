@@ -29,14 +29,14 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(acmCertificateArn, name:"acmCertificateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]+:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(acmCertificateArn, name:"acmCertificateArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]+:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
+            try validate(displayName, name:"displayName", parent: name, max: 100)
+            try validate(domainName, name:"domainName", parent: name, max: 253)
+            try validate(domainName, name:"domainName", parent: name, min: 1)
+            try validate(domainName, name:"domainName", parent: name, pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -75,12 +75,12 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 253)
+            try validate(domainName, name:"domainName", parent: name, min: 1)
+            try validate(domainName, name:"domainName", parent: name, pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -100,11 +100,6 @@ extension WorkLink {
 
         public init(authorizationProviderId: String? = nil) {
             self.authorizationProviderId = authorizationProviderId
-        }
-
-        public func validate() throws {
-            try validate(authorizationProviderId, name:"authorizationProviderId", max: 256)
-            try validate(authorizationProviderId, name:"authorizationProviderId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -132,13 +127,13 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(certificate, name:"certificate", max: 8192)
-            try validate(certificate, name:"certificate", min: 1)
-            try validate(certificate, name:"certificate", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(certificate, name:"certificate", parent: name, max: 8192)
+            try validate(certificate, name:"certificate", parent: name, min: 1)
+            try validate(certificate, name:"certificate", parent: name, pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            try validate(displayName, name:"displayName", parent: name, max: 100)
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -158,11 +153,6 @@ extension WorkLink {
 
         public init(websiteCaId: String? = nil) {
             self.websiteCaId = websiteCaId
-        }
-
-        public func validate() throws {
-            try validate(websiteCaId, name:"websiteCaId", max: 256)
-            try validate(websiteCaId, name:"websiteCaId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -195,11 +185,11 @@ extension WorkLink {
             self.optimizeForEndUserLocation = optimizeForEndUserLocation
         }
 
-        public func validate() throws {
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(fleetName, name:"fleetName", max: 48)
-            try validate(fleetName, name:"fleetName", min: 1)
-            try validate(fleetName, name:"fleetName", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,46}[a-z0-9])?$")
+        public func validate(name: String) throws {
+            try validate(displayName, name:"displayName", parent: name, max: 100)
+            try validate(fleetName, name:"fleetName", parent: name, max: 48)
+            try validate(fleetName, name:"fleetName", parent: name, min: 1)
+            try validate(fleetName, name:"fleetName", parent: name, pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,46}[a-z0-9])?$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -221,11 +211,6 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case fleetArn = "FleetArn"
         }
@@ -243,9 +228,9 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -273,9 +258,9 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -312,9 +297,9 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -342,17 +327,6 @@ extension WorkLink {
             self.vpcId = vpcId
         }
 
-        public func validate() throws {
-            try securityGroupIds?.forEach {
-                try validate($0, name:"securityGroupIds[]", pattern: "^sg-([0-9a-f]{8}|[0-9a-f]{17})$")
-            }
-            try validate(securityGroupIds, name:"securityGroupIds", max: 5)
-            try subnetIds?.forEach {
-                try validate($0, name:"subnetIds[]", pattern: "^subnet-([0-9a-f]{8}|[0-9a-f]{17})$")
-            }
-            try validate(vpcId, name:"vpcId", pattern: "^vpc-([0-9a-f]{8}|[0-9a-f]{17})$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case securityGroupIds = "SecurityGroupIds"
             case subnetIds = "SubnetIds"
@@ -372,9 +346,9 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -392,12 +366,6 @@ extension WorkLink {
 
         public init(deviceCaCertificate: String? = nil) {
             self.deviceCaCertificate = deviceCaCertificate
-        }
-
-        public func validate() throws {
-            try validate(deviceCaCertificate, name:"deviceCaCertificate", max: 8192)
-            try validate(deviceCaCertificate, name:"deviceCaCertificate", min: 1)
-            try validate(deviceCaCertificate, name:"deviceCaCertificate", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -421,11 +389,11 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(deviceId, name:"deviceId", max: 256)
-            try validate(deviceId, name:"deviceId", min: 1)
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(deviceId, name:"deviceId", parent: name, max: 256)
+            try validate(deviceId, name:"deviceId", parent: name, min: 1)
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -478,21 +446,6 @@ extension WorkLink {
             self.username = username
         }
 
-        public func validate() throws {
-            try validate(manufacturer, name:"manufacturer", max: 256)
-            try validate(manufacturer, name:"manufacturer", min: 1)
-            try validate(model, name:"model", max: 256)
-            try validate(model, name:"model", min: 1)
-            try validate(operatingSystem, name:"operatingSystem", max: 256)
-            try validate(operatingSystem, name:"operatingSystem", min: 1)
-            try validate(operatingSystemVersion, name:"operatingSystemVersion", max: 256)
-            try validate(operatingSystemVersion, name:"operatingSystemVersion", min: 1)
-            try validate(patchLevel, name:"patchLevel", max: 256)
-            try validate(patchLevel, name:"patchLevel", min: 1)
-            try validate(username, name:"username", max: 256)
-            try validate(username, name:"username", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case firstAccessedTime = "FirstAccessedTime"
             case lastAccessedTime = "LastAccessedTime"
@@ -522,12 +475,12 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 253)
+            try validate(domainName, name:"domainName", parent: name, min: 1)
+            try validate(domainName, name:"domainName", parent: name, pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -564,14 +517,6 @@ extension WorkLink {
             self.domainStatus = domainStatus
         }
 
-        public func validate() throws {
-            try validate(acmCertificateArn, name:"acmCertificateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:[\\w+=/,.@-]*:[0-9]+:[\\w+=,.@-]+(/[\\w+=/,.@-]+)*")
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case acmCertificateArn = "AcmCertificateArn"
             case createdTime = "CreatedTime"
@@ -593,9 +538,9 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -639,15 +584,6 @@ extension WorkLink {
             self.optimizeForEndUserLocation = optimizeForEndUserLocation
         }
 
-        public func validate() throws {
-            try validate(companyCode, name:"companyCode", max: 32)
-            try validate(companyCode, name:"companyCode", min: 1)
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(fleetName, name:"fleetName", max: 48)
-            try validate(fleetName, name:"fleetName", min: 1)
-            try validate(fleetName, name:"fleetName", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,46}[a-z0-9])?$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case companyCode = "CompanyCode"
             case createdTime = "CreatedTime"
@@ -671,9 +607,9 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -701,13 +637,6 @@ extension WorkLink {
             self.serviceProviderSamlMetadata = serviceProviderSamlMetadata
         }
 
-        public func validate() throws {
-            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", max: 204800)
-            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", min: 1)
-            try validate(serviceProviderSamlMetadata, name:"serviceProviderSamlMetadata", max: 204800)
-            try validate(serviceProviderSamlMetadata, name:"serviceProviderSamlMetadata", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case identityProviderSamlMetadata = "IdentityProviderSamlMetadata"
             case identityProviderType = "IdentityProviderType"
@@ -731,11 +660,11 @@ extension WorkLink {
             self.websiteCaId = websiteCaId
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(websiteCaId, name:"websiteCaId", max: 256)
-            try validate(websiteCaId, name:"websiteCaId", min: 1)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(websiteCaId, name:"websiteCaId", parent: name, max: 256)
+            try validate(websiteCaId, name:"websiteCaId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -762,13 +691,6 @@ extension WorkLink {
             self.certificate = certificate
             self.createdTime = createdTime
             self.displayName = displayName
-        }
-
-        public func validate() throws {
-            try validate(certificate, name:"certificate", max: 8192)
-            try validate(certificate, name:"certificate", min: 1)
-            try validate(certificate, name:"certificate", pattern: "-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
-            try validate(displayName, name:"displayName", max: 100)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -800,11 +722,6 @@ extension WorkLink {
             self.deviceStatus = deviceStatus
         }
 
-        public func validate() throws {
-            try validate(deviceId, name:"deviceId", max: 256)
-            try validate(deviceId, name:"deviceId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case deviceId = "DeviceId"
             case deviceStatus = "DeviceStatus"
@@ -827,12 +744,12 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 253)
+            try validate(domainName, name:"domainName", parent: name, min: 1)
+            try validate(domainName, name:"domainName", parent: name, pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -865,11 +782,11 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(authorizationProviderId, name:"authorizationProviderId", max: 256)
-            try validate(authorizationProviderId, name:"authorizationProviderId", min: 1)
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(authorizationProviderId, name:"authorizationProviderId", parent: name, max: 256)
+            try validate(authorizationProviderId, name:"authorizationProviderId", parent: name, min: 1)
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -902,11 +819,11 @@ extension WorkLink {
             self.websiteCaId = websiteCaId
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(websiteCaId, name:"websiteCaId", max: 256)
-            try validate(websiteCaId, name:"websiteCaId", min: 1)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(websiteCaId, name:"websiteCaId", parent: name, max: 256)
+            try validate(websiteCaId, name:"websiteCaId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -957,13 +874,6 @@ extension WorkLink {
             self.displayName = displayName
             self.domainName = domainName
             self.domainStatus = domainStatus
-        }
-
-        public func validate() throws {
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1020,17 +930,6 @@ extension WorkLink {
             self.lastUpdatedTime = lastUpdatedTime
         }
 
-        public func validate() throws {
-            try validate(companyCode, name:"companyCode", max: 32)
-            try validate(companyCode, name:"companyCode", min: 1)
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(fleetName, name:"fleetName", max: 48)
-            try validate(fleetName, name:"fleetName", min: 1)
-            try validate(fleetName, name:"fleetName", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,46}[a-z0-9])?$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case companyCode = "CompanyCode"
             case createdTime = "CreatedTime"
@@ -1057,23 +956,23 @@ extension WorkLink {
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The pagination token used to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
         public let nextToken: String?
 
-        public init(fleetArn: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(fleetArn: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1099,15 +998,6 @@ extension WorkLink {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try devices?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case devices = "Devices"
             case nextToken = "NextToken"
@@ -1124,23 +1014,23 @@ extension WorkLink {
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The pagination token used to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
         public let nextToken: String?
 
-        public init(fleetArn: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(fleetArn: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1166,15 +1056,6 @@ extension WorkLink {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try domains?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case domains = "Domains"
             case nextToken = "NextToken"
@@ -1188,20 +1069,20 @@ extension WorkLink {
         ]
 
         /// The maximum number of results to be included in the next page.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The pagination token used to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1226,15 +1107,6 @@ extension WorkLink {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try fleetSummaryList?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case fleetSummaryList = "FleetSummaryList"
             case nextToken = "NextToken"
@@ -1251,23 +1123,23 @@ extension WorkLink {
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The pagination token to use to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
         public let nextToken: String?
 
-        public init(fleetArn: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(fleetArn: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1293,15 +1165,6 @@ extension WorkLink {
             self.websiteAuthorizationProviders = websiteAuthorizationProviders
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
-            try websiteAuthorizationProviders?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case websiteAuthorizationProviders = "WebsiteAuthorizationProviders"
@@ -1318,23 +1181,23 @@ extension WorkLink {
         /// The ARN of the fleet.
         public let fleetArn: String
         /// The maximum number of results to be included in the next page.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The pagination token used to retrieve the next page of results for this operation. If this value is null, it retrieves the first page.
         public let nextToken: String?
 
-        public init(fleetArn: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(fleetArn: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.fleetArn = fleetArn
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\w\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1360,15 +1223,6 @@ extension WorkLink {
             self.websiteCertificateAuthorities = websiteCertificateAuthorities
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\w\\-]+")
-            try websiteCertificateAuthorities?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case websiteCertificateAuthorities = "WebsiteCertificateAuthorities"
@@ -1391,12 +1245,12 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 253)
+            try validate(domainName, name:"domainName", parent: name, min: 1)
+            try validate(domainName, name:"domainName", parent: name, pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1429,12 +1283,12 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 253)
+            try validate(domainName, name:"domainName", parent: name, min: 1)
+            try validate(domainName, name:"domainName", parent: name, pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1467,11 +1321,11 @@ extension WorkLink {
             self.username = username
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(username, name:"username", max: 256)
-            try validate(username, name:"username", min: 1)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(username, name:"username", parent: name, max: 256)
+            try validate(username, name:"username", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1504,9 +1358,9 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1547,17 +1401,17 @@ extension WorkLink {
             self.vpcId = vpcId
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
             try securityGroupIds.forEach {
-                try validate($0, name:"securityGroupIds[]", pattern: "^sg-([0-9a-f]{8}|[0-9a-f]{17})$")
+                try validate($0, name: "securityGroupIds[]", parent: name, pattern: "^sg-([0-9a-f]{8}|[0-9a-f]{17})$")
             }
-            try validate(securityGroupIds, name:"securityGroupIds", max: 5)
+            try validate(securityGroupIds, name:"securityGroupIds", parent: name, max: 5)
             try subnetIds.forEach {
-                try validate($0, name:"subnetIds[]", pattern: "^subnet-([0-9a-f]{8}|[0-9a-f]{17})$")
+                try validate($0, name: "subnetIds[]", parent: name, pattern: "^subnet-([0-9a-f]{8}|[0-9a-f]{17})$")
             }
-            try validate(vpcId, name:"vpcId", pattern: "^vpc-([0-9a-f]{8}|[0-9a-f]{17})$")
+            try validate(vpcId, name:"vpcId", parent: name, pattern: "^vpc-([0-9a-f]{8}|[0-9a-f]{17})$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1592,12 +1446,12 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(deviceCaCertificate, name:"deviceCaCertificate", max: 32768)
-            try validate(deviceCaCertificate, name:"deviceCaCertificate", min: 1)
-            try validate(deviceCaCertificate, name:"deviceCaCertificate", pattern: "(-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}\\u000D?\\u000A)*-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", parent: name, max: 32768)
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", parent: name, min: 1)
+            try validate(deviceCaCertificate, name:"deviceCaCertificate", parent: name, pattern: "(-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}\\u000D?\\u000A)*-{5}BEGIN CERTIFICATE-{5}\\u000D?\\u000A([A-Za-z0-9/+]{64}\\u000D?\\u000A)*[A-Za-z0-9/+]{1,64}={0,2}\\u000D?\\u000A-{5}END CERTIFICATE-{5}(\\u000D?\\u000A)?")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1634,13 +1488,13 @@ extension WorkLink {
             self.fleetArn = fleetArn
         }
 
-        public func validate() throws {
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(displayName, name:"displayName", parent: name, max: 100)
+            try validate(domainName, name:"domainName", parent: name, max: 253)
+            try validate(domainName, name:"domainName", parent: name, min: 1)
+            try validate(domainName, name:"domainName", parent: name, pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1678,10 +1532,10 @@ extension WorkLink {
             self.optimizeForEndUserLocation = optimizeForEndUserLocation
         }
 
-        public func validate() throws {
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(displayName, name:"displayName", parent: name, max: 100)
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1719,11 +1573,11 @@ extension WorkLink {
             self.identityProviderType = identityProviderType
         }
 
-        public func validate() throws {
-            try validate(fleetArn, name:"fleetArn", max: 2048)
-            try validate(fleetArn, name:"fleetArn", min: 20)
-            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", max: 204800)
-            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", min: 1)
+        public func validate(name: String) throws {
+            try validate(fleetArn, name:"fleetArn", parent: name, max: 2048)
+            try validate(fleetArn, name:"fleetArn", parent: name, min: 20)
+            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", parent: name, max: 204800)
+            try validate(identityProviderSamlMetadata, name:"identityProviderSamlMetadata", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1765,14 +1619,6 @@ extension WorkLink {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(authorizationProviderId, name:"authorizationProviderId", max: 256)
-            try validate(authorizationProviderId, name:"authorizationProviderId", min: 1)
-            try validate(domainName, name:"domainName", max: 253)
-            try validate(domainName, name:"domainName", min: 1)
-            try validate(domainName, name:"domainName", pattern: "^[a-zA-Z0-9]?((?!-)([A-Za-z0-9-]*[A-Za-z0-9])\\.)+[a-zA-Z0-9]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case authorizationProviderId = "AuthorizationProviderId"
             case authorizationProviderType = "AuthorizationProviderType"
@@ -1799,12 +1645,6 @@ extension WorkLink {
             self.createdTime = createdTime
             self.displayName = displayName
             self.websiteCaId = websiteCaId
-        }
-
-        public func validate() throws {
-            try validate(displayName, name:"displayName", max: 100)
-            try validate(websiteCaId, name:"websiteCaId", max: 256)
-            try validate(websiteCaId, name:"websiteCaId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

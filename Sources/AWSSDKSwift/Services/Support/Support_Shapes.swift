@@ -73,11 +73,11 @@ extension Support {
             self.communicationBody = communicationBody
         }
 
-        public func validate() throws {
-            try validate(ccEmailAddresses, name:"ccEmailAddresses", max: 10)
-            try validate(ccEmailAddresses, name:"ccEmailAddresses", min: 0)
-            try validate(communicationBody, name:"communicationBody", max: 8000)
-            try validate(communicationBody, name:"communicationBody", min: 1)
+        public func validate(name: String) throws {
+            try validate(ccEmailAddresses, name:"ccEmailAddresses", parent: name, max: 10)
+            try validate(ccEmailAddresses, name:"ccEmailAddresses", parent: name, min: 0)
+            try validate(communicationBody, name:"communicationBody", parent: name, max: 8000)
+            try validate(communicationBody, name:"communicationBody", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -205,12 +205,6 @@ extension Support {
             self.timeCreated = timeCreated
         }
 
-        public func validate() throws {
-            try validate(ccEmailAddresses, name:"ccEmailAddresses", max: 10)
-            try validate(ccEmailAddresses, name:"ccEmailAddresses", min: 0)
-            try recentCommunications?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case caseId = "caseId"
             case categoryCode = "categoryCode"
@@ -277,11 +271,6 @@ extension Support {
             self.timeCreated = timeCreated
         }
 
-        public func validate() throws {
-            try validate(body, name:"body", max: 8000)
-            try validate(body, name:"body", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attachmentSet = "attachmentSet"
             case body = "body"
@@ -335,11 +324,11 @@ extension Support {
             self.subject = subject
         }
 
-        public func validate() throws {
-            try validate(ccEmailAddresses, name:"ccEmailAddresses", max: 10)
-            try validate(ccEmailAddresses, name:"ccEmailAddresses", min: 0)
-            try validate(communicationBody, name:"communicationBody", max: 8000)
-            try validate(communicationBody, name:"communicationBody", min: 1)
+        public func validate(name: String) throws {
+            try validate(ccEmailAddresses, name:"ccEmailAddresses", parent: name, max: 10)
+            try validate(ccEmailAddresses, name:"ccEmailAddresses", parent: name, min: 0)
+            try validate(communicationBody, name:"communicationBody", parent: name, max: 8000)
+            try validate(communicationBody, name:"communicationBody", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -434,11 +423,11 @@ extension Support {
         /// The ISO 639-1 code for the language in which AWS provides support. AWS Support currently supports English ("en") and Japanese ("ja"). Language parameters must be passed explicitly for operations that take them.
         public let language: String?
         /// The maximum number of results to return before paginating.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A resumption point for pagination.
         public let nextToken: String?
 
-        public init(afterTime: String? = nil, beforeTime: String? = nil, caseIdList: [String]? = nil, displayId: String? = nil, includeCommunications: Bool? = nil, includeResolvedCases: Bool? = nil, language: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(afterTime: String? = nil, beforeTime: String? = nil, caseIdList: [String]? = nil, displayId: String? = nil, includeCommunications: Bool? = nil, includeResolvedCases: Bool? = nil, language: String? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.afterTime = afterTime
             self.beforeTime = beforeTime
             self.caseIdList = caseIdList
@@ -450,11 +439,11 @@ extension Support {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(caseIdList, name:"caseIdList", max: 100)
-            try validate(caseIdList, name:"caseIdList", min: 0)
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 10)
+        public func validate(name: String) throws {
+            try validate(caseIdList, name:"caseIdList", parent: name, max: 100)
+            try validate(caseIdList, name:"caseIdList", parent: name, min: 0)
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 10)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -486,12 +475,6 @@ extension Support {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try cases?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cases = "cases"
             case nextToken = "nextToken"
@@ -514,11 +497,11 @@ extension Support {
         /// The AWS Support case ID requested or returned in the call. The case ID is an alphanumeric string formatted as shown in this example: case-12345678910-2013-c4c1d2bf33c5cf47 
         public let caseId: String
         /// The maximum number of results to return before paginating.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A resumption point for pagination.
         public let nextToken: String?
 
-        public init(afterTime: String? = nil, beforeTime: String? = nil, caseId: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(afterTime: String? = nil, beforeTime: String? = nil, caseId: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.afterTime = afterTime
             self.beforeTime = beforeTime
             self.caseId = caseId
@@ -526,9 +509,9 @@ extension Support {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 10)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 10)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -556,12 +539,6 @@ extension Support {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try communications?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case communications = "communications"
             case nextToken = "nextToken"
@@ -584,9 +561,9 @@ extension Support {
             self.serviceCodeList = serviceCodeList
         }
 
-        public func validate() throws {
-            try validate(serviceCodeList, name:"serviceCodeList", max: 100)
-            try validate(serviceCodeList, name:"serviceCodeList", min: 0)
+        public func validate(name: String) throws {
+            try validate(serviceCodeList, name:"serviceCodeList", parent: name, max: 100)
+            try validate(serviceCodeList, name:"serviceCodeList", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -801,12 +778,6 @@ extension Support {
         public init(communications: [Communication]? = nil, nextToken: String? = nil) {
             self.communications = communications
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try communications?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {

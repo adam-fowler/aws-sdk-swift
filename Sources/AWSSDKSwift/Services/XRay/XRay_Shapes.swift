@@ -86,14 +86,14 @@ extension XRay {
             AWSShapeMember(label: "UnknownHostCount", required: false, type: .integer)
         ]
 
-        public let connectionRefusedCount: Int32?
-        public let hTTPCode4XXCount: Int32?
-        public let hTTPCode5XXCount: Int32?
-        public let otherCount: Int32?
-        public let timeoutCount: Int32?
-        public let unknownHostCount: Int32?
+        public let connectionRefusedCount: Int?
+        public let hTTPCode4XXCount: Int?
+        public let hTTPCode5XXCount: Int?
+        public let otherCount: Int?
+        public let timeoutCount: Int?
+        public let unknownHostCount: Int?
 
-        public init(connectionRefusedCount: Int32? = nil, hTTPCode4XXCount: Int32? = nil, hTTPCode5XXCount: Int32? = nil, otherCount: Int32? = nil, timeoutCount: Int32? = nil, unknownHostCount: Int32? = nil) {
+        public init(connectionRefusedCount: Int? = nil, hTTPCode4XXCount: Int? = nil, hTTPCode5XXCount: Int? = nil, otherCount: Int? = nil, timeoutCount: Int? = nil, unknownHostCount: Int? = nil) {
             self.connectionRefusedCount = connectionRefusedCount
             self.hTTPCode4XXCount = hTTPCode4XXCount
             self.hTTPCode5XXCount = hTTPCode5XXCount
@@ -128,10 +128,10 @@ extension XRay {
             self.traceIds = traceIds
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try traceIds.forEach {
-                try validate($0, name:"traceIds[]", max: 35)
-                try validate($0, name:"traceIds[]", min: 1)
+                try validate($0, name: "traceIds[]", parent: name, max: 35)
+                try validate($0, name: "traceIds[]", parent: name, min: 1)
             }
         }
 
@@ -161,16 +161,6 @@ extension XRay {
             self.unprocessedTraceIds = unprocessedTraceIds
         }
 
-        public func validate() throws {
-            try traces?.forEach {
-                try $0.validate()
-            }
-            try unprocessedTraceIds?.forEach {
-                try validate($0, name:"unprocessedTraceIds[]", max: 35)
-                try validate($0, name:"unprocessedTraceIds[]", min: 1)
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case traces = "Traces"
@@ -194,9 +184,9 @@ extension XRay {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 32)
-            try validate(groupName, name:"groupName", min: 1)
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 32)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -234,8 +224,8 @@ extension XRay {
             self.samplingRule = samplingRule
         }
 
-        public func validate() throws {
-            try samplingRule.validate()
+        public func validate(name: String) throws {
+            try samplingRule.validate(name: "\(name).samplingRule")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -253,10 +243,6 @@ extension XRay {
 
         public init(samplingRuleRecord: SamplingRuleRecord? = nil) {
             self.samplingRuleRecord = samplingRuleRecord
-        }
-
-        public func validate() throws {
-            try samplingRuleRecord?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -280,11 +266,11 @@ extension XRay {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupARN, name:"groupARN", max: 400)
-            try validate(groupARN, name:"groupARN", min: 1)
-            try validate(groupName, name:"groupName", max: 32)
-            try validate(groupName, name:"groupName", min: 1)
+        public func validate(name: String) throws {
+            try validate(groupARN, name:"groupARN", parent: name, max: 400)
+            try validate(groupARN, name:"groupARN", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, max: 32)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -335,10 +321,6 @@ extension XRay {
             self.samplingRuleRecord = samplingRuleRecord
         }
 
-        public func validate() throws {
-            try samplingRuleRecord?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case samplingRuleRecord = "SamplingRuleRecord"
         }
@@ -359,7 +341,7 @@ extension XRay {
         /// The end time of the last segment on the edge.
         public let endTime: TimeStamp?
         /// Identifier of the edge. Unique within a service map.
-        public let referenceId: Int32?
+        public let referenceId: Int?
         /// A histogram that maps the spread of client response times on an edge.
         public let responseTimeHistogram: [HistogramEntry]?
         /// The start time of the first segment on the edge.
@@ -367,7 +349,7 @@ extension XRay {
         /// Response statistics for segments on the edge.
         public let summaryStatistics: EdgeStatistics?
 
-        public init(aliases: [Alias]? = nil, endTime: TimeStamp? = nil, referenceId: Int32? = nil, responseTimeHistogram: [HistogramEntry]? = nil, startTime: TimeStamp? = nil, summaryStatistics: EdgeStatistics? = nil) {
+        public init(aliases: [Alias]? = nil, endTime: TimeStamp? = nil, referenceId: Int? = nil, responseTimeHistogram: [HistogramEntry]? = nil, startTime: TimeStamp? = nil, summaryStatistics: EdgeStatistics? = nil) {
             self.aliases = aliases
             self.endTime = endTime
             self.referenceId = referenceId
@@ -724,11 +706,11 @@ extension XRay {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupARN, name:"groupARN", max: 400)
-            try validate(groupARN, name:"groupARN", min: 1)
-            try validate(groupName, name:"groupName", max: 32)
-            try validate(groupName, name:"groupName", min: 1)
+        public func validate(name: String) throws {
+            try validate(groupARN, name:"groupARN", parent: name, max: 400)
+            try validate(groupARN, name:"groupARN", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, max: 32)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -766,9 +748,9 @@ extension XRay {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 100)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 100)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -831,12 +813,6 @@ extension XRay {
             self.samplingRuleRecords = samplingRuleRecords
         }
 
-        public func validate() throws {
-            try samplingRuleRecords?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case samplingRuleRecords = "SamplingRuleRecords"
@@ -894,11 +870,11 @@ extension XRay {
             self.samplingStatisticsDocuments = samplingStatisticsDocuments
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try samplingStatisticsDocuments.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).samplingStatisticsDocuments[]")
             }
-            try validate(samplingStatisticsDocuments, name:"samplingStatisticsDocuments", max: 25)
+            try validate(samplingStatisticsDocuments, name:"samplingStatisticsDocuments", parent: name, max: 25)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -961,11 +937,11 @@ extension XRay {
             self.startTime = startTime
         }
 
-        public func validate() throws {
-            try validate(groupARN, name:"groupARN", max: 400)
-            try validate(groupARN, name:"groupARN", min: 1)
-            try validate(groupName, name:"groupName", max: 32)
-            try validate(groupName, name:"groupName", min: 1)
+        public func validate(name: String) throws {
+            try validate(groupARN, name:"groupARN", parent: name, max: 400)
+            try validate(groupARN, name:"groupARN", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, max: 32)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1036,11 +1012,11 @@ extension XRay {
         /// Pagination token. Not used.
         public let nextToken: String?
         /// Aggregation period in seconds.
-        public let period: Int32?
+        public let period: Int?
         /// The start of the time frame for which to aggregate statistics.
         public let startTime: TimeStamp
 
-        public init(endTime: TimeStamp, entitySelectorExpression: String? = nil, groupARN: String? = nil, groupName: String? = nil, nextToken: String? = nil, period: Int32? = nil, startTime: TimeStamp) {
+        public init(endTime: TimeStamp, entitySelectorExpression: String? = nil, groupARN: String? = nil, groupName: String? = nil, nextToken: String? = nil, period: Int? = nil, startTime: TimeStamp) {
             self.endTime = endTime
             self.entitySelectorExpression = entitySelectorExpression
             self.groupARN = groupARN
@@ -1050,13 +1026,13 @@ extension XRay {
             self.startTime = startTime
         }
 
-        public func validate() throws {
-            try validate(entitySelectorExpression, name:"entitySelectorExpression", max: 500)
-            try validate(entitySelectorExpression, name:"entitySelectorExpression", min: 1)
-            try validate(groupARN, name:"groupARN", max: 400)
-            try validate(groupARN, name:"groupARN", min: 1)
-            try validate(groupName, name:"groupName", max: 32)
-            try validate(groupName, name:"groupName", min: 1)
+        public func validate(name: String) throws {
+            try validate(entitySelectorExpression, name:"entitySelectorExpression", parent: name, max: 500)
+            try validate(entitySelectorExpression, name:"entitySelectorExpression", parent: name, min: 1)
+            try validate(groupARN, name:"groupARN", parent: name, max: 400)
+            try validate(groupARN, name:"groupARN", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, max: 32)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1113,10 +1089,10 @@ extension XRay {
             self.traceIds = traceIds
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try traceIds.forEach {
-                try validate($0, name:"traceIds[]", max: 35)
-                try validate($0, name:"traceIds[]", min: 1)
+                try validate($0, name: "traceIds[]", parent: name, max: 35)
+                try validate($0, name: "traceIds[]", parent: name, min: 1)
             }
         }
 
@@ -1219,12 +1195,6 @@ extension XRay {
             self.traceSummaries = traceSummaries
         }
 
-        public func validate() throws {
-            try traceSummaries?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case approximateTime = "ApproximateTime"
             case nextToken = "NextToken"
@@ -1294,11 +1264,11 @@ extension XRay {
         ]
 
         /// The prevalence of the entry.
-        public let count: Int32?
+        public let count: Int?
         /// The value of the entry.
         public let value: Double?
 
-        public init(count: Int32? = nil, value: Double? = nil) {
+        public init(count: Int? = nil, value: Double? = nil) {
             self.count = count
             self.value = value
         }
@@ -1323,13 +1293,13 @@ extension XRay {
         /// The request method.
         public let httpMethod: String?
         /// The response status.
-        public let httpStatus: Int32?
+        public let httpStatus: Int?
         /// The request URL.
         public let httpURL: String?
         /// The request's user agent string.
         public let userAgent: String?
 
-        public init(clientIp: String? = nil, httpMethod: String? = nil, httpStatus: Int32? = nil, httpURL: String? = nil, userAgent: String? = nil) {
+        public init(clientIp: String? = nil, httpMethod: String? = nil, httpStatus: Int? = nil, httpURL: String? = nil, userAgent: String? = nil) {
             self.clientIp = clientIp
             self.httpMethod = httpMethod
             self.httpStatus = httpStatus
@@ -1379,9 +1349,9 @@ extension XRay {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(keyId, name:"keyId", max: 3000)
-            try validate(keyId, name:"keyId", min: 1)
+        public func validate(name: String) throws {
+            try validate(keyId, name:"keyId", parent: name, max: 3000)
+            try validate(keyId, name:"keyId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1427,10 +1397,10 @@ extension XRay {
             self.telemetryRecords = telemetryRecords
         }
 
-        public func validate() throws {
-            try validate(eC2InstanceId, name:"eC2InstanceId", max: 20)
-            try validate(hostname, name:"hostname", max: 255)
-            try validate(resourceARN, name:"resourceARN", max: 500)
+        public func validate(name: String) throws {
+            try validate(eC2InstanceId, name:"eC2InstanceId", parent: name, max: 20)
+            try validate(hostname, name:"hostname", parent: name, max: 255)
+            try validate(resourceARN, name:"resourceARN", parent: name, max: 500)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1634,9 +1604,9 @@ extension XRay {
         /// Matches the HTTP method of a request.
         public let hTTPMethod: String
         /// The priority of the sampling rule.
-        public let priority: Int32
+        public let priority: Int
         /// A fixed number of matching requests to instrument per second, prior to applying the fixed rate. The reservoir is not used directly by services, but applies to all services using the rule collectively.
-        public let reservoirSize: Int32
+        public let reservoirSize: Int
         /// Matches the ARN of the AWS resource on which the service runs.
         public let resourceARN: String
         /// The ARN of the sampling rule. Specify a rule by either name or ARN, but not both.
@@ -1650,9 +1620,9 @@ extension XRay {
         /// Matches the path from a request URL.
         public let uRLPath: String
         /// The version of the sampling rule format (1).
-        public let version: Int32
+        public let version: Int
 
-        public init(attributes: [String: String]? = nil, fixedRate: Double, host: String, hTTPMethod: String, priority: Int32, reservoirSize: Int32, resourceARN: String, ruleARN: String? = nil, ruleName: String? = nil, serviceName: String, serviceType: String, uRLPath: String, version: Int32) {
+        public init(attributes: [String: String]? = nil, fixedRate: Double, host: String, hTTPMethod: String, priority: Int, reservoirSize: Int, resourceARN: String, ruleARN: String? = nil, ruleName: String? = nil, serviceName: String, serviceType: String, uRLPath: String, version: Int) {
             self.attributes = attributes
             self.fixedRate = fixedRate
             self.host = host
@@ -1668,21 +1638,27 @@ extension XRay {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(fixedRate, name:"fixedRate", max: 1)
-            try validate(fixedRate, name:"fixedRate", min: 0)
-            try validate(host, name:"host", max: 64)
-            try validate(hTTPMethod, name:"hTTPMethod", max: 10)
-            try validate(priority, name:"priority", max: 9999)
-            try validate(priority, name:"priority", min: 1)
-            try validate(reservoirSize, name:"reservoirSize", min: 0)
-            try validate(resourceARN, name:"resourceARN", max: 500)
-            try validate(ruleName, name:"ruleName", max: 32)
-            try validate(ruleName, name:"ruleName", min: 1)
-            try validate(serviceName, name:"serviceName", max: 64)
-            try validate(serviceType, name:"serviceType", max: 64)
-            try validate(uRLPath, name:"uRLPath", max: 128)
-            try validate(version, name:"version", min: 1)
+        public func validate(name: String) throws {
+            try attributes?.forEach {
+                try validate($0.key, name:"attributes.key", parent: name, max: 32)
+                try validate($0.key, name:"attributes.key", parent: name, min: 1)
+                try validate($0.value, name:"attributes[\"\($0.key)\"]", parent: name, max: 32)
+                try validate($0.value, name:"attributes[\"\($0.key)\"]", parent: name, min: 1)
+            }
+            try validate(fixedRate, name:"fixedRate", parent: name, max: 1)
+            try validate(fixedRate, name:"fixedRate", parent: name, min: 0)
+            try validate(host, name:"host", parent: name, max: 64)
+            try validate(hTTPMethod, name:"hTTPMethod", parent: name, max: 10)
+            try validate(priority, name:"priority", parent: name, max: 9999)
+            try validate(priority, name:"priority", parent: name, min: 1)
+            try validate(reservoirSize, name:"reservoirSize", parent: name, min: 0)
+            try validate(resourceARN, name:"resourceARN", parent: name, max: 500)
+            try validate(ruleName, name:"ruleName", parent: name, max: 32)
+            try validate(ruleName, name:"ruleName", parent: name, min: 1)
+            try validate(serviceName, name:"serviceName", parent: name, max: 64)
+            try validate(serviceType, name:"serviceType", parent: name, max: 64)
+            try validate(uRLPath, name:"uRLPath", parent: name, max: 128)
+            try validate(version, name:"version", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1722,10 +1698,6 @@ extension XRay {
             self.samplingRule = samplingRule
         }
 
-        public func validate() throws {
-            try samplingRule?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createdAt = "CreatedAt"
             case modifiedAt = "ModifiedAt"
@@ -1758,9 +1730,9 @@ extension XRay {
         /// Matches the HTTP method of a request.
         public let hTTPMethod: String?
         /// The priority of the sampling rule.
-        public let priority: Int32?
+        public let priority: Int?
         /// A fixed number of matching requests to instrument per second, prior to applying the fixed rate. The reservoir is not used directly by services, but applies to all services using the rule collectively.
-        public let reservoirSize: Int32?
+        public let reservoirSize: Int?
         /// Matches the ARN of the AWS resource on which the service runs.
         public let resourceARN: String?
         /// The ARN of the sampling rule. Specify a rule by either name or ARN, but not both.
@@ -1774,7 +1746,7 @@ extension XRay {
         /// Matches the path from a request URL.
         public let uRLPath: String?
 
-        public init(attributes: [String: String]? = nil, fixedRate: Double? = nil, host: String? = nil, hTTPMethod: String? = nil, priority: Int32? = nil, reservoirSize: Int32? = nil, resourceARN: String? = nil, ruleARN: String? = nil, ruleName: String? = nil, serviceName: String? = nil, serviceType: String? = nil, uRLPath: String? = nil) {
+        public init(attributes: [String: String]? = nil, fixedRate: Double? = nil, host: String? = nil, hTTPMethod: String? = nil, priority: Int? = nil, reservoirSize: Int? = nil, resourceARN: String? = nil, ruleARN: String? = nil, ruleName: String? = nil, serviceName: String? = nil, serviceType: String? = nil, uRLPath: String? = nil) {
             self.attributes = attributes
             self.fixedRate = fixedRate
             self.host = host
@@ -1789,15 +1761,21 @@ extension XRay {
             self.uRLPath = uRLPath
         }
 
-        public func validate() throws {
-            try validate(host, name:"host", max: 64)
-            try validate(hTTPMethod, name:"hTTPMethod", max: 10)
-            try validate(resourceARN, name:"resourceARN", max: 500)
-            try validate(ruleName, name:"ruleName", max: 32)
-            try validate(ruleName, name:"ruleName", min: 1)
-            try validate(serviceName, name:"serviceName", max: 64)
-            try validate(serviceType, name:"serviceType", max: 64)
-            try validate(uRLPath, name:"uRLPath", max: 128)
+        public func validate(name: String) throws {
+            try attributes?.forEach {
+                try validate($0.key, name:"attributes.key", parent: name, max: 32)
+                try validate($0.key, name:"attributes.key", parent: name, min: 1)
+                try validate($0.value, name:"attributes[\"\($0.key)\"]", parent: name, max: 32)
+                try validate($0.value, name:"attributes[\"\($0.key)\"]", parent: name, min: 1)
+            }
+            try validate(host, name:"host", parent: name, max: 64)
+            try validate(hTTPMethod, name:"hTTPMethod", parent: name, max: 10)
+            try validate(resourceARN, name:"resourceARN", parent: name, max: 500)
+            try validate(ruleName, name:"ruleName", parent: name, max: 32)
+            try validate(ruleName, name:"ruleName", parent: name, min: 1)
+            try validate(serviceName, name:"serviceName", parent: name, max: 64)
+            try validate(serviceType, name:"serviceType", parent: name, max: 64)
+            try validate(uRLPath, name:"uRLPath", parent: name, max: 128)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1826,17 +1804,17 @@ extension XRay {
         ]
 
         /// The number of requests recorded with borrowed reservoir quota.
-        public let borrowCount: Int32?
+        public let borrowCount: Int?
         /// The number of requests that matched the rule.
-        public let requestCount: Int32?
+        public let requestCount: Int?
         /// The name of the sampling rule.
         public let ruleName: String?
         /// The number of requests recorded.
-        public let sampledCount: Int32?
+        public let sampledCount: Int?
         /// The start time of the reporting window.
         public let timestamp: TimeStamp?
 
-        public init(borrowCount: Int32? = nil, requestCount: Int32? = nil, ruleName: String? = nil, sampledCount: Int32? = nil, timestamp: TimeStamp? = nil) {
+        public init(borrowCount: Int? = nil, requestCount: Int? = nil, ruleName: String? = nil, sampledCount: Int? = nil, timestamp: TimeStamp? = nil) {
             self.borrowCount = borrowCount
             self.requestCount = requestCount
             self.ruleName = ruleName
@@ -1864,19 +1842,19 @@ extension XRay {
         ]
 
         /// The number of requests recorded with borrowed reservoir quota.
-        public let borrowCount: Int32?
+        public let borrowCount: Int?
         /// A unique identifier for the service in hexadecimal.
         public let clientID: String
         /// The number of requests that matched the rule.
-        public let requestCount: Int32
+        public let requestCount: Int
         /// The name of the sampling rule.
         public let ruleName: String
         /// The number of requests recorded.
-        public let sampledCount: Int32
+        public let sampledCount: Int
         /// The current time.
         public let timestamp: TimeStamp
 
-        public init(borrowCount: Int32? = nil, clientID: String, requestCount: Int32, ruleName: String, sampledCount: Int32, timestamp: TimeStamp) {
+        public init(borrowCount: Int? = nil, clientID: String, requestCount: Int, ruleName: String, sampledCount: Int, timestamp: TimeStamp) {
             self.borrowCount = borrowCount
             self.clientID = clientID
             self.requestCount = requestCount
@@ -1885,14 +1863,14 @@ extension XRay {
             self.timestamp = timestamp
         }
 
-        public func validate() throws {
-            try validate(borrowCount, name:"borrowCount", min: 0)
-            try validate(clientID, name:"clientID", max: 24)
-            try validate(clientID, name:"clientID", min: 24)
-            try validate(requestCount, name:"requestCount", min: 0)
-            try validate(ruleName, name:"ruleName", max: 32)
-            try validate(ruleName, name:"ruleName", min: 1)
-            try validate(sampledCount, name:"sampledCount", min: 0)
+        public func validate(name: String) throws {
+            try validate(borrowCount, name:"borrowCount", parent: name, min: 0)
+            try validate(clientID, name:"clientID", parent: name, max: 24)
+            try validate(clientID, name:"clientID", parent: name, min: 24)
+            try validate(requestCount, name:"requestCount", parent: name, min: 0)
+            try validate(ruleName, name:"ruleName", parent: name, max: 32)
+            try validate(ruleName, name:"ruleName", parent: name, min: 1)
+            try validate(sampledCount, name:"sampledCount", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1945,15 +1923,15 @@ extension XRay {
         /// The percentage of matching requests to instrument, after the reservoir is exhausted.
         public let fixedRate: Double?
         /// The number of seconds for the service to wait before getting sampling targets again.
-        public let interval: Int32?
+        public let interval: Int?
         /// The number of requests per second that X-Ray allocated this service.
-        public let reservoirQuota: Int32?
+        public let reservoirQuota: Int?
         /// When the reservoir quota expires.
         public let reservoirQuotaTTL: TimeStamp?
         /// The name of the sampling rule.
         public let ruleName: String?
 
-        public init(fixedRate: Double? = nil, interval: Int32? = nil, reservoirQuota: Int32? = nil, reservoirQuotaTTL: TimeStamp? = nil, ruleName: String? = nil) {
+        public init(fixedRate: Double? = nil, interval: Int? = nil, reservoirQuota: Int? = nil, reservoirQuotaTTL: TimeStamp? = nil, ruleName: String? = nil) {
             self.fixedRate = fixedRate
             self.interval = interval
             self.reservoirQuota = reservoirQuota
@@ -1984,10 +1962,6 @@ extension XRay {
         public init(document: String? = nil, id: String? = nil) {
             self.document = document
             self.id = id
-        }
-
-        public func validate() throws {
-            try validate(document, name:"document", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2026,7 +2000,7 @@ extension XRay {
         /// A list of names for the service, including the canonical name.
         public let names: [String]?
         /// Identifier for the service. Unique within the service map.
-        public let referenceId: Int32?
+        public let referenceId: Int?
         /// A histogram that maps the spread of service response times.
         public let responseTimeHistogram: [HistogramEntry]?
         /// Indicates that the service was the first service to process a request.
@@ -2040,7 +2014,7 @@ extension XRay {
         /// The type of service.   AWS Resource - The type of an AWS resource. For example, AWS::EC2::Instance for a application running on Amazon EC2 or AWS::DynamoDB::Table for an Amazon DynamoDB table that the application used.   AWS Service - The type of an AWS service. For example, AWS::DynamoDB for downstream calls to Amazon DynamoDB that didn't target a specific table.    client - Represents the clients that sent requests to a root service.    remote - A downstream service of indeterminate type.  
         public let `type`: String?
 
-        public init(accountId: String? = nil, durationHistogram: [HistogramEntry]? = nil, edges: [Edge]? = nil, endTime: TimeStamp? = nil, name: String? = nil, names: [String]? = nil, referenceId: Int32? = nil, responseTimeHistogram: [HistogramEntry]? = nil, root: Bool? = nil, startTime: TimeStamp? = nil, state: String? = nil, summaryStatistics: ServiceStatistics? = nil, type: String? = nil) {
+        public init(accountId: String? = nil, durationHistogram: [HistogramEntry]? = nil, edges: [Edge]? = nil, endTime: TimeStamp? = nil, name: String? = nil, names: [String]? = nil, referenceId: Int? = nil, responseTimeHistogram: [HistogramEntry]? = nil, root: Bool? = nil, startTime: TimeStamp? = nil, state: String? = nil, summaryStatistics: ServiceStatistics? = nil, type: String? = nil) {
             self.accountId = accountId
             self.durationHistogram = durationHistogram
             self.edges = edges
@@ -2149,13 +2123,13 @@ extension XRay {
         ]
 
         public let backendConnectionErrors: BackendConnectionErrors?
-        public let segmentsReceivedCount: Int32?
-        public let segmentsRejectedCount: Int32?
-        public let segmentsSentCount: Int32?
-        public let segmentsSpilloverCount: Int32?
+        public let segmentsReceivedCount: Int?
+        public let segmentsRejectedCount: Int?
+        public let segmentsSentCount: Int?
+        public let segmentsSpilloverCount: Int?
         public let timestamp: TimeStamp
 
-        public init(backendConnectionErrors: BackendConnectionErrors? = nil, segmentsReceivedCount: Int32? = nil, segmentsRejectedCount: Int32? = nil, segmentsSentCount: Int32? = nil, segmentsSpilloverCount: Int32? = nil, timestamp: TimeStamp) {
+        public init(backendConnectionErrors: BackendConnectionErrors? = nil, segmentsReceivedCount: Int? = nil, segmentsRejectedCount: Int? = nil, segmentsSentCount: Int? = nil, segmentsSpilloverCount: Int? = nil, timestamp: TimeStamp) {
             self.backendConnectionErrors = backendConnectionErrors
             self.segmentsReceivedCount = segmentsReceivedCount
             self.segmentsRejectedCount = segmentsRejectedCount
@@ -2230,14 +2204,6 @@ extension XRay {
             self.segments = segments
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 35)
-            try validate(id, name:"id", min: 1)
-            try segments?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case duration = "Duration"
             case id = "Id"
@@ -2304,13 +2270,13 @@ extension XRay {
         /// A collection of ResponseTimeRootCause structures corresponding to the trace segments.
         public let responseTimeRootCauses: [ResponseTimeRootCause]?
         /// The revision number of a trace.
-        public let revision: Int32?
+        public let revision: Int?
         /// Service IDs from the trace's segment documents.
         public let serviceIds: [ServiceId]?
         /// Users from the trace's segment documents.
         public let users: [TraceUser]?
 
-        public init(annotations: [String: [ValueWithServiceIds]]? = nil, availabilityZones: [AvailabilityZoneDetail]? = nil, duration: Double? = nil, entryPoint: ServiceId? = nil, errorRootCauses: [ErrorRootCause]? = nil, faultRootCauses: [FaultRootCause]? = nil, hasError: Bool? = nil, hasFault: Bool? = nil, hasThrottle: Bool? = nil, http: Http? = nil, id: String? = nil, instanceIds: [InstanceIdDetail]? = nil, isPartial: Bool? = nil, matchedEventTime: TimeStamp? = nil, resourceARNs: [ResourceARNDetail]? = nil, responseTime: Double? = nil, responseTimeRootCauses: [ResponseTimeRootCause]? = nil, revision: Int32? = nil, serviceIds: [ServiceId]? = nil, users: [TraceUser]? = nil) {
+        public init(annotations: [String: [ValueWithServiceIds]]? = nil, availabilityZones: [AvailabilityZoneDetail]? = nil, duration: Double? = nil, entryPoint: ServiceId? = nil, errorRootCauses: [ErrorRootCause]? = nil, faultRootCauses: [FaultRootCause]? = nil, hasError: Bool? = nil, hasFault: Bool? = nil, hasThrottle: Bool? = nil, http: Http? = nil, id: String? = nil, instanceIds: [InstanceIdDetail]? = nil, isPartial: Bool? = nil, matchedEventTime: TimeStamp? = nil, resourceARNs: [ResourceARNDetail]? = nil, responseTime: Double? = nil, responseTimeRootCauses: [ResponseTimeRootCause]? = nil, revision: Int? = nil, serviceIds: [ServiceId]? = nil, users: [TraceUser]? = nil) {
             self.annotations = annotations
             self.availabilityZones = availabilityZones
             self.duration = duration
@@ -2331,11 +2297,6 @@ extension XRay {
             self.revision = revision
             self.serviceIds = serviceIds
             self.users = users
-        }
-
-        public func validate() throws {
-            try validate(id, name:"id", max: 35)
-            try validate(id, name:"id", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2458,11 +2419,11 @@ extension XRay {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupARN, name:"groupARN", max: 400)
-            try validate(groupARN, name:"groupARN", min: 1)
-            try validate(groupName, name:"groupName", max: 32)
-            try validate(groupName, name:"groupName", min: 1)
+        public func validate(name: String) throws {
+            try validate(groupARN, name:"groupARN", parent: name, max: 400)
+            try validate(groupARN, name:"groupARN", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, max: 32)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2501,8 +2462,8 @@ extension XRay {
             self.samplingRuleUpdate = samplingRuleUpdate
         }
 
-        public func validate() throws {
-            try samplingRuleUpdate.validate()
+        public func validate(name: String) throws {
+            try samplingRuleUpdate.validate(name: "\(name).samplingRuleUpdate")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2520,10 +2481,6 @@ extension XRay {
 
         public init(samplingRuleRecord: SamplingRuleRecord? = nil) {
             self.samplingRuleRecord = samplingRuleRecord
-        }
-
-        public func validate() throws {
-            try samplingRuleRecord?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

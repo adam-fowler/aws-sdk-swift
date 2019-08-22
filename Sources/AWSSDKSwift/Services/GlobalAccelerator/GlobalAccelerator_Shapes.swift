@@ -45,14 +45,6 @@ extension GlobalAccelerator {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
-            try ipSets?.forEach {
-                try $0.validate()
-            }
-            try validate(name, name:"name", max: 255)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case acceleratorArn = "AcceleratorArn"
             case createdTime = "CreatedTime"
@@ -83,11 +75,6 @@ extension GlobalAccelerator {
             self.flowLogsEnabled = flowLogsEnabled
             self.flowLogsS3Bucket = flowLogsS3Bucket
             self.flowLogsS3Prefix = flowLogsS3Prefix
-        }
-
-        public func validate() throws {
-            try validate(flowLogsS3Bucket, name:"flowLogsS3Bucket", max: 255)
-            try validate(flowLogsS3Prefix, name:"flowLogsS3Prefix", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -133,9 +120,9 @@ extension GlobalAccelerator {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(idempotencyToken, name:"idempotencyToken", max: 255)
-            try validate(name, name:"name", max: 255)
+        public func validate(name: String) throws {
+            try validate(idempotencyToken, name:"idempotencyToken", parent: name, max: 255)
+            try validate(name, name:"name", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -156,10 +143,6 @@ extension GlobalAccelerator {
 
         public init(accelerator: Accelerator? = nil) {
             self.accelerator = accelerator
-        }
-
-        public func validate() throws {
-            try accelerator?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -186,11 +169,11 @@ extension GlobalAccelerator {
         /// The name of the AWS Region where the endpoint group is located. A listener can have only one endpoint group in a specific Region.
         public let endpointGroupRegion: String
         /// The time—10 seconds or 30 seconds—between each health check for an endpoint. The default value is 30.
-        public let healthCheckIntervalSeconds: Int32?
+        public let healthCheckIntervalSeconds: Int?
         /// If the protocol is HTTP/S, then this specifies the path that is the destination for health check targets. The default value is slash (/).
         public let healthCheckPath: String?
         /// The port that AWS Global Accelerator uses to check the health of endpoints that are part of this endpoint group. The default port is the listener port that this endpoint group is associated with. If listener port is a list of ports, Global Accelerator uses the first port in the list.
-        public let healthCheckPort: Int32?
+        public let healthCheckPort: Int?
         /// The protocol that AWS Global Accelerator uses to check the health of endpoints that are part of this endpoint group. The default value is TCP.
         public let healthCheckProtocol: HealthCheckProtocol?
         /// A unique, case-sensitive identifier that you provide to ensure the idempotency—that is, the uniqueness—of the request.
@@ -198,11 +181,11 @@ extension GlobalAccelerator {
         /// The Amazon Resource Name (ARN) of the listener.
         public let listenerArn: String
         /// The number of consecutive health checks required to set the state of a healthy endpoint to unhealthy, or to set an unhealthy endpoint to healthy. The default value is 3.
-        public let thresholdCount: Int32?
+        public let thresholdCount: Int?
         /// The percentage of traffic to send to an AWS Region. Additional traffic is distributed to other endpoint groups for this listener.  Use this action to increase (dial up) or decrease (dial down) traffic to a specific Region. The percentage is applied to the traffic that would otherwise have been routed to the Region based on optimal routing. The default value is 100.
         public let trafficDialPercentage: Float?
 
-        public init(endpointConfigurations: [EndpointConfiguration]? = nil, endpointGroupRegion: String, healthCheckIntervalSeconds: Int32? = nil, healthCheckPath: String? = nil, healthCheckPort: Int32? = nil, healthCheckProtocol: HealthCheckProtocol? = nil, idempotencyToken: String, listenerArn: String, thresholdCount: Int32? = nil, trafficDialPercentage: Float? = nil) {
+        public init(endpointConfigurations: [EndpointConfiguration]? = nil, endpointGroupRegion: String, healthCheckIntervalSeconds: Int? = nil, healthCheckPath: String? = nil, healthCheckPort: Int? = nil, healthCheckProtocol: HealthCheckProtocol? = nil, idempotencyToken: String, listenerArn: String, thresholdCount: Int? = nil, trafficDialPercentage: Float? = nil) {
             self.endpointConfigurations = endpointConfigurations
             self.endpointGroupRegion = endpointGroupRegion
             self.healthCheckIntervalSeconds = healthCheckIntervalSeconds
@@ -215,24 +198,24 @@ extension GlobalAccelerator {
             self.trafficDialPercentage = trafficDialPercentage
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try endpointConfigurations?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).endpointConfigurations[]")
             }
-            try validate(endpointConfigurations, name:"endpointConfigurations", max: 10)
-            try validate(endpointConfigurations, name:"endpointConfigurations", min: 0)
-            try validate(endpointGroupRegion, name:"endpointGroupRegion", max: 255)
-            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", max: 30)
-            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", min: 10)
-            try validate(healthCheckPath, name:"healthCheckPath", max: 255)
-            try validate(healthCheckPort, name:"healthCheckPort", max: 65535)
-            try validate(healthCheckPort, name:"healthCheckPort", min: 1)
-            try validate(idempotencyToken, name:"idempotencyToken", max: 255)
-            try validate(listenerArn, name:"listenerArn", max: 255)
-            try validate(thresholdCount, name:"thresholdCount", max: 10)
-            try validate(thresholdCount, name:"thresholdCount", min: 1)
-            try validate(trafficDialPercentage, name:"trafficDialPercentage", max: 100)
-            try validate(trafficDialPercentage, name:"trafficDialPercentage", min: 0)
+            try validate(endpointConfigurations, name:"endpointConfigurations", parent: name, max: 10)
+            try validate(endpointConfigurations, name:"endpointConfigurations", parent: name, min: 0)
+            try validate(endpointGroupRegion, name:"endpointGroupRegion", parent: name, max: 255)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", parent: name, max: 30)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", parent: name, min: 10)
+            try validate(healthCheckPath, name:"healthCheckPath", parent: name, max: 255)
+            try validate(healthCheckPort, name:"healthCheckPort", parent: name, max: 65535)
+            try validate(healthCheckPort, name:"healthCheckPort", parent: name, min: 1)
+            try validate(idempotencyToken, name:"idempotencyToken", parent: name, max: 255)
+            try validate(listenerArn, name:"listenerArn", parent: name, max: 255)
+            try validate(thresholdCount, name:"thresholdCount", parent: name, max: 10)
+            try validate(thresholdCount, name:"thresholdCount", parent: name, min: 1)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", parent: name, max: 100)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -259,10 +242,6 @@ extension GlobalAccelerator {
 
         public init(endpointGroup: EndpointGroup? = nil) {
             self.endpointGroup = endpointGroup
-        }
-
-        public func validate() throws {
-            try endpointGroup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -298,14 +277,14 @@ extension GlobalAccelerator {
             self.`protocol` = `protocol`
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
-            try validate(idempotencyToken, name:"idempotencyToken", max: 255)
+        public func validate(name: String) throws {
+            try validate(acceleratorArn, name:"acceleratorArn", parent: name, max: 255)
+            try validate(idempotencyToken, name:"idempotencyToken", parent: name, max: 255)
             try portRanges.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).portRanges[]")
             }
-            try validate(portRanges, name:"portRanges", max: 10)
-            try validate(portRanges, name:"portRanges", min: 1)
+            try validate(portRanges, name:"portRanges", parent: name, max: 10)
+            try validate(portRanges, name:"portRanges", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -329,10 +308,6 @@ extension GlobalAccelerator {
             self.listener = listener
         }
 
-        public func validate() throws {
-            try listener?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case listener = "Listener"
         }
@@ -350,8 +325,8 @@ extension GlobalAccelerator {
             self.acceleratorArn = acceleratorArn
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(acceleratorArn, name:"acceleratorArn", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -371,8 +346,8 @@ extension GlobalAccelerator {
             self.endpointGroupArn = endpointGroupArn
         }
 
-        public func validate() throws {
-            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(endpointGroupArn, name:"endpointGroupArn", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -392,8 +367,8 @@ extension GlobalAccelerator {
             self.listenerArn = listenerArn
         }
 
-        public func validate() throws {
-            try validate(listenerArn, name:"listenerArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(listenerArn, name:"listenerArn", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -413,8 +388,8 @@ extension GlobalAccelerator {
             self.acceleratorArn = acceleratorArn
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(acceleratorArn, name:"acceleratorArn", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -434,10 +409,6 @@ extension GlobalAccelerator {
             self.acceleratorAttributes = acceleratorAttributes
         }
 
-        public func validate() throws {
-            try acceleratorAttributes?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case acceleratorAttributes = "AcceleratorAttributes"
         }
@@ -455,8 +426,8 @@ extension GlobalAccelerator {
             self.acceleratorArn = acceleratorArn
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(acceleratorArn, name:"acceleratorArn", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -476,10 +447,6 @@ extension GlobalAccelerator {
             self.accelerator = accelerator
         }
 
-        public func validate() throws {
-            try accelerator?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accelerator = "Accelerator"
         }
@@ -497,8 +464,8 @@ extension GlobalAccelerator {
             self.endpointGroupArn = endpointGroupArn
         }
 
-        public func validate() throws {
-            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(endpointGroupArn, name:"endpointGroupArn", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -518,10 +485,6 @@ extension GlobalAccelerator {
             self.endpointGroup = endpointGroup
         }
 
-        public func validate() throws {
-            try endpointGroup?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case endpointGroup = "EndpointGroup"
         }
@@ -539,8 +502,8 @@ extension GlobalAccelerator {
             self.listenerArn = listenerArn
         }
 
-        public func validate() throws {
-            try validate(listenerArn, name:"listenerArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(listenerArn, name:"listenerArn", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -560,10 +523,6 @@ extension GlobalAccelerator {
             self.listener = listener
         }
 
-        public func validate() throws {
-            try listener?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case listener = "Listener"
         }
@@ -578,17 +537,17 @@ extension GlobalAccelerator {
         /// An ID for the endpoint. If the endpoint is a Network Load Balancer or Application Load Balancer, this is the Amazon Resource Name (ARN) of the resource. If the endpoint is an Elastic IP address, this is the Elastic IP address allocation ID.
         public let endpointId: String?
         /// The weight associated with the endpoint. When you add weights to endpoints, you configure AWS Global Accelerator to route traffic based on proportions that you specify. For example, you might specify endpoint weights of 4, 5, 5, and 6 (sum=20). The result is that 4/20 of your traffic, on average, is routed to the first endpoint, 5/20 is routed both to the second and third endpoints, and 6/20 is routed to the last endpoint. For more information, see Endpoint Weights in the AWS Global Accelerator Developer Guide.
-        public let weight: Int32?
+        public let weight: Int?
 
-        public init(endpointId: String? = nil, weight: Int32? = nil) {
+        public init(endpointId: String? = nil, weight: Int? = nil) {
             self.endpointId = endpointId
             self.weight = weight
         }
 
-        public func validate() throws {
-            try validate(endpointId, name:"endpointId", max: 255)
-            try validate(weight, name:"weight", max: 255)
-            try validate(weight, name:"weight", min: 0)
+        public func validate(name: String) throws {
+            try validate(endpointId, name:"endpointId", parent: name, max: 255)
+            try validate(weight, name:"weight", parent: name, max: 255)
+            try validate(weight, name:"weight", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -612,20 +571,13 @@ extension GlobalAccelerator {
         /// The health status of the endpoint.
         public let healthState: HealthState?
         /// The weight associated with the endpoint. When you add weights to endpoints, you configure AWS Global Accelerator to route traffic based on proportions that you specify. For example, you might specify endpoint weights of 4, 5, 5, and 6 (sum=20). The result is that 4/20 of your traffic, on average, is routed to the first endpoint, 5/20 is routed both to the second and third endpoints, and 6/20 is routed to the last endpoint. For more information, see Endpoint Weights in the AWS Global Accelerator Developer Guide. 
-        public let weight: Int32?
+        public let weight: Int?
 
-        public init(endpointId: String? = nil, healthReason: String? = nil, healthState: HealthState? = nil, weight: Int32? = nil) {
+        public init(endpointId: String? = nil, healthReason: String? = nil, healthState: HealthState? = nil, weight: Int? = nil) {
             self.endpointId = endpointId
             self.healthReason = healthReason
             self.healthState = healthState
             self.weight = weight
-        }
-
-        public func validate() throws {
-            try validate(endpointId, name:"endpointId", max: 255)
-            try validate(healthReason, name:"healthReason", max: 255)
-            try validate(weight, name:"weight", max: 255)
-            try validate(weight, name:"weight", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -656,19 +608,19 @@ extension GlobalAccelerator {
         /// The AWS Region that this endpoint group belongs.
         public let endpointGroupRegion: String?
         /// The time—10 seconds or 30 seconds—between health checks for each endpoint. The default value is 30.
-        public let healthCheckIntervalSeconds: Int32?
+        public let healthCheckIntervalSeconds: Int?
         /// If the protocol is HTTP/S, then this value provides the ping path that Global Accelerator uses for the destination on the endpoints for health checks. The default is slash (/).
         public let healthCheckPath: String?
         /// The port that Global Accelerator uses to perform health checks on endpoints that are part of this endpoint group.  The default port is the port for the listener that this endpoint group is associated with. If the listener port is a list, Global Accelerator uses the first specified port in the list of ports.
-        public let healthCheckPort: Int32?
+        public let healthCheckPort: Int?
         /// The protocol that Global Accelerator uses to perform health checks on endpoints that are part of this endpoint group. The default value is TCP.
         public let healthCheckProtocol: HealthCheckProtocol?
         /// The number of consecutive health checks required to set the state of a healthy endpoint to unhealthy, or to set an unhealthy endpoint to healthy. The default value is 3.
-        public let thresholdCount: Int32?
+        public let thresholdCount: Int?
         /// The percentage of traffic to send to an AWS Region. Additional traffic is distributed to other endpoint groups for this listener.  Use this action to increase (dial up) or decrease (dial down) traffic to a specific Region. The percentage is applied to the traffic that would otherwise have been routed to the Region based on optimal routing. The default value is 100.
         public let trafficDialPercentage: Float?
 
-        public init(endpointDescriptions: [EndpointDescription]? = nil, endpointGroupArn: String? = nil, endpointGroupRegion: String? = nil, healthCheckIntervalSeconds: Int32? = nil, healthCheckPath: String? = nil, healthCheckPort: Int32? = nil, healthCheckProtocol: HealthCheckProtocol? = nil, thresholdCount: Int32? = nil, trafficDialPercentage: Float? = nil) {
+        public init(endpointDescriptions: [EndpointDescription]? = nil, endpointGroupArn: String? = nil, endpointGroupRegion: String? = nil, healthCheckIntervalSeconds: Int? = nil, healthCheckPath: String? = nil, healthCheckPort: Int? = nil, healthCheckProtocol: HealthCheckProtocol? = nil, thresholdCount: Int? = nil, trafficDialPercentage: Float? = nil) {
             self.endpointDescriptions = endpointDescriptions
             self.endpointGroupArn = endpointGroupArn
             self.endpointGroupRegion = endpointGroupRegion
@@ -678,23 +630,6 @@ extension GlobalAccelerator {
             self.healthCheckProtocol = healthCheckProtocol
             self.thresholdCount = thresholdCount
             self.trafficDialPercentage = trafficDialPercentage
-        }
-
-        public func validate() throws {
-            try endpointDescriptions?.forEach {
-                try $0.validate()
-            }
-            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
-            try validate(endpointGroupRegion, name:"endpointGroupRegion", max: 255)
-            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", max: 30)
-            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", min: 10)
-            try validate(healthCheckPath, name:"healthCheckPath", max: 255)
-            try validate(healthCheckPort, name:"healthCheckPort", max: 65535)
-            try validate(healthCheckPort, name:"healthCheckPort", min: 1)
-            try validate(thresholdCount, name:"thresholdCount", max: 10)
-            try validate(thresholdCount, name:"thresholdCount", min: 1)
-            try validate(trafficDialPercentage, name:"trafficDialPercentage", max: 100)
-            try validate(trafficDialPercentage, name:"trafficDialPercentage", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -745,12 +680,6 @@ extension GlobalAccelerator {
             self.ipFamily = ipFamily
         }
 
-        public func validate() throws {
-            try validate(ipAddresses, name:"ipAddresses", max: 2)
-            try validate(ipAddresses, name:"ipAddresses", min: 0)
-            try validate(ipFamily, name:"ipFamily", max: 255)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case ipAddresses = "IpAddresses"
             case ipFamily = "IpFamily"
@@ -764,19 +693,19 @@ extension GlobalAccelerator {
         ]
 
         /// The number of Global Accelerator objects that you want to return with this call. The default value is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token for the next set of results. You receive this token from a previous call.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 255)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -801,13 +730,6 @@ extension GlobalAccelerator {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try accelerators?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 255)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accelerators = "Accelerators"
             case nextToken = "NextToken"
@@ -824,21 +746,21 @@ extension GlobalAccelerator {
         /// The Amazon Resource Name (ARN) of the listener.
         public let listenerArn: String
         /// The number of endpoint group objects that you want to return with this call. The default value is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token for the next set of results. You receive this token from a previous call.
         public let nextToken: String?
 
-        public init(listenerArn: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(listenerArn: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.listenerArn = listenerArn
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(listenerArn, name:"listenerArn", max: 255)
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 255)
+        public func validate(name: String) throws {
+            try validate(listenerArn, name:"listenerArn", parent: name, max: 255)
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -864,13 +786,6 @@ extension GlobalAccelerator {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try endpointGroups?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 255)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case endpointGroups = "EndpointGroups"
             case nextToken = "NextToken"
@@ -887,21 +802,21 @@ extension GlobalAccelerator {
         /// The Amazon Resource Name (ARN) of the accelerator for which you want to list listener objects.
         public let acceleratorArn: String
         /// The number of listener objects that you want to return with this call. The default value is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token for the next set of results. You receive this token from a previous call.
         public let nextToken: String?
 
-        public init(acceleratorArn: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(acceleratorArn: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.acceleratorArn = acceleratorArn
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 255)
+        public func validate(name: String) throws {
+            try validate(acceleratorArn, name:"acceleratorArn", parent: name, max: 255)
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -925,13 +840,6 @@ extension GlobalAccelerator {
         public init(listeners: [Listener]? = nil, nextToken: String? = nil) {
             self.listeners = listeners
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try listeners?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -964,15 +872,6 @@ extension GlobalAccelerator {
             self.`protocol` = `protocol`
         }
 
-        public func validate() throws {
-            try validate(listenerArn, name:"listenerArn", max: 255)
-            try portRanges?.forEach {
-                try $0.validate()
-            }
-            try validate(portRanges, name:"portRanges", max: 10)
-            try validate(portRanges, name:"portRanges", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case clientAffinity = "ClientAffinity"
             case listenerArn = "ListenerArn"
@@ -988,20 +887,20 @@ extension GlobalAccelerator {
         ]
 
         /// The first port in the range of ports, inclusive.
-        public let fromPort: Int32?
+        public let fromPort: Int?
         /// The last port in the range of ports, inclusive.
-        public let toPort: Int32?
+        public let toPort: Int?
 
-        public init(fromPort: Int32? = nil, toPort: Int32? = nil) {
+        public init(fromPort: Int? = nil, toPort: Int? = nil) {
             self.fromPort = fromPort
             self.toPort = toPort
         }
 
-        public func validate() throws {
-            try validate(fromPort, name:"fromPort", max: 65535)
-            try validate(fromPort, name:"fromPort", min: 1)
-            try validate(toPort, name:"toPort", max: 65535)
-            try validate(toPort, name:"toPort", min: 1)
+        public func validate(name: String) throws {
+            try validate(fromPort, name:"fromPort", parent: name, max: 65535)
+            try validate(fromPort, name:"fromPort", parent: name, min: 1)
+            try validate(toPort, name:"toPort", parent: name, max: 65535)
+            try validate(toPort, name:"toPort", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1040,10 +939,10 @@ extension GlobalAccelerator {
             self.flowLogsS3Prefix = flowLogsS3Prefix
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
-            try validate(flowLogsS3Bucket, name:"flowLogsS3Bucket", max: 255)
-            try validate(flowLogsS3Prefix, name:"flowLogsS3Prefix", max: 255)
+        public func validate(name: String) throws {
+            try validate(acceleratorArn, name:"acceleratorArn", parent: name, max: 255)
+            try validate(flowLogsS3Bucket, name:"flowLogsS3Bucket", parent: name, max: 255)
+            try validate(flowLogsS3Prefix, name:"flowLogsS3Prefix", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1064,10 +963,6 @@ extension GlobalAccelerator {
 
         public init(acceleratorAttributes: AcceleratorAttributes? = nil) {
             self.acceleratorAttributes = acceleratorAttributes
-        }
-
-        public func validate() throws {
-            try acceleratorAttributes?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1099,9 +994,9 @@ extension GlobalAccelerator {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(acceleratorArn, name:"acceleratorArn", max: 255)
-            try validate(name, name:"name", max: 255)
+        public func validate(name: String) throws {
+            try validate(acceleratorArn, name:"acceleratorArn", parent: name, max: 255)
+            try validate(name, name:"name", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1122,10 +1017,6 @@ extension GlobalAccelerator {
 
         public init(accelerator: Accelerator? = nil) {
             self.accelerator = accelerator
-        }
-
-        public func validate() throws {
-            try accelerator?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1150,19 +1041,19 @@ extension GlobalAccelerator {
         /// The Amazon Resource Name (ARN) of the endpoint group.
         public let endpointGroupArn: String
         /// The time—10 seconds or 30 seconds—between each health check for an endpoint. The default value is 30.
-        public let healthCheckIntervalSeconds: Int32?
+        public let healthCheckIntervalSeconds: Int?
         /// If the protocol is HTTP/S, then this specifies the path that is the destination for health check targets. The default value is slash (/).
         public let healthCheckPath: String?
         /// The port that AWS Global Accelerator uses to check the health of endpoints that are part of this endpoint group. The default port is the listener port that this endpoint group is associated with. If the listener port is a list of ports, Global Accelerator uses the first port in the list.
-        public let healthCheckPort: Int32?
+        public let healthCheckPort: Int?
         /// The protocol that AWS Global Accelerator uses to check the health of endpoints that are part of this endpoint group. The default value is TCP.
         public let healthCheckProtocol: HealthCheckProtocol?
         /// The number of consecutive health checks required to set the state of a healthy endpoint to unhealthy, or to set an unhealthy endpoint to healthy. The default value is 3.
-        public let thresholdCount: Int32?
+        public let thresholdCount: Int?
         /// The percentage of traffic to send to an AWS Region. Additional traffic is distributed to other endpoint groups for this listener.  Use this action to increase (dial up) or decrease (dial down) traffic to a specific Region. The percentage is applied to the traffic that would otherwise have been routed to the Region based on optimal routing. The default value is 100.
         public let trafficDialPercentage: Float?
 
-        public init(endpointConfigurations: [EndpointConfiguration]? = nil, endpointGroupArn: String, healthCheckIntervalSeconds: Int32? = nil, healthCheckPath: String? = nil, healthCheckPort: Int32? = nil, healthCheckProtocol: HealthCheckProtocol? = nil, thresholdCount: Int32? = nil, trafficDialPercentage: Float? = nil) {
+        public init(endpointConfigurations: [EndpointConfiguration]? = nil, endpointGroupArn: String, healthCheckIntervalSeconds: Int? = nil, healthCheckPath: String? = nil, healthCheckPort: Int? = nil, healthCheckProtocol: HealthCheckProtocol? = nil, thresholdCount: Int? = nil, trafficDialPercentage: Float? = nil) {
             self.endpointConfigurations = endpointConfigurations
             self.endpointGroupArn = endpointGroupArn
             self.healthCheckIntervalSeconds = healthCheckIntervalSeconds
@@ -1173,22 +1064,22 @@ extension GlobalAccelerator {
             self.trafficDialPercentage = trafficDialPercentage
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try endpointConfigurations?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).endpointConfigurations[]")
             }
-            try validate(endpointConfigurations, name:"endpointConfigurations", max: 10)
-            try validate(endpointConfigurations, name:"endpointConfigurations", min: 0)
-            try validate(endpointGroupArn, name:"endpointGroupArn", max: 255)
-            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", max: 30)
-            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", min: 10)
-            try validate(healthCheckPath, name:"healthCheckPath", max: 255)
-            try validate(healthCheckPort, name:"healthCheckPort", max: 65535)
-            try validate(healthCheckPort, name:"healthCheckPort", min: 1)
-            try validate(thresholdCount, name:"thresholdCount", max: 10)
-            try validate(thresholdCount, name:"thresholdCount", min: 1)
-            try validate(trafficDialPercentage, name:"trafficDialPercentage", max: 100)
-            try validate(trafficDialPercentage, name:"trafficDialPercentage", min: 0)
+            try validate(endpointConfigurations, name:"endpointConfigurations", parent: name, max: 10)
+            try validate(endpointConfigurations, name:"endpointConfigurations", parent: name, min: 0)
+            try validate(endpointGroupArn, name:"endpointGroupArn", parent: name, max: 255)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", parent: name, max: 30)
+            try validate(healthCheckIntervalSeconds, name:"healthCheckIntervalSeconds", parent: name, min: 10)
+            try validate(healthCheckPath, name:"healthCheckPath", parent: name, max: 255)
+            try validate(healthCheckPort, name:"healthCheckPort", parent: name, max: 65535)
+            try validate(healthCheckPort, name:"healthCheckPort", parent: name, min: 1)
+            try validate(thresholdCount, name:"thresholdCount", parent: name, max: 10)
+            try validate(thresholdCount, name:"thresholdCount", parent: name, min: 1)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", parent: name, max: 100)
+            try validate(trafficDialPercentage, name:"trafficDialPercentage", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1213,10 +1104,6 @@ extension GlobalAccelerator {
 
         public init(endpointGroup: EndpointGroup? = nil) {
             self.endpointGroup = endpointGroup
-        }
-
-        public func validate() throws {
-            try endpointGroup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1248,13 +1135,13 @@ extension GlobalAccelerator {
             self.`protocol` = `protocol`
         }
 
-        public func validate() throws {
-            try validate(listenerArn, name:"listenerArn", max: 255)
+        public func validate(name: String) throws {
+            try validate(listenerArn, name:"listenerArn", parent: name, max: 255)
             try portRanges?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).portRanges[]")
             }
-            try validate(portRanges, name:"portRanges", max: 10)
-            try validate(portRanges, name:"portRanges", min: 1)
+            try validate(portRanges, name:"portRanges", parent: name, max: 10)
+            try validate(portRanges, name:"portRanges", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1275,10 +1162,6 @@ extension GlobalAccelerator {
 
         public init(listener: Listener? = nil) {
             self.listener = listener
-        }
-
-        public func validate() throws {
-            try listener?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

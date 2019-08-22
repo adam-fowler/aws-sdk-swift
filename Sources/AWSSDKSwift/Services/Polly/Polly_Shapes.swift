@@ -17,8 +17,8 @@ extension Polly {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", pattern: "[0-9A-Za-z]{1,20}")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, pattern: "[0-9A-Za-z]{1,20}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -54,9 +54,9 @@ extension Polly {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 0)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -80,11 +80,6 @@ extension Polly {
         public init(nextToken: String? = nil, voices: [Voice]? = nil) {
             self.nextToken = nextToken
             self.voices = voices
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -111,8 +106,8 @@ extension Polly {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", pattern: "[0-9A-Za-z]{1,20}")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, pattern: "[0-9A-Za-z]{1,20}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -136,10 +131,6 @@ extension Polly {
             self.lexiconAttributes = lexiconAttributes
         }
 
-        public func validate() throws {
-            try lexicon?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case lexicon = "Lexicon"
             case lexiconAttributes = "LexiconAttributes"
@@ -158,8 +149,8 @@ extension Polly {
             self.taskId = taskId
         }
 
-        public func validate() throws {
-            try validate(taskId, name:"taskId", pattern: "^[a-zA-Z0-9_-]{1,100}$")
+        public func validate(name: String) throws {
+            try validate(taskId, name:"taskId", parent: name, pattern: "^[a-zA-Z0-9_-]{1,100}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -177,10 +168,6 @@ extension Polly {
 
         public init(synthesisTask: SynthesisTask? = nil) {
             self.synthesisTask = synthesisTask
-        }
-
-        public func validate() throws {
-            try synthesisTask?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -237,10 +224,6 @@ extension Polly {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", pattern: "[0-9A-Za-z]{1,20}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case content = "Content"
             case name = "Name"
@@ -264,13 +247,13 @@ extension Polly {
         /// Date lexicon was last modified (a timestamp value).
         public let lastModified: TimeStamp?
         /// Number of lexemes in the lexicon.
-        public let lexemesCount: Int32?
+        public let lexemesCount: Int?
         /// Amazon Resource Name (ARN) of the lexicon.
         public let lexiconArn: String?
         /// Total size of the lexicon, in characters.
-        public let size: Int32?
+        public let size: Int?
 
-        public init(alphabet: String? = nil, languageCode: LanguageCode? = nil, lastModified: TimeStamp? = nil, lexemesCount: Int32? = nil, lexiconArn: String? = nil, size: Int32? = nil) {
+        public init(alphabet: String? = nil, languageCode: LanguageCode? = nil, lastModified: TimeStamp? = nil, lexemesCount: Int? = nil, lexiconArn: String? = nil, size: Int? = nil) {
             self.alphabet = alphabet
             self.languageCode = languageCode
             self.lastModified = lastModified
@@ -305,10 +288,6 @@ extension Polly {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", pattern: "[0-9A-Za-z]{1,20}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attributes = "Attributes"
             case name = "Name"
@@ -327,9 +306,9 @@ extension Polly {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 0)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -353,14 +332,6 @@ extension Polly {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try lexicons?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case lexicons = "Lexicons"
             case nextToken = "NextToken"
@@ -375,23 +346,23 @@ extension Polly {
         ]
 
         /// Maximum number of speech synthesis tasks returned in a List operation.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The pagination token to use in the next request to continue the listing of speech synthesis tasks. 
         public let nextToken: String?
         /// Status of the speech synthesis tasks returned in a List operation
         public let status: TaskStatus?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, status: TaskStatus? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, status: TaskStatus? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 0)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -415,14 +386,6 @@ extension Polly {
         public init(nextToken: String? = nil, synthesisTasks: [SynthesisTask]? = nil) {
             self.nextToken = nextToken
             self.synthesisTasks = synthesisTasks
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 0)
-            try synthesisTasks?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -455,8 +418,8 @@ extension Polly {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", pattern: "[0-9A-Za-z]{1,20}")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, pattern: "[0-9A-Za-z]{1,20}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -533,15 +496,15 @@ extension Polly {
             self.voiceId = voiceId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try lexiconNames?.forEach {
-                try validate($0, name:"lexiconNames[]", pattern: "[0-9A-Za-z]{1,20}")
+                try validate($0, name: "lexiconNames[]", parent: name, pattern: "[0-9A-Za-z]{1,20}")
             }
-            try validate(lexiconNames, name:"lexiconNames", max: 5)
-            try validate(outputS3BucketName, name:"outputS3BucketName", pattern: "^[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9]$")
-            try validate(outputS3KeyPrefix, name:"outputS3KeyPrefix", pattern: "^[0-9a-zA-Z\\/\\!\\-_\\.\\*\\'\\(\\)]{0,800}$")
-            try validate(snsTopicArn, name:"snsTopicArn", pattern: "^arn:aws(-(cn|iso(-b)?|us-gov))?:sns:[a-z0-9_-]{1,50}:\\d{12}:[a-zA-Z0-9_-]{1,256}$")
-            try validate(speechMarkTypes, name:"speechMarkTypes", max: 4)
+            try validate(lexiconNames, name:"lexiconNames", parent: name, max: 5)
+            try validate(outputS3BucketName, name:"outputS3BucketName", parent: name, pattern: "^[a-z0-9][\\.\\-a-z0-9]{1,61}[a-z0-9]$")
+            try validate(outputS3KeyPrefix, name:"outputS3KeyPrefix", parent: name, pattern: "^[0-9a-zA-Z\\/\\!\\-_\\.\\*\\'\\(\\)]{0,800}$")
+            try validate(snsTopicArn, name:"snsTopicArn", parent: name, pattern: "^arn:aws(-(cn|iso(-b)?|us-gov))?:sns:[a-z0-9_-]{1,50}:\\d{12}:[a-zA-Z0-9_-]{1,256}$")
+            try validate(speechMarkTypes, name:"speechMarkTypes", parent: name, max: 4)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -569,10 +532,6 @@ extension Polly {
 
         public init(synthesisTask: SynthesisTask? = nil) {
             self.synthesisTask = synthesisTask
-        }
-
-        public func validate() throws {
-            try synthesisTask?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -609,7 +568,7 @@ extension Polly {
         /// Pathway for the output speech file.
         public let outputUri: String?
         /// Number of billable characters synthesized.
-        public let requestCharacters: Int32?
+        public let requestCharacters: Int?
         /// The audio frequency specified in Hz. The valid values for mp3 and ogg_vorbis are "8000", "16000", and "22050". The default value is "22050". Valid values for pcm are "8000" and "16000" The default value is "16000". 
         public let sampleRate: String?
         /// ARN for the SNS topic optionally used for providing status notification for a speech synthesis task.
@@ -627,7 +586,7 @@ extension Polly {
         /// Voice ID to use for the synthesis. 
         public let voiceId: VoiceId?
 
-        public init(creationTime: TimeStamp? = nil, languageCode: LanguageCode? = nil, lexiconNames: [String]? = nil, outputFormat: OutputFormat? = nil, outputUri: String? = nil, requestCharacters: Int32? = nil, sampleRate: String? = nil, snsTopicArn: String? = nil, speechMarkTypes: [SpeechMarkType]? = nil, taskId: String? = nil, taskStatus: TaskStatus? = nil, taskStatusReason: String? = nil, textType: TextType? = nil, voiceId: VoiceId? = nil) {
+        public init(creationTime: TimeStamp? = nil, languageCode: LanguageCode? = nil, lexiconNames: [String]? = nil, outputFormat: OutputFormat? = nil, outputUri: String? = nil, requestCharacters: Int? = nil, sampleRate: String? = nil, snsTopicArn: String? = nil, speechMarkTypes: [SpeechMarkType]? = nil, taskId: String? = nil, taskStatus: TaskStatus? = nil, taskStatusReason: String? = nil, textType: TextType? = nil, voiceId: VoiceId? = nil) {
             self.creationTime = creationTime
             self.languageCode = languageCode
             self.lexiconNames = lexiconNames
@@ -642,16 +601,6 @@ extension Polly {
             self.taskStatusReason = taskStatusReason
             self.textType = textType
             self.voiceId = voiceId
-        }
-
-        public func validate() throws {
-            try lexiconNames?.forEach {
-                try validate($0, name:"lexiconNames[]", pattern: "[0-9A-Za-z]{1,20}")
-            }
-            try validate(lexiconNames, name:"lexiconNames", max: 5)
-            try validate(snsTopicArn, name:"snsTopicArn", pattern: "^arn:aws(-(cn|iso(-b)?|us-gov))?:sns:[a-z0-9_-]{1,50}:\\d{12}:[a-zA-Z0-9_-]{1,256}$")
-            try validate(speechMarkTypes, name:"speechMarkTypes", max: 4)
-            try validate(taskId, name:"taskId", pattern: "^[a-zA-Z0-9_-]{1,100}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -712,12 +661,12 @@ extension Polly {
             self.voiceId = voiceId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try lexiconNames?.forEach {
-                try validate($0, name:"lexiconNames[]", pattern: "[0-9A-Za-z]{1,20}")
+                try validate($0, name: "lexiconNames[]", parent: name, pattern: "[0-9A-Za-z]{1,20}")
             }
-            try validate(lexiconNames, name:"lexiconNames", max: 5)
-            try validate(speechMarkTypes, name:"speechMarkTypes", max: 4)
+            try validate(lexiconNames, name:"lexiconNames", parent: name, max: 5)
+            try validate(speechMarkTypes, name:"speechMarkTypes", parent: name, max: 4)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -746,9 +695,9 @@ extension Polly {
         ///  Specifies the type audio stream. This should reflect the OutputFormat parameter in your request.     If you request mp3 as the OutputFormat, the ContentType returned is audio/mpeg.     If you request ogg_vorbis as the OutputFormat, the ContentType returned is audio/ogg.     If you request pcm as the OutputFormat, the ContentType returned is audio/pcm in a signed 16-bit, 1 channel (mono), little-endian format.    If you request json as the OutputFormat, the ContentType returned is audio/json.    
         public let contentType: String?
         /// Number of characters synthesized.
-        public let requestCharacters: Int32?
+        public let requestCharacters: Int?
 
-        public init(audioStream: Data? = nil, contentType: String? = nil, requestCharacters: Int32? = nil) {
+        public init(audioStream: Data? = nil, contentType: String? = nil, requestCharacters: Int? = nil) {
             self.audioStream = audioStream
             self.contentType = contentType
             self.requestCharacters = requestCharacters

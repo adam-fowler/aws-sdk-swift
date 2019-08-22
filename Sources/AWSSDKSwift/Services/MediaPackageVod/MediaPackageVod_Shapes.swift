@@ -12,112 +12,6 @@ extension MediaPackageVod {
         public var description: String { return self.rawValue }
     }
 
-    public struct Asset: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Arn", location: .body(locationName: "arn"), required: false, type: .string), 
-            AWSShapeMember(label: "EgressEndpoints", location: .body(locationName: "egressEndpoints"), required: false, type: .list), 
-            AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: false, type: .string), 
-            AWSShapeMember(label: "PackagingGroupId", location: .body(locationName: "packagingGroupId"), required: false, type: .string), 
-            AWSShapeMember(label: "ResourceId", location: .body(locationName: "resourceId"), required: false, type: .string), 
-            AWSShapeMember(label: "SourceArn", location: .body(locationName: "sourceArn"), required: false, type: .string), 
-            AWSShapeMember(label: "SourceRoleArn", location: .body(locationName: "sourceRoleArn"), required: false, type: .string)
-        ]
-
-        /// The ARN of the Asset.
-        public let arn: String?
-        /// The list of egress endpoints available for the Asset.
-        public let egressEndpoints: [EgressEndpoint]?
-        /// The unique identifier for the Asset.
-        public let id: String?
-        /// The ID of the PackagingGroup for the Asset.
-        public let packagingGroupId: String?
-        /// The resource ID to include in SPEKE key requests.
-        public let resourceId: String?
-        /// ARN of the source object in S3.
-        public let sourceArn: String?
-        /// The IAM role_arn used to access the source S3 bucket.
-        public let sourceRoleArn: String?
-
-        public init(arn: String? = nil, egressEndpoints: [EgressEndpoint]? = nil, id: String? = nil, packagingGroupId: String? = nil, resourceId: String? = nil, sourceArn: String? = nil, sourceRoleArn: String? = nil) {
-            self.arn = arn
-            self.egressEndpoints = egressEndpoints
-            self.id = id
-            self.packagingGroupId = packagingGroupId
-            self.resourceId = resourceId
-            self.sourceArn = sourceArn
-            self.sourceRoleArn = sourceRoleArn
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case arn = "arn"
-            case egressEndpoints = "egressEndpoints"
-            case id = "id"
-            case packagingGroupId = "packagingGroupId"
-            case resourceId = "resourceId"
-            case sourceArn = "sourceArn"
-            case sourceRoleArn = "sourceRoleArn"
-        }
-    }
-
-    public struct AssetCreateParameters: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: true, type: .string), 
-            AWSShapeMember(label: "PackagingGroupId", location: .body(locationName: "packagingGroupId"), required: true, type: .string), 
-            AWSShapeMember(label: "ResourceId", location: .body(locationName: "resourceId"), required: false, type: .string), 
-            AWSShapeMember(label: "SourceArn", location: .body(locationName: "sourceArn"), required: true, type: .string), 
-            AWSShapeMember(label: "SourceRoleArn", location: .body(locationName: "sourceRoleArn"), required: true, type: .string)
-        ]
-
-        /// The unique identifier for the Asset.
-        public let id: String
-        /// The ID of the PackagingGroup for the Asset.
-        public let packagingGroupId: String
-        /// The resource ID to include in SPEKE key requests.
-        public let resourceId: String?
-        /// ARN of the source object in S3.
-        public let sourceArn: String
-        /// The IAM role ARN used to access the source S3 bucket.
-        public let sourceRoleArn: String
-
-        public init(id: String, packagingGroupId: String, resourceId: String? = nil, sourceArn: String, sourceRoleArn: String) {
-            self.id = id
-            self.packagingGroupId = packagingGroupId
-            self.resourceId = resourceId
-            self.sourceArn = sourceArn
-            self.sourceRoleArn = sourceRoleArn
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case id = "id"
-            case packagingGroupId = "packagingGroupId"
-            case resourceId = "resourceId"
-            case sourceArn = "sourceArn"
-            case sourceRoleArn = "sourceRoleArn"
-        }
-    }
-
-    public struct AssetList: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Assets", location: .body(locationName: "assets"), required: false, type: .list), 
-            AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
-        ]
-
-        /// A list of MediaPackage VOD Asset resources.
-        public let assets: [AssetShallow]?
-        /// A token that can be used to resume pagination from the end of the collection.
-        public let nextToken: String?
-
-        public init(assets: [AssetShallow]? = nil, nextToken: String? = nil) {
-            self.assets = assets
-            self.nextToken = nextToken
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case assets = "assets"
-            case nextToken = "nextToken"
-        }
-    }
-
     public struct AssetShallow: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", location: .body(locationName: "arn"), required: false, type: .string), 
@@ -188,9 +82,9 @@ extension MediaPackageVod {
         public let hlsManifests: [HlsManifest]
         /// Duration (in seconds) of each fragment. Actual fragments will be
         /// rounded to the nearest multiple of the source fragment duration.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
 
-        public init(encryption: CmafEncryption? = nil, hlsManifests: [HlsManifest], segmentDurationSeconds: Int32? = nil) {
+        public init(encryption: CmafEncryption? = nil, hlsManifests: [HlsManifest], segmentDurationSeconds: Int? = nil) {
             self.encryption = encryption
             self.hlsManifests = hlsManifests
             self.segmentDurationSeconds = segmentDurationSeconds
@@ -414,12 +308,12 @@ extension MediaPackageVod {
         /// An optional string to include in the name of the manifest.
         public let manifestName: String?
         /// Minimum duration (in seconds) that a player will buffer media before starting the presentation.
-        public let minBufferTimeSeconds: Int32?
+        public let minBufferTimeSeconds: Int?
         /// The Dynamic Adaptive Streaming over HTTP (DASH) profile type.  When set to "HBBTV_1_5", HbbTV 1.5 compliant output is enabled.
         public let profile: Profile?
         public let streamSelection: StreamSelection?
 
-        public init(manifestName: String? = nil, minBufferTimeSeconds: Int32? = nil, profile: Profile? = nil, streamSelection: StreamSelection? = nil) {
+        public init(manifestName: String? = nil, minBufferTimeSeconds: Int? = nil, profile: Profile? = nil, streamSelection: StreamSelection? = nil) {
             self.manifestName = manifestName
             self.minBufferTimeSeconds = minBufferTimeSeconds
             self.profile = profile
@@ -446,9 +340,9 @@ extension MediaPackageVod {
         public let encryption: DashEncryption?
         /// Duration (in seconds) of each segment. Actual segments will be
         /// rounded to the nearest multiple of the source segment duration.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
 
-        public init(dashManifests: [DashManifest], encryption: DashEncryption? = nil, segmentDurationSeconds: Int32? = nil) {
+        public init(dashManifests: [DashManifest], encryption: DashEncryption? = nil, segmentDurationSeconds: Int? = nil) {
             self.dashManifests = dashManifests
             self.encryption = encryption
             self.segmentDurationSeconds = segmentDurationSeconds
@@ -760,12 +654,12 @@ extension MediaPackageVod {
         /// ID3Timed Metadata messages will be generated. Note that irrespective
         /// of this parameter, if any ID3 Timed Metadata is found in HTTP Live Streaming (HLS) input,
         /// it will be passed through to HLS output.
-        public let programDateTimeIntervalSeconds: Int32?
+        public let programDateTimeIntervalSeconds: Int?
         /// When enabled, the EXT-X-KEY tag will be repeated in output manifests.
         public let repeatExtXKey: Bool?
         public let streamSelection: StreamSelection?
 
-        public init(adMarkers: AdMarkers? = nil, includeIframeOnlyStream: Bool? = nil, manifestName: String? = nil, programDateTimeIntervalSeconds: Int32? = nil, repeatExtXKey: Bool? = nil, streamSelection: StreamSelection? = nil) {
+        public init(adMarkers: AdMarkers? = nil, includeIframeOnlyStream: Bool? = nil, manifestName: String? = nil, programDateTimeIntervalSeconds: Int? = nil, repeatExtXKey: Bool? = nil, streamSelection: StreamSelection? = nil) {
             self.adMarkers = adMarkers
             self.includeIframeOnlyStream = includeIframeOnlyStream
             self.manifestName = manifestName
@@ -797,11 +691,11 @@ extension MediaPackageVod {
         public let hlsManifests: [HlsManifest]
         /// Duration (in seconds) of each fragment. Actual fragments will be
         /// rounded to the nearest multiple of the source fragment duration.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
         /// When enabled, audio streams will be placed in rendition groups in the output.
         public let useAudioRenditionGroup: Bool?
 
-        public init(encryption: HlsEncryption? = nil, hlsManifests: [HlsManifest], segmentDurationSeconds: Int32? = nil, useAudioRenditionGroup: Bool? = nil) {
+        public init(encryption: HlsEncryption? = nil, hlsManifests: [HlsManifest], segmentDurationSeconds: Int? = nil, useAudioRenditionGroup: Bool? = nil) {
             self.encryption = encryption
             self.hlsManifests = hlsManifests
             self.segmentDurationSeconds = segmentDurationSeconds
@@ -823,19 +717,19 @@ extension MediaPackageVod {
             AWSShapeMember(label: "PackagingGroupId", location: .querystring(locationName: "packagingGroupId"), required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
         public let packagingGroupId: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, packagingGroupId: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, packagingGroupId: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.packagingGroupId = packagingGroupId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -872,19 +766,19 @@ extension MediaPackageVod {
             AWSShapeMember(label: "PackagingGroupId", location: .querystring(locationName: "packagingGroupId"), required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
         public let packagingGroupId: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, packagingGroupId: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, packagingGroupId: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.packagingGroupId = packagingGroupId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -920,17 +814,17 @@ extension MediaPackageVod {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1007,9 +901,9 @@ extension MediaPackageVod {
         /// A list of MSS manifest configurations.
         public let mssManifests: [MssManifest]
         /// The duration (in seconds) of each segment.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
 
-        public init(encryption: MssEncryption? = nil, mssManifests: [MssManifest], segmentDurationSeconds: Int32? = nil) {
+        public init(encryption: MssEncryption? = nil, mssManifests: [MssManifest], segmentDurationSeconds: Int? = nil) {
             self.encryption = encryption
             self.mssManifests = mssManifests
             self.segmentDurationSeconds = segmentDurationSeconds
@@ -1065,66 +959,6 @@ extension MediaPackageVod {
         }
     }
 
-    public struct PackagingConfigurationCreateParameters: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "CmafPackage", location: .body(locationName: "cmafPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "DashPackage", location: .body(locationName: "dashPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "HlsPackage", location: .body(locationName: "hlsPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: true, type: .string), 
-            AWSShapeMember(label: "MssPackage", location: .body(locationName: "mssPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "PackagingGroupId", location: .body(locationName: "packagingGroupId"), required: true, type: .string)
-        ]
-
-        public let cmafPackage: CmafPackage?
-        public let dashPackage: DashPackage?
-        public let hlsPackage: HlsPackage?
-        /// The ID of the PackagingConfiguration.
-        public let id: String
-        public let mssPackage: MssPackage?
-        /// The ID of a PackagingGroup.
-        public let packagingGroupId: String
-
-        public init(cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, hlsPackage: HlsPackage? = nil, id: String, mssPackage: MssPackage? = nil, packagingGroupId: String) {
-            self.cmafPackage = cmafPackage
-            self.dashPackage = dashPackage
-            self.hlsPackage = hlsPackage
-            self.id = id
-            self.mssPackage = mssPackage
-            self.packagingGroupId = packagingGroupId
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case cmafPackage = "cmafPackage"
-            case dashPackage = "dashPackage"
-            case hlsPackage = "hlsPackage"
-            case id = "id"
-            case mssPackage = "mssPackage"
-            case packagingGroupId = "packagingGroupId"
-        }
-    }
-
-    public struct PackagingConfigurationList: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
-            AWSShapeMember(label: "PackagingConfigurations", location: .body(locationName: "packagingConfigurations"), required: false, type: .list)
-        ]
-
-        /// A token that can be used to resume pagination from the end of the collection.
-        public let nextToken: String?
-        /// A list of MediaPackage VOD PackagingConfiguration resources.
-        public let packagingConfigurations: [PackagingConfiguration]?
-
-        public init(nextToken: String? = nil, packagingConfigurations: [PackagingConfiguration]? = nil) {
-            self.nextToken = nextToken
-            self.packagingConfigurations = packagingConfigurations
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case nextToken = "nextToken"
-            case packagingConfigurations = "packagingConfigurations"
-        }
-    }
-
     public struct PackagingGroup: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", location: .body(locationName: "arn"), required: false, type: .string), 
@@ -1144,45 +978,6 @@ extension MediaPackageVod {
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case id = "id"
-        }
-    }
-
-    public struct PackagingGroupCreateParameters: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: true, type: .string)
-        ]
-
-        /// The ID of the PackagingGroup.
-        public let id: String
-
-        public init(id: String) {
-            self.id = id
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case id = "id"
-        }
-    }
-
-    public struct PackagingGroupList: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
-            AWSShapeMember(label: "PackagingGroups", location: .body(locationName: "packagingGroups"), required: false, type: .list)
-        ]
-
-        /// A token that can be used to resume pagination from the end of the collection.
-        public let nextToken: String?
-        /// A list of MediaPackage VOD PackagingGroup resources.
-        public let packagingGroups: [PackagingGroup]?
-
-        public init(nextToken: String? = nil, packagingGroups: [PackagingGroup]? = nil) {
-            self.nextToken = nextToken
-            self.packagingGroups = packagingGroups
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case nextToken = "nextToken"
-            case packagingGroups = "packagingGroups"
         }
     }
 
@@ -1235,13 +1030,13 @@ extension MediaPackageVod {
         ]
 
         /// The maximum video bitrate (bps) to include in output.
-        public let maxVideoBitsPerSecond: Int32?
+        public let maxVideoBitsPerSecond: Int?
         /// The minimum video bitrate (bps) to include in output.
-        public let minVideoBitsPerSecond: Int32?
+        public let minVideoBitsPerSecond: Int?
         /// A directive that determines the order of streams in the output.
         public let streamOrder: StreamOrder?
 
-        public init(maxVideoBitsPerSecond: Int32? = nil, minVideoBitsPerSecond: Int32? = nil, streamOrder: StreamOrder? = nil) {
+        public init(maxVideoBitsPerSecond: Int? = nil, minVideoBitsPerSecond: Int? = nil, streamOrder: StreamOrder? = nil) {
             self.maxVideoBitsPerSecond = maxVideoBitsPerSecond
             self.minVideoBitsPerSecond = minVideoBitsPerSecond
             self.streamOrder = streamOrder

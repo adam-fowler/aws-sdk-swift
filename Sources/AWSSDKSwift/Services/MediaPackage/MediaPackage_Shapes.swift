@@ -55,72 +55,6 @@ extension MediaPackage {
         }
     }
 
-    public struct ChannelCreateParameters: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Description", location: .body(locationName: "description"), required: false, type: .string), 
-            AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: true, type: .string), 
-            AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map)
-        ]
-
-        /// A short text description of the Channel.
-        public let description: String?
-        /// The ID of the Channel. The ID must be unique within the region and it
-        /// cannot be changed after a Channel is created.
-        public let id: String
-        public let tags: [String: String]?
-
-        public init(description: String? = nil, id: String, tags: [String: String]? = nil) {
-            self.description = description
-            self.id = id
-            self.tags = tags
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case description = "description"
-            case id = "id"
-            case tags = "tags"
-        }
-    }
-
-    public struct ChannelList: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Channels", location: .body(locationName: "channels"), required: false, type: .list), 
-            AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
-        ]
-
-        /// A list of Channel records.
-        public let channels: [Channel]?
-        /// A token that can be used to resume pagination from the end of the collection.
-        public let nextToken: String?
-
-        public init(channels: [Channel]? = nil, nextToken: String? = nil) {
-            self.channels = channels
-            self.nextToken = nextToken
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case channels = "channels"
-            case nextToken = "nextToken"
-        }
-    }
-
-    public struct ChannelUpdateParameters: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Description", location: .body(locationName: "description"), required: false, type: .string)
-        ]
-
-        /// A short text description of the Channel.
-        public let description: String?
-
-        public init(description: String? = nil) {
-            self.description = description
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case description = "description"
-        }
-    }
-
     public struct CmafEncryption: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "KeyRotationIntervalSeconds", location: .body(locationName: "keyRotationIntervalSeconds"), required: false, type: .integer), 
@@ -128,10 +62,10 @@ extension MediaPackage {
         ]
 
         /// Time (in seconds) between each encryption key rotation.
-        public let keyRotationIntervalSeconds: Int32?
+        public let keyRotationIntervalSeconds: Int?
         public let spekeKeyProvider: SpekeKeyProvider
 
-        public init(keyRotationIntervalSeconds: Int32? = nil, spekeKeyProvider: SpekeKeyProvider) {
+        public init(keyRotationIntervalSeconds: Int? = nil, spekeKeyProvider: SpekeKeyProvider) {
             self.keyRotationIntervalSeconds = keyRotationIntervalSeconds
             self.spekeKeyProvider = spekeKeyProvider
         }
@@ -156,12 +90,12 @@ extension MediaPackage {
         public let hlsManifests: [HlsManifest]?
         /// Duration (in seconds) of each segment. Actual segments will be
         /// rounded to the nearest multiple of the source segment duration.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
         /// An optional custom string that is prepended to the name of each segment. If not specified, it defaults to the ChannelId.
         public let segmentPrefix: String?
         public let streamSelection: StreamSelection?
 
-        public init(encryption: CmafEncryption? = nil, hlsManifests: [HlsManifest]? = nil, segmentDurationSeconds: Int32? = nil, segmentPrefix: String? = nil, streamSelection: StreamSelection? = nil) {
+        public init(encryption: CmafEncryption? = nil, hlsManifests: [HlsManifest]? = nil, segmentDurationSeconds: Int? = nil, segmentPrefix: String? = nil, streamSelection: StreamSelection? = nil) {
             self.encryption = encryption
             self.hlsManifests = hlsManifests
             self.segmentDurationSeconds = segmentDurationSeconds
@@ -192,12 +126,12 @@ extension MediaPackage {
         public let hlsManifests: [HlsManifestCreateOrUpdateParameters]?
         /// Duration (in seconds) of each segment. Actual segments will be
         /// rounded to the nearest multiple of the source segment duration.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
         /// An optional custom string that is prepended to the name of each segment. If not specified, it defaults to the ChannelId.
         public let segmentPrefix: String?
         public let streamSelection: StreamSelection?
 
-        public init(encryption: CmafEncryption? = nil, hlsManifests: [HlsManifestCreateOrUpdateParameters]? = nil, segmentDurationSeconds: Int32? = nil, segmentPrefix: String? = nil, streamSelection: StreamSelection? = nil) {
+        public init(encryption: CmafEncryption? = nil, hlsManifests: [HlsManifestCreateOrUpdateParameters]? = nil, segmentDurationSeconds: Int? = nil, segmentPrefix: String? = nil, streamSelection: StreamSelection? = nil) {
             self.encryption = encryption
             self.hlsManifests = hlsManifests
             self.segmentDurationSeconds = segmentDurationSeconds
@@ -294,12 +228,12 @@ extension MediaPackage {
         public let id: String
         public let manifestName: String?
         public let mssPackage: MssPackage?
-        public let startoverWindowSeconds: Int32?
+        public let startoverWindowSeconds: Int?
         public let tags: [String: String]?
-        public let timeDelaySeconds: Int32?
+        public let timeDelaySeconds: Int?
         public let whitelist: [String]?
 
-        public init(channelId: String, cmafPackage: CmafPackageCreateOrUpdateParameters? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int32? = nil, whitelist: [String]? = nil) {
+        public init(channelId: String, cmafPackage: CmafPackageCreateOrUpdateParameters? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int? = nil, whitelist: [String]? = nil) {
             self.channelId = channelId
             self.cmafPackage = cmafPackage
             self.dashPackage = dashPackage
@@ -357,13 +291,13 @@ extension MediaPackage {
         public let id: String?
         public let manifestName: String?
         public let mssPackage: MssPackage?
-        public let startoverWindowSeconds: Int32?
+        public let startoverWindowSeconds: Int?
         public let tags: [String: String]?
-        public let timeDelaySeconds: Int32?
+        public let timeDelaySeconds: Int?
         public let url: String?
         public let whitelist: [String]?
 
-        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int32? = nil, url: String? = nil, whitelist: [String]? = nil) {
+        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int? = nil, url: String? = nil, whitelist: [String]? = nil) {
             self.arn = arn
             self.channelId = channelId
             self.cmafPackage = cmafPackage
@@ -405,10 +339,10 @@ extension MediaPackage {
         ]
 
         /// Time (in seconds) between each encryption key rotation.
-        public let keyRotationIntervalSeconds: Int32?
+        public let keyRotationIntervalSeconds: Int?
         public let spekeKeyProvider: SpekeKeyProvider
 
-        public init(keyRotationIntervalSeconds: Int32? = nil, spekeKeyProvider: SpekeKeyProvider) {
+        public init(keyRotationIntervalSeconds: Int? = nil, spekeKeyProvider: SpekeKeyProvider) {
             self.keyRotationIntervalSeconds = keyRotationIntervalSeconds
             self.spekeKeyProvider = spekeKeyProvider
         }
@@ -442,11 +376,11 @@ extension MediaPackage {
         /// Determines the position of some tags in the Media Presentation Description (MPD).  When set to FULL, elements like SegmentTemplate and ContentProtection are included in each Representation.  When set to COMPACT, duplicate elements are combined and presented at the AdaptationSet level.
         public let manifestLayout: ManifestLayout?
         /// Time window (in seconds) contained in each manifest.
-        public let manifestWindowSeconds: Int32?
+        public let manifestWindowSeconds: Int?
         /// Minimum duration (in seconds) that a player will buffer media before starting the presentation.
-        public let minBufferTimeSeconds: Int32?
+        public let minBufferTimeSeconds: Int?
         /// Minimum duration (in seconds) between potential changes to the Dynamic Adaptive Streaming over HTTP (DASH) Media Presentation Description (MPD).
-        public let minUpdatePeriodSeconds: Int32?
+        public let minUpdatePeriodSeconds: Int?
         /// A list of triggers that controls when the outgoing Dynamic Adaptive Streaming over HTTP (DASH)
         /// Media Presentation Description (MPD) will be partitioned into multiple periods. If empty, the content will not
         /// be partitioned into more than one period. If the list contains "ADS", new periods will be created where
@@ -456,14 +390,14 @@ extension MediaPackage {
         public let profile: Profile?
         /// Duration (in seconds) of each segment. Actual segments will be
         /// rounded to the nearest multiple of the source segment duration.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
         /// Determines the type of SegmentTemplate included in the Media Presentation Description (MPD).  When set to NUMBER_WITH_TIMELINE, a full timeline is presented in each SegmentTemplate, with $Number$ media URLs.  When set to TIME_WITH_TIMELINE, a full timeline is presented in each SegmentTemplate, with $Time$ media URLs. When set to NUMBER_WITH_DURATION, only a duration is included in each SegmentTemplate, with $Number$ media URLs.
         public let segmentTemplateFormat: SegmentTemplateFormat?
         public let streamSelection: StreamSelection?
         /// Duration (in seconds) to delay live content before presentation.
-        public let suggestedPresentationDelaySeconds: Int32?
+        public let suggestedPresentationDelaySeconds: Int?
 
-        public init(adsOnDeliveryRestrictions: AdsOnDeliveryRestrictions? = nil, adTriggers: [Adtriggerselement]? = nil, encryption: DashEncryption? = nil, manifestLayout: ManifestLayout? = nil, manifestWindowSeconds: Int32? = nil, minBufferTimeSeconds: Int32? = nil, minUpdatePeriodSeconds: Int32? = nil, periodTriggers: [Periodtriggerselement]? = nil, profile: Profile? = nil, segmentDurationSeconds: Int32? = nil, segmentTemplateFormat: SegmentTemplateFormat? = nil, streamSelection: StreamSelection? = nil, suggestedPresentationDelaySeconds: Int32? = nil) {
+        public init(adsOnDeliveryRestrictions: AdsOnDeliveryRestrictions? = nil, adTriggers: [Adtriggerselement]? = nil, encryption: DashEncryption? = nil, manifestLayout: ManifestLayout? = nil, manifestWindowSeconds: Int? = nil, minBufferTimeSeconds: Int? = nil, minUpdatePeriodSeconds: Int? = nil, periodTriggers: [Periodtriggerselement]? = nil, profile: Profile? = nil, segmentDurationSeconds: Int? = nil, segmentTemplateFormat: SegmentTemplateFormat? = nil, streamSelection: StreamSelection? = nil, suggestedPresentationDelaySeconds: Int? = nil) {
             self.adsOnDeliveryRestrictions = adsOnDeliveryRestrictions
             self.adTriggers = adTriggers
             self.encryption = encryption
@@ -635,13 +569,13 @@ extension MediaPackage {
         public let id: String?
         public let manifestName: String?
         public let mssPackage: MssPackage?
-        public let startoverWindowSeconds: Int32?
+        public let startoverWindowSeconds: Int?
         public let tags: [String: String]?
-        public let timeDelaySeconds: Int32?
+        public let timeDelaySeconds: Int?
         public let url: String?
         public let whitelist: [String]?
 
-        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int32? = nil, url: String? = nil, whitelist: [String]? = nil) {
+        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int? = nil, url: String? = nil, whitelist: [String]? = nil) {
             self.arn = arn
             self.channelId = channelId
             self.cmafPackage = cmafPackage
@@ -697,12 +631,12 @@ extension MediaPackage {
         /// The encryption method to use.
         public let encryptionMethod: EncryptionMethod?
         /// Interval (in seconds) between each encryption key rotation.
-        public let keyRotationIntervalSeconds: Int32?
+        public let keyRotationIntervalSeconds: Int?
         /// When enabled, the EXT-X-KEY tag will be repeated in output manifests.
         public let repeatExtXKey: Bool?
         public let spekeKeyProvider: SpekeKeyProvider
 
-        public init(constantInitializationVector: String? = nil, encryptionMethod: EncryptionMethod? = nil, keyRotationIntervalSeconds: Int32? = nil, repeatExtXKey: Bool? = nil, spekeKeyProvider: SpekeKeyProvider) {
+        public init(constantInitializationVector: String? = nil, encryptionMethod: EncryptionMethod? = nil, keyRotationIntervalSeconds: Int? = nil, repeatExtXKey: Bool? = nil, spekeKeyProvider: SpekeKeyProvider) {
             self.constantInitializationVector = constantInitializationVector
             self.encryptionMethod = encryptionMethod
             self.keyRotationIntervalSeconds = keyRotationIntervalSeconds
@@ -766,7 +700,7 @@ extension MediaPackage {
         /// entry will be included in the media playlist.
         public let playlistType: PlaylistType?
         /// Time window (in seconds) contained in each parent manifest.
-        public let playlistWindowSeconds: Int32?
+        public let playlistWindowSeconds: Int?
         /// The interval (in seconds) between each EXT-X-PROGRAM-DATE-TIME tag
         /// inserted into manifests. Additionally, when an interval is specified
         /// ID3Timed Metadata messages will be generated every 5 seconds using the
@@ -776,11 +710,11 @@ extension MediaPackage {
         /// ID3Timed Metadata messages will be generated. Note that irrespective
         /// of this parameter, if any ID3 Timed Metadata is found in HTTP Live Streaming (HLS) input,
         /// it will be passed through to HLS output.
-        public let programDateTimeIntervalSeconds: Int32?
+        public let programDateTimeIntervalSeconds: Int?
         /// The URL of the packaged OriginEndpoint for consumption.
         public let url: String?
 
-        public init(adMarkers: AdMarkers? = nil, id: String, includeIframeOnlyStream: Bool? = nil, manifestName: String? = nil, playlistType: PlaylistType? = nil, playlistWindowSeconds: Int32? = nil, programDateTimeIntervalSeconds: Int32? = nil, url: String? = nil) {
+        public init(adMarkers: AdMarkers? = nil, id: String, includeIframeOnlyStream: Bool? = nil, manifestName: String? = nil, playlistType: PlaylistType? = nil, playlistWindowSeconds: Int? = nil, programDateTimeIntervalSeconds: Int? = nil, url: String? = nil) {
             self.adMarkers = adMarkers
             self.id = id
             self.includeIframeOnlyStream = includeIframeOnlyStream
@@ -836,7 +770,7 @@ extension MediaPackage {
         /// entry will be included in the media playlist.
         public let playlistType: PlaylistType?
         /// Time window (in seconds) contained in each parent manifest.
-        public let playlistWindowSeconds: Int32?
+        public let playlistWindowSeconds: Int?
         /// The interval (in seconds) between each EXT-X-PROGRAM-DATE-TIME tag
         /// inserted into manifests. Additionally, when an interval is specified
         /// ID3Timed Metadata messages will be generated every 5 seconds using the
@@ -846,9 +780,9 @@ extension MediaPackage {
         /// ID3Timed Metadata messages will be generated. Note that irrespective
         /// of this parameter, if any ID3 Timed Metadata is found in HTTP Live Streaming (HLS) input,
         /// it will be passed through to HLS output.
-        public let programDateTimeIntervalSeconds: Int32?
+        public let programDateTimeIntervalSeconds: Int?
 
-        public init(adMarkers: AdMarkers? = nil, adsOnDeliveryRestrictions: AdsOnDeliveryRestrictions? = nil, adTriggers: [Adtriggerselement]? = nil, id: String, includeIframeOnlyStream: Bool? = nil, manifestName: String? = nil, playlistType: PlaylistType? = nil, playlistWindowSeconds: Int32? = nil, programDateTimeIntervalSeconds: Int32? = nil) {
+        public init(adMarkers: AdMarkers? = nil, adsOnDeliveryRestrictions: AdsOnDeliveryRestrictions? = nil, adTriggers: [Adtriggerselement]? = nil, id: String, includeIframeOnlyStream: Bool? = nil, manifestName: String? = nil, playlistType: PlaylistType? = nil, playlistWindowSeconds: Int? = nil, programDateTimeIntervalSeconds: Int? = nil) {
             self.adMarkers = adMarkers
             self.adsOnDeliveryRestrictions = adsOnDeliveryRestrictions
             self.adTriggers = adTriggers
@@ -905,7 +839,7 @@ extension MediaPackage {
         /// entry will be included in the media playlist.
         public let playlistType: PlaylistType?
         /// Time window (in seconds) contained in each parent manifest.
-        public let playlistWindowSeconds: Int32?
+        public let playlistWindowSeconds: Int?
         /// The interval (in seconds) between each EXT-X-PROGRAM-DATE-TIME tag
         /// inserted into manifests. Additionally, when an interval is specified
         /// ID3Timed Metadata messages will be generated every 5 seconds using the
@@ -915,15 +849,15 @@ extension MediaPackage {
         /// ID3Timed Metadata messages will be generated. Note that irrespective
         /// of this parameter, if any ID3 Timed Metadata is found in HTTP Live Streaming (HLS) input,
         /// it will be passed through to HLS output.
-        public let programDateTimeIntervalSeconds: Int32?
+        public let programDateTimeIntervalSeconds: Int?
         /// Duration (in seconds) of each fragment. Actual fragments will be
         /// rounded to the nearest multiple of the source fragment duration.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
         public let streamSelection: StreamSelection?
         /// When enabled, audio streams will be placed in rendition groups in the output.
         public let useAudioRenditionGroup: Bool?
 
-        public init(adMarkers: AdMarkers? = nil, adsOnDeliveryRestrictions: AdsOnDeliveryRestrictions? = nil, adTriggers: [Adtriggerselement]? = nil, encryption: HlsEncryption? = nil, includeIframeOnlyStream: Bool? = nil, playlistType: PlaylistType? = nil, playlistWindowSeconds: Int32? = nil, programDateTimeIntervalSeconds: Int32? = nil, segmentDurationSeconds: Int32? = nil, streamSelection: StreamSelection? = nil, useAudioRenditionGroup: Bool? = nil) {
+        public init(adMarkers: AdMarkers? = nil, adsOnDeliveryRestrictions: AdsOnDeliveryRestrictions? = nil, adTriggers: [Adtriggerselement]? = nil, encryption: HlsEncryption? = nil, includeIframeOnlyStream: Bool? = nil, playlistType: PlaylistType? = nil, playlistWindowSeconds: Int? = nil, programDateTimeIntervalSeconds: Int? = nil, segmentDurationSeconds: Int? = nil, streamSelection: StreamSelection? = nil, useAudioRenditionGroup: Bool? = nil) {
             self.adMarkers = adMarkers
             self.adsOnDeliveryRestrictions = adsOnDeliveryRestrictions
             self.adTriggers = adTriggers
@@ -990,17 +924,17 @@ extension MediaPackage {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1037,18 +971,18 @@ extension MediaPackage {
         ]
 
         public let channelId: String?
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(channelId: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(channelId: String? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.channelId = channelId
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1142,12 +1076,12 @@ extension MediaPackage {
 
         public let encryption: MssEncryption?
         /// The time window (in seconds) contained in each manifest.
-        public let manifestWindowSeconds: Int32?
+        public let manifestWindowSeconds: Int?
         /// The duration (in seconds) of each segment.
-        public let segmentDurationSeconds: Int32?
+        public let segmentDurationSeconds: Int?
         public let streamSelection: StreamSelection?
 
-        public init(encryption: MssEncryption? = nil, manifestWindowSeconds: Int32? = nil, segmentDurationSeconds: Int32? = nil, streamSelection: StreamSelection? = nil) {
+        public init(encryption: MssEncryption? = nil, manifestWindowSeconds: Int? = nil, segmentDurationSeconds: Int? = nil, streamSelection: StreamSelection? = nil) {
             self.encryption = encryption
             self.manifestWindowSeconds = manifestWindowSeconds
             self.segmentDurationSeconds = segmentDurationSeconds
@@ -1196,17 +1130,17 @@ extension MediaPackage {
         public let mssPackage: MssPackage?
         /// Maximum duration (seconds) of content to retain for startover playback.
         /// If not specified, startover playback will be disabled for the OriginEndpoint.
-        public let startoverWindowSeconds: Int32?
+        public let startoverWindowSeconds: Int?
         public let tags: [String: String]?
         /// Amount of delay (seconds) to enforce on the playback of live content.
         /// If not specified, there will be no time delay in effect for the OriginEndpoint.
-        public let timeDelaySeconds: Int32?
+        public let timeDelaySeconds: Int?
         /// The URL of the packaged OriginEndpoint for consumption.
         public let url: String?
         /// A list of source IP CIDR blocks that will be allowed to access the OriginEndpoint.
         public let whitelist: [String]?
 
-        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int32? = nil, url: String? = nil, whitelist: [String]? = nil) {
+        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int? = nil, url: String? = nil, whitelist: [String]? = nil) {
             self.arn = arn
             self.channelId = channelId
             self.cmafPackage = cmafPackage
@@ -1237,154 +1171,6 @@ extension MediaPackage {
             case tags = "tags"
             case timeDelaySeconds = "timeDelaySeconds"
             case url = "url"
-            case whitelist = "whitelist"
-        }
-    }
-
-    public struct OriginEndpointCreateParameters: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "ChannelId", location: .body(locationName: "channelId"), required: true, type: .string), 
-            AWSShapeMember(label: "CmafPackage", location: .body(locationName: "cmafPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "DashPackage", location: .body(locationName: "dashPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "Description", location: .body(locationName: "description"), required: false, type: .string), 
-            AWSShapeMember(label: "HlsPackage", location: .body(locationName: "hlsPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "Id", location: .body(locationName: "id"), required: true, type: .string), 
-            AWSShapeMember(label: "ManifestName", location: .body(locationName: "manifestName"), required: false, type: .string), 
-            AWSShapeMember(label: "MssPackage", location: .body(locationName: "mssPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "StartoverWindowSeconds", location: .body(locationName: "startoverWindowSeconds"), required: false, type: .integer), 
-            AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: false, type: .map), 
-            AWSShapeMember(label: "TimeDelaySeconds", location: .body(locationName: "timeDelaySeconds"), required: false, type: .integer), 
-            AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
-        ]
-
-        /// The ID of the Channel that the OriginEndpoint will be associated with.
-        /// This cannot be changed after the OriginEndpoint is created.
-        public let channelId: String
-        public let cmafPackage: CmafPackageCreateOrUpdateParameters?
-        public let dashPackage: DashPackage?
-        /// A short text description of the OriginEndpoint.
-        public let description: String?
-        public let hlsPackage: HlsPackage?
-        /// The ID of the OriginEndpoint.  The ID must be unique within the region
-        /// and it cannot be changed after the OriginEndpoint is created.
-        public let id: String
-        /// A short string that will be used as the filename of the OriginEndpoint URL (defaults to "index").
-        public let manifestName: String?
-        public let mssPackage: MssPackage?
-        /// Maximum duration (seconds) of content to retain for startover playback.
-        /// If not specified, startover playback will be disabled for the OriginEndpoint.
-        public let startoverWindowSeconds: Int32?
-        public let tags: [String: String]?
-        /// Amount of delay (seconds) to enforce on the playback of live content.
-        /// If not specified, there will be no time delay in effect for the OriginEndpoint.
-        public let timeDelaySeconds: Int32?
-        /// A list of source IP CIDR blocks that will be allowed to access the OriginEndpoint.
-        public let whitelist: [String]?
-
-        public init(channelId: String, cmafPackage: CmafPackageCreateOrUpdateParameters? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int32? = nil, whitelist: [String]? = nil) {
-            self.channelId = channelId
-            self.cmafPackage = cmafPackage
-            self.dashPackage = dashPackage
-            self.description = description
-            self.hlsPackage = hlsPackage
-            self.id = id
-            self.manifestName = manifestName
-            self.mssPackage = mssPackage
-            self.startoverWindowSeconds = startoverWindowSeconds
-            self.tags = tags
-            self.timeDelaySeconds = timeDelaySeconds
-            self.whitelist = whitelist
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case channelId = "channelId"
-            case cmafPackage = "cmafPackage"
-            case dashPackage = "dashPackage"
-            case description = "description"
-            case hlsPackage = "hlsPackage"
-            case id = "id"
-            case manifestName = "manifestName"
-            case mssPackage = "mssPackage"
-            case startoverWindowSeconds = "startoverWindowSeconds"
-            case tags = "tags"
-            case timeDelaySeconds = "timeDelaySeconds"
-            case whitelist = "whitelist"
-        }
-    }
-
-    public struct OriginEndpointList: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string), 
-            AWSShapeMember(label: "OriginEndpoints", location: .body(locationName: "originEndpoints"), required: false, type: .list)
-        ]
-
-        /// A token that can be used to resume pagination from the end of the collection.
-        public let nextToken: String?
-        /// A list of OriginEndpoint records.
-        public let originEndpoints: [OriginEndpoint]?
-
-        public init(nextToken: String? = nil, originEndpoints: [OriginEndpoint]? = nil) {
-            self.nextToken = nextToken
-            self.originEndpoints = originEndpoints
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case nextToken = "nextToken"
-            case originEndpoints = "originEndpoints"
-        }
-    }
-
-    public struct OriginEndpointUpdateParameters: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "CmafPackage", location: .body(locationName: "cmafPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "DashPackage", location: .body(locationName: "dashPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "Description", location: .body(locationName: "description"), required: false, type: .string), 
-            AWSShapeMember(label: "HlsPackage", location: .body(locationName: "hlsPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "ManifestName", location: .body(locationName: "manifestName"), required: false, type: .string), 
-            AWSShapeMember(label: "MssPackage", location: .body(locationName: "mssPackage"), required: false, type: .structure), 
-            AWSShapeMember(label: "StartoverWindowSeconds", location: .body(locationName: "startoverWindowSeconds"), required: false, type: .integer), 
-            AWSShapeMember(label: "TimeDelaySeconds", location: .body(locationName: "timeDelaySeconds"), required: false, type: .integer), 
-            AWSShapeMember(label: "Whitelist", location: .body(locationName: "whitelist"), required: false, type: .list)
-        ]
-
-        public let cmafPackage: CmafPackageCreateOrUpdateParameters?
-        public let dashPackage: DashPackage?
-        /// A short text description of the OriginEndpoint.
-        public let description: String?
-        public let hlsPackage: HlsPackage?
-        /// A short string that will be appended to the end of the Endpoint URL.
-        public let manifestName: String?
-        public let mssPackage: MssPackage?
-        /// Maximum duration (in seconds) of content to retain for startover playback.
-        /// If not specified, startover playback will be disabled for the OriginEndpoint.
-        public let startoverWindowSeconds: Int32?
-        /// Amount of delay (in seconds) to enforce on the playback of live content.
-        /// If not specified, there will be no time delay in effect for the OriginEndpoint.
-        public let timeDelaySeconds: Int32?
-        /// A list of source IP CIDR blocks that will be allowed to access the OriginEndpoint.
-        public let whitelist: [String]?
-
-        public init(cmafPackage: CmafPackageCreateOrUpdateParameters? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, timeDelaySeconds: Int32? = nil, whitelist: [String]? = nil) {
-            self.cmafPackage = cmafPackage
-            self.dashPackage = dashPackage
-            self.description = description
-            self.hlsPackage = hlsPackage
-            self.manifestName = manifestName
-            self.mssPackage = mssPackage
-            self.startoverWindowSeconds = startoverWindowSeconds
-            self.timeDelaySeconds = timeDelaySeconds
-            self.whitelist = whitelist
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case cmafPackage = "cmafPackage"
-            case dashPackage = "dashPackage"
-            case description = "description"
-            case hlsPackage = "hlsPackage"
-            case manifestName = "manifestName"
-            case mssPackage = "mssPackage"
-            case startoverWindowSeconds = "startoverWindowSeconds"
-            case timeDelaySeconds = "timeDelaySeconds"
             case whitelist = "whitelist"
         }
     }
@@ -1564,13 +1350,13 @@ extension MediaPackage {
         ]
 
         /// The maximum video bitrate (bps) to include in output.
-        public let maxVideoBitsPerSecond: Int32?
+        public let maxVideoBitsPerSecond: Int?
         /// The minimum video bitrate (bps) to include in output.
-        public let minVideoBitsPerSecond: Int32?
+        public let minVideoBitsPerSecond: Int?
         /// A directive that determines the order of streams in the output.
         public let streamOrder: StreamOrder?
 
-        public init(maxVideoBitsPerSecond: Int32? = nil, minVideoBitsPerSecond: Int32? = nil, streamOrder: StreamOrder? = nil) {
+        public init(maxVideoBitsPerSecond: Int? = nil, minVideoBitsPerSecond: Int? = nil, streamOrder: StreamOrder? = nil) {
             self.maxVideoBitsPerSecond = maxVideoBitsPerSecond
             self.minVideoBitsPerSecond = minVideoBitsPerSecond
             self.streamOrder = streamOrder
@@ -1599,22 +1385,6 @@ extension MediaPackage {
 
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resource-arn"
-            case tags = "tags"
-        }
-    }
-
-    public struct TagsModel: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: true, type: .map)
-        ]
-
-        public let tags: [String: String]
-
-        public init(tags: [String: String]) {
-            self.tags = tags
-        }
-
-        private enum CodingKeys: String, CodingKey {
             case tags = "tags"
         }
     }
@@ -1712,11 +1482,11 @@ extension MediaPackage {
         public let id: String
         public let manifestName: String?
         public let mssPackage: MssPackage?
-        public let startoverWindowSeconds: Int32?
-        public let timeDelaySeconds: Int32?
+        public let startoverWindowSeconds: Int?
+        public let timeDelaySeconds: Int?
         public let whitelist: [String]?
 
-        public init(cmafPackage: CmafPackageCreateOrUpdateParameters? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, timeDelaySeconds: Int32? = nil, whitelist: [String]? = nil) {
+        public init(cmafPackage: CmafPackageCreateOrUpdateParameters? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int? = nil, timeDelaySeconds: Int? = nil, whitelist: [String]? = nil) {
             self.cmafPackage = cmafPackage
             self.dashPackage = dashPackage
             self.description = description
@@ -1770,13 +1540,13 @@ extension MediaPackage {
         public let id: String?
         public let manifestName: String?
         public let mssPackage: MssPackage?
-        public let startoverWindowSeconds: Int32?
+        public let startoverWindowSeconds: Int?
         public let tags: [String: String]?
-        public let timeDelaySeconds: Int32?
+        public let timeDelaySeconds: Int?
         public let url: String?
         public let whitelist: [String]?
 
-        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int32? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int32? = nil, url: String? = nil, whitelist: [String]? = nil) {
+        public init(arn: String? = nil, channelId: String? = nil, cmafPackage: CmafPackage? = nil, dashPackage: DashPackage? = nil, description: String? = nil, hlsPackage: HlsPackage? = nil, id: String? = nil, manifestName: String? = nil, mssPackage: MssPackage? = nil, startoverWindowSeconds: Int? = nil, tags: [String: String]? = nil, timeDelaySeconds: Int? = nil, url: String? = nil, whitelist: [String]? = nil) {
             self.arn = arn
             self.channelId = channelId
             self.cmafPackage = cmafPackage

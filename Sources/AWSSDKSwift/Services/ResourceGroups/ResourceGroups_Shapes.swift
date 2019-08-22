@@ -29,13 +29,21 @@ extension ResourceGroups {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 512)
-            try validate(description, name:"description", pattern: "[\\sa-zA-Z0-9_\\.-]*")
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\.-]+")
-            try resourceQuery.validate()
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 512)
+            try validate(description, name:"description", parent: name, pattern: "[\\sa-zA-Z0-9_\\.-]*")
+            try validate(name, name:"name", parent: name, max: 128)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[a-zA-Z0-9_\\.-]+")
+            try resourceQuery.validate(name: "\(name).resourceQuery")
+            try tags?.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.key, name:"tags.key", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, min: 0)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -66,11 +74,6 @@ extension ResourceGroups {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try group?.validate()
-            try resourceQuery?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case group = "Group"
             case resourceQuery = "ResourceQuery"
@@ -90,10 +93,10 @@ extension ResourceGroups {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -113,10 +116,6 @@ extension ResourceGroups {
             self.group = group
         }
 
-        public func validate() throws {
-            try group?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case group = "Group"
         }
@@ -134,10 +133,10 @@ extension ResourceGroups {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -157,10 +156,6 @@ extension ResourceGroups {
             self.group = group
         }
 
-        public func validate() throws {
-            try group?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case group = "Group"
         }
@@ -178,10 +173,10 @@ extension ResourceGroups {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -201,10 +196,6 @@ extension ResourceGroups {
             self.groupQuery = groupQuery
         }
 
-        public func validate() throws {
-            try groupQuery?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groupQuery = "GroupQuery"
         }
@@ -222,10 +213,10 @@ extension ResourceGroups {
             self.arn = arn
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 1600)
-            try validate(arn, name:"arn", min: 12)
-            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+        public func validate(name: String) throws {
+            try validate(arn, name:"arn", parent: name, max: 1600)
+            try validate(arn, name:"arn", parent: name, min: 12)
+            try validate(arn, name:"arn", parent: name, pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -247,12 +238,6 @@ extension ResourceGroups {
         public init(arn: String? = nil, tags: [String: String]? = nil) {
             self.arn = arn
             self.tags = tags
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 1600)
-            try validate(arn, name:"arn", min: 12)
-            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -281,17 +266,6 @@ extension ResourceGroups {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 512)
-            try validate(description, name:"description", pattern: "[\\sa-zA-Z0-9_\\.-]*")
-            try validate(groupArn, name:"groupArn", max: 1600)
-            try validate(groupArn, name:"groupArn", min: 12)
-            try validate(groupArn, name:"groupArn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[a-zA-Z0-9_\\.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case groupArn = "GroupArn"
@@ -315,14 +289,14 @@ extension ResourceGroups {
             self.values = values
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try values.forEach {
-                try validate($0, name:"values[]", max: 128)
-                try validate($0, name:"values[]", min: 1)
-                try validate($0, name:"values[]", pattern: "AWS::(AllSupported|[a-zA-Z0-9]+::[a-zA-Z0-9]+)")
+                try validate($0, name: "values[]", parent: name, max: 128)
+                try validate($0, name: "values[]", parent: name, min: 1)
+                try validate($0, name: "values[]", parent: name, pattern: "AWS::(AllSupported|[a-zA-Z0-9]+::[a-zA-Z0-9]+)")
             }
-            try validate(values, name:"values", max: 5)
-            try validate(values, name:"values", min: 1)
+            try validate(values, name:"values", parent: name, max: 5)
+            try validate(values, name:"values", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -352,15 +326,6 @@ extension ResourceGroups {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupArn, name:"groupArn", max: 1600)
-            try validate(groupArn, name:"groupArn", min: 12)
-            try validate(groupArn, name:"groupArn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groupArn = "GroupArn"
             case groupName = "GroupName"
@@ -383,13 +348,6 @@ extension ResourceGroups {
             self.resourceQuery = resourceQuery
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
-            try resourceQuery.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groupName = "GroupName"
             case resourceQuery = "ResourceQuery"
@@ -409,29 +367,29 @@ extension ResourceGroups {
         /// The name of the resource group.
         public let groupName: String
         /// The maximum number of group member ARNs that are returned in a single call by ListGroupResources, in paginated output. By default, this number is 50.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The NextToken value that is returned in a paginated ListGroupResources request. To get the next page of results, run the call again, add the NextToken parameter, and specify the NextToken value.
         public let nextToken: String?
 
-        public init(filters: [ResourceFilter]? = nil, groupName: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filters: [ResourceFilter]? = nil, groupName: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filters = filters
             self.groupName = groupName
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try filters?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).filters[]")
             }
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", min: 0)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[a-zA-Z0-9_\\.-]+")
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 8192)
+            try validate(nextToken, name:"nextToken", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9+/]*={0,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -462,15 +420,6 @@ extension ResourceGroups {
             self.resourceIdentifiers = resourceIdentifiers
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", min: 0)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
-            try resourceIdentifiers?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case queryErrors = "QueryErrors"
@@ -488,25 +437,25 @@ extension ResourceGroups {
         /// Filters, formatted as GroupFilter objects, that you want to apply to a ListGroups operation.    resource-type - Filter groups by resource type. Specify up to five resource types in the format AWS::ServiceCode::ResourceType. For example, AWS::EC2::Instance, or AWS::S3::Bucket.  
         public let filters: [GroupFilter]?
         /// The maximum number of resource group results that are returned by ListGroups in paginated output. By default, this number is 50.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The NextToken value that is returned in a paginated ListGroups request. To get the next page of results, run the call again, add the NextToken parameter, and specify the NextToken value.
         public let nextToken: String?
 
-        public init(filters: [GroupFilter]? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filters: [GroupFilter]? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try filters?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).filters[]")
             }
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", min: 0)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 8192)
+            try validate(nextToken, name:"nextToken", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9+/]*={0,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -530,15 +479,6 @@ extension ResourceGroups {
         public init(groupIdentifiers: [GroupIdentifier]? = nil, nextToken: String? = nil) {
             self.groupIdentifiers = groupIdentifiers
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try groupIdentifiers?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", min: 0)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -597,14 +537,14 @@ extension ResourceGroups {
             self.values = values
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try values.forEach {
-                try validate($0, name:"values[]", max: 128)
-                try validate($0, name:"values[]", min: 1)
-                try validate($0, name:"values[]", pattern: "AWS::[a-zA-Z0-9]+::[a-zA-Z0-9]+")
+                try validate($0, name: "values[]", parent: name, max: 128)
+                try validate($0, name: "values[]", parent: name, min: 1)
+                try validate($0, name: "values[]", parent: name, pattern: "AWS::[a-zA-Z0-9]+::[a-zA-Z0-9]+")
             }
-            try validate(values, name:"values", max: 5)
-            try validate(values, name:"values", min: 1)
+            try validate(values, name:"values", parent: name, max: 5)
+            try validate(values, name:"values", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -634,11 +574,6 @@ extension ResourceGroups {
             self.resourceType = resourceType
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", pattern: "arn:aws(-[a-z]+)*:[a-z0-9\\-]*:([a-z]{2}-[a-z]+-\\d{1})?:([0-9]{12})?:.+")
-            try validate(resourceType, name:"resourceType", pattern: "AWS::[a-zA-Z0-9]+::\\w+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
             case resourceType = "ResourceType"
@@ -661,9 +596,9 @@ extension ResourceGroups {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(query, name:"query", max: 4096)
-            try validate(query, name:"query", pattern: "[\\s\\S]*")
+        public func validate(name: String) throws {
+            try validate(query, name:"query", parent: name, max: 4096)
+            try validate(query, name:"query", parent: name, pattern: "[\\s\\S]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -680,25 +615,25 @@ extension ResourceGroups {
         ]
 
         /// The maximum number of group member ARNs returned by SearchResources in paginated output. By default, this number is 50.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The NextToken value that is returned in a paginated SearchResources request. To get the next page of results, run the call again, add the NextToken parameter, and specify the NextToken value.
         public let nextToken: String?
         /// The search query, using the same formats that are supported for resource group definition.
         public let resourceQuery: ResourceQuery
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, resourceQuery: ResourceQuery) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, resourceQuery: ResourceQuery) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceQuery = resourceQuery
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", min: 0)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
-            try resourceQuery.validate()
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 8192)
+            try validate(nextToken, name:"nextToken", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9+/]*={0,2}$")
+            try resourceQuery.validate(name: "\(name).resourceQuery")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -728,15 +663,6 @@ extension ResourceGroups {
             self.resourceIdentifiers = resourceIdentifiers
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", min: 0)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9+/]*={0,2}$")
-            try resourceIdentifiers?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case queryErrors = "QueryErrors"
@@ -760,10 +686,18 @@ extension ResourceGroups {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 1600)
-            try validate(arn, name:"arn", min: 12)
-            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+        public func validate(name: String) throws {
+            try validate(arn, name:"arn", parent: name, max: 1600)
+            try validate(arn, name:"arn", parent: name, min: 12)
+            try validate(arn, name:"arn", parent: name, pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+            try tags.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.key, name:"tags.key", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, min: 0)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -788,12 +722,6 @@ extension ResourceGroups {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 1600)
-            try validate(arn, name:"arn", min: 12)
-            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case tags = "Tags"
@@ -816,14 +744,14 @@ extension ResourceGroups {
             self.keys = keys
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 1600)
-            try validate(arn, name:"arn", min: 12)
-            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
+        public func validate(name: String) throws {
+            try validate(arn, name:"arn", parent: name, max: 1600)
+            try validate(arn, name:"arn", parent: name, min: 12)
+            try validate(arn, name:"arn", parent: name, pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
             try keys.forEach {
-                try validate($0, name:"keys[]", max: 128)
-                try validate($0, name:"keys[]", min: 1)
-                try validate($0, name:"keys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+                try validate($0, name: "keys[]", parent: name, max: 128)
+                try validate($0, name: "keys[]", parent: name, min: 1)
+                try validate($0, name: "keys[]", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
             }
         }
 
@@ -849,17 +777,6 @@ extension ResourceGroups {
             self.keys = keys
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 1600)
-            try validate(arn, name:"arn", min: 12)
-            try validate(arn, name:"arn", pattern: "arn:aws(-[a-z]+)*:resource-groups:[a-z]{2}-[a-z]+-\\d{1}:[0-9]{12}:group/[a-zA-Z0-9_\\.-]{1,128}")
-            try keys?.forEach {
-                try validate($0, name:"keys[]", max: 128)
-                try validate($0, name:"keys[]", min: 1)
-                try validate($0, name:"keys[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case keys = "Keys"
@@ -882,12 +799,12 @@ extension ResourceGroups {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 512)
-            try validate(description, name:"description", pattern: "[\\sa-zA-Z0-9_\\.-]*")
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 512)
+            try validate(description, name:"description", parent: name, pattern: "[\\sa-zA-Z0-9_\\.-]*")
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[a-zA-Z0-9_\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -906,10 +823,6 @@ extension ResourceGroups {
 
         public init(group: Group? = nil) {
             self.group = group
-        }
-
-        public func validate() throws {
-            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -933,11 +846,11 @@ extension ResourceGroups {
             self.resourceQuery = resourceQuery
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[a-zA-Z0-9_\\.-]+")
-            try resourceQuery.validate()
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[a-zA-Z0-9_\\.-]+")
+            try resourceQuery.validate(name: "\(name).resourceQuery")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -956,10 +869,6 @@ extension ResourceGroups {
 
         public init(groupQuery: GroupQuery? = nil) {
             self.groupQuery = groupQuery
-        }
-
-        public func validate() throws {
-            try groupQuery?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

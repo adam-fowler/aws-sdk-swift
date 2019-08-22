@@ -30,13 +30,13 @@ extension S3Control {
         /// The operation that you want this job to perform on each object listed in the manifest. For more information about the available operations, see Available Operations in the Amazon Simple Storage Service Developer Guide.
         public let operation: JobOperation
         /// The numerical priority for this job. Higher numbers indicate higher priority.
-        public let priority: Int32
+        public let priority: Int
         /// Configuration parameters for the optional job-completion report.
         public let report: JobReport
         /// The Amazon Resource Name (ARN) for the Identity and Access Management (IAM) Role that batch operations will use to execute this job's operation on each object in the manifest.
         public let roleArn: String
 
-        public init(accountId: String, clientRequestToken: String = CreateJobRequest.idempotencyToken(), confirmationRequired: Bool? = nil, description: String? = nil, manifest: JobManifest, operation: JobOperation, priority: Int32, report: JobReport, roleArn: String) {
+        public init(accountId: String, clientRequestToken: String = CreateJobRequest.idempotencyToken(), confirmationRequired: Bool? = nil, description: String? = nil, manifest: JobManifest, operation: JobOperation, priority: Int, report: JobReport, roleArn: String) {
             self.accountId = accountId
             self.clientRequestToken = clientRequestToken
             self.confirmationRequired = confirmationRequired
@@ -48,19 +48,19 @@ extension S3Control {
             self.roleArn = roleArn
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
-            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(description, name:"description", max: 256)
-            try validate(description, name:"description", min: 1)
-            try manifest.validate()
-            try operation.validate()
-            try validate(priority, name:"priority", max: 2147483647)
-            try validate(priority, name:"priority", min: 0)
-            try report.validate()
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(description, name:"description", parent: name, max: 256)
+            try validate(description, name:"description", parent: name, min: 1)
+            try manifest.validate(name: "\(name).manifest")
+            try operation.validate(name: "\(name).operation")
+            try validate(priority, name:"priority", parent: name, max: 2147483647)
+            try validate(priority, name:"priority", parent: name, min: 0)
+            try report.validate(name: "\(name).report")
+            try validate(roleArn, name:"roleArn", parent: name, max: 2048)
+            try validate(roleArn, name:"roleArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -88,11 +88,6 @@ extension S3Control {
             self.jobId = jobId
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case jobId = "JobId"
         }
@@ -110,8 +105,8 @@ extension S3Control {
             self.accountId = accountId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -134,10 +129,10 @@ extension S3Control {
             self.jobId = jobId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
+            try validate(jobId, name:"jobId", parent: name, max: 36)
+            try validate(jobId, name:"jobId", parent: name, min: 5)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -156,10 +151,6 @@ extension S3Control {
 
         public init(job: JobDescriptor? = nil) {
             self.job = job
-        }
-
-        public func validate() throws {
-            try job?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -196,8 +187,8 @@ extension S3Control {
             self.accountId = accountId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -243,7 +234,7 @@ extension S3Control {
         /// The operation that the specified job is configured to execute on the objects listed in the manifest.
         public let operation: JobOperation?
         /// The priority of the specified job.
-        public let priority: Int32?
+        public let priority: Int?
         /// Describes the total number of tasks that the specified job has executed, the number of tasks that succeeded, and the number of tasks that failed.
         public let progressSummary: JobProgressSummary?
         /// Contains the configuration information for the job-completion report if you requested one in the Create Job request.
@@ -260,7 +251,7 @@ extension S3Control {
         /// A timestamp indicating when this job terminated. A job's termination date is the date and time when it succeeded, failed, or was canceled.
         public let terminationDate: TimeStamp?
 
-        public init(confirmationRequired: Bool? = nil, creationTime: TimeStamp? = nil, description: String? = nil, failureReasons: [JobFailure]? = nil, jobArn: String? = nil, jobId: String? = nil, manifest: JobManifest? = nil, operation: JobOperation? = nil, priority: Int32? = nil, progressSummary: JobProgressSummary? = nil, report: JobReport? = nil, roleArn: String? = nil, status: JobStatus? = nil, statusUpdateReason: String? = nil, suspendedCause: String? = nil, suspendedDate: TimeStamp? = nil, terminationDate: TimeStamp? = nil) {
+        public init(confirmationRequired: Bool? = nil, creationTime: TimeStamp? = nil, description: String? = nil, failureReasons: [JobFailure]? = nil, jobArn: String? = nil, jobId: String? = nil, manifest: JobManifest? = nil, operation: JobOperation? = nil, priority: Int? = nil, progressSummary: JobProgressSummary? = nil, report: JobReport? = nil, roleArn: String? = nil, status: JobStatus? = nil, statusUpdateReason: String? = nil, suspendedCause: String? = nil, suspendedDate: TimeStamp? = nil, terminationDate: TimeStamp? = nil) {
             self.confirmationRequired = confirmationRequired
             self.creationTime = creationTime
             self.description = description
@@ -278,30 +269,6 @@ extension S3Control {
             self.suspendedCause = suspendedCause
             self.suspendedDate = suspendedDate
             self.terminationDate = terminationDate
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 256)
-            try validate(description, name:"description", min: 1)
-            try failureReasons?.forEach {
-                try $0.validate()
-            }
-            try validate(jobArn, name:"jobArn", max: 1024)
-            try validate(jobArn, name:"jobArn", min: 1)
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
-            try manifest?.validate()
-            try operation?.validate()
-            try validate(priority, name:"priority", max: 2147483647)
-            try validate(priority, name:"priority", min: 0)
-            try progressSummary?.validate()
-            try report?.validate()
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 1)
-            try validate(statusUpdateReason, name:"statusUpdateReason", max: 256)
-            try validate(statusUpdateReason, name:"statusUpdateReason", min: 1)
-            try validate(suspendedCause, name:"suspendedCause", max: 1024)
-            try validate(suspendedCause, name:"suspendedCause", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -341,13 +308,6 @@ extension S3Control {
             self.failureReason = failureReason
         }
 
-        public func validate() throws {
-            try validate(failureCode, name:"failureCode", max: 64)
-            try validate(failureCode, name:"failureCode", min: 1)
-            try validate(failureReason, name:"failureReason", max: 256)
-            try validate(failureReason, name:"failureReason", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case failureCode = "FailureCode"
             case failureReason = "FailureReason"
@@ -375,7 +335,7 @@ extension S3Control {
         /// The operation that the specified job is configured to run on each object listed in the manifest.
         public let operation: OperationName?
         /// The current priority for the specified job.
-        public let priority: Int32?
+        public let priority: Int?
         /// Describes the total number of tasks that the specified job has executed, the number of tasks that succeeded, and the number of tasks that failed.
         public let progressSummary: JobProgressSummary?
         /// The specified job's current status.
@@ -383,7 +343,7 @@ extension S3Control {
         /// A timestamp indicating when the specified job terminated. A job's termination date is the date and time when it succeeded, failed, or was canceled.
         public let terminationDate: TimeStamp?
 
-        public init(creationTime: TimeStamp? = nil, description: String? = nil, jobId: String? = nil, operation: OperationName? = nil, priority: Int32? = nil, progressSummary: JobProgressSummary? = nil, status: JobStatus? = nil, terminationDate: TimeStamp? = nil) {
+        public init(creationTime: TimeStamp? = nil, description: String? = nil, jobId: String? = nil, operation: OperationName? = nil, priority: Int? = nil, progressSummary: JobProgressSummary? = nil, status: JobStatus? = nil, terminationDate: TimeStamp? = nil) {
             self.creationTime = creationTime
             self.description = description
             self.jobId = jobId
@@ -392,16 +352,6 @@ extension S3Control {
             self.progressSummary = progressSummary
             self.status = status
             self.terminationDate = terminationDate
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 256)
-            try validate(description, name:"description", min: 1)
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
-            try validate(priority, name:"priority", max: 2147483647)
-            try validate(priority, name:"priority", min: 0)
-            try progressSummary?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -432,8 +382,8 @@ extension S3Control {
             self.spec = spec
         }
 
-        public func validate() throws {
-            try location.validate()
+        public func validate(name: String) throws {
+            try location.validate(name: "\(name).location")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -476,13 +426,13 @@ extension S3Control {
             self.objectVersionId = objectVersionId
         }
 
-        public func validate() throws {
-            try validate(eTag, name:"eTag", max: 1024)
-            try validate(eTag, name:"eTag", min: 1)
-            try validate(objectArn, name:"objectArn", max: 2000)
-            try validate(objectArn, name:"objectArn", min: 1)
-            try validate(objectVersionId, name:"objectVersionId", max: 2000)
-            try validate(objectVersionId, name:"objectVersionId", min: 1)
+        public func validate(name: String) throws {
+            try validate(eTag, name:"eTag", parent: name, max: 1024)
+            try validate(eTag, name:"eTag", parent: name, min: 1)
+            try validate(objectArn, name:"objectArn", parent: name, max: 2000)
+            try validate(objectArn, name:"objectArn", parent: name, min: 1)
+            try validate(objectVersionId, name:"objectVersionId", parent: name, max: 2000)
+            try validate(objectVersionId, name:"objectVersionId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -542,12 +492,12 @@ extension S3Control {
             self.s3PutObjectTagging = s3PutObjectTagging
         }
 
-        public func validate() throws {
-            try lambdaInvoke?.validate()
-            try s3InitiateRestoreObject?.validate()
-            try s3PutObjectAcl?.validate()
-            try s3PutObjectCopy?.validate()
-            try s3PutObjectTagging?.validate()
+        public func validate(name: String) throws {
+            try lambdaInvoke?.validate(name: "\(name).lambdaInvoke")
+            try s3InitiateRestoreObject?.validate(name: "\(name).s3InitiateRestoreObject")
+            try s3PutObjectAcl?.validate(name: "\(name).s3PutObjectAcl")
+            try s3PutObjectCopy?.validate(name: "\(name).s3PutObjectCopy")
+            try s3PutObjectTagging?.validate(name: "\(name).s3PutObjectTagging")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -574,12 +524,6 @@ extension S3Control {
             self.numberOfTasksFailed = numberOfTasksFailed
             self.numberOfTasksSucceeded = numberOfTasksSucceeded
             self.totalNumberOfTasks = totalNumberOfTasks
-        }
-
-        public func validate() throws {
-            try validate(numberOfTasksFailed, name:"numberOfTasksFailed", min: 0)
-            try validate(numberOfTasksSucceeded, name:"numberOfTasksSucceeded", min: 0)
-            try validate(totalNumberOfTasks, name:"totalNumberOfTasks", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -617,11 +561,11 @@ extension S3Control {
             self.reportScope = reportScope
         }
 
-        public func validate() throws {
-            try validate(bucket, name:"bucket", max: 128)
-            try validate(bucket, name:"bucket", min: 1)
-            try validate(prefix, name:"prefix", max: 512)
-            try validate(prefix, name:"prefix", min: 1)
+        public func validate(name: String) throws {
+            try validate(bucket, name:"bucket", parent: name, max: 128)
+            try validate(bucket, name:"bucket", parent: name, min: 1)
+            try validate(prefix, name:"prefix", parent: name, max: 512)
+            try validate(prefix, name:"prefix", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -673,9 +617,9 @@ extension S3Control {
             self.functionArn = functionArn
         }
 
-        public func validate() throws {
-            try validate(functionArn, name:"functionArn", max: 1024)
-            try validate(functionArn, name:"functionArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(functionArn, name:"functionArn", parent: name, max: 1024)
+            try validate(functionArn, name:"functionArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -695,23 +639,23 @@ extension S3Control {
         /// The List Jobs request returns jobs that match the statuses listed in this element.
         public let jobStatuses: [JobStatus]?
         /// The maximum number of jobs that Amazon S3 will include in the List Jobs response. If there are more jobs than this number, the response will include a pagination token in the NextToken field to enable you to retrieve the next page of results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A pagination token to request the next page of results. Use the token that Amazon S3 returned in the NextToken element of the ListJobsResult from the previous List Jobs request.
         public let nextToken: String?
 
-        public init(accountId: String, jobStatuses: [JobStatus]? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(accountId: String, jobStatuses: [JobStatus]? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.accountId = accountId
             self.jobStatuses = jobStatuses
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -736,14 +680,6 @@ extension S3Control {
         public init(jobs: [JobListDescriptor]? = nil, nextToken: String? = nil) {
             self.jobs = jobs
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try jobs?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -806,8 +742,8 @@ extension S3Control {
             self.publicAccessBlockConfiguration = publicAccessBlockConfiguration
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -836,11 +772,11 @@ extension S3Control {
             self.owner = owner
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try grants?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).grants[]")
             }
-            try owner.validate()
+            try owner.validate(name: "\(name).owner")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -863,8 +799,8 @@ extension S3Control {
             self.cannedAccessControlList = cannedAccessControlList
         }
 
-        public func validate() throws {
-            try accessControlList?.validate()
+        public func validate(name: String) throws {
+            try accessControlList?.validate(name: "\(name).accessControlList")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -940,22 +876,22 @@ extension S3Control {
             self.unModifiedSinceConstraint = unModifiedSinceConstraint
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try accessControlGrants?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).accessControlGrants[]")
             }
-            try newObjectMetadata?.validate()
+            try newObjectMetadata?.validate(name: "\(name).newObjectMetadata")
             try newObjectTagging?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).newObjectTagging[]")
             }
-            try validate(redirectLocation, name:"redirectLocation", max: 2048)
-            try validate(redirectLocation, name:"redirectLocation", min: 1)
-            try validate(sSEAwsKmsKeyId, name:"sSEAwsKmsKeyId", max: 2000)
-            try validate(sSEAwsKmsKeyId, name:"sSEAwsKmsKeyId", min: 1)
-            try validate(targetKeyPrefix, name:"targetKeyPrefix", max: 1024)
-            try validate(targetKeyPrefix, name:"targetKeyPrefix", min: 1)
-            try validate(targetResource, name:"targetResource", max: 128)
-            try validate(targetResource, name:"targetResource", min: 1)
+            try validate(redirectLocation, name:"redirectLocation", parent: name, max: 2048)
+            try validate(redirectLocation, name:"redirectLocation", parent: name, min: 1)
+            try validate(sSEAwsKmsKeyId, name:"sSEAwsKmsKeyId", parent: name, max: 2000)
+            try validate(sSEAwsKmsKeyId, name:"sSEAwsKmsKeyId", parent: name, min: 1)
+            try validate(targetKeyPrefix, name:"targetKeyPrefix", parent: name, max: 1024)
+            try validate(targetKeyPrefix, name:"targetKeyPrefix", parent: name, min: 1)
+            try validate(targetResource, name:"targetResource", parent: name, max: 128)
+            try validate(targetResource, name:"targetResource", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -998,8 +934,8 @@ extension S3Control {
             self.permission = permission
         }
 
-        public func validate() throws {
-            try grantee?.validate()
+        public func validate(name: String) throws {
+            try grantee?.validate(name: "\(name).grantee")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1025,11 +961,11 @@ extension S3Control {
             self.typeIdentifier = typeIdentifier
         }
 
-        public func validate() throws {
-            try validate(displayName, name:"displayName", max: 1024)
-            try validate(displayName, name:"displayName", min: 1)
-            try validate(identifier, name:"identifier", max: 1024)
-            try validate(identifier, name:"identifier", min: 1)
+        public func validate(name: String) throws {
+            try validate(displayName, name:"displayName", parent: name, max: 1024)
+            try validate(displayName, name:"displayName", parent: name, min: 1)
+            try validate(identifier, name:"identifier", parent: name, max: 1024)
+            try validate(identifier, name:"identifier", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1052,16 +988,16 @@ extension S3Control {
             AWSShapeMember(label: "GlacierJobTier", required: false, type: .enum)
         ]
 
-        public let expirationInDays: Int32?
+        public let expirationInDays: Int?
         public let glacierJobTier: S3GlacierJobTier?
 
-        public init(expirationInDays: Int32? = nil, glacierJobTier: S3GlacierJobTier? = nil) {
+        public init(expirationInDays: Int? = nil, glacierJobTier: S3GlacierJobTier? = nil) {
             self.expirationInDays = expirationInDays
             self.glacierJobTier = glacierJobTier
         }
 
-        public func validate() throws {
-            try validate(expirationInDays, name:"expirationInDays", min: 0)
+        public func validate(name: String) throws {
+            try validate(expirationInDays, name:"expirationInDays", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1129,20 +1065,25 @@ extension S3Control {
             self.userMetadata = userMetadata
         }
 
-        public func validate() throws {
-            try validate(cacheControl, name:"cacheControl", max: 1024)
-            try validate(cacheControl, name:"cacheControl", min: 1)
-            try validate(contentDisposition, name:"contentDisposition", max: 1024)
-            try validate(contentDisposition, name:"contentDisposition", min: 1)
-            try validate(contentEncoding, name:"contentEncoding", max: 1024)
-            try validate(contentEncoding, name:"contentEncoding", min: 1)
-            try validate(contentLanguage, name:"contentLanguage", max: 1024)
-            try validate(contentLanguage, name:"contentLanguage", min: 1)
-            try validate(contentLength, name:"contentLength", min: 0)
-            try validate(contentMD5, name:"contentMD5", max: 1024)
-            try validate(contentMD5, name:"contentMD5", min: 1)
-            try validate(contentType, name:"contentType", max: 1024)
-            try validate(contentType, name:"contentType", min: 1)
+        public func validate(name: String) throws {
+            try validate(cacheControl, name:"cacheControl", parent: name, max: 1024)
+            try validate(cacheControl, name:"cacheControl", parent: name, min: 1)
+            try validate(contentDisposition, name:"contentDisposition", parent: name, max: 1024)
+            try validate(contentDisposition, name:"contentDisposition", parent: name, min: 1)
+            try validate(contentEncoding, name:"contentEncoding", parent: name, max: 1024)
+            try validate(contentEncoding, name:"contentEncoding", parent: name, min: 1)
+            try validate(contentLanguage, name:"contentLanguage", parent: name, max: 1024)
+            try validate(contentLanguage, name:"contentLanguage", parent: name, min: 1)
+            try validate(contentLength, name:"contentLength", parent: name, min: 0)
+            try validate(contentMD5, name:"contentMD5", parent: name, max: 1024)
+            try validate(contentMD5, name:"contentMD5", parent: name, min: 1)
+            try validate(contentType, name:"contentType", parent: name, max: 1024)
+            try validate(contentType, name:"contentType", parent: name, min: 1)
+            try userMetadata?.forEach {
+                try validate($0.key, name:"userMetadata.key", parent: name, max: 1024)
+                try validate($0.key, name:"userMetadata.key", parent: name, min: 1)
+                try validate($0.value, name:"userMetadata[\"\($0.key)\"]", parent: name, max: 1024)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1174,11 +1115,11 @@ extension S3Control {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(displayName, name:"displayName", max: 1024)
-            try validate(displayName, name:"displayName", min: 1)
-            try validate(id, name:"id", max: 1024)
-            try validate(id, name:"id", min: 1)
+        public func validate(name: String) throws {
+            try validate(displayName, name:"displayName", parent: name, max: 1024)
+            try validate(displayName, name:"displayName", parent: name, min: 1)
+            try validate(id, name:"id", parent: name, max: 1024)
+            try validate(id, name:"id", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1213,8 +1154,8 @@ extension S3Control {
             self.accessControlPolicy = accessControlPolicy
         }
 
-        public func validate() throws {
-            try accessControlPolicy?.validate()
+        public func validate(name: String) throws {
+            try accessControlPolicy?.validate(name: "\(name).accessControlPolicy")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1233,9 +1174,9 @@ extension S3Control {
             self.tagSet = tagSet
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tagSet?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tagSet[]")
             }
         }
 
@@ -1268,10 +1209,10 @@ extension S3Control {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 1024)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 1024)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 1024)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(value, name:"value", parent: name, max: 1024)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1291,20 +1232,20 @@ extension S3Control {
         /// The ID for the job whose priority you want to update.
         public let jobId: String
         /// The priority you want to assign to this job.
-        public let priority: Int32
+        public let priority: Int
 
-        public init(accountId: String, jobId: String, priority: Int32) {
+        public init(accountId: String, jobId: String, priority: Int) {
             self.accountId = accountId
             self.jobId = jobId
             self.priority = priority
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
-            try validate(priority, name:"priority", max: 2147483647)
-            try validate(priority, name:"priority", min: 0)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
+            try validate(jobId, name:"jobId", parent: name, max: 36)
+            try validate(jobId, name:"jobId", parent: name, min: 5)
+            try validate(priority, name:"priority", parent: name, max: 2147483647)
+            try validate(priority, name:"priority", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1323,18 +1264,11 @@ extension S3Control {
         /// The ID for the job whose priority Amazon S3 updated.
         public let jobId: String
         /// The new priority assigned to the specified job.
-        public let priority: Int32
+        public let priority: Int
 
-        public init(jobId: String, priority: Int32) {
+        public init(jobId: String, priority: Int) {
             self.jobId = jobId
             self.priority = priority
-        }
-
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
-            try validate(priority, name:"priority", max: 2147483647)
-            try validate(priority, name:"priority", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1366,12 +1300,12 @@ extension S3Control {
             self.statusUpdateReason = statusUpdateReason
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", max: 64)
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
-            try validate(statusUpdateReason, name:"statusUpdateReason", max: 256)
-            try validate(statusUpdateReason, name:"statusUpdateReason", min: 1)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, max: 64)
+            try validate(jobId, name:"jobId", parent: name, max: 36)
+            try validate(jobId, name:"jobId", parent: name, min: 5)
+            try validate(statusUpdateReason, name:"statusUpdateReason", parent: name, max: 256)
+            try validate(statusUpdateReason, name:"statusUpdateReason", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1400,13 +1334,6 @@ extension S3Control {
             self.jobId = jobId
             self.status = status
             self.statusUpdateReason = statusUpdateReason
-        }
-
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 5)
-            try validate(statusUpdateReason, name:"statusUpdateReason", max: 256)
-            try validate(statusUpdateReason, name:"statusUpdateReason", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

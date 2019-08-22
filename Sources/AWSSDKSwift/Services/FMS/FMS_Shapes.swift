@@ -26,10 +26,10 @@ extension FMS {
             self.adminAccount = adminAccount
         }
 
-        public func validate() throws {
-            try validate(adminAccount, name:"adminAccount", max: 1024)
-            try validate(adminAccount, name:"adminAccount", min: 1)
-            try validate(adminAccount, name:"adminAccount", pattern: "^[0-9]+$")
+        public func validate(name: String) throws {
+            try validate(adminAccount, name:"adminAccount", parent: name, max: 1024)
+            try validate(adminAccount, name:"adminAccount", parent: name, min: 1)
+            try validate(adminAccount, name:"adminAccount", parent: name, pattern: "^[0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -55,15 +55,6 @@ extension FMS {
             self.resourceId = resourceId
             self.resourceType = resourceType
             self.violationReason = violationReason
-        }
-
-        public func validate() throws {
-            try validate(resourceId, name:"resourceId", max: 1024)
-            try validate(resourceId, name:"resourceId", min: 1)
-            try validate(resourceId, name:"resourceId", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(resourceType, name:"resourceType", max: 128)
-            try validate(resourceType, name:"resourceType", min: 1)
-            try validate(resourceType, name:"resourceType", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -102,10 +93,10 @@ extension FMS {
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+        public func validate(name: String) throws {
+            try validate(policyId, name:"policyId", parent: name, max: 36)
+            try validate(policyId, name:"policyId", parent: name, min: 36)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -149,10 +140,6 @@ extension FMS {
             self.violatorCount = violatorCount
         }
 
-        public func validate() throws {
-            try validate(violatorCount, name:"violatorCount", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case complianceStatus = "ComplianceStatus"
             case evaluationLimitExceeded = "EvaluationLimitExceeded"
@@ -184,12 +171,6 @@ extension FMS {
             self.roleStatus = roleStatus
         }
 
-        public func validate() throws {
-            try validate(adminAccount, name:"adminAccount", max: 1024)
-            try validate(adminAccount, name:"adminAccount", min: 1)
-            try validate(adminAccount, name:"adminAccount", pattern: "^[0-9]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case adminAccount = "AdminAccount"
             case roleStatus = "RoleStatus"
@@ -212,13 +193,13 @@ extension FMS {
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(memberAccount, name:"memberAccount", max: 1024)
-            try validate(memberAccount, name:"memberAccount", min: 1)
-            try validate(memberAccount, name:"memberAccount", pattern: "^[0-9]+$")
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+        public func validate(name: String) throws {
+            try validate(memberAccount, name:"memberAccount", parent: name, max: 1024)
+            try validate(memberAccount, name:"memberAccount", parent: name, min: 1)
+            try validate(memberAccount, name:"memberAccount", parent: name, pattern: "^[0-9]+$")
+            try validate(policyId, name:"policyId", parent: name, max: 36)
+            try validate(policyId, name:"policyId", parent: name, min: 36)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -237,10 +218,6 @@ extension FMS {
 
         public init(policyComplianceDetail: PolicyComplianceDetail? = nil) {
             self.policyComplianceDetail = policyComplianceDetail
-        }
-
-        public func validate() throws {
-            try policyComplianceDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -272,15 +249,6 @@ extension FMS {
             self.snsTopicArn = snsTopicArn
         }
 
-        public func validate() throws {
-            try validate(snsRoleName, name:"snsRoleName", max: 1024)
-            try validate(snsRoleName, name:"snsRoleName", min: 1)
-            try validate(snsRoleName, name:"snsRoleName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(snsTopicArn, name:"snsTopicArn", max: 1024)
-            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
-            try validate(snsTopicArn, name:"snsTopicArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case snsRoleName = "SnsRoleName"
             case snsTopicArn = "SnsTopicArn"
@@ -299,10 +267,10 @@ extension FMS {
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+        public func validate(name: String) throws {
+            try validate(policyId, name:"policyId", parent: name, max: 36)
+            try validate(policyId, name:"policyId", parent: name, min: 36)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -326,13 +294,6 @@ extension FMS {
             self.policyArn = policyArn
         }
 
-        public func validate() throws {
-            try policy?.validate()
-            try validate(policyArn, name:"policyArn", max: 1024)
-            try validate(policyArn, name:"policyArn", min: 1)
-            try validate(policyArn, name:"policyArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case policy = "Policy"
             case policyArn = "PolicyArn"
@@ -352,7 +313,7 @@ extension FMS {
         /// The end of the time period to query for the attacks. This is a timestamp type. The sample request above indicates a number type because the default used by AWS Firewall Manager is Unix time in seconds. However, any valid timestamp format is allowed.
         public let endTime: TimeStamp?
         /// Specifies the number of objects that you want AWS Firewall Manager to return for this request. If you have more objects than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of objects.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The AWS account that is in scope of the policy that you want to get the details for.
         public let memberAccountId: String?
         /// If you specify a value for MaxResults and you have more objects than the number that you specify for MaxResults, AWS Firewall Manager returns a NextToken value in the response that allows you to list another group of objects. For the second and subsequent GetProtectionStatus requests, specify the value of NextToken from the previous response to get information about another batch of objects.
@@ -362,7 +323,7 @@ extension FMS {
         /// The start of the time period to query for the attacks. This is a timestamp type. The sample request above indicates a number type because the default used by AWS Firewall Manager is Unix time in seconds. However, any valid timestamp format is allowed.
         public let startTime: TimeStamp?
 
-        public init(endTime: TimeStamp? = nil, maxResults: Int32? = nil, memberAccountId: String? = nil, nextToken: String? = nil, policyId: String, startTime: TimeStamp? = nil) {
+        public init(endTime: TimeStamp? = nil, maxResults: Int? = nil, memberAccountId: String? = nil, nextToken: String? = nil, policyId: String, startTime: TimeStamp? = nil) {
             self.endTime = endTime
             self.maxResults = maxResults
             self.memberAccountId = memberAccountId
@@ -371,17 +332,17 @@ extension FMS {
             self.startTime = startTime
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(memberAccountId, name:"memberAccountId", max: 1024)
-            try validate(memberAccountId, name:"memberAccountId", min: 1)
-            try validate(memberAccountId, name:"memberAccountId", pattern: "^[0-9]+$")
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(memberAccountId, name:"memberAccountId", parent: name, max: 1024)
+            try validate(memberAccountId, name:"memberAccountId", parent: name, min: 1)
+            try validate(memberAccountId, name:"memberAccountId", parent: name, pattern: "^[0-9]+$")
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyId, name:"policyId", parent: name, max: 36)
+            try validate(policyId, name:"policyId", parent: name, min: 36)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -418,14 +379,6 @@ extension FMS {
             self.serviceType = serviceType
         }
 
-        public func validate() throws {
-            try validate(adminAccountId, name:"adminAccountId", max: 1024)
-            try validate(adminAccountId, name:"adminAccountId", min: 1)
-            try validate(adminAccountId, name:"adminAccountId", pattern: "^[0-9]+$")
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case adminAccountId = "AdminAccountId"
             case data = "Data"
@@ -442,26 +395,26 @@ extension FMS {
         ]
 
         /// Specifies the number of PolicyComplianceStatus objects that you want AWS Firewall Manager to return for this request. If you have more PolicyComplianceStatus objects than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of PolicyComplianceStatus objects.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If you specify a value for MaxResults and you have more PolicyComplianceStatus objects than the number that you specify for MaxResults, AWS Firewall Manager returns a NextToken value in the response that allows you to list another group of PolicyComplianceStatus objects. For the second and subsequent ListComplianceStatus requests, specify the value of NextToken from the previous response to get information about another batch of PolicyComplianceStatus objects.
         public let nextToken: String?
         /// The ID of the AWS Firewall Manager policy that you want the details for.
         public let policyId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, policyId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, policyId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.policyId = policyId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyId, name:"policyId", parent: name, max: 36)
+            try validate(policyId, name:"policyId", parent: name, min: 36)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^[a-z0-9A-Z-]{36}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -487,14 +440,6 @@ extension FMS {
             self.policyComplianceStatusList = policyComplianceStatusList
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try policyComplianceStatusList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case policyComplianceStatusList = "PolicyComplianceStatusList"
@@ -508,20 +453,20 @@ extension FMS {
         ]
 
         /// Specifies the number of member account IDs that you want AWS Firewall Manager to return for this request. If you have more IDs than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of member account IDs.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If you specify a value for MaxResults and you have more account IDs than the number that you specify for MaxResults, AWS Firewall Manager returns a NextToken value in the response that allows you to list another group of IDs. For the second and subsequent ListMemberAccountsRequest requests, specify the value of NextToken from the previous response to get information about another batch of member account IDs.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -546,16 +491,6 @@ extension FMS {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try memberAccounts?.forEach {
-                try validate($0, name:"memberAccounts[]", max: 1024)
-                try validate($0, name:"memberAccounts[]", min: 1)
-                try validate($0, name:"memberAccounts[]", pattern: "^[0-9]+$")
-            }
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case memberAccounts = "MemberAccounts"
             case nextToken = "NextToken"
@@ -569,20 +504,20 @@ extension FMS {
         ]
 
         /// Specifies the number of PolicySummary objects that you want AWS Firewall Manager to return for this request. If you have more PolicySummary objects than the number that you specify for MaxResults, the response includes a NextToken value that you can use to get another batch of PolicySummary objects.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If you specify a value for MaxResults and you have more PolicySummary objects than the number that you specify for MaxResults, AWS Firewall Manager returns a NextToken value in the response that allows you to list another group of PolicySummary objects. For the second and subsequent ListPolicies requests, specify the value of NextToken from the previous response to get information about another batch of PolicySummary objects.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -605,14 +540,6 @@ extension FMS {
         public init(nextToken: String? = nil, policyList: [PolicySummary]? = nil) {
             self.nextToken = nextToken
             self.policyList = policyList
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try policyList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -673,30 +600,30 @@ extension FMS {
             self.securityServicePolicyData = securityServicePolicyData
         }
 
-        public func validate() throws {
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(policyUpdateToken, name:"policyUpdateToken", max: 1024)
-            try validate(policyUpdateToken, name:"policyUpdateToken", min: 1)
-            try validate(policyUpdateToken, name:"policyUpdateToken", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        public func validate(name: String) throws {
+            try validate(policyId, name:"policyId", parent: name, max: 36)
+            try validate(policyId, name:"policyId", parent: name, min: 36)
+            try validate(policyId, name:"policyId", parent: name, pattern: "^[a-z0-9A-Z-]{36}$")
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(policyUpdateToken, name:"policyUpdateToken", parent: name, max: 1024)
+            try validate(policyUpdateToken, name:"policyUpdateToken", parent: name, min: 1)
+            try validate(policyUpdateToken, name:"policyUpdateToken", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
             try resourceTags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).resourceTags[]")
             }
-            try validate(resourceTags, name:"resourceTags", max: 8)
-            try validate(resourceTags, name:"resourceTags", min: 0)
-            try validate(resourceType, name:"resourceType", max: 128)
-            try validate(resourceType, name:"resourceType", min: 1)
-            try validate(resourceType, name:"resourceType", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(resourceTags, name:"resourceTags", parent: name, max: 8)
+            try validate(resourceTags, name:"resourceTags", parent: name, min: 0)
+            try validate(resourceType, name:"resourceType", parent: name, max: 128)
+            try validate(resourceType, name:"resourceType", parent: name, min: 1)
+            try validate(resourceType, name:"resourceType", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
             try resourceTypeList?.forEach {
-                try validate($0, name:"resourceTypeList[]", max: 128)
-                try validate($0, name:"resourceTypeList[]", min: 1)
-                try validate($0, name:"resourceTypeList[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+                try validate($0, name: "resourceTypeList[]", parent: name, max: 128)
+                try validate($0, name: "resourceTypeList[]", parent: name, min: 1)
+                try validate($0, name: "resourceTypeList[]", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
             }
-            try securityServicePolicyData.validate()
+            try securityServicePolicyData.validate(name: "\(name).securityServicePolicyData")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -750,21 +677,6 @@ extension FMS {
             self.violators = violators
         }
 
-        public func validate() throws {
-            try validate(memberAccount, name:"memberAccount", max: 1024)
-            try validate(memberAccount, name:"memberAccount", min: 1)
-            try validate(memberAccount, name:"memberAccount", pattern: "^[0-9]+$")
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
-            try validate(policyOwner, name:"policyOwner", max: 1024)
-            try validate(policyOwner, name:"policyOwner", min: 1)
-            try validate(policyOwner, name:"policyOwner", pattern: "^[0-9]+$")
-            try violators?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case evaluationLimitExceeded = "EvaluationLimitExceeded"
             case expiredAt = "ExpiredAt"
@@ -810,24 +722,6 @@ extension FMS {
             self.policyId = policyId
             self.policyName = policyName
             self.policyOwner = policyOwner
-        }
-
-        public func validate() throws {
-            try evaluationResults?.forEach {
-                try $0.validate()
-            }
-            try validate(memberAccount, name:"memberAccount", max: 1024)
-            try validate(memberAccount, name:"memberAccount", min: 1)
-            try validate(memberAccount, name:"memberAccount", pattern: "^[0-9]+$")
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(policyOwner, name:"policyOwner", max: 1024)
-            try validate(policyOwner, name:"policyOwner", min: 1)
-            try validate(policyOwner, name:"policyOwner", pattern: "^[0-9]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -879,21 +773,6 @@ extension FMS {
             self.securityServiceType = securityServiceType
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 1024)
-            try validate(policyArn, name:"policyArn", min: 1)
-            try validate(policyArn, name:"policyArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(policyId, name:"policyId", max: 36)
-            try validate(policyId, name:"policyId", min: 36)
-            try validate(policyId, name:"policyId", pattern: "^[a-z0-9A-Z-]{36}$")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(resourceType, name:"resourceType", max: 128)
-            try validate(resourceType, name:"resourceType", min: 1)
-            try validate(resourceType, name:"resourceType", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case policyArn = "PolicyArn"
             case policyId = "PolicyId"
@@ -920,13 +799,13 @@ extension FMS {
             self.snsTopicArn = snsTopicArn
         }
 
-        public func validate() throws {
-            try validate(snsRoleName, name:"snsRoleName", max: 1024)
-            try validate(snsRoleName, name:"snsRoleName", min: 1)
-            try validate(snsRoleName, name:"snsRoleName", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(snsTopicArn, name:"snsTopicArn", max: 1024)
-            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
-            try validate(snsTopicArn, name:"snsTopicArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        public func validate(name: String) throws {
+            try validate(snsRoleName, name:"snsRoleName", parent: name, max: 1024)
+            try validate(snsRoleName, name:"snsRoleName", parent: name, min: 1)
+            try validate(snsRoleName, name:"snsRoleName", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(snsTopicArn, name:"snsTopicArn", parent: name, max: 1024)
+            try validate(snsTopicArn, name:"snsTopicArn", parent: name, min: 1)
+            try validate(snsTopicArn, name:"snsTopicArn", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -947,8 +826,8 @@ extension FMS {
             self.policy = policy
         }
 
-        public func validate() throws {
-            try policy.validate()
+        public func validate(name: String) throws {
+            try policy.validate(name: "\(name).policy")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -970,13 +849,6 @@ extension FMS {
         public init(policy: Policy? = nil, policyArn: String? = nil) {
             self.policy = policy
             self.policyArn = policyArn
-        }
-
-        public func validate() throws {
-            try policy?.validate()
-            try validate(policyArn, name:"policyArn", max: 1024)
-            try validate(policyArn, name:"policyArn", min: 1)
-            try validate(policyArn, name:"policyArn", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1001,12 +873,12 @@ extension FMS {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(key, name:"key", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1031,9 +903,9 @@ extension FMS {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(managedServiceData, name:"managedServiceData", max: 1024)
-            try validate(managedServiceData, name:"managedServiceData", min: 1)
+        public func validate(name: String) throws {
+            try validate(managedServiceData, name:"managedServiceData", parent: name, max: 1024)
+            try validate(managedServiceData, name:"managedServiceData", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

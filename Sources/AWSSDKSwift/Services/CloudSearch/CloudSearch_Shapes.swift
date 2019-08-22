@@ -19,10 +19,6 @@ extension CloudSearch {
             self.status = status
         }
 
-        public func validate() throws {
-            try status.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case options = "Options"
             case status = "Status"
@@ -91,10 +87,10 @@ extension CloudSearch {
             self.analysisSchemeName = analysisSchemeName
         }
 
-        public func validate() throws {
-            try validate(analysisSchemeName, name:"analysisSchemeName", max: 64)
-            try validate(analysisSchemeName, name:"analysisSchemeName", min: 1)
-            try validate(analysisSchemeName, name:"analysisSchemeName", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(analysisSchemeName, name:"analysisSchemeName", parent: name, max: 64)
+            try validate(analysisSchemeName, name:"analysisSchemeName", parent: name, min: 1)
+            try validate(analysisSchemeName, name:"analysisSchemeName", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -157,11 +153,6 @@ extension CloudSearch {
             self.status = status
         }
 
-        public func validate() throws {
-            try options.validate()
-            try status.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case options = "Options"
             case status = "Status"
@@ -183,10 +174,6 @@ extension CloudSearch {
             self.status = status
         }
 
-        public func validate() throws {
-            try status.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case options = "Options"
             case status = "Status"
@@ -204,10 +191,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -224,14 +211,6 @@ extension CloudSearch {
 
         public init(fieldNames: [String]? = nil) {
             self.fieldNames = fieldNames
-        }
-
-        public func validate() throws {
-            try fieldNames?.forEach {
-                try validate($0, name:"fieldNames[]", max: 64)
-                try validate($0, name:"fieldNames[]", min: 1)
-                try validate($0, name:"fieldNames[]", pattern: "[a-z][a-z0-9_]*")
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -251,10 +230,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -271,10 +250,6 @@ extension CloudSearch {
 
         public init(domainStatus: DomainStatus? = nil) {
             self.domainStatus = domainStatus
-        }
-
-        public func validate() throws {
-            try domainStatus?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -310,10 +285,10 @@ extension CloudSearch {
             self.sourceFields = sourceFields
         }
 
-        public func validate() throws {
-            try validate(defaultValue, name:"defaultValue", max: 1024)
-            try validate(defaultValue, name:"defaultValue", min: 0)
-            try validate(sourceFields, name:"sourceFields", pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
+        public func validate(name: String) throws {
+            try validate(defaultValue, name:"defaultValue", parent: name, max: 1024)
+            try validate(defaultValue, name:"defaultValue", parent: name, min: 0)
+            try validate(sourceFields, name:"sourceFields", parent: name, pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -356,12 +331,12 @@ extension CloudSearch {
             self.sourceField = sourceField
         }
 
-        public func validate() throws {
-            try validate(defaultValue, name:"defaultValue", max: 1024)
-            try validate(defaultValue, name:"defaultValue", min: 0)
-            try validate(sourceField, name:"sourceField", max: 64)
-            try validate(sourceField, name:"sourceField", min: 1)
-            try validate(sourceField, name:"sourceField", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(defaultValue, name:"defaultValue", parent: name, max: 1024)
+            try validate(defaultValue, name:"defaultValue", parent: name, min: 0)
+            try validate(sourceField, name:"sourceField", parent: name, max: 64)
+            try validate(sourceField, name:"sourceField", parent: name, min: 1)
+            try validate(sourceField, name:"sourceField", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -388,11 +363,11 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try analysisScheme.validate()
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try analysisScheme.validate(name: "\(name).analysisScheme")
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -410,10 +385,6 @@ extension CloudSearch {
 
         public init(analysisScheme: AnalysisSchemeStatus) {
             self.analysisScheme = analysisScheme
-        }
-
-        public func validate() throws {
-            try analysisScheme.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -435,11 +406,11 @@ extension CloudSearch {
             self.expression = expression
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try expression.validate()
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
+            try expression.validate(name: "\(name).expression")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -457,10 +428,6 @@ extension CloudSearch {
 
         public init(expression: ExpressionStatus) {
             self.expression = expression
-        }
-
-        public func validate() throws {
-            try expression.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -483,11 +450,11 @@ extension CloudSearch {
             self.indexField = indexField
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try indexField.validate()
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
+            try indexField.validate(name: "\(name).indexField")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -505,10 +472,6 @@ extension CloudSearch {
 
         public init(indexField: IndexFieldStatus) {
             self.indexField = indexField
-        }
-
-        public func validate() throws {
-            try indexField.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -530,11 +493,11 @@ extension CloudSearch {
             self.suggester = suggester
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try suggester.validate()
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
+            try suggester.validate(name: "\(name).suggester")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -552,10 +515,6 @@ extension CloudSearch {
 
         public init(suggester: SuggesterStatus) {
             self.suggester = suggester
-        }
-
-        public func validate() throws {
-            try suggester.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -578,13 +537,13 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(analysisSchemeName, name:"analysisSchemeName", max: 64)
-            try validate(analysisSchemeName, name:"analysisSchemeName", min: 1)
-            try validate(analysisSchemeName, name:"analysisSchemeName", pattern: "[a-z][a-z0-9_]*")
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(analysisSchemeName, name:"analysisSchemeName", parent: name, max: 64)
+            try validate(analysisSchemeName, name:"analysisSchemeName", parent: name, min: 1)
+            try validate(analysisSchemeName, name:"analysisSchemeName", parent: name, pattern: "[a-z][a-z0-9_]*")
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -605,10 +564,6 @@ extension CloudSearch {
             self.analysisScheme = analysisScheme
         }
 
-        public func validate() throws {
-            try analysisScheme.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case analysisScheme = "AnalysisScheme"
         }
@@ -626,10 +581,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -646,10 +601,6 @@ extension CloudSearch {
 
         public init(domainStatus: DomainStatus? = nil) {
             self.domainStatus = domainStatus
-        }
-
-        public func validate() throws {
-            try domainStatus?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -672,13 +623,13 @@ extension CloudSearch {
             self.expressionName = expressionName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try validate(expressionName, name:"expressionName", max: 64)
-            try validate(expressionName, name:"expressionName", min: 1)
-            try validate(expressionName, name:"expressionName", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
+            try validate(expressionName, name:"expressionName", parent: name, max: 64)
+            try validate(expressionName, name:"expressionName", parent: name, min: 1)
+            try validate(expressionName, name:"expressionName", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -697,10 +648,6 @@ extension CloudSearch {
 
         public init(expression: ExpressionStatus) {
             self.expression = expression
-        }
-
-        public func validate() throws {
-            try expression.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -723,13 +670,13 @@ extension CloudSearch {
             self.indexFieldName = indexFieldName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try validate(indexFieldName, name:"indexFieldName", max: 64)
-            try validate(indexFieldName, name:"indexFieldName", min: 1)
-            try validate(indexFieldName, name:"indexFieldName", pattern: "([a-z][a-z0-9_]*\\*?|\\*[a-z0-9_]*)")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
+            try validate(indexFieldName, name:"indexFieldName", parent: name, max: 64)
+            try validate(indexFieldName, name:"indexFieldName", parent: name, min: 1)
+            try validate(indexFieldName, name:"indexFieldName", parent: name, pattern: "([a-z][a-z0-9_]*\\*?|\\*[a-z0-9_]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -748,10 +695,6 @@ extension CloudSearch {
 
         public init(indexField: IndexFieldStatus) {
             self.indexField = indexField
-        }
-
-        public func validate() throws {
-            try indexField.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -774,13 +717,13 @@ extension CloudSearch {
             self.suggesterName = suggesterName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try validate(suggesterName, name:"suggesterName", max: 64)
-            try validate(suggesterName, name:"suggesterName", min: 1)
-            try validate(suggesterName, name:"suggesterName", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
+            try validate(suggesterName, name:"suggesterName", parent: name, max: 64)
+            try validate(suggesterName, name:"suggesterName", parent: name, min: 1)
+            try validate(suggesterName, name:"suggesterName", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -799,10 +742,6 @@ extension CloudSearch {
 
         public init(suggester: SuggesterStatus) {
             self.suggester = suggester
-        }
-
-        public func validate() throws {
-            try suggester.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -830,15 +769,15 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try analysisSchemeNames?.forEach {
-                try validate($0, name:"analysisSchemeNames[]", max: 64)
-                try validate($0, name:"analysisSchemeNames[]", min: 1)
-                try validate($0, name:"analysisSchemeNames[]", pattern: "[a-z][a-z0-9_]*")
+                try validate($0, name: "analysisSchemeNames[]", parent: name, max: 64)
+                try validate($0, name: "analysisSchemeNames[]", parent: name, min: 1)
+                try validate($0, name: "analysisSchemeNames[]", parent: name, pattern: "[a-z][a-z0-9_]*")
             }
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -858,12 +797,6 @@ extension CloudSearch {
 
         public init(analysisSchemes: [AnalysisSchemeStatus]) {
             self.analysisSchemes = analysisSchemes
-        }
-
-        public func validate() throws {
-            try analysisSchemes.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -887,10 +820,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -911,10 +844,6 @@ extension CloudSearch {
             self.availabilityOptions = availabilityOptions
         }
 
-        public func validate() throws {
-            try availabilityOptions?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case availabilityOptions = "AvailabilityOptions"
         }
@@ -932,11 +861,11 @@ extension CloudSearch {
             self.domainNames = domainNames
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try domainNames?.forEach {
-                try validate($0, name:"domainNames[]", max: 28)
-                try validate($0, name:"domainNames[]", min: 3)
-                try validate($0, name:"domainNames[]", pattern: "[a-z][a-z0-9\\-]+")
+                try validate($0, name: "domainNames[]", parent: name, max: 28)
+                try validate($0, name: "domainNames[]", parent: name, min: 3)
+                try validate($0, name: "domainNames[]", parent: name, pattern: "[a-z][a-z0-9\\-]+")
             }
         }
 
@@ -954,12 +883,6 @@ extension CloudSearch {
 
         public init(domainStatusList: [DomainStatus]) {
             self.domainStatusList = domainStatusList
-        }
-
-        public func validate() throws {
-            try domainStatusList.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -987,14 +910,14 @@ extension CloudSearch {
             self.expressionNames = expressionNames
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
             try expressionNames?.forEach {
-                try validate($0, name:"expressionNames[]", max: 64)
-                try validate($0, name:"expressionNames[]", min: 1)
-                try validate($0, name:"expressionNames[]", pattern: "[a-z][a-z0-9_]*")
+                try validate($0, name: "expressionNames[]", parent: name, max: 64)
+                try validate($0, name: "expressionNames[]", parent: name, min: 1)
+                try validate($0, name: "expressionNames[]", parent: name, pattern: "[a-z][a-z0-9_]*")
             }
         }
 
@@ -1015,12 +938,6 @@ extension CloudSearch {
 
         public init(expressions: [ExpressionStatus]) {
             self.expressions = expressions
-        }
-
-        public func validate() throws {
-            try expressions.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1048,14 +965,14 @@ extension CloudSearch {
             self.fieldNames = fieldNames
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
             try fieldNames?.forEach {
-                try validate($0, name:"fieldNames[]", max: 64)
-                try validate($0, name:"fieldNames[]", min: 1)
-                try validate($0, name:"fieldNames[]", pattern: "([a-z][a-z0-9_]*\\*?|\\*[a-z0-9_]*)")
+                try validate($0, name: "fieldNames[]", parent: name, max: 64)
+                try validate($0, name: "fieldNames[]", parent: name, min: 1)
+                try validate($0, name: "fieldNames[]", parent: name, pattern: "([a-z][a-z0-9_]*\\*?|\\*[a-z0-9_]*)")
             }
         }
 
@@ -1078,12 +995,6 @@ extension CloudSearch {
             self.indexFields = indexFields
         }
 
-        public func validate() throws {
-            try indexFields.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case indexFields = "IndexFields"
         }
@@ -1100,10 +1011,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1120,10 +1031,6 @@ extension CloudSearch {
 
         public init(scalingParameters: ScalingParametersStatus) {
             self.scalingParameters = scalingParameters
-        }
-
-        public func validate() throws {
-            try scalingParameters.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1147,10 +1054,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1169,10 +1076,6 @@ extension CloudSearch {
 
         public init(accessPolicies: AccessPoliciesStatus) {
             self.accessPolicies = accessPolicies
-        }
-
-        public func validate() throws {
-            try accessPolicies.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1200,14 +1103,14 @@ extension CloudSearch {
             self.suggesterNames = suggesterNames
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
             try suggesterNames?.forEach {
-                try validate($0, name:"suggesterNames[]", max: 64)
-                try validate($0, name:"suggesterNames[]", min: 1)
-                try validate($0, name:"suggesterNames[]", pattern: "[a-z][a-z0-9_]*")
+                try validate($0, name: "suggesterNames[]", parent: name, max: 64)
+                try validate($0, name: "suggesterNames[]", parent: name, min: 1)
+                try validate($0, name: "suggesterNames[]", parent: name, pattern: "[a-z][a-z0-9_]*")
             }
         }
 
@@ -1228,12 +1131,6 @@ extension CloudSearch {
 
         public init(suggesters: [SuggesterStatus]) {
             self.suggesters = suggesters
-        }
-
-        public func validate() throws {
-            try suggesters.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1261,10 +1158,10 @@ extension CloudSearch {
             self.sourceField = sourceField
         }
 
-        public func validate() throws {
-            try validate(sourceField, name:"sourceField", max: 64)
-            try validate(sourceField, name:"sourceField", min: 1)
-            try validate(sourceField, name:"sourceField", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(sourceField, name:"sourceField", parent: name, max: 64)
+            try validate(sourceField, name:"sourceField", parent: name, min: 1)
+            try validate(sourceField, name:"sourceField", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1306,15 +1203,15 @@ extension CloudSearch {
         /// True if IndexDocuments needs to be called to activate the current domain configuration.
         public let requiresIndexDocuments: Bool
         /// The number of search instances that are available to process search requests.
-        public let searchInstanceCount: Int32?
+        public let searchInstanceCount: Int?
         /// The instance type that is being used to process search requests.
         public let searchInstanceType: String?
         /// The number of partitions across which the search index is spread.
-        public let searchPartitionCount: Int32?
+        public let searchPartitionCount: Int?
         /// The service endpoint for requesting search results from a search domain.
         public let searchService: ServiceEndpoint?
 
-        public init(arn: String? = nil, created: Bool? = nil, deleted: Bool? = nil, docService: ServiceEndpoint? = nil, domainId: String, domainName: String, limits: Limits? = nil, processing: Bool? = nil, requiresIndexDocuments: Bool, searchInstanceCount: Int32? = nil, searchInstanceType: String? = nil, searchPartitionCount: Int32? = nil, searchService: ServiceEndpoint? = nil) {
+        public init(arn: String? = nil, created: Bool? = nil, deleted: Bool? = nil, docService: ServiceEndpoint? = nil, domainId: String, domainName: String, limits: Limits? = nil, processing: Bool? = nil, requiresIndexDocuments: Bool, searchInstanceCount: Int? = nil, searchInstanceType: String? = nil, searchPartitionCount: Int? = nil, searchService: ServiceEndpoint? = nil) {
             self.arn = arn
             self.created = created
             self.deleted = deleted
@@ -1328,17 +1225,6 @@ extension CloudSearch {
             self.searchInstanceType = searchInstanceType
             self.searchPartitionCount = searchPartitionCount
             self.searchService = searchService
-        }
-
-        public func validate() throws {
-            try validate(domainId, name:"domainId", max: 64)
-            try validate(domainId, name:"domainId", min: 1)
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try limits?.validate()
-            try validate(searchInstanceCount, name:"searchInstanceCount", min: 1)
-            try validate(searchPartitionCount, name:"searchPartitionCount", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1386,8 +1272,8 @@ extension CloudSearch {
             self.sourceFields = sourceFields
         }
 
-        public func validate() throws {
-            try validate(sourceFields, name:"sourceFields", pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
+        public func validate(name: String) throws {
+            try validate(sourceFields, name:"sourceFields", parent: name, pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1431,10 +1317,10 @@ extension CloudSearch {
             self.sourceField = sourceField
         }
 
-        public func validate() throws {
-            try validate(sourceField, name:"sourceField", max: 64)
-            try validate(sourceField, name:"sourceField", min: 1)
-            try validate(sourceField, name:"sourceField", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(sourceField, name:"sourceField", parent: name, max: 64)
+            try validate(sourceField, name:"sourceField", parent: name, min: 1)
+            try validate(sourceField, name:"sourceField", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1461,12 +1347,12 @@ extension CloudSearch {
             self.expressionValue = expressionValue
         }
 
-        public func validate() throws {
-            try validate(expressionName, name:"expressionName", max: 64)
-            try validate(expressionName, name:"expressionName", min: 1)
-            try validate(expressionName, name:"expressionName", pattern: "[a-z][a-z0-9_]*")
-            try validate(expressionValue, name:"expressionValue", max: 10240)
-            try validate(expressionValue, name:"expressionValue", min: 1)
+        public func validate(name: String) throws {
+            try validate(expressionName, name:"expressionName", parent: name, max: 64)
+            try validate(expressionName, name:"expressionName", parent: name, min: 1)
+            try validate(expressionName, name:"expressionName", parent: name, pattern: "[a-z][a-z0-9_]*")
+            try validate(expressionValue, name:"expressionValue", parent: name, max: 10240)
+            try validate(expressionValue, name:"expressionValue", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1490,11 +1376,6 @@ extension CloudSearch {
             self.status = status
         }
 
-        public func validate() throws {
-            try options.validate()
-            try status.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case options = "Options"
             case status = "Status"
@@ -1512,10 +1393,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1533,14 +1414,6 @@ extension CloudSearch {
 
         public init(fieldNames: [String]? = nil) {
             self.fieldNames = fieldNames
-        }
-
-        public func validate() throws {
-            try fieldNames?.forEach {
-                try validate($0, name:"fieldNames[]", max: 64)
-                try validate($0, name:"fieldNames[]", min: 1)
-                try validate($0, name:"fieldNames[]", pattern: "[a-z][a-z0-9_]*")
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1596,21 +1469,21 @@ extension CloudSearch {
             self.textOptions = textOptions
         }
 
-        public func validate() throws {
-            try dateArrayOptions?.validate()
-            try dateOptions?.validate()
-            try doubleArrayOptions?.validate()
-            try doubleOptions?.validate()
-            try validate(indexFieldName, name:"indexFieldName", max: 64)
-            try validate(indexFieldName, name:"indexFieldName", min: 1)
-            try validate(indexFieldName, name:"indexFieldName", pattern: "([a-z][a-z0-9_]*\\*?|\\*[a-z0-9_]*)")
-            try intArrayOptions?.validate()
-            try intOptions?.validate()
-            try latLonOptions?.validate()
-            try literalArrayOptions?.validate()
-            try literalOptions?.validate()
-            try textArrayOptions?.validate()
-            try textOptions?.validate()
+        public func validate(name: String) throws {
+            try dateArrayOptions?.validate(name: "\(name).dateArrayOptions")
+            try dateOptions?.validate(name: "\(name).dateOptions")
+            try doubleArrayOptions?.validate(name: "\(name).doubleArrayOptions")
+            try doubleOptions?.validate(name: "\(name).doubleOptions")
+            try validate(indexFieldName, name:"indexFieldName", parent: name, max: 64)
+            try validate(indexFieldName, name:"indexFieldName", parent: name, min: 1)
+            try validate(indexFieldName, name:"indexFieldName", parent: name, pattern: "([a-z][a-z0-9_]*\\*?|\\*[a-z0-9_]*)")
+            try intArrayOptions?.validate(name: "\(name).intArrayOptions")
+            try intOptions?.validate(name: "\(name).intOptions")
+            try latLonOptions?.validate(name: "\(name).latLonOptions")
+            try literalArrayOptions?.validate(name: "\(name).literalArrayOptions")
+            try literalOptions?.validate(name: "\(name).literalOptions")
+            try textArrayOptions?.validate(name: "\(name).textArrayOptions")
+            try textOptions?.validate(name: "\(name).textOptions")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1642,11 +1515,6 @@ extension CloudSearch {
         public init(options: IndexField, status: OptionStatus) {
             self.options = options
             self.status = status
-        }
-
-        public func validate() throws {
-            try options.validate()
-            try status.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1698,8 +1566,8 @@ extension CloudSearch {
             self.sourceFields = sourceFields
         }
 
-        public func validate() throws {
-            try validate(sourceFields, name:"sourceFields", pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
+        public func validate(name: String) throws {
+            try validate(sourceFields, name:"sourceFields", parent: name, pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1743,10 +1611,10 @@ extension CloudSearch {
             self.sourceField = sourceField
         }
 
-        public func validate() throws {
-            try validate(sourceField, name:"sourceField", max: 64)
-            try validate(sourceField, name:"sourceField", min: 1)
-            try validate(sourceField, name:"sourceField", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(sourceField, name:"sourceField", parent: name, max: 64)
+            try validate(sourceField, name:"sourceField", parent: name, min: 1)
+            try validate(sourceField, name:"sourceField", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1790,12 +1658,12 @@ extension CloudSearch {
             self.sourceField = sourceField
         }
 
-        public func validate() throws {
-            try validate(defaultValue, name:"defaultValue", max: 1024)
-            try validate(defaultValue, name:"defaultValue", min: 0)
-            try validate(sourceField, name:"sourceField", max: 64)
-            try validate(sourceField, name:"sourceField", min: 1)
-            try validate(sourceField, name:"sourceField", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(defaultValue, name:"defaultValue", parent: name, max: 1024)
+            try validate(defaultValue, name:"defaultValue", parent: name, min: 0)
+            try validate(sourceField, name:"sourceField", parent: name, max: 64)
+            try validate(sourceField, name:"sourceField", parent: name, min: 1)
+            try validate(sourceField, name:"sourceField", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1814,17 +1682,12 @@ extension CloudSearch {
             AWSShapeMember(label: "MaximumReplicationCount", required: true, type: .integer)
         ]
 
-        public let maximumPartitionCount: Int32
-        public let maximumReplicationCount: Int32
+        public let maximumPartitionCount: Int
+        public let maximumReplicationCount: Int
 
-        public init(maximumPartitionCount: Int32, maximumReplicationCount: Int32) {
+        public init(maximumPartitionCount: Int, maximumReplicationCount: Int) {
             self.maximumPartitionCount = maximumPartitionCount
             self.maximumReplicationCount = maximumReplicationCount
-        }
-
-        public func validate() throws {
-            try validate(maximumPartitionCount, name:"maximumPartitionCount", min: 1)
-            try validate(maximumReplicationCount, name:"maximumReplicationCount", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1878,10 +1741,10 @@ extension CloudSearch {
             self.sourceFields = sourceFields
         }
 
-        public func validate() throws {
-            try validate(defaultValue, name:"defaultValue", max: 1024)
-            try validate(defaultValue, name:"defaultValue", min: 0)
-            try validate(sourceFields, name:"sourceFields", pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
+        public func validate(name: String) throws {
+            try validate(defaultValue, name:"defaultValue", parent: name, max: 1024)
+            try validate(defaultValue, name:"defaultValue", parent: name, min: 0)
+            try validate(sourceFields, name:"sourceFields", parent: name, pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1924,12 +1787,12 @@ extension CloudSearch {
             self.sourceField = sourceField
         }
 
-        public func validate() throws {
-            try validate(defaultValue, name:"defaultValue", max: 1024)
-            try validate(defaultValue, name:"defaultValue", min: 0)
-            try validate(sourceField, name:"sourceField", max: 64)
-            try validate(sourceField, name:"sourceField", min: 1)
-            try validate(sourceField, name:"sourceField", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(defaultValue, name:"defaultValue", parent: name, max: 1024)
+            try validate(defaultValue, name:"defaultValue", parent: name, min: 0)
+            try validate(sourceField, name:"sourceField", parent: name, max: 64)
+            try validate(sourceField, name:"sourceField", parent: name, min: 1)
+            try validate(sourceField, name:"sourceField", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1968,18 +1831,14 @@ extension CloudSearch {
         /// A timestamp for when this option was last updated.
         public let updateDate: TimeStamp
         /// A unique integer that indicates when this option was last updated.
-        public let updateVersion: Int32?
+        public let updateVersion: Int?
 
-        public init(creationDate: TimeStamp, pendingDeletion: Bool? = nil, state: OptionState, updateDate: TimeStamp, updateVersion: Int32? = nil) {
+        public init(creationDate: TimeStamp, pendingDeletion: Bool? = nil, state: OptionState, updateDate: TimeStamp, updateVersion: Int? = nil) {
             self.creationDate = creationDate
             self.pendingDeletion = pendingDeletion
             self.state = state
             self.updateDate = updateDate
             self.updateVersion = updateVersion
-        }
-
-        public func validate() throws {
-            try validate(updateVersion, name:"updateVersion", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2013,19 +1872,19 @@ extension CloudSearch {
         /// The instance type that you want to preconfigure for your domain. For example, search.m1.small.
         public let desiredInstanceType: PartitionInstanceType?
         /// The number of partitions you want to preconfigure for your domain. Only valid when you select m2.2xlarge as the desired instance type.
-        public let desiredPartitionCount: Int32?
+        public let desiredPartitionCount: Int?
         /// The number of replicas you want to preconfigure for each index partition.
-        public let desiredReplicationCount: Int32?
+        public let desiredReplicationCount: Int?
 
-        public init(desiredInstanceType: PartitionInstanceType? = nil, desiredPartitionCount: Int32? = nil, desiredReplicationCount: Int32? = nil) {
+        public init(desiredInstanceType: PartitionInstanceType? = nil, desiredPartitionCount: Int? = nil, desiredReplicationCount: Int? = nil) {
             self.desiredInstanceType = desiredInstanceType
             self.desiredPartitionCount = desiredPartitionCount
             self.desiredReplicationCount = desiredReplicationCount
         }
 
-        public func validate() throws {
-            try validate(desiredPartitionCount, name:"desiredPartitionCount", min: 0)
-            try validate(desiredReplicationCount, name:"desiredReplicationCount", min: 0)
+        public func validate(name: String) throws {
+            try validate(desiredPartitionCount, name:"desiredPartitionCount", parent: name, min: 0)
+            try validate(desiredReplicationCount, name:"desiredReplicationCount", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2047,11 +1906,6 @@ extension CloudSearch {
         public init(options: ScalingParameters, status: OptionStatus) {
             self.options = options
             self.status = status
-        }
-
-        public func validate() throws {
-            try options.validate()
-            try status.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2090,11 +1944,11 @@ extension CloudSearch {
             self.suggesterName = suggesterName
         }
 
-        public func validate() throws {
-            try documentSuggesterOptions.validate()
-            try validate(suggesterName, name:"suggesterName", max: 64)
-            try validate(suggesterName, name:"suggesterName", min: 1)
-            try validate(suggesterName, name:"suggesterName", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try documentSuggesterOptions.validate(name: "\(name).documentSuggesterOptions")
+            try validate(suggesterName, name:"suggesterName", parent: name, max: 64)
+            try validate(suggesterName, name:"suggesterName", parent: name, min: 1)
+            try validate(suggesterName, name:"suggesterName", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2122,11 +1976,6 @@ extension CloudSearch {
         public init(options: Suggester, status: OptionStatus) {
             self.options = options
             self.status = status
-        }
-
-        public func validate() throws {
-            try options.validate()
-            try status.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2163,11 +2012,11 @@ extension CloudSearch {
             self.sourceFields = sourceFields
         }
 
-        public func validate() throws {
-            try validate(analysisScheme, name:"analysisScheme", pattern: "[\\S]+")
-            try validate(defaultValue, name:"defaultValue", max: 1024)
-            try validate(defaultValue, name:"defaultValue", min: 0)
-            try validate(sourceFields, name:"sourceFields", pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
+        public func validate(name: String) throws {
+            try validate(analysisScheme, name:"analysisScheme", parent: name, pattern: "[\\S]+")
+            try validate(defaultValue, name:"defaultValue", parent: name, max: 1024)
+            try validate(defaultValue, name:"defaultValue", parent: name, min: 0)
+            try validate(sourceFields, name:"sourceFields", parent: name, pattern: "\\s*[a-z*][a-z0-9_]*\\*?\\s*(,\\s*[a-z*][a-z0-9_]*\\*?\\s*)*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2210,13 +2059,13 @@ extension CloudSearch {
             self.sourceField = sourceField
         }
 
-        public func validate() throws {
-            try validate(analysisScheme, name:"analysisScheme", pattern: "[\\S]+")
-            try validate(defaultValue, name:"defaultValue", max: 1024)
-            try validate(defaultValue, name:"defaultValue", min: 0)
-            try validate(sourceField, name:"sourceField", max: 64)
-            try validate(sourceField, name:"sourceField", min: 1)
-            try validate(sourceField, name:"sourceField", pattern: "[a-z][a-z0-9_]*")
+        public func validate(name: String) throws {
+            try validate(analysisScheme, name:"analysisScheme", parent: name, pattern: "[\\S]+")
+            try validate(defaultValue, name:"defaultValue", parent: name, max: 1024)
+            try validate(defaultValue, name:"defaultValue", parent: name, min: 0)
+            try validate(sourceField, name:"sourceField", parent: name, max: 64)
+            try validate(sourceField, name:"sourceField", parent: name, min: 1)
+            try validate(sourceField, name:"sourceField", parent: name, pattern: "[a-z][a-z0-9_]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2244,10 +2093,10 @@ extension CloudSearch {
             self.multiAZ = multiAZ
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2266,10 +2115,6 @@ extension CloudSearch {
 
         public init(availabilityOptions: AvailabilityOptionsStatus? = nil) {
             self.availabilityOptions = availabilityOptions
-        }
-
-        public func validate() throws {
-            try availabilityOptions?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2291,11 +2136,11 @@ extension CloudSearch {
             self.scalingParameters = scalingParameters
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
-            try scalingParameters.validate()
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
+            try scalingParameters.validate(name: "\(name).scalingParameters")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2313,10 +2158,6 @@ extension CloudSearch {
 
         public init(scalingParameters: ScalingParametersStatus) {
             self.scalingParameters = scalingParameters
-        }
-
-        public func validate() throws {
-            try scalingParameters.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2339,10 +2180,10 @@ extension CloudSearch {
             self.domainName = domainName
         }
 
-        public func validate() throws {
-            try validate(domainName, name:"domainName", max: 28)
-            try validate(domainName, name:"domainName", min: 3)
-            try validate(domainName, name:"domainName", pattern: "[a-z][a-z0-9\\-]+")
+        public func validate(name: String) throws {
+            try validate(domainName, name:"domainName", parent: name, max: 28)
+            try validate(domainName, name:"domainName", parent: name, min: 3)
+            try validate(domainName, name:"domainName", parent: name, pattern: "[a-z][a-z0-9\\-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2361,10 +2202,6 @@ extension CloudSearch {
 
         public init(accessPolicies: AccessPoliciesStatus) {
             self.accessPolicies = accessPolicies
-        }
-
-        public func validate() throws {
-            try accessPolicies.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

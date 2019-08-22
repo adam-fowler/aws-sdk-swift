@@ -5,18 +5,6 @@ import AWSSDKSwiftCore
 
 extension Inspector {
 
-    public enum AccessDeniedErrorCode: String, CustomStringConvertible, Codable {
-        case accessDeniedToAssessmentTarget = "ACCESS_DENIED_TO_ASSESSMENT_TARGET"
-        case accessDeniedToAssessmentTemplate = "ACCESS_DENIED_TO_ASSESSMENT_TEMPLATE"
-        case accessDeniedToAssessmentRun = "ACCESS_DENIED_TO_ASSESSMENT_RUN"
-        case accessDeniedToFinding = "ACCESS_DENIED_TO_FINDING"
-        case accessDeniedToResourceGroup = "ACCESS_DENIED_TO_RESOURCE_GROUP"
-        case accessDeniedToRulesPackage = "ACCESS_DENIED_TO_RULES_PACKAGE"
-        case accessDeniedToSnsTopic = "ACCESS_DENIED_TO_SNS_TOPIC"
-        case accessDeniedToIamRole = "ACCESS_DENIED_TO_IAM_ROLE"
-        public var description: String { return self.rawValue }
-    }
-
     public struct AddAttributesToFindingsRequest: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "attributes", required: true, type: .list), 
@@ -33,18 +21,18 @@ extension Inspector {
             self.findingArns = findingArns
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try attributes.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).attributes[]")
             }
-            try validate(attributes, name:"attributes", max: 10)
-            try validate(attributes, name:"attributes", min: 0)
+            try validate(attributes, name:"attributes", parent: name, max: 10)
+            try validate(attributes, name:"attributes", parent: name, min: 0)
             try findingArns.forEach {
-                try validate($0, name:"findingArns[]", max: 300)
-                try validate($0, name:"findingArns[]", min: 1)
+                try validate($0, name: "findingArns[]", parent: name, max: 300)
+                try validate($0, name: "findingArns[]", parent: name, min: 1)
             }
-            try validate(findingArns, name:"findingArns", max: 10)
-            try validate(findingArns, name:"findingArns", min: 1)
+            try validate(findingArns, name:"findingArns", parent: name, max: 10)
+            try validate(findingArns, name:"findingArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -70,35 +58,6 @@ extension Inspector {
         }
     }
 
-    public struct AgentAlreadyRunningAssessment: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "agentId", required: true, type: .string), 
-            AWSShapeMember(label: "assessmentRunArn", required: true, type: .string)
-        ]
-
-        /// ID of the agent that is running on an EC2 instance that is already participating in another started assessment run.
-        public let agentId: String
-        /// The ARN of the assessment run that has already been started.
-        public let assessmentRunArn: String
-
-        public init(agentId: String, assessmentRunArn: String) {
-            self.agentId = agentId
-            self.assessmentRunArn = assessmentRunArn
-        }
-
-        public func validate() throws {
-            try validate(agentId, name:"agentId", max: 128)
-            try validate(agentId, name:"agentId", min: 1)
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case agentId = "agentId"
-            case assessmentRunArn = "assessmentRunArn"
-        }
-    }
-
     public struct AgentFilter: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "agentHealthCodes", required: true, type: .list), 
@@ -115,11 +74,11 @@ extension Inspector {
             self.agentHealths = agentHealths
         }
 
-        public func validate() throws {
-            try validate(agentHealthCodes, name:"agentHealthCodes", max: 10)
-            try validate(agentHealthCodes, name:"agentHealthCodes", min: 0)
-            try validate(agentHealths, name:"agentHealths", max: 10)
-            try validate(agentHealths, name:"agentHealths", min: 0)
+        public func validate(name: String) throws {
+            try validate(agentHealthCodes, name:"agentHealthCodes", parent: name, max: 10)
+            try validate(agentHealthCodes, name:"agentHealthCodes", parent: name, min: 0)
+            try validate(agentHealths, name:"agentHealths", parent: name, max: 10)
+            try validate(agentHealths, name:"agentHealths", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -185,23 +144,6 @@ extension Inspector {
             self.operatingSystem = operatingSystem
         }
 
-        public func validate() throws {
-            try validate(agentId, name:"agentId", max: 128)
-            try validate(agentId, name:"agentId", min: 1)
-            try validate(agentVersion, name:"agentVersion", max: 128)
-            try validate(agentVersion, name:"agentVersion", min: 1)
-            try validate(autoScalingGroup, name:"autoScalingGroup", max: 256)
-            try validate(autoScalingGroup, name:"autoScalingGroup", min: 1)
-            try validate(hostname, name:"hostname", max: 256)
-            try validate(hostname, name:"hostname", min: 0)
-            try validate(ipv4Address, name:"ipv4Address", max: 15)
-            try validate(ipv4Address, name:"ipv4Address", min: 7)
-            try validate(kernelVersion, name:"kernelVersion", max: 128)
-            try validate(kernelVersion, name:"kernelVersion", min: 1)
-            try validate(operatingSystem, name:"operatingSystem", max: 256)
-            try validate(operatingSystem, name:"operatingSystem", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case agentHealth = "agentHealth"
             case agentId = "agentId"
@@ -244,9 +186,9 @@ extension Inspector {
         /// A Boolean value (true or false) that specifies whether the process of collecting data from the agents is completed.
         public let dataCollected: Bool
         /// The duration of the assessment run.
-        public let durationInSeconds: Int32
+        public let durationInSeconds: Int
         /// Provides a total count of generated findings per severity.
-        public let findingCounts: [Severity: Int32]
+        public let findingCounts: [Severity: Int]
         /// The auto-generated name for the assessment run.
         public let name: String
         /// A list of notifications for the event subscriptions. A notification about a particular generated finding is added to this list only once.
@@ -264,7 +206,7 @@ extension Inspector {
         /// The user-defined attributes that are assigned to every generated finding.
         public let userAttributesForFindings: [Attribute]
 
-        public init(arn: String, assessmentTemplateArn: String, completedAt: TimeStamp? = nil, createdAt: TimeStamp, dataCollected: Bool, durationInSeconds: Int32, findingCounts: [Severity: Int32], name: String, notifications: [AssessmentRunNotification], rulesPackageArns: [String], startedAt: TimeStamp? = nil, state: AssessmentRunState, stateChangedAt: TimeStamp, stateChanges: [AssessmentRunStateChange], userAttributesForFindings: [Attribute]) {
+        public init(arn: String, assessmentTemplateArn: String, completedAt: TimeStamp? = nil, createdAt: TimeStamp, dataCollected: Bool, durationInSeconds: Int, findingCounts: [Severity: Int], name: String, notifications: [AssessmentRunNotification], rulesPackageArns: [String], startedAt: TimeStamp? = nil, state: AssessmentRunState, stateChangedAt: TimeStamp, stateChanges: [AssessmentRunStateChange], userAttributesForFindings: [Attribute]) {
             self.arn = arn
             self.assessmentTemplateArn = assessmentTemplateArn
             self.completedAt = completedAt
@@ -280,35 +222,6 @@ extension Inspector {
             self.stateChangedAt = stateChangedAt
             self.stateChanges = stateChanges
             self.userAttributesForFindings = userAttributesForFindings
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 300)
-            try validate(arn, name:"arn", min: 1)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
-            try validate(durationInSeconds, name:"durationInSeconds", max: 86400)
-            try validate(durationInSeconds, name:"durationInSeconds", min: 180)
-            try validate(name, name:"name", max: 140)
-            try validate(name, name:"name", min: 1)
-            try notifications.forEach {
-                try $0.validate()
-            }
-            try validate(notifications, name:"notifications", max: 50)
-            try validate(notifications, name:"notifications", min: 0)
-            try rulesPackageArns.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
-            }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 1)
-            try validate(stateChanges, name:"stateChanges", max: 50)
-            try validate(stateChanges, name:"stateChanges", min: 0)
-            try userAttributesForFindings.forEach {
-                try $0.validate()
-            }
-            try validate(userAttributesForFindings, name:"userAttributesForFindings", max: 10)
-            try validate(userAttributesForFindings, name:"userAttributesForFindings", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -366,22 +279,6 @@ extension Inspector {
             self.telemetryMetadata = telemetryMetadata
         }
 
-        public func validate() throws {
-            try validate(agentHealthDetails, name:"agentHealthDetails", max: 1000)
-            try validate(agentHealthDetails, name:"agentHealthDetails", min: 0)
-            try validate(agentId, name:"agentId", max: 128)
-            try validate(agentId, name:"agentId", min: 1)
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
-            try validate(autoScalingGroup, name:"autoScalingGroup", max: 256)
-            try validate(autoScalingGroup, name:"autoScalingGroup", min: 1)
-            try telemetryMetadata.forEach {
-                try $0.validate()
-            }
-            try validate(telemetryMetadata, name:"telemetryMetadata", max: 5000)
-            try validate(telemetryMetadata, name:"telemetryMetadata", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case agentHealth = "agentHealth"
             case agentHealthCode = "agentHealthCode"
@@ -429,18 +326,18 @@ extension Inspector {
             self.states = states
         }
 
-        public func validate() throws {
-            try durationRange?.validate()
-            try validate(namePattern, name:"namePattern", max: 140)
-            try validate(namePattern, name:"namePattern", min: 1)
+        public func validate(name: String) throws {
+            try durationRange?.validate(name: "\(name).durationRange")
+            try validate(namePattern, name:"namePattern", parent: name, max: 140)
+            try validate(namePattern, name:"namePattern", parent: name, min: 1)
             try rulesPackageArns?.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
+                try validate($0, name: "rulesPackageArns[]", parent: name, max: 300)
+                try validate($0, name: "rulesPackageArns[]", parent: name, min: 1)
             }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
-            try validate(states, name:"states", max: 50)
-            try validate(states, name:"states", min: 0)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, min: 0)
+            try validate(states, name:"states", parent: name, max: 50)
+            try validate(states, name:"states", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -484,13 +381,6 @@ extension Inspector {
             self.message = message
             self.snsPublishStatusCode = snsPublishStatusCode
             self.snsTopicArn = snsTopicArn
-        }
-
-        public func validate() throws {
-            try validate(message, name:"message", max: 1000)
-            try validate(message, name:"message", min: 0)
-            try validate(snsTopicArn, name:"snsTopicArn", max: 300)
-            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -578,15 +468,6 @@ extension Inspector {
             self.updatedAt = updatedAt
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 300)
-            try validate(arn, name:"arn", min: 1)
-            try validate(name, name:"name", max: 140)
-            try validate(name, name:"name", min: 1)
-            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
-            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdAt = "createdAt"
@@ -608,9 +489,9 @@ extension Inspector {
             self.assessmentTargetNamePattern = assessmentTargetNamePattern
         }
 
-        public func validate() throws {
-            try validate(assessmentTargetNamePattern, name:"assessmentTargetNamePattern", max: 140)
-            try validate(assessmentTargetNamePattern, name:"assessmentTargetNamePattern", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentTargetNamePattern, name:"assessmentTargetNamePattern", parent: name, max: 140)
+            try validate(assessmentTargetNamePattern, name:"assessmentTargetNamePattern", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -634,13 +515,13 @@ extension Inspector {
         /// The ARN of the assessment template.
         public let arn: String
         /// The number of existing assessment runs associated with this assessment template. This value can be zero or a positive integer.
-        public let assessmentRunCount: Int32
+        public let assessmentRunCount: Int
         /// The ARN of the assessment target that corresponds to this assessment template.
         public let assessmentTargetArn: String
         /// The time at which the assessment template is created.
         public let createdAt: TimeStamp
         /// The duration in seconds specified for this assessment template. The default value is 3600 seconds (one hour). The maximum value is 86400 seconds (one day).
-        public let durationInSeconds: Int32
+        public let durationInSeconds: Int
         /// The Amazon Resource Name (ARN) of the most recent assessment run associated with this assessment template. This value exists only when the value of assessmentRunCount is greaterpa than zero.
         public let lastAssessmentRunArn: String?
         /// The name of the assessment template.
@@ -650,7 +531,7 @@ extension Inspector {
         /// The user-defined attributes that are assigned to every generated finding from the assessment run that uses this assessment template.
         public let userAttributesForFindings: [Attribute]
 
-        public init(arn: String, assessmentRunCount: Int32, assessmentTargetArn: String, createdAt: TimeStamp, durationInSeconds: Int32, lastAssessmentRunArn: String? = nil, name: String, rulesPackageArns: [String], userAttributesForFindings: [Attribute]) {
+        public init(arn: String, assessmentRunCount: Int, assessmentTargetArn: String, createdAt: TimeStamp, durationInSeconds: Int, lastAssessmentRunArn: String? = nil, name: String, rulesPackageArns: [String], userAttributesForFindings: [Attribute]) {
             self.arn = arn
             self.assessmentRunCount = assessmentRunCount
             self.assessmentTargetArn = assessmentTargetArn
@@ -660,30 +541,6 @@ extension Inspector {
             self.name = name
             self.rulesPackageArns = rulesPackageArns
             self.userAttributesForFindings = userAttributesForFindings
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 300)
-            try validate(arn, name:"arn", min: 1)
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
-            try validate(durationInSeconds, name:"durationInSeconds", max: 86400)
-            try validate(durationInSeconds, name:"durationInSeconds", min: 180)
-            try validate(lastAssessmentRunArn, name:"lastAssessmentRunArn", max: 300)
-            try validate(lastAssessmentRunArn, name:"lastAssessmentRunArn", min: 1)
-            try validate(name, name:"name", max: 140)
-            try validate(name, name:"name", min: 1)
-            try rulesPackageArns.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
-            }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
-            try userAttributesForFindings.forEach {
-                try $0.validate()
-            }
-            try validate(userAttributesForFindings, name:"userAttributesForFindings", max: 10)
-            try validate(userAttributesForFindings, name:"userAttributesForFindings", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -719,16 +576,16 @@ extension Inspector {
             self.rulesPackageArns = rulesPackageArns
         }
 
-        public func validate() throws {
-            try durationRange?.validate()
-            try validate(namePattern, name:"namePattern", max: 140)
-            try validate(namePattern, name:"namePattern", min: 1)
+        public func validate(name: String) throws {
+            try durationRange?.validate(name: "\(name).durationRange")
+            try validate(namePattern, name:"namePattern", parent: name, max: 140)
+            try validate(namePattern, name:"namePattern", parent: name, min: 1)
             try rulesPackageArns?.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
+                try validate($0, name: "rulesPackageArns[]", parent: name, max: 300)
+                try validate($0, name: "rulesPackageArns[]", parent: name, min: 1)
             }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -763,11 +620,11 @@ extension Inspector {
         /// An array of the network interfaces interacting with the EC2 instance where the finding is generated.
         public let networkInterfaces: [NetworkInterface]?
         /// The schema version of this data type.
-        public let schemaVersion: Int32
+        public let schemaVersion: Int
         /// The tags related to the EC2 instance where the finding is generated.
         public let tags: [Tag]?
 
-        public init(agentId: String? = nil, amiId: String? = nil, autoScalingGroup: String? = nil, hostname: String? = nil, ipv4Addresses: [String]? = nil, networkInterfaces: [NetworkInterface]? = nil, schemaVersion: Int32, tags: [Tag]? = nil) {
+        public init(agentId: String? = nil, amiId: String? = nil, autoScalingGroup: String? = nil, hostname: String? = nil, ipv4Addresses: [String]? = nil, networkInterfaces: [NetworkInterface]? = nil, schemaVersion: Int, tags: [Tag]? = nil) {
             self.agentId = agentId
             self.amiId = amiId
             self.autoScalingGroup = autoScalingGroup
@@ -776,30 +633,6 @@ extension Inspector {
             self.networkInterfaces = networkInterfaces
             self.schemaVersion = schemaVersion
             self.tags = tags
-        }
-
-        public func validate() throws {
-            try validate(agentId, name:"agentId", max: 128)
-            try validate(agentId, name:"agentId", min: 1)
-            try validate(amiId, name:"amiId", max: 256)
-            try validate(amiId, name:"amiId", min: 0)
-            try validate(autoScalingGroup, name:"autoScalingGroup", max: 256)
-            try validate(autoScalingGroup, name:"autoScalingGroup", min: 1)
-            try validate(hostname, name:"hostname", max: 256)
-            try validate(hostname, name:"hostname", min: 0)
-            try ipv4Addresses?.forEach {
-                try validate($0, name:"ipv4Addresses[]", max: 15)
-                try validate($0, name:"ipv4Addresses[]", min: 7)
-            }
-            try validate(ipv4Addresses, name:"ipv4Addresses", max: 50)
-            try validate(ipv4Addresses, name:"ipv4Addresses", min: 0)
-            try networkInterfaces?.forEach {
-                try $0.validate()
-            }
-            try validate(schemaVersion, name:"schemaVersion", min: 0)
-            try tags?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -835,11 +668,11 @@ extension Inspector {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -864,11 +697,11 @@ extension Inspector {
             self.resourceGroupArn = resourceGroupArn
         }
 
-        public func validate() throws {
-            try validate(assessmentTargetName, name:"assessmentTargetName", max: 140)
-            try validate(assessmentTargetName, name:"assessmentTargetName", min: 1)
-            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
-            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentTargetName, name:"assessmentTargetName", parent: name, max: 140)
+            try validate(assessmentTargetName, name:"assessmentTargetName", parent: name, min: 1)
+            try validate(resourceGroupArn, name:"resourceGroupArn", parent: name, max: 300)
+            try validate(resourceGroupArn, name:"resourceGroupArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -887,11 +720,6 @@ extension Inspector {
 
         public init(assessmentTargetArn: String) {
             self.assessmentTargetArn = assessmentTargetArn
-        }
-
-        public func validate() throws {
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -913,13 +741,13 @@ extension Inspector {
         /// The user-defined name that identifies the assessment template that you want to create. You can create several assessment templates for an assessment target. The names of the assessment templates that correspond to a particular assessment target must be unique.
         public let assessmentTemplateName: String
         /// The duration of the assessment run in seconds.
-        public let durationInSeconds: Int32
+        public let durationInSeconds: Int
         /// The ARNs that specify the rules packages that you want to attach to the assessment template.
         public let rulesPackageArns: [String]
         /// The user-defined attributes that are assigned to every finding that is generated by the assessment run that uses this assessment template. An attribute is a key and value pair (an Attribute object). Within an assessment template, each key must be unique.
         public let userAttributesForFindings: [Attribute]?
 
-        public init(assessmentTargetArn: String, assessmentTemplateName: String, durationInSeconds: Int32, rulesPackageArns: [String], userAttributesForFindings: [Attribute]? = nil) {
+        public init(assessmentTargetArn: String, assessmentTemplateName: String, durationInSeconds: Int, rulesPackageArns: [String], userAttributesForFindings: [Attribute]? = nil) {
             self.assessmentTargetArn = assessmentTargetArn
             self.assessmentTemplateName = assessmentTemplateName
             self.durationInSeconds = durationInSeconds
@@ -927,24 +755,24 @@ extension Inspector {
             self.userAttributesForFindings = userAttributesForFindings
         }
 
-        public func validate() throws {
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
-            try validate(assessmentTemplateName, name:"assessmentTemplateName", max: 140)
-            try validate(assessmentTemplateName, name:"assessmentTemplateName", min: 1)
-            try validate(durationInSeconds, name:"durationInSeconds", max: 86400)
-            try validate(durationInSeconds, name:"durationInSeconds", min: 180)
+        public func validate(name: String) throws {
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", parent: name, max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", parent: name, min: 1)
+            try validate(assessmentTemplateName, name:"assessmentTemplateName", parent: name, max: 140)
+            try validate(assessmentTemplateName, name:"assessmentTemplateName", parent: name, min: 1)
+            try validate(durationInSeconds, name:"durationInSeconds", parent: name, max: 86400)
+            try validate(durationInSeconds, name:"durationInSeconds", parent: name, min: 180)
             try rulesPackageArns.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
+                try validate($0, name: "rulesPackageArns[]", parent: name, max: 300)
+                try validate($0, name: "rulesPackageArns[]", parent: name, min: 1)
             }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, min: 0)
             try userAttributesForFindings?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).userAttributesForFindings[]")
             }
-            try validate(userAttributesForFindings, name:"userAttributesForFindings", max: 10)
-            try validate(userAttributesForFindings, name:"userAttributesForFindings", min: 0)
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", parent: name, max: 10)
+            try validate(userAttributesForFindings, name:"userAttributesForFindings", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -968,11 +796,6 @@ extension Inspector {
             self.assessmentTemplateArn = assessmentTemplateArn
         }
 
-        public func validate() throws {
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case assessmentTemplateArn = "assessmentTemplateArn"
         }
@@ -990,9 +813,9 @@ extension Inspector {
             self.assessmentTemplateArn = assessmentTemplateArn
         }
 
-        public func validate() throws {
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1012,10 +835,6 @@ extension Inspector {
             self.previewToken = previewToken
         }
 
-        public func validate() throws {
-            try validate(previewToken, name:"previewToken", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case previewToken = "previewToken"
         }
@@ -1033,12 +852,12 @@ extension Inspector {
             self.resourceGroupTags = resourceGroupTags
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try resourceGroupTags.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).resourceGroupTags[]")
             }
-            try validate(resourceGroupTags, name:"resourceGroupTags", max: 10)
-            try validate(resourceGroupTags, name:"resourceGroupTags", min: 1)
+            try validate(resourceGroupTags, name:"resourceGroupTags", parent: name, max: 10)
+            try validate(resourceGroupTags, name:"resourceGroupTags", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1058,11 +877,6 @@ extension Inspector {
             self.resourceGroupArn = resourceGroupArn
         }
 
-        public func validate() throws {
-            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
-            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case resourceGroupArn = "resourceGroupArn"
         }
@@ -1080,9 +894,9 @@ extension Inspector {
             self.assessmentRunArn = assessmentRunArn
         }
 
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1102,9 +916,9 @@ extension Inspector {
             self.assessmentTargetArn = assessmentTargetArn
         }
 
-        public func validate() throws {
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", parent: name, max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1124,9 +938,9 @@ extension Inspector {
             self.assessmentTemplateArn = assessmentTemplateArn
         }
 
-        public func validate() throws {
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1146,13 +960,13 @@ extension Inspector {
             self.assessmentRunArns = assessmentRunArns
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try assessmentRunArns.forEach {
-                try validate($0, name:"assessmentRunArns[]", max: 300)
-                try validate($0, name:"assessmentRunArns[]", min: 1)
+                try validate($0, name: "assessmentRunArns[]", parent: name, max: 300)
+                try validate($0, name: "assessmentRunArns[]", parent: name, min: 1)
             }
-            try validate(assessmentRunArns, name:"assessmentRunArns", max: 10)
-            try validate(assessmentRunArns, name:"assessmentRunArns", min: 1)
+            try validate(assessmentRunArns, name:"assessmentRunArns", parent: name, max: 10)
+            try validate(assessmentRunArns, name:"assessmentRunArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1176,14 +990,6 @@ extension Inspector {
             self.failedItems = failedItems
         }
 
-        public func validate() throws {
-            try assessmentRuns.forEach {
-                try $0.validate()
-            }
-            try validate(assessmentRuns, name:"assessmentRuns", max: 10)
-            try validate(assessmentRuns, name:"assessmentRuns", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case assessmentRuns = "assessmentRuns"
             case failedItems = "failedItems"
@@ -1202,13 +1008,13 @@ extension Inspector {
             self.assessmentTargetArns = assessmentTargetArns
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try assessmentTargetArns.forEach {
-                try validate($0, name:"assessmentTargetArns[]", max: 300)
-                try validate($0, name:"assessmentTargetArns[]", min: 1)
+                try validate($0, name: "assessmentTargetArns[]", parent: name, max: 300)
+                try validate($0, name: "assessmentTargetArns[]", parent: name, min: 1)
             }
-            try validate(assessmentTargetArns, name:"assessmentTargetArns", max: 10)
-            try validate(assessmentTargetArns, name:"assessmentTargetArns", min: 1)
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", parent: name, max: 10)
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1232,14 +1038,6 @@ extension Inspector {
             self.failedItems = failedItems
         }
 
-        public func validate() throws {
-            try assessmentTargets.forEach {
-                try $0.validate()
-            }
-            try validate(assessmentTargets, name:"assessmentTargets", max: 10)
-            try validate(assessmentTargets, name:"assessmentTargets", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case assessmentTargets = "assessmentTargets"
             case failedItems = "failedItems"
@@ -1257,13 +1055,13 @@ extension Inspector {
             self.assessmentTemplateArns = assessmentTemplateArns
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try assessmentTemplateArns.forEach {
-                try validate($0, name:"assessmentTemplateArns[]", max: 300)
-                try validate($0, name:"assessmentTemplateArns[]", min: 1)
+                try validate($0, name: "assessmentTemplateArns[]", parent: name, max: 300)
+                try validate($0, name: "assessmentTemplateArns[]", parent: name, min: 1)
             }
-            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", max: 10)
-            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", min: 1)
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", parent: name, max: 10)
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1285,14 +1083,6 @@ extension Inspector {
         public init(assessmentTemplates: [AssessmentTemplate], failedItems: [String: FailedItemDetails]) {
             self.assessmentTemplates = assessmentTemplates
             self.failedItems = failedItems
-        }
-
-        public func validate() throws {
-            try assessmentTemplates.forEach {
-                try $0.validate()
-            }
-            try validate(assessmentTemplates, name:"assessmentTemplates", max: 10)
-            try validate(assessmentTemplates, name:"assessmentTemplates", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1321,11 +1111,6 @@ extension Inspector {
             self.valid = valid
         }
 
-        public func validate() throws {
-            try validate(roleArn, name:"roleArn", max: 300)
-            try validate(roleArn, name:"roleArn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case registeredAt = "registeredAt"
             case roleArn = "roleArn"
@@ -1349,13 +1134,13 @@ extension Inspector {
             self.locale = locale
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try exclusionArns.forEach {
-                try validate($0, name:"exclusionArns[]", max: 300)
-                try validate($0, name:"exclusionArns[]", min: 1)
+                try validate($0, name: "exclusionArns[]", parent: name, max: 300)
+                try validate($0, name: "exclusionArns[]", parent: name, min: 1)
             }
-            try validate(exclusionArns, name:"exclusionArns", max: 100)
-            try validate(exclusionArns, name:"exclusionArns", min: 1)
+            try validate(exclusionArns, name:"exclusionArns", parent: name, max: 100)
+            try validate(exclusionArns, name:"exclusionArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1402,13 +1187,13 @@ extension Inspector {
             self.locale = locale
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try findingArns.forEach {
-                try validate($0, name:"findingArns[]", max: 300)
-                try validate($0, name:"findingArns[]", min: 1)
+                try validate($0, name: "findingArns[]", parent: name, max: 300)
+                try validate($0, name: "findingArns[]", parent: name, min: 1)
             }
-            try validate(findingArns, name:"findingArns", max: 10)
-            try validate(findingArns, name:"findingArns", min: 1)
+            try validate(findingArns, name:"findingArns", parent: name, max: 10)
+            try validate(findingArns, name:"findingArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1433,14 +1218,6 @@ extension Inspector {
             self.findings = findings
         }
 
-        public func validate() throws {
-            try findings.forEach {
-                try $0.validate()
-            }
-            try validate(findings, name:"findings", max: 100)
-            try validate(findings, name:"findings", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case failedItems = "failedItems"
             case findings = "findings"
@@ -1459,13 +1236,13 @@ extension Inspector {
             self.resourceGroupArns = resourceGroupArns
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try resourceGroupArns.forEach {
-                try validate($0, name:"resourceGroupArns[]", max: 300)
-                try validate($0, name:"resourceGroupArns[]", min: 1)
+                try validate($0, name: "resourceGroupArns[]", parent: name, max: 300)
+                try validate($0, name: "resourceGroupArns[]", parent: name, min: 1)
             }
-            try validate(resourceGroupArns, name:"resourceGroupArns", max: 10)
-            try validate(resourceGroupArns, name:"resourceGroupArns", min: 1)
+            try validate(resourceGroupArns, name:"resourceGroupArns", parent: name, max: 10)
+            try validate(resourceGroupArns, name:"resourceGroupArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1487,14 +1264,6 @@ extension Inspector {
         public init(failedItems: [String: FailedItemDetails], resourceGroups: [ResourceGroup]) {
             self.failedItems = failedItems
             self.resourceGroups = resourceGroups
-        }
-
-        public func validate() throws {
-            try resourceGroups.forEach {
-                try $0.validate()
-            }
-            try validate(resourceGroups, name:"resourceGroups", max: 10)
-            try validate(resourceGroups, name:"resourceGroups", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1519,13 +1288,13 @@ extension Inspector {
             self.rulesPackageArns = rulesPackageArns
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try rulesPackageArns.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
+                try validate($0, name: "rulesPackageArns[]", parent: name, max: 300)
+                try validate($0, name: "rulesPackageArns[]", parent: name, min: 1)
             }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 10)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 1)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, max: 10)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1550,14 +1319,6 @@ extension Inspector {
             self.rulesPackages = rulesPackages
         }
 
-        public func validate() throws {
-            try rulesPackages.forEach {
-                try $0.validate()
-            }
-            try validate(rulesPackages, name:"rulesPackages", max: 10)
-            try validate(rulesPackages, name:"rulesPackages", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case failedItems = "failedItems"
             case rulesPackages = "rulesPackages"
@@ -1571,20 +1332,20 @@ extension Inspector {
         ]
 
         /// The maximum value of the duration range. Must be less than or equal to 604800 seconds (1 week).
-        public let maxSeconds: Int32?
+        public let maxSeconds: Int?
         /// The minimum value of the duration range. Must be greater than zero.
-        public let minSeconds: Int32?
+        public let minSeconds: Int?
 
-        public init(maxSeconds: Int32? = nil, minSeconds: Int32? = nil) {
+        public init(maxSeconds: Int? = nil, minSeconds: Int? = nil) {
             self.maxSeconds = maxSeconds
             self.minSeconds = minSeconds
         }
 
-        public func validate() throws {
-            try validate(maxSeconds, name:"maxSeconds", max: 86400)
-            try validate(maxSeconds, name:"maxSeconds", min: 180)
-            try validate(minSeconds, name:"minSeconds", max: 86400)
-            try validate(minSeconds, name:"minSeconds", min: 180)
+        public func validate(name: String) throws {
+            try validate(maxSeconds, name:"maxSeconds", parent: name, max: 86400)
+            try validate(maxSeconds, name:"maxSeconds", parent: name, min: 180)
+            try validate(minSeconds, name:"minSeconds", parent: name, max: 86400)
+            try validate(minSeconds, name:"minSeconds", parent: name, min: 180)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1647,23 +1408,6 @@ extension Inspector {
             self.title = title
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 300)
-            try validate(arn, name:"arn", min: 1)
-            try attributes?.forEach {
-                try $0.validate()
-            }
-            try validate(attributes, name:"attributes", max: 50)
-            try validate(attributes, name:"attributes", min: 0)
-            try validate(description, name:"description", max: 20000)
-            try validate(description, name:"description", min: 0)
-            try validate(recommendation, name:"recommendation", max: 20000)
-            try validate(recommendation, name:"recommendation", min: 0)
-            try validate(scopes, name:"scopes", min: 1)
-            try validate(title, name:"title", max: 20000)
-            try validate(title, name:"title", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case attributes = "attributes"
@@ -1700,21 +1444,6 @@ extension Inspector {
             self.recommendation = recommendation
             self.scopes = scopes
             self.title = title
-        }
-
-        public func validate() throws {
-            try attributes?.forEach {
-                try $0.validate()
-            }
-            try validate(attributes, name:"attributes", max: 50)
-            try validate(attributes, name:"attributes", min: 0)
-            try validate(description, name:"description", max: 20000)
-            try validate(description, name:"description", min: 0)
-            try validate(recommendation, name:"recommendation", max: 20000)
-            try validate(recommendation, name:"recommendation", min: 0)
-            try validate(scopes, name:"scopes", min: 1)
-            try validate(title, name:"title", max: 20000)
-            try validate(title, name:"title", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1789,7 +1518,7 @@ extension Inspector {
         /// The system-defined attributes for the finding.
         public let attributes: [Attribute]
         /// This data element is currently not used.
-        public let confidence: Int32?
+        public let confidence: Int?
         /// The time when the finding was generated.
         public let createdAt: TimeStamp
         /// The description of the finding.
@@ -1803,7 +1532,7 @@ extension Inspector {
         /// The recommendation for the finding.
         public let recommendation: String?
         /// The schema version of this data type.
-        public let schemaVersion: Int32?
+        public let schemaVersion: Int?
         /// The data element is set to "Inspector".
         public let service: String?
         /// This data type is used in the Finding data type.
@@ -1817,7 +1546,7 @@ extension Inspector {
         /// The user-defined attributes that are assigned to the finding.
         public let userAttributes: [Attribute]
 
-        public init(arn: String, assetAttributes: AssetAttributes? = nil, assetType: AssetType? = nil, attributes: [Attribute], confidence: Int32? = nil, createdAt: TimeStamp, description: String? = nil, id: String? = nil, indicatorOfCompromise: Bool? = nil, numericSeverity: Double? = nil, recommendation: String? = nil, schemaVersion: Int32? = nil, service: String? = nil, serviceAttributes: InspectorServiceAttributes? = nil, severity: Severity? = nil, title: String? = nil, updatedAt: TimeStamp, userAttributes: [Attribute]) {
+        public init(arn: String, assetAttributes: AssetAttributes? = nil, assetType: AssetType? = nil, attributes: [Attribute], confidence: Int? = nil, createdAt: TimeStamp, description: String? = nil, id: String? = nil, indicatorOfCompromise: Bool? = nil, numericSeverity: Double? = nil, recommendation: String? = nil, schemaVersion: Int? = nil, service: String? = nil, serviceAttributes: InspectorServiceAttributes? = nil, severity: Severity? = nil, title: String? = nil, updatedAt: TimeStamp, userAttributes: [Attribute]) {
             self.arn = arn
             self.assetAttributes = assetAttributes
             self.assetType = assetType
@@ -1836,38 +1565,6 @@ extension Inspector {
             self.title = title
             self.updatedAt = updatedAt
             self.userAttributes = userAttributes
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 300)
-            try validate(arn, name:"arn", min: 1)
-            try assetAttributes?.validate()
-            try attributes.forEach {
-                try $0.validate()
-            }
-            try validate(attributes, name:"attributes", max: 50)
-            try validate(attributes, name:"attributes", min: 0)
-            try validate(confidence, name:"confidence", max: 10)
-            try validate(confidence, name:"confidence", min: 0)
-            try validate(description, name:"description", max: 20000)
-            try validate(description, name:"description", min: 0)
-            try validate(id, name:"id", max: 128)
-            try validate(id, name:"id", min: 0)
-            try validate(numericSeverity, name:"numericSeverity", max: 10)
-            try validate(numericSeverity, name:"numericSeverity", min: 0)
-            try validate(recommendation, name:"recommendation", max: 20000)
-            try validate(recommendation, name:"recommendation", min: 0)
-            try validate(schemaVersion, name:"schemaVersion", min: 0)
-            try validate(service, name:"service", max: 128)
-            try validate(service, name:"service", min: 0)
-            try serviceAttributes?.validate()
-            try validate(title, name:"title", max: 20000)
-            try validate(title, name:"title", min: 0)
-            try userAttributes.forEach {
-                try $0.validate()
-            }
-            try validate(userAttributes, name:"userAttributes", max: 10)
-            try validate(userAttributes, name:"userAttributes", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1932,42 +1629,42 @@ extension Inspector {
             self.userAttributes = userAttributes
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try agentIds?.forEach {
-                try validate($0, name:"agentIds[]", max: 128)
-                try validate($0, name:"agentIds[]", min: 1)
+                try validate($0, name: "agentIds[]", parent: name, max: 128)
+                try validate($0, name: "agentIds[]", parent: name, min: 1)
             }
-            try validate(agentIds, name:"agentIds", max: 99)
-            try validate(agentIds, name:"agentIds", min: 0)
+            try validate(agentIds, name:"agentIds", parent: name, max: 99)
+            try validate(agentIds, name:"agentIds", parent: name, min: 0)
             try attributes?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).attributes[]")
             }
-            try validate(attributes, name:"attributes", max: 50)
-            try validate(attributes, name:"attributes", min: 0)
+            try validate(attributes, name:"attributes", parent: name, max: 50)
+            try validate(attributes, name:"attributes", parent: name, min: 0)
             try autoScalingGroups?.forEach {
-                try validate($0, name:"autoScalingGroups[]", max: 256)
-                try validate($0, name:"autoScalingGroups[]", min: 1)
+                try validate($0, name: "autoScalingGroups[]", parent: name, max: 256)
+                try validate($0, name: "autoScalingGroups[]", parent: name, min: 1)
             }
-            try validate(autoScalingGroups, name:"autoScalingGroups", max: 20)
-            try validate(autoScalingGroups, name:"autoScalingGroups", min: 0)
+            try validate(autoScalingGroups, name:"autoScalingGroups", parent: name, max: 20)
+            try validate(autoScalingGroups, name:"autoScalingGroups", parent: name, min: 0)
             try ruleNames?.forEach {
-                try validate($0, name:"ruleNames[]", max: 1000)
+                try validate($0, name: "ruleNames[]", parent: name, max: 1000)
             }
-            try validate(ruleNames, name:"ruleNames", max: 50)
-            try validate(ruleNames, name:"ruleNames", min: 0)
+            try validate(ruleNames, name:"ruleNames", parent: name, max: 50)
+            try validate(ruleNames, name:"ruleNames", parent: name, min: 0)
             try rulesPackageArns?.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
+                try validate($0, name: "rulesPackageArns[]", parent: name, max: 300)
+                try validate($0, name: "rulesPackageArns[]", parent: name, min: 1)
             }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 50)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
-            try validate(severities, name:"severities", max: 50)
-            try validate(severities, name:"severities", min: 0)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, max: 50)
+            try validate(rulesPackageArns, name:"rulesPackageArns", parent: name, min: 0)
+            try validate(severities, name:"severities", parent: name, max: 50)
+            try validate(severities, name:"severities", parent: name, min: 0)
             try userAttributes?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).userAttributes[]")
             }
-            try validate(userAttributes, name:"userAttributes", max: 50)
-            try validate(userAttributes, name:"userAttributes", min: 0)
+            try validate(userAttributes, name:"userAttributes", parent: name, max: 50)
+            try validate(userAttributes, name:"userAttributes", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2002,9 +1699,9 @@ extension Inspector {
             self.reportType = reportType
         }
 
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2030,10 +1727,6 @@ extension Inspector {
             self.url = url
         }
 
-        public func validate() throws {
-            try validate(url, name:"url", max: 2048)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case status = "status"
             case url = "url"
@@ -2054,13 +1747,13 @@ extension Inspector {
         /// The locale into which you want to translate the exclusion's title, description, and recommendation.
         public let locale: Locale?
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 100. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the GetExclusionsPreviewRequest action. Subsequent calls to the action fill nextToken in the request with the value of nextToken from the previous response to continue listing data.
         public let nextToken: String?
         /// The unique identifier associated of the exclusions preview.
         public let previewToken: String
 
-        public init(assessmentTemplateArn: String, locale: Locale? = nil, maxResults: Int32? = nil, nextToken: String? = nil, previewToken: String) {
+        public init(assessmentTemplateArn: String, locale: Locale? = nil, maxResults: Int? = nil, nextToken: String? = nil, previewToken: String) {
             self.assessmentTemplateArn = assessmentTemplateArn
             self.locale = locale
             self.maxResults = maxResults
@@ -2068,12 +1761,12 @@ extension Inspector {
             self.previewToken = previewToken
         }
 
-        public func validate() throws {
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(previewToken, name:"previewToken", pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+        public func validate(name: String) throws {
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(previewToken, name:"previewToken", parent: name, pattern: "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2105,16 +1798,6 @@ extension Inspector {
             self.previewStatus = previewStatus
         }
 
-        public func validate() throws {
-            try exclusionPreviews?.forEach {
-                try $0.validate()
-            }
-            try validate(exclusionPreviews, name:"exclusionPreviews", max: 100)
-            try validate(exclusionPreviews, name:"exclusionPreviews", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case exclusionPreviews = "exclusionPreviews"
             case nextToken = "nextToken"
@@ -2134,9 +1817,9 @@ extension Inspector {
             self.assessmentRunArn = assessmentRunArn
         }
 
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2154,14 +1837,6 @@ extension Inspector {
 
         public init(telemetryMetadata: [TelemetryMetadata]) {
             self.telemetryMetadata = telemetryMetadata
-        }
-
-        public func validate() throws {
-            try telemetryMetadata.forEach {
-                try $0.validate()
-            }
-            try validate(telemetryMetadata, name:"telemetryMetadata", max: 5000)
-            try validate(telemetryMetadata, name:"telemetryMetadata", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2190,20 +1865,12 @@ extension Inspector {
         /// The ARN of the rules package that is used to generate the finding.
         public let rulesPackageArn: String?
         /// The schema version of this data type.
-        public let schemaVersion: Int32
+        public let schemaVersion: Int
 
-        public init(assessmentRunArn: String? = nil, rulesPackageArn: String? = nil, schemaVersion: Int32) {
+        public init(assessmentRunArn: String? = nil, rulesPackageArn: String? = nil, schemaVersion: Int) {
             self.assessmentRunArn = assessmentRunArn
             self.rulesPackageArn = rulesPackageArn
             self.schemaVersion = schemaVersion
-        }
-
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
-            try validate(rulesPackageArn, name:"rulesPackageArn", max: 300)
-            try validate(rulesPackageArn, name:"rulesPackageArn", min: 1)
-            try validate(schemaVersion, name:"schemaVersion", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2211,79 +1878,6 @@ extension Inspector {
             case rulesPackageArn = "rulesPackageArn"
             case schemaVersion = "schemaVersion"
         }
-    }
-
-    public enum InvalidCrossAccountRoleErrorCode: String, CustomStringConvertible, Codable {
-        case roleDoesNotExistOrInvalidTrustRelationship = "ROLE_DOES_NOT_EXIST_OR_INVALID_TRUST_RELATIONSHIP"
-        case roleDoesNotHaveCorrectPolicy = "ROLE_DOES_NOT_HAVE_CORRECT_POLICY"
-        public var description: String { return self.rawValue }
-    }
-
-    public enum InvalidInputErrorCode: String, CustomStringConvertible, Codable {
-        case invalidAssessmentTargetArn = "INVALID_ASSESSMENT_TARGET_ARN"
-        case invalidAssessmentTemplateArn = "INVALID_ASSESSMENT_TEMPLATE_ARN"
-        case invalidAssessmentRunArn = "INVALID_ASSESSMENT_RUN_ARN"
-        case invalidFindingArn = "INVALID_FINDING_ARN"
-        case invalidResourceGroupArn = "INVALID_RESOURCE_GROUP_ARN"
-        case invalidRulesPackageArn = "INVALID_RULES_PACKAGE_ARN"
-        case invalidResourceArn = "INVALID_RESOURCE_ARN"
-        case invalidSnsTopicArn = "INVALID_SNS_TOPIC_ARN"
-        case invalidIamRoleArn = "INVALID_IAM_ROLE_ARN"
-        case invalidAssessmentTargetName = "INVALID_ASSESSMENT_TARGET_NAME"
-        case invalidAssessmentTargetNamePattern = "INVALID_ASSESSMENT_TARGET_NAME_PATTERN"
-        case invalidAssessmentTemplateName = "INVALID_ASSESSMENT_TEMPLATE_NAME"
-        case invalidAssessmentTemplateNamePattern = "INVALID_ASSESSMENT_TEMPLATE_NAME_PATTERN"
-        case invalidAssessmentTemplateDuration = "INVALID_ASSESSMENT_TEMPLATE_DURATION"
-        case invalidAssessmentTemplateDurationRange = "INVALID_ASSESSMENT_TEMPLATE_DURATION_RANGE"
-        case invalidAssessmentRunDurationRange = "INVALID_ASSESSMENT_RUN_DURATION_RANGE"
-        case invalidAssessmentRunStartTimeRange = "INVALID_ASSESSMENT_RUN_START_TIME_RANGE"
-        case invalidAssessmentRunCompletionTimeRange = "INVALID_ASSESSMENT_RUN_COMPLETION_TIME_RANGE"
-        case invalidAssessmentRunStateChangeTimeRange = "INVALID_ASSESSMENT_RUN_STATE_CHANGE_TIME_RANGE"
-        case invalidAssessmentRunState = "INVALID_ASSESSMENT_RUN_STATE"
-        case invalidTag = "INVALID_TAG"
-        case invalidTagKey = "INVALID_TAG_KEY"
-        case invalidTagValue = "INVALID_TAG_VALUE"
-        case invalidResourceGroupTagKey = "INVALID_RESOURCE_GROUP_TAG_KEY"
-        case invalidResourceGroupTagValue = "INVALID_RESOURCE_GROUP_TAG_VALUE"
-        case invalidAttribute = "INVALID_ATTRIBUTE"
-        case invalidUserAttribute = "INVALID_USER_ATTRIBUTE"
-        case invalidUserAttributeKey = "INVALID_USER_ATTRIBUTE_KEY"
-        case invalidUserAttributeValue = "INVALID_USER_ATTRIBUTE_VALUE"
-        case invalidPaginationToken = "INVALID_PAGINATION_TOKEN"
-        case invalidMaxResults = "INVALID_MAX_RESULTS"
-        case invalidAgentId = "INVALID_AGENT_ID"
-        case invalidAutoScalingGroup = "INVALID_AUTO_SCALING_GROUP"
-        case invalidRuleName = "INVALID_RULE_NAME"
-        case invalidSeverity = "INVALID_SEVERITY"
-        case invalidLocale = "INVALID_LOCALE"
-        case invalidEvent = "INVALID_EVENT"
-        case assessmentTargetNameAlreadyTaken = "ASSESSMENT_TARGET_NAME_ALREADY_TAKEN"
-        case assessmentTemplateNameAlreadyTaken = "ASSESSMENT_TEMPLATE_NAME_ALREADY_TAKEN"
-        case invalidNumberOfAssessmentTargetArns = "INVALID_NUMBER_OF_ASSESSMENT_TARGET_ARNS"
-        case invalidNumberOfAssessmentTemplateArns = "INVALID_NUMBER_OF_ASSESSMENT_TEMPLATE_ARNS"
-        case invalidNumberOfAssessmentRunArns = "INVALID_NUMBER_OF_ASSESSMENT_RUN_ARNS"
-        case invalidNumberOfFindingArns = "INVALID_NUMBER_OF_FINDING_ARNS"
-        case invalidNumberOfResourceGroupArns = "INVALID_NUMBER_OF_RESOURCE_GROUP_ARNS"
-        case invalidNumberOfRulesPackageArns = "INVALID_NUMBER_OF_RULES_PACKAGE_ARNS"
-        case invalidNumberOfAssessmentRunStates = "INVALID_NUMBER_OF_ASSESSMENT_RUN_STATES"
-        case invalidNumberOfTags = "INVALID_NUMBER_OF_TAGS"
-        case invalidNumberOfResourceGroupTags = "INVALID_NUMBER_OF_RESOURCE_GROUP_TAGS"
-        case invalidNumberOfAttributes = "INVALID_NUMBER_OF_ATTRIBUTES"
-        case invalidNumberOfUserAttributes = "INVALID_NUMBER_OF_USER_ATTRIBUTES"
-        case invalidNumberOfAgentIds = "INVALID_NUMBER_OF_AGENT_IDS"
-        case invalidNumberOfAutoScalingGroups = "INVALID_NUMBER_OF_AUTO_SCALING_GROUPS"
-        case invalidNumberOfRuleNames = "INVALID_NUMBER_OF_RULE_NAMES"
-        case invalidNumberOfSeverities = "INVALID_NUMBER_OF_SEVERITIES"
-        public var description: String { return self.rawValue }
-    }
-
-    public enum LimitExceededErrorCode: String, CustomStringConvertible, Codable {
-        case assessmentTargetLimitExceeded = "ASSESSMENT_TARGET_LIMIT_EXCEEDED"
-        case assessmentTemplateLimitExceeded = "ASSESSMENT_TEMPLATE_LIMIT_EXCEEDED"
-        case assessmentRunLimitExceeded = "ASSESSMENT_RUN_LIMIT_EXCEEDED"
-        case resourceGroupLimitExceeded = "RESOURCE_GROUP_LIMIT_EXCEEDED"
-        case eventSubscriptionLimitExceeded = "EVENT_SUBSCRIPTION_LIMIT_EXCEEDED"
-        public var description: String { return self.rawValue }
     }
 
     public struct ListAssessmentRunAgentsRequest: AWSShape {
@@ -2299,23 +1893,23 @@ extension Inspector {
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
         public let filter: AgentFilter?
         /// You can use this parameter to indicate the maximum number of items that you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListAssessmentRunAgents action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
 
-        public init(assessmentRunArn: String, filter: AgentFilter? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(assessmentRunArn: String, filter: AgentFilter? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.assessmentRunArn = assessmentRunArn
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
-            try filter?.validate()
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, min: 1)
+            try filter?.validate(name: "\(name).filter")
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2342,16 +1936,6 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try assessmentRunAgents.forEach {
-                try $0.validate()
-            }
-            try validate(assessmentRunAgents, name:"assessmentRunAgents", max: 500)
-            try validate(assessmentRunAgents, name:"assessmentRunAgents", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case assessmentRunAgents = "assessmentRunAgents"
             case nextToken = "nextToken"
@@ -2371,27 +1955,27 @@ extension Inspector {
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
         public let filter: AssessmentRunFilter?
         /// You can use this parameter to indicate the maximum number of items that you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListAssessmentRuns action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
 
-        public init(assessmentTemplateArns: [String]? = nil, filter: AssessmentRunFilter? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(assessmentTemplateArns: [String]? = nil, filter: AssessmentRunFilter? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.assessmentTemplateArns = assessmentTemplateArns
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try assessmentTemplateArns?.forEach {
-                try validate($0, name:"assessmentTemplateArns[]", max: 300)
-                try validate($0, name:"assessmentTemplateArns[]", min: 1)
+                try validate($0, name: "assessmentTemplateArns[]", parent: name, max: 300)
+                try validate($0, name: "assessmentTemplateArns[]", parent: name, min: 1)
             }
-            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", max: 50)
-            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", min: 0)
-            try filter?.validate()
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", parent: name, max: 50)
+            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", parent: name, min: 0)
+            try filter?.validate(name: "\(name).filter")
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2418,17 +2002,6 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try assessmentRunArns.forEach {
-                try validate($0, name:"assessmentRunArns[]", max: 300)
-                try validate($0, name:"assessmentRunArns[]", min: 1)
-            }
-            try validate(assessmentRunArns, name:"assessmentRunArns", max: 100)
-            try validate(assessmentRunArns, name:"assessmentRunArns", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case assessmentRunArns = "assessmentRunArns"
             case nextToken = "nextToken"
@@ -2445,20 +2018,20 @@ extension Inspector {
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
         public let filter: AssessmentTargetFilter?
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListAssessmentTargets action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
 
-        public init(filter: AssessmentTargetFilter? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filter: AssessmentTargetFilter? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try filter?.validate()
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try filter?.validate(name: "\(name).filter")
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2484,17 +2057,6 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try assessmentTargetArns.forEach {
-                try validate($0, name:"assessmentTargetArns[]", max: 300)
-                try validate($0, name:"assessmentTargetArns[]", min: 1)
-            }
-            try validate(assessmentTargetArns, name:"assessmentTargetArns", max: 100)
-            try validate(assessmentTargetArns, name:"assessmentTargetArns", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case assessmentTargetArns = "assessmentTargetArns"
             case nextToken = "nextToken"
@@ -2514,27 +2076,27 @@ extension Inspector {
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
         public let filter: AssessmentTemplateFilter?
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListAssessmentTemplates action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
 
-        public init(assessmentTargetArns: [String]? = nil, filter: AssessmentTemplateFilter? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(assessmentTargetArns: [String]? = nil, filter: AssessmentTemplateFilter? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.assessmentTargetArns = assessmentTargetArns
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try assessmentTargetArns?.forEach {
-                try validate($0, name:"assessmentTargetArns[]", max: 300)
-                try validate($0, name:"assessmentTargetArns[]", min: 1)
+                try validate($0, name: "assessmentTargetArns[]", parent: name, max: 300)
+                try validate($0, name: "assessmentTargetArns[]", parent: name, min: 1)
             }
-            try validate(assessmentTargetArns, name:"assessmentTargetArns", max: 50)
-            try validate(assessmentTargetArns, name:"assessmentTargetArns", min: 0)
-            try filter?.validate()
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", parent: name, max: 50)
+            try validate(assessmentTargetArns, name:"assessmentTargetArns", parent: name, min: 0)
+            try filter?.validate(name: "\(name).filter")
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2561,17 +2123,6 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try assessmentTemplateArns.forEach {
-                try validate($0, name:"assessmentTemplateArns[]", max: 300)
-                try validate($0, name:"assessmentTemplateArns[]", min: 1)
-            }
-            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", max: 100)
-            try validate(assessmentTemplateArns, name:"assessmentTemplateArns", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case assessmentTemplateArns = "assessmentTemplateArns"
             case nextToken = "nextToken"
@@ -2586,23 +2137,23 @@ extension Inspector {
         ]
 
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListEventSubscriptions action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
         /// The ARN of the assessment template for which you want to list the existing event subscriptions.
         public let resourceArn: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, resourceArn: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, resourceArn: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceArn = resourceArn
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(resourceArn, name:"resourceArn", max: 300)
-            try validate(resourceArn, name:"resourceArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 300)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2628,16 +2179,6 @@ extension Inspector {
             self.subscriptions = subscriptions
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try subscriptions.forEach {
-                try $0.validate()
-            }
-            try validate(subscriptions, name:"subscriptions", max: 50)
-            try validate(subscriptions, name:"subscriptions", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "nextToken"
             case subscriptions = "subscriptions"
@@ -2654,21 +2195,21 @@ extension Inspector {
         /// The ARN of the assessment run that generated the exclusions that you want to list.
         public let assessmentRunArn: String
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 100. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListExclusionsRequest action. Subsequent calls to the action fill nextToken in the request with the value of nextToken from the previous response to continue listing data.
         public let nextToken: String?
 
-        public init(assessmentRunArn: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(assessmentRunArn: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.assessmentRunArn = assessmentRunArn
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2694,17 +2235,6 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try exclusionArns.forEach {
-                try validate($0, name:"exclusionArns[]", max: 300)
-                try validate($0, name:"exclusionArns[]", min: 1)
-            }
-            try validate(exclusionArns, name:"exclusionArns", max: 100)
-            try validate(exclusionArns, name:"exclusionArns", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case exclusionArns = "exclusionArns"
             case nextToken = "nextToken"
@@ -2724,27 +2254,27 @@ extension Inspector {
         /// You can use this parameter to specify a subset of data to be included in the action's response. For a record to match a filter, all specified filter attributes must match. When multiple values are specified for a filter attribute, any of the values can match.
         public let filter: FindingFilter?
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListFindings action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
 
-        public init(assessmentRunArns: [String]? = nil, filter: FindingFilter? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(assessmentRunArns: [String]? = nil, filter: FindingFilter? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.assessmentRunArns = assessmentRunArns
             self.filter = filter
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try assessmentRunArns?.forEach {
-                try validate($0, name:"assessmentRunArns[]", max: 300)
-                try validate($0, name:"assessmentRunArns[]", min: 1)
+                try validate($0, name: "assessmentRunArns[]", parent: name, max: 300)
+                try validate($0, name: "assessmentRunArns[]", parent: name, min: 1)
             }
-            try validate(assessmentRunArns, name:"assessmentRunArns", max: 50)
-            try validate(assessmentRunArns, name:"assessmentRunArns", min: 0)
-            try filter?.validate()
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
+            try validate(assessmentRunArns, name:"assessmentRunArns", parent: name, max: 50)
+            try validate(assessmentRunArns, name:"assessmentRunArns", parent: name, min: 0)
+            try filter?.validate(name: "\(name).filter")
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2771,17 +2301,6 @@ extension Inspector {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try findingArns.forEach {
-                try validate($0, name:"findingArns[]", max: 300)
-                try validate($0, name:"findingArns[]", min: 1)
-            }
-            try validate(findingArns, name:"findingArns", max: 100)
-            try validate(findingArns, name:"findingArns", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case findingArns = "findingArns"
             case nextToken = "nextToken"
@@ -2795,18 +2314,18 @@ extension Inspector {
         ]
 
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the ListRulesPackages action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2831,17 +2350,6 @@ extension Inspector {
             self.rulesPackageArns = rulesPackageArns
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try rulesPackageArns.forEach {
-                try validate($0, name:"rulesPackageArns[]", max: 300)
-                try validate($0, name:"rulesPackageArns[]", min: 1)
-            }
-            try validate(rulesPackageArns, name:"rulesPackageArns", max: 100)
-            try validate(rulesPackageArns, name:"rulesPackageArns", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "nextToken"
             case rulesPackageArns = "rulesPackageArns"
@@ -2860,9 +2368,9 @@ extension Inspector {
             self.resourceArn = resourceArn
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 300)
-            try validate(resourceArn, name:"resourceArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 300)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2880,14 +2388,6 @@ extension Inspector {
 
         public init(tags: [Tag]) {
             self.tags = tags
-        }
-
-        public func validate() throws {
-            try tags.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 10)
-            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2948,33 +2448,6 @@ extension Inspector {
             self.vpcId = vpcId
         }
 
-        public func validate() throws {
-            try ipv6Addresses?.forEach {
-                try validate($0, name:"ipv6Addresses[]", max: 20000)
-                try validate($0, name:"ipv6Addresses[]", min: 0)
-            }
-            try validate(networkInterfaceId, name:"networkInterfaceId", max: 20000)
-            try validate(networkInterfaceId, name:"networkInterfaceId", min: 0)
-            try validate(privateDnsName, name:"privateDnsName", max: 20000)
-            try validate(privateDnsName, name:"privateDnsName", min: 0)
-            try validate(privateIpAddress, name:"privateIpAddress", max: 20000)
-            try validate(privateIpAddress, name:"privateIpAddress", min: 0)
-            try privateIpAddresses?.forEach {
-                try $0.validate()
-            }
-            try validate(publicDnsName, name:"publicDnsName", max: 20000)
-            try validate(publicDnsName, name:"publicDnsName", min: 0)
-            try validate(publicIp, name:"publicIp", max: 20000)
-            try validate(publicIp, name:"publicIp", min: 0)
-            try securityGroups?.forEach {
-                try $0.validate()
-            }
-            try validate(subnetId, name:"subnetId", max: 20000)
-            try validate(subnetId, name:"subnetId", min: 0)
-            try validate(vpcId, name:"vpcId", max: 20000)
-            try validate(vpcId, name:"vpcId", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case ipv6Addresses = "ipv6Addresses"
             case networkInterfaceId = "networkInterfaceId"
@@ -2989,18 +2462,6 @@ extension Inspector {
         }
     }
 
-    public enum NoSuchEntityErrorCode: String, CustomStringConvertible, Codable {
-        case assessmentTargetDoesNotExist = "ASSESSMENT_TARGET_DOES_NOT_EXIST"
-        case assessmentTemplateDoesNotExist = "ASSESSMENT_TEMPLATE_DOES_NOT_EXIST"
-        case assessmentRunDoesNotExist = "ASSESSMENT_RUN_DOES_NOT_EXIST"
-        case findingDoesNotExist = "FINDING_DOES_NOT_EXIST"
-        case resourceGroupDoesNotExist = "RESOURCE_GROUP_DOES_NOT_EXIST"
-        case rulesPackageDoesNotExist = "RULES_PACKAGE_DOES_NOT_EXIST"
-        case snsTopicDoesNotExist = "SNS_TOPIC_DOES_NOT_EXIST"
-        case iamRoleDoesNotExist = "IAM_ROLE_DOES_NOT_EXIST"
-        public var description: String { return self.rawValue }
-    }
-
     public struct PreviewAgentsRequest: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "maxResults", required: false, type: .integer), 
@@ -3009,23 +2470,23 @@ extension Inspector {
         ]
 
         /// You can use this parameter to indicate the maximum number of items you want in the response. The default value is 10. The maximum value is 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// You can use this parameter when paginating results. Set the value of this parameter to null on your first call to the PreviewAgents action. Subsequent calls to the action fill nextToken in the request with the value of NextToken from the previous response to continue listing data.
         public let nextToken: String?
         /// The ARN of the assessment target whose agents you want to preview.
         public let previewAgentsArn: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, previewAgentsArn: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, previewAgentsArn: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.previewAgentsArn = previewAgentsArn
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(previewAgentsArn, name:"previewAgentsArn", max: 300)
-            try validate(previewAgentsArn, name:"previewAgentsArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 300)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(previewAgentsArn, name:"previewAgentsArn", parent: name, max: 300)
+            try validate(previewAgentsArn, name:"previewAgentsArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3049,16 +2510,6 @@ extension Inspector {
         public init(agentPreviews: [AgentPreview], nextToken: String? = nil) {
             self.agentPreviews = agentPreviews
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try agentPreviews.forEach {
-                try $0.validate()
-            }
-            try validate(agentPreviews, name:"agentPreviews", max: 100)
-            try validate(agentPreviews, name:"agentPreviews", min: 0)
-            try validate(nextToken, name:"nextToken", max: 300)
-            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3089,13 +2540,6 @@ extension Inspector {
             self.privateIpAddress = privateIpAddress
         }
 
-        public func validate() throws {
-            try validate(privateDnsName, name:"privateDnsName", max: 20000)
-            try validate(privateDnsName, name:"privateDnsName", min: 0)
-            try validate(privateIpAddress, name:"privateIpAddress", max: 20000)
-            try validate(privateIpAddress, name:"privateIpAddress", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case privateDnsName = "privateDnsName"
             case privateIpAddress = "privateIpAddress"
@@ -3114,9 +2558,9 @@ extension Inspector {
             self.roleArn = roleArn
         }
 
-        public func validate() throws {
-            try validate(roleArn, name:"roleArn", max: 300)
-            try validate(roleArn, name:"roleArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(roleArn, name:"roleArn", parent: name, max: 300)
+            try validate(roleArn, name:"roleArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3140,19 +2584,19 @@ extension Inspector {
             self.findingArns = findingArns
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try attributeKeys.forEach {
-                try validate($0, name:"attributeKeys[]", max: 128)
-                try validate($0, name:"attributeKeys[]", min: 1)
+                try validate($0, name: "attributeKeys[]", parent: name, max: 128)
+                try validate($0, name: "attributeKeys[]", parent: name, min: 1)
             }
-            try validate(attributeKeys, name:"attributeKeys", max: 10)
-            try validate(attributeKeys, name:"attributeKeys", min: 0)
+            try validate(attributeKeys, name:"attributeKeys", parent: name, max: 10)
+            try validate(attributeKeys, name:"attributeKeys", parent: name, min: 0)
             try findingArns.forEach {
-                try validate($0, name:"findingArns[]", max: 300)
-                try validate($0, name:"findingArns[]", min: 1)
+                try validate($0, name: "findingArns[]", parent: name, max: 300)
+                try validate($0, name: "findingArns[]", parent: name, min: 1)
             }
-            try validate(findingArns, name:"findingArns", max: 10)
-            try validate(findingArns, name:"findingArns", min: 1)
+            try validate(findingArns, name:"findingArns", parent: name, max: 10)
+            try validate(findingArns, name:"findingArns", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3217,16 +2661,6 @@ extension Inspector {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 300)
-            try validate(arn, name:"arn", min: 1)
-            try tags.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 10)
-            try validate(tags, name:"tags", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdAt = "createdAt"
@@ -3250,11 +2684,11 @@ extension Inspector {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3289,19 +2723,6 @@ extension Inspector {
             self.name = name
             self.provider = provider
             self.version = version
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 300)
-            try validate(arn, name:"arn", min: 1)
-            try validate(description, name:"description", max: 20000)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 1000)
-            try validate(name, name:"name", min: 0)
-            try validate(provider, name:"provider", max: 1000)
-            try validate(provider, name:"provider", min: 0)
-            try validate(version, name:"version", max: 1000)
-            try validate(version, name:"version", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3357,13 +2778,6 @@ extension Inspector {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupId, name:"groupId", max: 20000)
-            try validate(groupId, name:"groupId", min: 0)
-            try validate(groupName, name:"groupName", max: 20000)
-            try validate(groupName, name:"groupName", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groupId = "groupId"
             case groupName = "groupName"
@@ -3386,14 +2800,14 @@ extension Inspector {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 300)
-            try validate(resourceArn, name:"resourceArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 300)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 10)
-            try validate(tags, name:"tags", min: 0)
+            try validate(tags, name:"tags", parent: name, max: 10)
+            try validate(tags, name:"tags", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3427,11 +2841,11 @@ extension Inspector {
             self.assessmentTemplateArn = assessmentTemplateArn
         }
 
-        public func validate() throws {
-            try validate(assessmentRunName, name:"assessmentRunName", max: 140)
-            try validate(assessmentRunName, name:"assessmentRunName", min: 1)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", max: 300)
-            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentRunName, name:"assessmentRunName", parent: name, max: 140)
+            try validate(assessmentRunName, name:"assessmentRunName", parent: name, min: 1)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, max: 300)
+            try validate(assessmentTemplateArn, name:"assessmentTemplateArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3450,11 +2864,6 @@ extension Inspector {
 
         public init(assessmentRunArn: String) {
             self.assessmentRunArn = assessmentRunArn
-        }
-
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3484,9 +2893,9 @@ extension Inspector {
             self.stopAction = stopAction
         }
 
-        public func validate() throws {
-            try validate(assessmentRunArn, name:"assessmentRunArn", max: 300)
-            try validate(assessmentRunArn, name:"assessmentRunArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, max: 300)
+            try validate(assessmentRunArn, name:"assessmentRunArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3515,11 +2924,11 @@ extension Inspector {
             self.topicArn = topicArn
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 300)
-            try validate(resourceArn, name:"resourceArn", min: 1)
-            try validate(topicArn, name:"topicArn", max: 300)
-            try validate(topicArn, name:"topicArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 300)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
+            try validate(topicArn, name:"topicArn", parent: name, max: 300)
+            try validate(topicArn, name:"topicArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3549,15 +2958,6 @@ extension Inspector {
             self.topicArn = topicArn
         }
 
-        public func validate() throws {
-            try validate(eventSubscriptions, name:"eventSubscriptions", max: 50)
-            try validate(eventSubscriptions, name:"eventSubscriptions", min: 1)
-            try validate(resourceArn, name:"resourceArn", max: 300)
-            try validate(resourceArn, name:"resourceArn", min: 1)
-            try validate(topicArn, name:"topicArn", max: 300)
-            try validate(topicArn, name:"topicArn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case eventSubscriptions = "eventSubscriptions"
             case resourceArn = "resourceArn"
@@ -3581,11 +2981,11 @@ extension Inspector {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3612,11 +3012,6 @@ extension Inspector {
             self.count = count
             self.dataSize = dataSize
             self.messageType = messageType
-        }
-
-        public func validate() throws {
-            try validate(messageType, name:"messageType", max: 300)
-            try validate(messageType, name:"messageType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3668,11 +3063,11 @@ extension Inspector {
             self.topicArn = topicArn
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 300)
-            try validate(resourceArn, name:"resourceArn", min: 1)
-            try validate(topicArn, name:"topicArn", max: 300)
-            try validate(topicArn, name:"topicArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 300)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
+            try validate(topicArn, name:"topicArn", parent: name, max: 300)
+            try validate(topicArn, name:"topicArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3702,13 +3097,13 @@ extension Inspector {
             self.resourceGroupArn = resourceGroupArn
         }
 
-        public func validate() throws {
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", max: 300)
-            try validate(assessmentTargetArn, name:"assessmentTargetArn", min: 1)
-            try validate(assessmentTargetName, name:"assessmentTargetName", max: 140)
-            try validate(assessmentTargetName, name:"assessmentTargetName", min: 1)
-            try validate(resourceGroupArn, name:"resourceGroupArn", max: 300)
-            try validate(resourceGroupArn, name:"resourceGroupArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", parent: name, max: 300)
+            try validate(assessmentTargetArn, name:"assessmentTargetArn", parent: name, min: 1)
+            try validate(assessmentTargetName, name:"assessmentTargetName", parent: name, max: 140)
+            try validate(assessmentTargetName, name:"assessmentTargetName", parent: name, min: 1)
+            try validate(resourceGroupArn, name:"resourceGroupArn", parent: name, max: 300)
+            try validate(resourceGroupArn, name:"resourceGroupArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

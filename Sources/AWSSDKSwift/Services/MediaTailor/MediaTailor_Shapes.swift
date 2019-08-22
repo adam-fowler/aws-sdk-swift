@@ -211,17 +211,17 @@ extension MediaTailor {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "NextToken"), required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -478,28 +478,6 @@ extension MediaTailor {
 
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "ResourceArn"
-            case tags = "tags"
-        }
-    }
-
-    public struct TagsModel: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Tags", location: .body(locationName: "tags"), required: true, type: .map)
-        ]
-
-        /// A comma-separated list of tag key:value pairs. For example: 
-        ///  {
-        ///  "Key1": "Value1",
-        ///  "Key2": "Value2"
-        ///  }
-        ///  
-        public let tags: [String: String]
-
-        public init(tags: [String: String]) {
-            self.tags = tags
-        }
-
-        private enum CodingKeys: String, CodingKey {
             case tags = "tags"
         }
     }

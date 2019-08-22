@@ -18,11 +18,11 @@ extension ComprehendMedical {
         ]
 
         ///  The 0-based character offset in the input text that shows where the attribute begins. The offset returns the UTF-8 code point in the string. 
-        public let beginOffset: Int32?
+        public let beginOffset: Int?
         ///  The 0-based character offset in the input text that shows where the attribute ends. The offset returns the UTF-8 code point in the string. 
-        public let endOffset: Int32?
+        public let endOffset: Int?
         ///  The numeric identifier for this attribute. This is a monotonically increasing id unique within this response rather than a global unique identifier. 
-        public let id: Int32?
+        public let id: Int?
         ///  The level of confidence that Comprehend Medical has that this attribute is correctly related to this entity. 
         public let relationshipScore: Float?
         ///  The level of confidence that Comprehend Medical has that the segment of text is correctly recognized as an attribute. 
@@ -34,7 +34,7 @@ extension ComprehendMedical {
         ///  The type of attribute. 
         public let `type`: EntitySubType?
 
-        public init(beginOffset: Int32? = nil, endOffset: Int32? = nil, id: Int32? = nil, relationshipScore: Float? = nil, score: Float? = nil, text: String? = nil, traits: [Trait]? = nil, type: EntitySubType? = nil) {
+        public init(beginOffset: Int? = nil, endOffset: Int? = nil, id: Int? = nil, relationshipScore: Float? = nil, score: Float? = nil, text: String? = nil, traits: [Trait]? = nil, type: EntitySubType? = nil) {
             self.beginOffset = beginOffset
             self.endOffset = endOffset
             self.id = id
@@ -43,10 +43,6 @@ extension ComprehendMedical {
             self.text = text
             self.traits = traits
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -81,9 +77,9 @@ extension ComprehendMedical {
             self.text = text
         }
 
-        public func validate() throws {
-            try validate(text, name:"text", max: 20000)
-            try validate(text, name:"text", min: 1)
+        public func validate(name: String) throws {
+            try validate(text, name:"text", parent: name, max: 20000)
+            try validate(text, name:"text", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -111,16 +107,6 @@ extension ComprehendMedical {
             self.unmappedAttributes = unmappedAttributes
         }
 
-        public func validate() throws {
-            try entities.forEach {
-                try $0.validate()
-            }
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try unmappedAttributes?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case entities = "Entities"
             case paginationToken = "PaginationToken"
@@ -140,9 +126,9 @@ extension ComprehendMedical {
             self.text = text
         }
 
-        public func validate() throws {
-            try validate(text, name:"text", max: 20000)
-            try validate(text, name:"text", min: 1)
+        public func validate(name: String) throws {
+            try validate(text, name:"text", parent: name, max: 20000)
+            try validate(text, name:"text", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -164,13 +150,6 @@ extension ComprehendMedical {
         public init(entities: [Entity], paginationToken: String? = nil) {
             self.entities = entities
             self.paginationToken = paginationToken
-        }
-
-        public func validate() throws {
-            try entities.forEach {
-                try $0.validate()
-            }
-            try validate(paginationToken, name:"paginationToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -195,13 +174,13 @@ extension ComprehendMedical {
         ///  The extracted attributes that relate to this entity.
         public let attributes: [Attribute]?
         ///  The 0-based character offset in the input text that shows where the entity begins. The offset returns the UTF-8 code point in the string. 
-        public let beginOffset: Int32?
+        public let beginOffset: Int?
         ///  The category of the entity.
         public let category: EntityType?
         ///  The 0-based character offset in the input text that shows where the entity ends. The offset returns the UTF-8 code point in the string. 
-        public let endOffset: Int32?
+        public let endOffset: Int?
         ///  The numeric identifier for the entity. This is a monotonically increasing id unique within this response rather than a global unique identifier. 
-        public let id: Int32?
+        public let id: Int?
         /// The level of confidence that Comprehend Medical has in the accuracy of the detection.
         public let score: Float?
         ///  The segment of input text extracted as this entity.
@@ -211,7 +190,7 @@ extension ComprehendMedical {
         ///  Describes the specific type of entity with category of entities. 
         public let `type`: EntitySubType?
 
-        public init(attributes: [Attribute]? = nil, beginOffset: Int32? = nil, category: EntityType? = nil, endOffset: Int32? = nil, id: Int32? = nil, score: Float? = nil, text: String? = nil, traits: [Trait]? = nil, type: EntitySubType? = nil) {
+        public init(attributes: [Attribute]? = nil, beginOffset: Int? = nil, category: EntityType? = nil, endOffset: Int? = nil, id: Int? = nil, score: Float? = nil, text: String? = nil, traits: [Trait]? = nil, type: EntitySubType? = nil) {
             self.attributes = attributes
             self.beginOffset = beginOffset
             self.category = category
@@ -221,13 +200,6 @@ extension ComprehendMedical {
             self.text = text
             self.traits = traits
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try attributes?.forEach {
-                try $0.validate()
-            }
-            try validate(text, name:"text", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -320,10 +292,6 @@ extension ComprehendMedical {
         public init(attribute: Attribute? = nil, type: EntityType? = nil) {
             self.attribute = attribute
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try attribute?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

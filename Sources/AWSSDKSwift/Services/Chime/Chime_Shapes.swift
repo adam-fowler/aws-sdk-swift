@@ -102,8 +102,8 @@ extension Chime {
             self.userId = userId
         }
 
-        public func validate() throws {
-            try validate(e164PhoneNumber, name:"e164PhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
+        public func validate(name: String) throws {
+            try validate(e164PhoneNumber, name:"e164PhoneNumber", parent: name, pattern: "^\\+?[1-9]\\d{1,14}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -137,11 +137,11 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try e164PhoneNumbers?.forEach {
-                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
+                try validate($0, name: "e164PhoneNumbers[]", parent: name, pattern: "^\\+?[1-9]\\d{1,14}$")
             }
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -162,12 +162,6 @@ extension Chime {
             self.phoneNumberErrors = phoneNumberErrors
         }
 
-        public func validate() throws {
-            try phoneNumberErrors?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case phoneNumberErrors = "PhoneNumberErrors"
         }
@@ -185,8 +179,8 @@ extension Chime {
             self.phoneNumberIds = phoneNumberIds
         }
 
-        public func validate() throws {
-            try validate(phoneNumberIds, name:"phoneNumberIds", min: 1)
+        public func validate(name: String) throws {
+            try validate(phoneNumberIds, name:"phoneNumberIds", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -204,12 +198,6 @@ extension Chime {
 
         public init(phoneNumberErrors: [PhoneNumberError]? = nil) {
             self.phoneNumberErrors = phoneNumberErrors
-        }
-
-        public func validate() throws {
-            try phoneNumberErrors?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -233,12 +221,12 @@ extension Chime {
             self.userIdList = userIdList
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
             try userIdList.forEach {
-                try validate($0, name:"userIdList[]", pattern: ".*\\S.*")
+                try validate($0, name: "userIdList[]", parent: name, pattern: ".*\\S.*")
             }
-            try validate(userIdList, name:"userIdList", max: 50)
+            try validate(userIdList, name:"userIdList", parent: name, max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -257,12 +245,6 @@ extension Chime {
 
         public init(userErrors: [UserError]? = nil) {
             self.userErrors = userErrors
-        }
-
-        public func validate() throws {
-            try userErrors?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -286,12 +268,12 @@ extension Chime {
             self.userIdList = userIdList
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
             try userIdList.forEach {
-                try validate($0, name:"userIdList[]", pattern: ".*\\S.*")
+                try validate($0, name: "userIdList[]", parent: name, pattern: ".*\\S.*")
             }
-            try validate(userIdList, name:"userIdList", max: 50)
+            try validate(userIdList, name:"userIdList", parent: name, max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -312,12 +294,6 @@ extension Chime {
             self.userErrors = userErrors
         }
 
-        public func validate() throws {
-            try userErrors?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case userErrors = "UserErrors"
         }
@@ -335,9 +311,9 @@ extension Chime {
             self.updatePhoneNumberRequestItems = updatePhoneNumberRequestItems
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try updatePhoneNumberRequestItems.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).updatePhoneNumberRequestItems[]")
             }
         }
 
@@ -356,12 +332,6 @@ extension Chime {
 
         public init(phoneNumberErrors: [PhoneNumberError]? = nil) {
             self.phoneNumberErrors = phoneNumberErrors
-        }
-
-        public func validate() throws {
-            try phoneNumberErrors?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -385,12 +355,12 @@ extension Chime {
             self.updateUserRequestItems = updateUserRequestItems
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
             try updateUserRequestItems.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).updateUserRequestItems[]")
             }
-            try validate(updateUserRequestItems, name:"updateUserRequestItems", max: 20)
+            try validate(updateUserRequestItems, name:"updateUserRequestItems", parent: name, max: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -409,12 +379,6 @@ extension Chime {
 
         public init(userErrors: [UserError]? = nil) {
             self.userErrors = userErrors
-        }
-
-        public func validate() throws {
-            try userErrors?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -513,10 +477,10 @@ extension Chime {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -561,9 +525,9 @@ extension Chime {
             self.domain = domain
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(domain, name:"domain", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(domain, name:"domain", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -606,9 +570,9 @@ extension Chime {
             self.productType = productType
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try e164PhoneNumbers.forEach {
-                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
+                try validate($0, name: "e164PhoneNumbers[]", parent: name, pattern: "^\\+?[1-9]\\d{1,14}$")
             }
         }
 
@@ -628,10 +592,6 @@ extension Chime {
 
         public init(phoneNumberOrder: PhoneNumberOrder? = nil) {
             self.phoneNumberOrder = phoneNumberOrder
-        }
-
-        public func validate() throws {
-            try phoneNumberOrder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -655,9 +615,9 @@ extension Chime {
             self.requireEncryption = requireEncryption
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -676,10 +636,6 @@ extension Chime {
 
         public init(voiceConnector: VoiceConnector? = nil) {
             self.voiceConnector = voiceConnector
-        }
-
-        public func validate() throws {
-            try voiceConnector?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -721,8 +677,8 @@ extension Chime {
             self.accountId = accountId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -754,9 +710,9 @@ extension Chime {
             self.botId = botId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(botId, name:"botId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -794,8 +750,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -815,8 +771,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -840,8 +796,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -862,8 +818,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -917,11 +873,11 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try e164PhoneNumbers?.forEach {
-                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
+                try validate($0, name: "e164PhoneNumbers[]", parent: name, pattern: "^\\+?[1-9]\\d{1,14}$")
             }
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -940,12 +896,6 @@ extension Chime {
 
         public init(phoneNumberErrors: [PhoneNumberError]? = nil) {
             self.phoneNumberErrors = phoneNumberErrors
-        }
-
-        public func validate() throws {
-            try phoneNumberErrors?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1013,8 +963,8 @@ extension Chime {
             self.accountId = accountId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1051,8 +1001,8 @@ extension Chime {
             self.accountId = accountId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1093,9 +1043,9 @@ extension Chime {
             self.botId = botId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(botId, name:"botId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1137,9 +1087,9 @@ extension Chime {
             self.botId = botId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(botId, name:"botId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1199,8 +1149,8 @@ extension Chime {
             self.phoneNumberOrderId = phoneNumberOrderId
         }
 
-        public func validate() throws {
-            try validate(phoneNumberOrderId, name:"phoneNumberOrderId", pattern: "[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}")
+        public func validate(name: String) throws {
+            try validate(phoneNumberOrderId, name:"phoneNumberOrderId", parent: name, pattern: "[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1218,10 +1168,6 @@ extension Chime {
 
         public init(phoneNumberOrder: PhoneNumberOrder? = nil) {
             self.phoneNumberOrder = phoneNumberOrder
-        }
-
-        public func validate() throws {
-            try phoneNumberOrder?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1258,10 +1204,6 @@ extension Chime {
             self.phoneNumber = phoneNumber
         }
 
-        public func validate() throws {
-            try phoneNumber?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case phoneNumber = "PhoneNumber"
         }
@@ -1283,9 +1225,9 @@ extension Chime {
             self.userId = userId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(userId, name:"userId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(userId, name:"userId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1304,10 +1246,6 @@ extension Chime {
 
         public init(user: User? = nil) {
             self.user = user
-        }
-
-        public func validate() throws {
-            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1366,8 +1304,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1387,10 +1325,6 @@ extension Chime {
             self.origination = origination
         }
 
-        public func validate() throws {
-            try origination?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case origination = "Origination"
         }
@@ -1408,8 +1342,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1429,10 +1363,6 @@ extension Chime {
             self.voiceConnector = voiceConnector
         }
 
-        public func validate() throws {
-            try voiceConnector?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case voiceConnector = "VoiceConnector"
         }
@@ -1450,8 +1380,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1488,8 +1418,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1507,10 +1437,6 @@ extension Chime {
 
         public init(termination: Termination? = nil) {
             self.termination = termination
-        }
-
-        public func validate() throws {
-            try termination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1540,10 +1466,6 @@ extension Chime {
             self.emailStatus = emailStatus
             self.inviteId = inviteId
             self.status = status
-        }
-
-        public func validate() throws {
-            try validate(emailAddress, name:"emailAddress", pattern: ".+@.+\\..+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1577,12 +1499,12 @@ extension Chime {
             self.userEmailList = userEmailList
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
             try userEmailList.forEach {
-                try validate($0, name:"userEmailList[]", pattern: ".+@.+\\..+")
+                try validate($0, name: "userEmailList[]", parent: name, pattern: ".+@.+\\..+")
             }
-            try validate(userEmailList, name:"userEmailList", max: 50)
+            try validate(userEmailList, name:"userEmailList", parent: name, max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1601,12 +1523,6 @@ extension Chime {
 
         public init(invites: [Invite]? = nil) {
             self.invites = invites
-        }
-
-        public func validate() throws {
-            try invites?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1631,7 +1547,7 @@ extension Chime {
         ]
 
         /// The maximum number of results to return in a single call. Defaults to 100.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Amazon Chime account name prefix with which to filter results.
         public let name: String?
         /// The token to use to retrieve the next page of results.
@@ -1639,20 +1555,20 @@ extension Chime {
         /// User email address with which to filter results.
         public let userEmail: String?
 
-        public init(maxResults: Int32? = nil, name: String? = nil, nextToken: String? = nil, userEmail: String? = nil) {
+        public init(maxResults: Int? = nil, name: String? = nil, nextToken: String? = nil, userEmail: String? = nil) {
             self.maxResults = maxResults
             self.name = name
             self.nextToken = nextToken
             self.userEmail = userEmail
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 200)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: ".*\\S.*")
-            try validate(userEmail, name:"userEmail", pattern: ".+@.+\\..+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 200)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: ".*\\S.*")
+            try validate(userEmail, name:"userEmail", parent: name, pattern: ".+@.+\\..+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1695,20 +1611,20 @@ extension Chime {
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The maximum number of results to return in a single call. Default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
 
-        public init(accountId: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(accountId: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.accountId = accountId
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(maxResults, name:"maxResults", max: 99)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(maxResults, name:"maxResults", parent: name, max: 99)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1747,18 +1663,18 @@ extension Chime {
         ]
 
         /// The maximum number of results to return in a single call.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 99)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 99)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1783,12 +1699,6 @@ extension Chime {
             self.phoneNumberOrders = phoneNumberOrders
         }
 
-        public func validate() throws {
-            try phoneNumberOrders?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case phoneNumberOrders = "PhoneNumberOrders"
@@ -1810,7 +1720,7 @@ extension Chime {
         /// The value to use for the filter.
         public let filterValue: String?
         /// The maximum number of results to return in a single call.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
         /// The phone number product type.
@@ -1818,7 +1728,7 @@ extension Chime {
         /// The phone number status.
         public let status: PhoneNumberStatus?
 
-        public init(filterName: PhoneNumberAssociationName? = nil, filterValue: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, productType: PhoneNumberProductType? = nil, status: PhoneNumberStatus? = nil) {
+        public init(filterName: PhoneNumberAssociationName? = nil, filterValue: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, productType: PhoneNumberProductType? = nil, status: PhoneNumberStatus? = nil) {
             self.filterName = filterName
             self.filterValue = filterValue
             self.maxResults = maxResults
@@ -1827,9 +1737,9 @@ extension Chime {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 99)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 99)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1858,12 +1768,6 @@ extension Chime {
             self.phoneNumbers = phoneNumbers
         }
 
-        public func validate() throws {
-            try phoneNumbers?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case phoneNumbers = "PhoneNumbers"
@@ -1881,24 +1785,24 @@ extension Chime {
         /// The Amazon Chime account ID.
         public let accountId: String
         /// The maximum number of results to return in a single call. Defaults to 100.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
         /// Optional. The user email address used to filter results. Maximum 1.
         public let userEmail: String?
 
-        public init(accountId: String, maxResults: Int32? = nil, nextToken: String? = nil, userEmail: String? = nil) {
+        public init(accountId: String, maxResults: Int? = nil, nextToken: String? = nil, userEmail: String? = nil) {
             self.accountId = accountId
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.userEmail = userEmail
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(maxResults, name:"maxResults", max: 200)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(userEmail, name:"userEmail", pattern: ".+@.+\\..+")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(maxResults, name:"maxResults", parent: name, max: 200)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(userEmail, name:"userEmail", parent: name, pattern: ".+@.+\\..+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1925,12 +1829,6 @@ extension Chime {
             self.users = users
         }
 
-        public func validate() throws {
-            try users?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case users = "Users"
@@ -1949,8 +1847,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1982,18 +1880,18 @@ extension Chime {
         ]
 
         /// The maximum number of results to return in a single call.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 99)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 99)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2018,12 +1916,6 @@ extension Chime {
             self.voiceConnectors = voiceConnectors
         }
 
-        public func validate() throws {
-            try voiceConnectors?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case voiceConnectors = "VoiceConnectors"
@@ -2046,9 +1938,9 @@ extension Chime {
             self.userId = userId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(userId, name:"userId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(userId, name:"userId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2081,10 +1973,6 @@ extension Chime {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(e164PhoneNumber, name:"e164PhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case e164PhoneNumber = "E164PhoneNumber"
             case status = "Status"
@@ -2114,9 +2002,9 @@ extension Chime {
             self.routes = routes
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try routes?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).routes[]")
             }
         }
 
@@ -2138,15 +2026,15 @@ extension Chime {
         /// The FODN or IP address to contact for origination traffic.
         public let host: String?
         /// The designated origination route port. Defaults to 5060.
-        public let port: Int32?
+        public let port: Int?
         /// The priority associated with the host, with 1 being the highest priority. Higher priority hosts are attempted first.
-        public let priority: Int32?
+        public let priority: Int?
         /// The protocol to use for the origination route. Encryption-enabled Amazon Chime Voice Connectors use TCP protocol by default.
         public let `protocol`: OriginationRouteProtocol?
         /// The weight associated with the host. If hosts are equal in priority, calls are distributed among them based on their relative weight.
-        public let weight: Int32?
+        public let weight: Int?
 
-        public init(host: String? = nil, port: Int32? = nil, priority: Int32? = nil, protocol: OriginationRouteProtocol? = nil, weight: Int32? = nil) {
+        public init(host: String? = nil, port: Int? = nil, priority: Int? = nil, protocol: OriginationRouteProtocol? = nil, weight: Int? = nil) {
             self.host = host
             self.port = port
             self.priority = priority
@@ -2154,13 +2042,13 @@ extension Chime {
             self.weight = weight
         }
 
-        public func validate() throws {
-            try validate(port, name:"port", max: 65535)
-            try validate(port, name:"port", min: 0)
-            try validate(priority, name:"priority", max: 100)
-            try validate(priority, name:"priority", min: 1)
-            try validate(weight, name:"weight", max: 100)
-            try validate(weight, name:"weight", min: 1)
+        public func validate(name: String) throws {
+            try validate(port, name:"port", parent: name, max: 65535)
+            try validate(port, name:"port", parent: name, min: 0)
+            try validate(priority, name:"priority", parent: name, max: 100)
+            try validate(priority, name:"priority", parent: name, min: 1)
+            try validate(weight, name:"weight", parent: name, max: 100)
+            try validate(weight, name:"weight", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2224,10 +2112,6 @@ extension Chime {
             self.status = status
             self.`type` = `type`
             self.updatedTimestamp = updatedTimestamp
-        }
-
-        public func validate() throws {
-            try validate(e164PhoneNumber, name:"e164PhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2340,10 +2224,6 @@ extension Chime {
             self.phoneNumberId = phoneNumberId
         }
 
-        public func validate() throws {
-            try validate(phoneNumberId, name:"phoneNumberId", pattern: ".*\\S.*")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case errorCode = "ErrorCode"
             case errorMessage = "ErrorMessage"
@@ -2381,13 +2261,6 @@ extension Chime {
             self.productType = productType
             self.status = status
             self.updatedTimestamp = updatedTimestamp
-        }
-
-        public func validate() throws {
-            try orderedPhoneNumbers?.forEach {
-                try $0.validate()
-            }
-            try validate(phoneNumberOrderId, name:"phoneNumberOrderId", pattern: "[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2456,9 +2329,9 @@ extension Chime {
             self.outboundEventsHTTPSEndpoint = outboundEventsHTTPSEndpoint
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(botId, name:"botId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2501,9 +2374,9 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try origination.validate()
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try origination.validate(name: "\(name).origination")
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2522,10 +2395,6 @@ extension Chime {
 
         public init(origination: Origination? = nil) {
             self.origination = origination
-        }
-
-        public func validate() throws {
-            try origination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2549,8 +2418,8 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2575,9 +2444,9 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try termination.validate()
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try termination.validate(name: "\(name).termination")
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2596,10 +2465,6 @@ extension Chime {
 
         public init(termination: Termination? = nil) {
             self.termination = termination
-        }
-
-        public func validate() throws {
-            try termination?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2623,9 +2488,9 @@ extension Chime {
             self.botId = botId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(botId, name:"botId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2673,9 +2538,9 @@ extension Chime {
             self.userId = userId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(userId, name:"userId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(userId, name:"userId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2696,10 +2561,6 @@ extension Chime {
             self.user = user
         }
 
-        public func validate() throws {
-            try user?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case user = "User"
         }
@@ -2717,8 +2578,8 @@ extension Chime {
             self.phoneNumberId = phoneNumberId
         }
 
-        public func validate() throws {
-            try validate(phoneNumberId, name:"phoneNumberId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(phoneNumberId, name:"phoneNumberId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2736,10 +2597,6 @@ extension Chime {
 
         public init(phoneNumber: PhoneNumber? = nil) {
             self.phoneNumber = phoneNumber
-        }
-
-        public func validate() throws {
-            try phoneNumber?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2765,7 +2622,7 @@ extension Chime {
         /// The country used to filter results.
         public let country: String?
         /// The maximum number of results to return in a single call.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to use to retrieve the next page of results.
         public let nextToken: String?
         /// The state used to filter results.
@@ -2773,7 +2630,7 @@ extension Chime {
         /// The toll-free prefix that you use to filter results.
         public let tollFreePrefix: String?
 
-        public init(areaCode: String? = nil, city: String? = nil, country: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, state: String? = nil, tollFreePrefix: String? = nil) {
+        public init(areaCode: String? = nil, city: String? = nil, country: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, state: String? = nil, tollFreePrefix: String? = nil) {
             self.areaCode = areaCode
             self.city = city
             self.country = country
@@ -2783,12 +2640,12 @@ extension Chime {
             self.tollFreePrefix = tollFreePrefix
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 500)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(tollFreePrefix, name:"tollFreePrefix", max: 3)
-            try validate(tollFreePrefix, name:"tollFreePrefix", min: 3)
-            try validate(tollFreePrefix, name:"tollFreePrefix", pattern: "^8(00|33|44|55|66|77|88)$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 500)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(tollFreePrefix, name:"tollFreePrefix", parent: name, max: 3)
+            try validate(tollFreePrefix, name:"tollFreePrefix", parent: name, min: 3)
+            try validate(tollFreePrefix, name:"tollFreePrefix", parent: name, pattern: "^8(00|33|44|55|66|77|88)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2812,12 +2669,6 @@ extension Chime {
 
         public init(e164PhoneNumbers: [String]? = nil) {
             self.e164PhoneNumbers = e164PhoneNumbers
-        }
-
-        public func validate() throws {
-            try e164PhoneNumbers?.forEach {
-                try validate($0, name:"e164PhoneNumbers[]", pattern: "^\\+?[1-9]\\d{1,14}$")
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2866,13 +2717,13 @@ extension Chime {
         /// The IP addresses allowed to make calls, in CIDR format.
         public let cidrAllowedList: [String]?
         /// The limit on calls per second. Max value based on account service limit. Default value of 1.
-        public let cpsLimit: Int32?
+        public let cpsLimit: Int?
         /// The default caller ID phone number.
         public let defaultPhoneNumber: String?
         /// When termination settings are disabled, outbound calls can not be made.
         public let disabled: Bool?
 
-        public init(callingRegions: [String]? = nil, cidrAllowedList: [String]? = nil, cpsLimit: Int32? = nil, defaultPhoneNumber: String? = nil, disabled: Bool? = nil) {
+        public init(callingRegions: [String]? = nil, cidrAllowedList: [String]? = nil, cpsLimit: Int? = nil, defaultPhoneNumber: String? = nil, disabled: Bool? = nil) {
             self.callingRegions = callingRegions
             self.cidrAllowedList = cidrAllowedList
             self.cpsLimit = cpsLimit
@@ -2880,9 +2731,9 @@ extension Chime {
             self.disabled = disabled
         }
 
-        public func validate() throws {
-            try validate(cpsLimit, name:"cpsLimit", min: 1)
-            try validate(defaultPhoneNumber, name:"defaultPhoneNumber", pattern: "^\\+?[1-9]\\d{1,14}$")
+        public func validate(name: String) throws {
+            try validate(cpsLimit, name:"cpsLimit", parent: name, min: 1)
+            try validate(defaultPhoneNumber, name:"defaultPhoneNumber", parent: name, pattern: "^\\+?[1-9]\\d{1,14}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2932,11 +2783,11 @@ extension Chime {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2978,8 +2829,8 @@ extension Chime {
             self.accountSettings = accountSettings
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3016,9 +2867,9 @@ extension Chime {
             self.disabled = disabled
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(botId, name:"botId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(botId, name:"botId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3105,8 +2956,8 @@ extension Chime {
             self.productType = productType
         }
 
-        public func validate() throws {
-            try validate(phoneNumberId, name:"phoneNumberId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(phoneNumberId, name:"phoneNumberId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3125,10 +2976,6 @@ extension Chime {
 
         public init(phoneNumber: PhoneNumber? = nil) {
             self.phoneNumber = phoneNumber
-        }
-
-        public func validate() throws {
-            try phoneNumber?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3156,9 +3003,9 @@ extension Chime {
             self.userId = userId
         }
 
-        public func validate() throws {
-            try validate(accountId, name:"accountId", pattern: ".*\\S.*")
-            try validate(userId, name:"userId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(accountId, name:"accountId", parent: name, pattern: ".*\\S.*")
+            try validate(userId, name:"userId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3184,8 +3031,8 @@ extension Chime {
             self.userId = userId
         }
 
-        public func validate() throws {
-            try validate(userId, name:"userId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(userId, name:"userId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3204,10 +3051,6 @@ extension Chime {
 
         public init(user: User? = nil) {
             self.user = user
-        }
-
-        public func validate() throws {
-            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3262,10 +3105,10 @@ extension Chime {
             self.voiceConnectorId = voiceConnectorId
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(voiceConnectorId, name:"voiceConnectorId", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3285,10 +3128,6 @@ extension Chime {
 
         public init(voiceConnector: VoiceConnector? = nil) {
             self.voiceConnector = voiceConnector
-        }
-
-        public func validate() throws {
-            try voiceConnector?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3348,10 +3187,6 @@ extension Chime {
             self.userRegistrationStatus = userRegistrationStatus
         }
 
-        public func validate() throws {
-            try validate(primaryEmail, name:"primaryEmail", pattern: ".+@.+\\..+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accountId = "AccountId"
             case displayName = "DisplayName"
@@ -3385,10 +3220,6 @@ extension Chime {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.userId = userId
-        }
-
-        public func validate() throws {
-            try validate(userId, name:"userId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3445,12 +3276,6 @@ extension Chime {
             self.requireEncryption = requireEncryption
             self.updatedTimestamp = updatedTimestamp
             self.voiceConnectorId = voiceConnectorId
-        }
-
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(voiceConnectorId, name:"voiceConnectorId", pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {

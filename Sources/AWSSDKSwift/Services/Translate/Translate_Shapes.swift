@@ -21,15 +21,6 @@ extension Translate {
             self.terms = terms
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z0-9-]_?)+$")
-            try terms?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case terms = "Terms"
@@ -48,10 +39,10 @@ extension Translate {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z0-9-]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z0-9-]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -75,10 +66,10 @@ extension Translate {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 400)
-            try validate(id, name:"id", min: 1)
-            try validate(id, name:"id", pattern: "(arn:aws((-us-gov)|(-cn))?:kms:)?([a-z]{2}-[a-z]+-\\d:)?(\\d{12}:)?(((key/)?[a-zA-Z0-9-_]+)|(alias/[a-zA-Z0-9:/_-]+))")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, max: 400)
+            try validate(id, name:"id", parent: name, min: 1)
+            try validate(id, name:"id", parent: name, pattern: "(arn:aws((-us-gov)|(-cn))?:kms:)?([a-z]{2}-[a-z]+-\\d:)?(\\d{12}:)?(((key/)?[a-zA-Z0-9-_]+)|(alias/[a-zA-Z0-9:/_-]+))")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -108,10 +99,10 @@ extension Translate {
             self.terminologyDataFormat = terminologyDataFormat
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z0-9-]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z0-9-]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -134,11 +125,6 @@ extension Translate {
         public init(terminologyDataLocation: TerminologyDataLocation? = nil, terminologyProperties: TerminologyProperties? = nil) {
             self.terminologyDataLocation = terminologyDataLocation
             self.terminologyProperties = terminologyProperties
-        }
-
-        public func validate() throws {
-            try terminologyDataLocation?.validate()
-            try terminologyProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -175,14 +161,14 @@ extension Translate {
             self.terminologyData = terminologyData
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 256)
-            try validate(description, name:"description", pattern: "[\\P{M}\\p{M}]{0,256}")
-            try encryptionKey?.validate()
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z0-9-]_?)+$")
-            try terminologyData.validate()
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 256)
+            try validate(description, name:"description", parent: name, pattern: "[\\P{M}\\p{M}]{0,256}")
+            try encryptionKey?.validate(name: "\(name).encryptionKey")
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z0-9-]_?)+$")
+            try terminologyData.validate(name: "\(name).terminologyData")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -206,10 +192,6 @@ extension Translate {
             self.terminologyProperties = terminologyProperties
         }
 
-        public func validate() throws {
-            try terminologyProperties?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case terminologyProperties = "TerminologyProperties"
         }
@@ -222,20 +204,20 @@ extension Translate {
         ]
 
         /// The maximum number of custom terminologies returned per list request.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If the result of the request to ListTerminologies was truncated, include the NextToken to fetch the next group of custom terminologies. 
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 500)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", pattern: "\\p{ASCII}{0,8192}")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 500)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 8192)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "\\p{ASCII}{0,8192}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -258,14 +240,6 @@ extension Translate {
         public init(nextToken: String? = nil, terminologyPropertiesList: [TerminologyProperties]? = nil) {
             self.nextToken = nextToken
             self.terminologyPropertiesList = terminologyPropertiesList
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 8192)
-            try validate(nextToken, name:"nextToken", pattern: "\\p{ASCII}{0,8192}")
-            try terminologyPropertiesList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -295,13 +269,6 @@ extension Translate {
             self.targetText = targetText
         }
 
-        public func validate() throws {
-            try validate(sourceText, name:"sourceText", max: 10000)
-            try validate(sourceText, name:"sourceText", pattern: "[\\P{M}\\p{M}]{0,10000}")
-            try validate(targetText, name:"targetText", max: 10000)
-            try validate(targetText, name:"targetText", pattern: "[\\P{M}\\p{M}]{0,10000}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case sourceText = "SourceText"
             case targetText = "TargetText"
@@ -324,8 +291,8 @@ extension Translate {
             self.format = format
         }
 
-        public func validate() throws {
-            try validate(file, name:"file", max: 10485760)
+        public func validate(name: String) throws {
+            try validate(file, name:"file", parent: name, max: 10485760)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -354,13 +321,6 @@ extension Translate {
         public init(location: String, repositoryType: String) {
             self.location = location
             self.repositoryType = repositoryType
-        }
-
-        public func validate() throws {
-            try validate(location, name:"location", max: 10000)
-            try validate(location, name:"location", pattern: "[\\P{M}\\p{M}]{0,10000}")
-            try validate(repositoryType, name:"repositoryType", max: 10000)
-            try validate(repositoryType, name:"repositoryType", pattern: "[\\P{M}\\p{M}]{0,10000}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -396,15 +356,15 @@ extension Translate {
         /// The name of the custom terminology.
         public let name: String?
         /// The size of the file used when importing a custom terminology.
-        public let sizeBytes: Int32?
+        public let sizeBytes: Int?
         /// The language code for the source text of the translation request for which the custom terminology is being used.
         public let sourceLanguageCode: String?
         /// The language codes for the target languages available with the custom terminology file. All possible target languages are returned in array.
         public let targetLanguageCodes: [String]?
         /// The number of terms included in the custom terminology.
-        public let termCount: Int32?
+        public let termCount: Int?
 
-        public init(arn: String? = nil, createdAt: TimeStamp? = nil, description: String? = nil, encryptionKey: EncryptionKey? = nil, lastUpdatedAt: TimeStamp? = nil, name: String? = nil, sizeBytes: Int32? = nil, sourceLanguageCode: String? = nil, targetLanguageCodes: [String]? = nil, termCount: Int32? = nil) {
+        public init(arn: String? = nil, createdAt: TimeStamp? = nil, description: String? = nil, encryptionKey: EncryptionKey? = nil, lastUpdatedAt: TimeStamp? = nil, name: String? = nil, sizeBytes: Int? = nil, sourceLanguageCode: String? = nil, targetLanguageCodes: [String]? = nil, termCount: Int? = nil) {
             self.arn = arn
             self.createdAt = createdAt
             self.description = description
@@ -415,22 +375,6 @@ extension Translate {
             self.sourceLanguageCode = sourceLanguageCode
             self.targetLanguageCodes = targetLanguageCodes
             self.termCount = termCount
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws((-us-gov)|(-cn))?:translate:[a-zA-Z0-9-]+:[0-9]{12}:terminology/.+?/.+?$")
-            try validate(description, name:"description", max: 256)
-            try validate(description, name:"description", pattern: "[\\P{M}\\p{M}]{0,256}")
-            try encryptionKey?.validate()
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z0-9-]_?)+$")
-            try validate(sourceLanguageCode, name:"sourceLanguageCode", max: 5)
-            try validate(sourceLanguageCode, name:"sourceLanguageCode", min: 2)
-            try targetLanguageCodes?.forEach {
-                try validate($0, name:"targetLanguageCodes[]", max: 5)
-                try validate($0, name:"targetLanguageCodes[]", min: 2)
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -471,19 +415,19 @@ extension Translate {
             self.text = text
         }
 
-        public func validate() throws {
-            try validate(sourceLanguageCode, name:"sourceLanguageCode", max: 5)
-            try validate(sourceLanguageCode, name:"sourceLanguageCode", min: 2)
-            try validate(targetLanguageCode, name:"targetLanguageCode", max: 5)
-            try validate(targetLanguageCode, name:"targetLanguageCode", min: 2)
+        public func validate(name: String) throws {
+            try validate(sourceLanguageCode, name:"sourceLanguageCode", parent: name, max: 5)
+            try validate(sourceLanguageCode, name:"sourceLanguageCode", parent: name, min: 2)
+            try validate(targetLanguageCode, name:"targetLanguageCode", parent: name, max: 5)
+            try validate(targetLanguageCode, name:"targetLanguageCode", parent: name, min: 2)
             try terminologyNames?.forEach {
-                try validate($0, name:"terminologyNames[]", max: 256)
-                try validate($0, name:"terminologyNames[]", min: 1)
-                try validate($0, name:"terminologyNames[]", pattern: "^([A-Za-z0-9-]_?)+$")
+                try validate($0, name: "terminologyNames[]", parent: name, max: 256)
+                try validate($0, name: "terminologyNames[]", parent: name, min: 1)
+                try validate($0, name: "terminologyNames[]", parent: name, pattern: "^([A-Za-z0-9-]_?)+$")
             }
-            try validate(text, name:"text", max: 5000)
-            try validate(text, name:"text", min: 1)
-            try validate(text, name:"text", pattern: "[\\P{M}\\p{M}]{1,5000}")
+            try validate(text, name:"text", parent: name, max: 5000)
+            try validate(text, name:"text", parent: name, min: 1)
+            try validate(text, name:"text", parent: name, pattern: "[\\P{M}\\p{M}]{1,5000}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -516,18 +460,6 @@ extension Translate {
             self.sourceLanguageCode = sourceLanguageCode
             self.targetLanguageCode = targetLanguageCode
             self.translatedText = translatedText
-        }
-
-        public func validate() throws {
-            try appliedTerminologies?.forEach {
-                try $0.validate()
-            }
-            try validate(sourceLanguageCode, name:"sourceLanguageCode", max: 5)
-            try validate(sourceLanguageCode, name:"sourceLanguageCode", min: 2)
-            try validate(targetLanguageCode, name:"targetLanguageCode", max: 5)
-            try validate(targetLanguageCode, name:"targetLanguageCode", min: 2)
-            try validate(translatedText, name:"translatedText", max: 10000)
-            try validate(translatedText, name:"translatedText", pattern: "[\\P{M}\\p{M}]{0,10000}")
         }
 
         private enum CodingKeys: String, CodingKey {

@@ -17,10 +17,10 @@ extension Shield {
             self.logBucket = logBucket
         }
 
-        public func validate() throws {
-            try validate(logBucket, name:"logBucket", max: 63)
-            try validate(logBucket, name:"logBucket", min: 3)
-            try validate(logBucket, name:"logBucket", pattern: "^([a-z]|(\\d(?!\\d{0,2}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})))([a-z\\d]|(\\.(?!(\\.|-)))|(-(?!\\.))){1,61}[a-z\\d]$")
+        public func validate(name: String) throws {
+            try validate(logBucket, name:"logBucket", parent: name, max: 63)
+            try validate(logBucket, name:"logBucket", parent: name, min: 3)
+            try validate(logBucket, name:"logBucket", parent: name, pattern: "^([a-z]|(\\d(?!\\d{0,2}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})))([a-z\\d]|(\\.(?!(\\.|-)))|(-(?!\\.))){1,61}[a-z\\d]$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -48,10 +48,10 @@ extension Shield {
             self.roleArn = roleArn
         }
 
-        public func validate() throws {
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 1)
-            try validate(roleArn, name:"roleArn", pattern: "^arn:aws:iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+")
+        public func validate(name: String) throws {
+            try validate(roleArn, name:"roleArn", parent: name, max: 2048)
+            try validate(roleArn, name:"roleArn", parent: name, min: 1)
+            try validate(roleArn, name:"roleArn", parent: name, pattern: "^arn:aws:iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -105,15 +105,6 @@ extension Shield {
             self.resourceArn = resourceArn
             self.startTime = startTime
             self.subResources = subResources
-        }
-
-        public func validate() throws {
-            try validate(attackId, name:"attackId", max: 128)
-            try validate(attackId, name:"attackId", min: 1)
-            try validate(attackId, name:"attackId", pattern: "[a-zA-Z0-9\\\\-]*")
-            try validate(resourceArn, name:"resourceArn", max: 2048)
-            try validate(resourceArn, name:"resourceArn", min: 1)
-            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -279,13 +270,13 @@ extension Shield {
             self.resourceArn = resourceArn
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[ a-zA-Z0-9_\\\\.\\\\-]*")
-            try validate(resourceArn, name:"resourceArn", max: 2048)
-            try validate(resourceArn, name:"resourceArn", min: 1)
-            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws.*")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 128)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[ a-zA-Z0-9_\\\\.\\\\-]*")
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 2048)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "^arn:aws.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -304,12 +295,6 @@ extension Shield {
 
         public init(protectionId: String? = nil) {
             self.protectionId = protectionId
-        }
-
-        public func validate() throws {
-            try validate(protectionId, name:"protectionId", max: 36)
-            try validate(protectionId, name:"protectionId", min: 1)
-            try validate(protectionId, name:"protectionId", pattern: "[a-zA-Z0-9\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -345,10 +330,10 @@ extension Shield {
             self.protectionId = protectionId
         }
 
-        public func validate() throws {
-            try validate(protectionId, name:"protectionId", max: 36)
-            try validate(protectionId, name:"protectionId", min: 1)
-            try validate(protectionId, name:"protectionId", pattern: "[a-zA-Z0-9\\\\-]*")
+        public func validate(name: String) throws {
+            try validate(protectionId, name:"protectionId", parent: name, max: 36)
+            try validate(protectionId, name:"protectionId", parent: name, min: 1)
+            try validate(protectionId, name:"protectionId", parent: name, pattern: "[a-zA-Z0-9\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -392,10 +377,10 @@ extension Shield {
             self.attackId = attackId
         }
 
-        public func validate() throws {
-            try validate(attackId, name:"attackId", max: 128)
-            try validate(attackId, name:"attackId", min: 1)
-            try validate(attackId, name:"attackId", pattern: "[a-zA-Z0-9\\\\-]*")
+        public func validate(name: String) throws {
+            try validate(attackId, name:"attackId", parent: name, max: 128)
+            try validate(attackId, name:"attackId", parent: name, min: 1)
+            try validate(attackId, name:"attackId", parent: name, pattern: "[a-zA-Z0-9\\\\-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -413,10 +398,6 @@ extension Shield {
 
         public init(attack: AttackDetail? = nil) {
             self.attack = attack
-        }
-
-        public func validate() throws {
-            try attack?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -448,19 +429,6 @@ extension Shield {
             self.roleArn = roleArn
         }
 
-        public func validate() throws {
-            try logBucketList?.forEach {
-                try validate($0, name:"logBucketList[]", max: 63)
-                try validate($0, name:"logBucketList[]", min: 3)
-                try validate($0, name:"logBucketList[]", pattern: "^([a-z]|(\\d(?!\\d{0,2}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})))([a-z\\d]|(\\.(?!(\\.|-)))|(-(?!\\.))){1,61}[a-z\\d]$")
-            }
-            try validate(logBucketList, name:"logBucketList", max: 10)
-            try validate(logBucketList, name:"logBucketList", min: 0)
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 1)
-            try validate(roleArn, name:"roleArn", pattern: "^arn:aws:iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case logBucketList = "LogBucketList"
             case roleArn = "RoleArn"
@@ -487,14 +455,6 @@ extension Shield {
             self.emergencyContactList = emergencyContactList
         }
 
-        public func validate() throws {
-            try emergencyContactList?.forEach {
-                try $0.validate()
-            }
-            try validate(emergencyContactList, name:"emergencyContactList", max: 10)
-            try validate(emergencyContactList, name:"emergencyContactList", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case emergencyContactList = "EmergencyContactList"
         }
@@ -516,13 +476,13 @@ extension Shield {
             self.resourceArn = resourceArn
         }
 
-        public func validate() throws {
-            try validate(protectionId, name:"protectionId", max: 36)
-            try validate(protectionId, name:"protectionId", min: 1)
-            try validate(protectionId, name:"protectionId", pattern: "[a-zA-Z0-9\\\\-]*")
-            try validate(resourceArn, name:"resourceArn", max: 2048)
-            try validate(resourceArn, name:"resourceArn", min: 1)
-            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws.*")
+        public func validate(name: String) throws {
+            try validate(protectionId, name:"protectionId", parent: name, max: 36)
+            try validate(protectionId, name:"protectionId", parent: name, min: 1)
+            try validate(protectionId, name:"protectionId", parent: name, pattern: "[a-zA-Z0-9\\\\-]*")
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 2048)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "^arn:aws.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -541,10 +501,6 @@ extension Shield {
 
         public init(protection: Protection? = nil) {
             self.protection = protection
-        }
-
-        public func validate() throws {
-            try protection?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -572,10 +528,6 @@ extension Shield {
             self.subscription = subscription
         }
 
-        public func validate() throws {
-            try subscription?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case subscription = "Subscription"
         }
@@ -593,10 +545,10 @@ extension Shield {
             self.logBucket = logBucket
         }
 
-        public func validate() throws {
-            try validate(logBucket, name:"logBucket", max: 63)
-            try validate(logBucket, name:"logBucket", min: 3)
-            try validate(logBucket, name:"logBucket", pattern: "^([a-z]|(\\d(?!\\d{0,2}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})))([a-z\\d]|(\\.(?!(\\.|-)))|(-(?!\\.))){1,61}[a-z\\d]$")
+        public func validate(name: String) throws {
+            try validate(logBucket, name:"logBucket", parent: name, max: 63)
+            try validate(logBucket, name:"logBucket", parent: name, min: 3)
+            try validate(logBucket, name:"logBucket", parent: name, pattern: "^([a-z]|(\\d(?!\\d{0,2}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})))([a-z\\d]|(\\.(?!(\\.|-)))|(-(?!\\.))){1,61}[a-z\\d]$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -640,10 +592,10 @@ extension Shield {
             self.emailAddress = emailAddress
         }
 
-        public func validate() throws {
-            try validate(emailAddress, name:"emailAddress", max: 150)
-            try validate(emailAddress, name:"emailAddress", min: 1)
-            try validate(emailAddress, name:"emailAddress", pattern: "^\\S+@\\S+\\.\\S+$")
+        public func validate(name: String) throws {
+            try validate(emailAddress, name:"emailAddress", parent: name, max: 150)
+            try validate(emailAddress, name:"emailAddress", parent: name, min: 1)
+            try validate(emailAddress, name:"emailAddress", parent: name, pattern: "^\\S+@\\S+\\.\\S+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -710,7 +662,7 @@ extension Shield {
         /// The end of the time period for the attacks. This is a timestamp type. The sample request above indicates a number type because the default used by WAF is Unix time in seconds. However any valid timestamp format is allowed. 
         public let endTime: TimeRange?
         /// The maximum number of AttackSummary objects to be returned. If this is left blank, the first 20 results will be returned. This is a maximum value; it is possible that AWS WAF will return the results in smaller batches. That is, the number of AttackSummary objects returned could be less than MaxResults, even if there are still more AttackSummary objects yet to return. If there are more AttackSummary objects to return, AWS WAF will always also return a NextToken.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The ListAttacksRequest.NextMarker value from a previous call to ListAttacksRequest. Pass null if this is the first call.
         public let nextToken: String?
         /// The ARN (Amazon Resource Name) of the resource that was attacked. If this is left blank, all applicable resources for this account will be included.
@@ -718,7 +670,7 @@ extension Shield {
         /// The start of the time period for the attacks. This is a timestamp type. The sample request above indicates a number type because the default used by WAF is Unix time in seconds. However any valid timestamp format is allowed. 
         public let startTime: TimeRange?
 
-        public init(endTime: TimeRange? = nil, maxResults: Int32? = nil, nextToken: String? = nil, resourceArns: [String]? = nil, startTime: TimeRange? = nil) {
+        public init(endTime: TimeRange? = nil, maxResults: Int? = nil, nextToken: String? = nil, resourceArns: [String]? = nil, startTime: TimeRange? = nil) {
             self.endTime = endTime
             self.maxResults = maxResults
             self.nextToken = nextToken
@@ -726,16 +678,16 @@ extension Shield {
             self.startTime = startTime
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 10000)
-            try validate(maxResults, name:"maxResults", min: 0)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^.*$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 10000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^.*$")
             try resourceArns?.forEach {
-                try validate($0, name:"resourceArns[]", max: 2048)
-                try validate($0, name:"resourceArns[]", min: 1)
-                try validate($0, name:"resourceArns[]", pattern: "^arn:aws.*")
+                try validate($0, name: "resourceArns[]", parent: name, max: 2048)
+                try validate($0, name: "resourceArns[]", parent: name, min: 1)
+                try validate($0, name: "resourceArns[]", parent: name, pattern: "^arn:aws.*")
             }
         }
 
@@ -764,12 +716,6 @@ extension Shield {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^.*$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attackSummaries = "AttackSummaries"
             case nextToken = "NextToken"
@@ -783,21 +729,21 @@ extension Shield {
         ]
 
         /// The maximum number of Protection objects to be returned. If this is left blank the first 20 results will be returned. This is a maximum value; it is possible that AWS WAF will return the results in smaller batches. That is, the number of Protection objects returned could be less than MaxResults, even if there are still more Protection objects yet to return. If there are more Protection objects to return, AWS WAF will always also return a NextToken.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The ListProtectionsRequest.NextToken value from a previous call to ListProtections. Pass null if this is the first call.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 10000)
-            try validate(maxResults, name:"maxResults", min: 0)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^.*$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 10000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^.*$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -820,15 +766,6 @@ extension Shield {
         public init(nextToken: String? = nil, protections: [Protection]? = nil) {
             self.nextToken = nextToken
             self.protections = protections
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "^.*$")
-            try protections?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -872,18 +809,6 @@ extension Shield {
             self.id = id
             self.name = name
             self.resourceArn = resourceArn
-        }
-
-        public func validate() throws {
-            try validate(id, name:"id", max: 36)
-            try validate(id, name:"id", min: 1)
-            try validate(id, name:"id", pattern: "[a-zA-Z0-9\\\\-]*")
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[ a-zA-Z0-9_\\\\.\\\\-]*")
-            try validate(resourceArn, name:"resourceArn", max: 2048)
-            try validate(resourceArn, name:"resourceArn", min: 1)
-            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -959,10 +884,6 @@ extension Shield {
             self.timeCommitmentInSeconds = timeCommitmentInSeconds
         }
 
-        public func validate() throws {
-            try validate(timeCommitmentInSeconds, name:"timeCommitmentInSeconds", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case autoRenew = "AutoRenew"
             case endTime = "EndTime"
@@ -1015,7 +936,7 @@ extension Shield {
         /// The maximum value of the counter for a specified time period.
         public let max: Double?
         /// The number of counters for a specified time period.
-        public let n: Int32?
+        public let n: Int?
         /// The counter name.
         public let name: String?
         /// The total of counter values for a specified time period.
@@ -1023,7 +944,7 @@ extension Shield {
         /// The unit of the counters.
         public let unit: String?
 
-        public init(average: Double? = nil, max: Double? = nil, n: Int32? = nil, name: String? = nil, sum: Double? = nil, unit: String? = nil) {
+        public init(average: Double? = nil, max: Double? = nil, n: Int? = nil, name: String? = nil, sum: Double? = nil, unit: String? = nil) {
             self.average = average
             self.max = max
             self.n = n
@@ -1084,12 +1005,12 @@ extension Shield {
             self.emergencyContactList = emergencyContactList
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try emergencyContactList?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).emergencyContactList[]")
             }
-            try validate(emergencyContactList, name:"emergencyContactList", max: 10)
-            try validate(emergencyContactList, name:"emergencyContactList", min: 0)
+            try validate(emergencyContactList, name:"emergencyContactList", parent: name, max: 10)
+            try validate(emergencyContactList, name:"emergencyContactList", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {

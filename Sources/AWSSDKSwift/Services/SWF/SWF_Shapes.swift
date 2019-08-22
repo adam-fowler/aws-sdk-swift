@@ -37,16 +37,6 @@ extension SWF {
             self.workflowExecution = workflowExecution
         }
 
-        public func validate() throws {
-            try validate(activityId, name:"activityId", max: 256)
-            try validate(activityId, name:"activityId", min: 1)
-            try activityType.validate()
-            try validate(input, name:"input", max: 32768)
-            try validate(taskToken, name:"taskToken", max: 1024)
-            try validate(taskToken, name:"taskToken", min: 1)
-            try workflowExecution.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case activityId = "activityId"
             case activityType = "activityType"
@@ -71,11 +61,6 @@ extension SWF {
         public init(activityId: String, decisionTaskCompletedEventId: Int64) {
             self.activityId = activityId
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
-        }
-
-        public func validate() throws {
-            try validate(activityId, name:"activityId", max: 256)
-            try validate(activityId, name:"activityId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -108,10 +93,6 @@ extension SWF {
             self.startedEventId = startedEventId
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case details = "details"
             case latestCancelRequestedEventId = "latestCancelRequestedEventId"
@@ -138,10 +119,6 @@ extension SWF {
             self.result = result
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
-        }
-
-        public func validate() throws {
-            try validate(result, name:"result", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -173,11 +150,6 @@ extension SWF {
             self.reason = reason
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
-        }
-
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(reason, name:"reason", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -240,19 +212,6 @@ extension SWF {
             self.taskPriority = taskPriority
         }
 
-        public func validate() throws {
-            try validate(activityId, name:"activityId", max: 256)
-            try validate(activityId, name:"activityId", min: 1)
-            try activityType.validate()
-            try validate(control, name:"control", max: 32768)
-            try validate(heartbeatTimeout, name:"heartbeatTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(scheduleToCloseTimeout, name:"scheduleToCloseTimeout", max: 8)
-            try validate(scheduleToStartTimeout, name:"scheduleToStartTimeout", max: 8)
-            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
-            try taskList.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case activityId = "activityId"
             case activityType = "activityType"
@@ -282,10 +241,6 @@ extension SWF {
         public init(identity: String? = nil, scheduledEventId: Int64) {
             self.identity = identity
             self.scheduledEventId = scheduledEventId
-        }
-
-        public func validate() throws {
-            try validate(identity, name:"identity", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -335,10 +290,6 @@ extension SWF {
             self.timeoutType = timeoutType
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 2048)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case details = "details"
             case scheduledEventId = "scheduledEventId"
@@ -371,11 +322,11 @@ extension SWF {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -416,14 +367,6 @@ extension SWF {
             self.defaultTaskStartToCloseTimeout = defaultTaskStartToCloseTimeout
         }
 
-        public func validate() throws {
-            try validate(defaultTaskHeartbeatTimeout, name:"defaultTaskHeartbeatTimeout", max: 8)
-            try defaultTaskList?.validate()
-            try validate(defaultTaskScheduleToCloseTimeout, name:"defaultTaskScheduleToCloseTimeout", max: 8)
-            try validate(defaultTaskScheduleToStartTimeout, name:"defaultTaskScheduleToStartTimeout", max: 8)
-            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case defaultTaskHeartbeatTimeout = "defaultTaskHeartbeatTimeout"
             case defaultTaskList = "defaultTaskList"
@@ -448,11 +391,6 @@ extension SWF {
         public init(configuration: ActivityTypeConfiguration, typeInfo: ActivityTypeInfo) {
             self.configuration = configuration
             self.typeInfo = typeInfo
-        }
-
-        public func validate() throws {
-            try configuration.validate()
-            try typeInfo.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -489,11 +427,6 @@ extension SWF {
             self.status = status
         }
 
-        public func validate() throws {
-            try activityType.validate()
-            try validate(description, name:"description", max: 1024)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case activityType = "activityType"
             case creationDate = "creationDate"
@@ -519,13 +452,6 @@ extension SWF {
             self.typeInfos = typeInfos
         }
 
-        public func validate() throws {
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
-            try typeInfos.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextPageToken = "nextPageToken"
             case typeInfos = "typeInfos"
@@ -544,9 +470,9 @@ extension SWF {
             self.timerId = timerId
         }
 
-        public func validate() throws {
-            try validate(timerId, name:"timerId", max: 256)
-            try validate(timerId, name:"timerId", min: 1)
+        public func validate(name: String) throws {
+            try validate(timerId, name:"timerId", parent: name, max: 256)
+            try validate(timerId, name:"timerId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -580,11 +506,6 @@ extension SWF {
             self.timerId = timerId
         }
 
-        public func validate() throws {
-            try validate(timerId, name:"timerId", max: 256)
-            try validate(timerId, name:"timerId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -604,8 +525,8 @@ extension SWF {
             self.details = details
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
+        public func validate(name: String) throws {
+            try validate(details, name:"details", parent: name, max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -676,12 +597,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try workflowExecution.validate()
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case details = "details"
             case initiatedEventId = "initiatedEventId"
@@ -717,12 +632,6 @@ extension SWF {
             self.startedEventId = startedEventId
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
-        }
-
-        public func validate() throws {
-            try validate(result, name:"result", max: 32768)
-            try workflowExecution.validate()
-            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -766,13 +675,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(reason, name:"reason", max: 256)
-            try workflowExecution.validate()
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case details = "details"
             case initiatedEventId = "initiatedEventId"
@@ -801,11 +703,6 @@ extension SWF {
             self.initiatedEventId = initiatedEventId
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
-        }
-
-        public func validate() throws {
-            try workflowExecution.validate()
-            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -837,11 +734,6 @@ extension SWF {
             self.startedEventId = startedEventId
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
-        }
-
-        public func validate() throws {
-            try workflowExecution.validate()
-            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -878,11 +770,6 @@ extension SWF {
             self.timeoutType = timeoutType
             self.workflowExecution = workflowExecution
             self.workflowType = workflowType
-        }
-
-        public func validate() throws {
-            try workflowExecution.validate()
-            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -933,8 +820,8 @@ extension SWF {
             self.result = result
         }
 
-        public func validate() throws {
-            try validate(result, name:"result", max: 32768)
+        public func validate(name: String) throws {
+            try validate(result, name:"result", parent: name, max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1014,20 +901,20 @@ extension SWF {
             self.workflowTypeVersion = workflowTypeVersion
         }
 
-        public func validate() throws {
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(lambdaRole, name:"lambdaRole", max: 1600)
-            try validate(lambdaRole, name:"lambdaRole", min: 1)
+        public func validate(name: String) throws {
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", parent: name, max: 8)
+            try validate(input, name:"input", parent: name, max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", parent: name, max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", parent: name, min: 1)
             try tagList?.forEach {
-                try validate($0, name:"tagList[]", max: 256)
-                try validate($0, name:"tagList[]", min: 0)
+                try validate($0, name: "tagList[]", parent: name, max: 256)
+                try validate($0, name: "tagList[]", parent: name, min: 0)
             }
-            try validate(tagList, name:"tagList", max: 5)
-            try taskList?.validate()
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
-            try validate(workflowTypeVersion, name:"workflowTypeVersion", max: 64)
-            try validate(workflowTypeVersion, name:"workflowTypeVersion", min: 1)
+            try validate(tagList, name:"tagList", parent: name, max: 5)
+            try taskList?.validate(name: "\(name).taskList")
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", parent: name, max: 8)
+            try validate(workflowTypeVersion, name:"workflowTypeVersion", parent: name, max: 64)
+            try validate(workflowTypeVersion, name:"workflowTypeVersion", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1114,12 +1001,12 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try executionFilter?.validate()
-            try tagFilter?.validate()
-            try typeFilter?.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try executionFilter?.validate(name: "\(name).executionFilter")
+            try tagFilter?.validate(name: "\(name).tagFilter")
+            try typeFilter?.validate(name: "\(name).typeFilter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1161,12 +1048,12 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try executionFilter?.validate()
-            try tagFilter?.validate()
-            try typeFilter?.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try executionFilter?.validate(name: "\(name).executionFilter")
+            try tagFilter?.validate(name: "\(name).tagFilter")
+            try typeFilter?.validate(name: "\(name).typeFilter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1194,10 +1081,10 @@ extension SWF {
             self.taskList = taskList
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try taskList.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try taskList.validate(name: "\(name).taskList")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1222,10 +1109,10 @@ extension SWF {
             self.taskList = taskList
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try taskList.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try taskList.validate(name: "\(name).taskList")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1298,20 +1185,20 @@ extension SWF {
             self.startTimerDecisionAttributes = startTimerDecisionAttributes
         }
 
-        public func validate() throws {
-            try cancelTimerDecisionAttributes?.validate()
-            try cancelWorkflowExecutionDecisionAttributes?.validate()
-            try completeWorkflowExecutionDecisionAttributes?.validate()
-            try continueAsNewWorkflowExecutionDecisionAttributes?.validate()
-            try failWorkflowExecutionDecisionAttributes?.validate()
-            try recordMarkerDecisionAttributes?.validate()
-            try requestCancelActivityTaskDecisionAttributes?.validate()
-            try requestCancelExternalWorkflowExecutionDecisionAttributes?.validate()
-            try scheduleActivityTaskDecisionAttributes?.validate()
-            try scheduleLambdaFunctionDecisionAttributes?.validate()
-            try signalExternalWorkflowExecutionDecisionAttributes?.validate()
-            try startChildWorkflowExecutionDecisionAttributes?.validate()
-            try startTimerDecisionAttributes?.validate()
+        public func validate(name: String) throws {
+            try cancelTimerDecisionAttributes?.validate(name: "\(name).cancelTimerDecisionAttributes")
+            try cancelWorkflowExecutionDecisionAttributes?.validate(name: "\(name).cancelWorkflowExecutionDecisionAttributes")
+            try completeWorkflowExecutionDecisionAttributes?.validate(name: "\(name).completeWorkflowExecutionDecisionAttributes")
+            try continueAsNewWorkflowExecutionDecisionAttributes?.validate(name: "\(name).continueAsNewWorkflowExecutionDecisionAttributes")
+            try failWorkflowExecutionDecisionAttributes?.validate(name: "\(name).failWorkflowExecutionDecisionAttributes")
+            try recordMarkerDecisionAttributes?.validate(name: "\(name).recordMarkerDecisionAttributes")
+            try requestCancelActivityTaskDecisionAttributes?.validate(name: "\(name).requestCancelActivityTaskDecisionAttributes")
+            try requestCancelExternalWorkflowExecutionDecisionAttributes?.validate(name: "\(name).requestCancelExternalWorkflowExecutionDecisionAttributes")
+            try scheduleActivityTaskDecisionAttributes?.validate(name: "\(name).scheduleActivityTaskDecisionAttributes")
+            try scheduleLambdaFunctionDecisionAttributes?.validate(name: "\(name).scheduleLambdaFunctionDecisionAttributes")
+            try signalExternalWorkflowExecutionDecisionAttributes?.validate(name: "\(name).signalExternalWorkflowExecutionDecisionAttributes")
+            try startChildWorkflowExecutionDecisionAttributes?.validate(name: "\(name).startChildWorkflowExecutionDecisionAttributes")
+            try startTimerDecisionAttributes?.validate(name: "\(name).startTimerDecisionAttributes")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1368,17 +1255,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try events.forEach {
-                try $0.validate()
-            }
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
-            try validate(taskToken, name:"taskToken", max: 1024)
-            try validate(taskToken, name:"taskToken", min: 1)
-            try workflowExecution.validate()
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case events = "events"
             case nextPageToken = "nextPageToken"
@@ -1410,10 +1286,6 @@ extension SWF {
             self.startedEventId = startedEventId
         }
 
-        public func validate() throws {
-            try validate(executionContext, name:"executionContext", max: 32768)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case executionContext = "executionContext"
             case scheduledEventId = "scheduledEventId"
@@ -1441,11 +1313,6 @@ extension SWF {
             self.taskPriority = taskPriority
         }
 
-        public func validate() throws {
-            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
-            try taskList.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case startToCloseTimeout = "startToCloseTimeout"
             case taskList = "taskList"
@@ -1467,10 +1334,6 @@ extension SWF {
         public init(identity: String? = nil, scheduledEventId: Int64) {
             self.identity = identity
             self.scheduledEventId = scheduledEventId
-        }
-
-        public func validate() throws {
-            try validate(identity, name:"identity", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1544,10 +1407,10 @@ extension SWF {
             self.domain = domain
         }
 
-        public func validate() throws {
-            try activityType.validate()
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
+        public func validate(name: String) throws {
+            try activityType.validate(name: "\(name).activityType")
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1568,9 +1431,9 @@ extension SWF {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1594,10 +1457,10 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try workflowType.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try workflowType.validate(name: "\(name).workflowType")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1622,10 +1485,10 @@ extension SWF {
             self.domain = domain
         }
 
-        public func validate() throws {
-            try activityType.validate()
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
+        public func validate(name: String) throws {
+            try activityType.validate(name: "\(name).activityType")
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1646,9 +1509,9 @@ extension SWF {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1672,10 +1535,10 @@ extension SWF {
             self.execution = execution
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try execution.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try execution.validate(name: "\(name).execution")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1700,10 +1563,10 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try workflowType.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try workflowType.validate(name: "\(name).workflowType")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1722,11 +1585,6 @@ extension SWF {
 
         public init(workflowExecutionRetentionPeriodInDays: String) {
             self.workflowExecutionRetentionPeriodInDays = workflowExecutionRetentionPeriodInDays
-        }
-
-        public func validate() throws {
-            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", max: 8)
-            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1748,11 +1606,6 @@ extension SWF {
         public init(configuration: DomainConfiguration, domainInfo: DomainInfo) {
             self.configuration = configuration
             self.domainInfo = domainInfo
-        }
-
-        public func validate() throws {
-            try configuration.validate()
-            try domainInfo.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1785,14 +1638,6 @@ extension SWF {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 1600)
-            try validate(arn, name:"arn", min: 1)
-            try validate(description, name:"description", max: 1024)
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case description = "description"
@@ -1815,13 +1660,6 @@ extension SWF {
         public init(domainInfos: [DomainInfo], nextPageToken: String? = nil) {
             self.domainInfos = domainInfos
             self.nextPageToken = nextPageToken
-        }
-
-        public func validate() throws {
-            try domainInfos.forEach {
-                try $0.validate()
-            }
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1932,10 +1770,6 @@ extension SWF {
             self.workflowExecution = workflowExecution
         }
 
-        public func validate() throws {
-            try workflowExecution.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case initiatedEventId = "initiatedEventId"
             case workflowExecution = "workflowExecution"
@@ -1956,10 +1790,6 @@ extension SWF {
         public init(initiatedEventId: Int64, workflowExecution: WorkflowExecution) {
             self.initiatedEventId = initiatedEventId
             self.workflowExecution = workflowExecution
-        }
-
-        public func validate() throws {
-            try workflowExecution.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1984,9 +1814,9 @@ extension SWF {
             self.reason = reason
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(reason, name:"reason", max: 256)
+        public func validate(name: String) throws {
+            try validate(details, name:"details", parent: name, max: 32768)
+            try validate(reason, name:"reason", parent: name, max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2037,13 +1867,13 @@ extension SWF {
         /// Specifies the workflow execution for which to return the history.
         public let execution: WorkflowExecution
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
-        public let maximumPageSize: Int32?
+        public let maximumPageSize: Int?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call. 
         public let nextPageToken: String?
         /// When set to true, returns the events in reverse order. By default the results are returned in ascending order of the eventTimeStamp of the events.
         public let reverseOrder: Bool?
 
-        public init(domain: String, execution: WorkflowExecution, maximumPageSize: Int32? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil) {
+        public init(domain: String, execution: WorkflowExecution, maximumPageSize: Int? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil) {
             self.domain = domain
             self.execution = execution
             self.maximumPageSize = maximumPageSize
@@ -2051,13 +1881,13 @@ extension SWF {
             self.reverseOrder = reverseOrder
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try execution.validate()
-            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
-            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try execution.validate(name: "\(name).execution")
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, min: 0)
+            try validate(nextPageToken, name:"nextPageToken", parent: name, max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2083,13 +1913,6 @@ extension SWF {
         public init(events: [HistoryEvent], nextPageToken: String? = nil) {
             self.events = events
             self.nextPageToken = nextPageToken
-        }
-
-        public func validate() throws {
-            try events.forEach {
-                try $0.validate()
-            }
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2334,55 +2157,6 @@ extension SWF {
             self.workflowExecutionTimedOutEventAttributes = workflowExecutionTimedOutEventAttributes
         }
 
-        public func validate() throws {
-            try activityTaskCanceledEventAttributes?.validate()
-            try activityTaskCancelRequestedEventAttributes?.validate()
-            try activityTaskCompletedEventAttributes?.validate()
-            try activityTaskFailedEventAttributes?.validate()
-            try activityTaskScheduledEventAttributes?.validate()
-            try activityTaskStartedEventAttributes?.validate()
-            try activityTaskTimedOutEventAttributes?.validate()
-            try cancelTimerFailedEventAttributes?.validate()
-            try childWorkflowExecutionCanceledEventAttributes?.validate()
-            try childWorkflowExecutionCompletedEventAttributes?.validate()
-            try childWorkflowExecutionFailedEventAttributes?.validate()
-            try childWorkflowExecutionStartedEventAttributes?.validate()
-            try childWorkflowExecutionTerminatedEventAttributes?.validate()
-            try childWorkflowExecutionTimedOutEventAttributes?.validate()
-            try decisionTaskCompletedEventAttributes?.validate()
-            try decisionTaskScheduledEventAttributes?.validate()
-            try decisionTaskStartedEventAttributes?.validate()
-            try externalWorkflowExecutionCancelRequestedEventAttributes?.validate()
-            try externalWorkflowExecutionSignaledEventAttributes?.validate()
-            try lambdaFunctionCompletedEventAttributes?.validate()
-            try lambdaFunctionFailedEventAttributes?.validate()
-            try lambdaFunctionScheduledEventAttributes?.validate()
-            try markerRecordedEventAttributes?.validate()
-            try recordMarkerFailedEventAttributes?.validate()
-            try requestCancelActivityTaskFailedEventAttributes?.validate()
-            try requestCancelExternalWorkflowExecutionFailedEventAttributes?.validate()
-            try requestCancelExternalWorkflowExecutionInitiatedEventAttributes?.validate()
-            try scheduleActivityTaskFailedEventAttributes?.validate()
-            try scheduleLambdaFunctionFailedEventAttributes?.validate()
-            try signalExternalWorkflowExecutionFailedEventAttributes?.validate()
-            try signalExternalWorkflowExecutionInitiatedEventAttributes?.validate()
-            try startChildWorkflowExecutionFailedEventAttributes?.validate()
-            try startChildWorkflowExecutionInitiatedEventAttributes?.validate()
-            try startLambdaFunctionFailedEventAttributes?.validate()
-            try startTimerFailedEventAttributes?.validate()
-            try timerCanceledEventAttributes?.validate()
-            try timerFiredEventAttributes?.validate()
-            try timerStartedEventAttributes?.validate()
-            try workflowExecutionCanceledEventAttributes?.validate()
-            try workflowExecutionCancelRequestedEventAttributes?.validate()
-            try workflowExecutionCompletedEventAttributes?.validate()
-            try workflowExecutionContinuedAsNewEventAttributes?.validate()
-            try workflowExecutionFailedEventAttributes?.validate()
-            try workflowExecutionSignaledEventAttributes?.validate()
-            try workflowExecutionStartedEventAttributes?.validate()
-            try workflowExecutionTerminatedEventAttributes?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case activityTaskCanceledEventAttributes = "activityTaskCanceledEventAttributes"
             case activityTaskCancelRequestedEventAttributes = "activityTaskCancelRequestedEventAttributes"
@@ -2464,10 +2238,6 @@ extension SWF {
             self.startedEventId = startedEventId
         }
 
-        public func validate() throws {
-            try validate(result, name:"result", max: 32768)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case result = "result"
             case scheduledEventId = "scheduledEventId"
@@ -2497,11 +2267,6 @@ extension SWF {
             self.reason = reason
             self.scheduledEventId = scheduledEventId
             self.startedEventId = startedEventId
-        }
-
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(reason, name:"reason", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2542,17 +2307,6 @@ extension SWF {
             self.input = input
             self.name = name
             self.startToCloseTimeout = startToCloseTimeout
-        }
-
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(id, name:"id", max: 256)
-            try validate(id, name:"id", min: 1)
-            try validate(input, name:"input", max: 32768)
-            try validate(input, name:"input", min: 0)
-            try validate(name, name:"name", max: 64)
-            try validate(name, name:"name", min: 1)
-            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2627,7 +2381,7 @@ extension SWF {
         /// The name of the domain in which the activity types have been registered.
         public let domain: String
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
-        public let maximumPageSize: Int32?
+        public let maximumPageSize: Int?
         /// If specified, only lists the activity types that have this name.
         public let name: String?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call. 
@@ -2637,7 +2391,7 @@ extension SWF {
         /// When set to true, returns the results in reverse order. By default, the results are returned in ascending alphabetical order by name of the activity types.
         public let reverseOrder: Bool?
 
-        public init(domain: String, maximumPageSize: Int32? = nil, name: String? = nil, nextPageToken: String? = nil, registrationStatus: RegistrationStatus, reverseOrder: Bool? = nil) {
+        public init(domain: String, maximumPageSize: Int? = nil, name: String? = nil, nextPageToken: String? = nil, registrationStatus: RegistrationStatus, reverseOrder: Bool? = nil) {
             self.domain = domain
             self.maximumPageSize = maximumPageSize
             self.name = name
@@ -2646,14 +2400,14 @@ extension SWF {
             self.reverseOrder = reverseOrder
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
-            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, min: 0)
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(nextPageToken, name:"nextPageToken", parent: name, max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2689,7 +2443,7 @@ extension SWF {
         /// If specified, only workflow executions matching the workflow ID specified in the filter are returned.   closeStatusFilter, executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
         public let executionFilter: WorkflowExecutionFilter?
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
-        public let maximumPageSize: Int32?
+        public let maximumPageSize: Int?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call. 
         public let nextPageToken: String?
         /// When set to true, returns the results in reverse order. By default the results are returned in descending order of the start or the close time of the executions.
@@ -2701,7 +2455,7 @@ extension SWF {
         /// If specified, only executions of the type specified in the filter are returned.   closeStatusFilter, executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
         public let typeFilter: WorkflowTypeFilter?
 
-        public init(closeStatusFilter: CloseStatusFilter? = nil, closeTimeFilter: ExecutionTimeFilter? = nil, domain: String, executionFilter: WorkflowExecutionFilter? = nil, maximumPageSize: Int32? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil, startTimeFilter: ExecutionTimeFilter? = nil, tagFilter: TagFilter? = nil, typeFilter: WorkflowTypeFilter? = nil) {
+        public init(closeStatusFilter: CloseStatusFilter? = nil, closeTimeFilter: ExecutionTimeFilter? = nil, domain: String, executionFilter: WorkflowExecutionFilter? = nil, maximumPageSize: Int? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil, startTimeFilter: ExecutionTimeFilter? = nil, tagFilter: TagFilter? = nil, typeFilter: WorkflowTypeFilter? = nil) {
             self.closeStatusFilter = closeStatusFilter
             self.closeTimeFilter = closeTimeFilter
             self.domain = domain
@@ -2714,15 +2468,15 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try executionFilter?.validate()
-            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
-            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
-            try tagFilter?.validate()
-            try typeFilter?.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try executionFilter?.validate(name: "\(name).executionFilter")
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, min: 0)
+            try validate(nextPageToken, name:"nextPageToken", parent: name, max: 2048)
+            try tagFilter?.validate(name: "\(name).tagFilter")
+            try typeFilter?.validate(name: "\(name).typeFilter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2748,7 +2502,7 @@ extension SWF {
         ]
 
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
-        public let maximumPageSize: Int32?
+        public let maximumPageSize: Int?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call. 
         public let nextPageToken: String?
         /// Specifies the registration status of the domains to list.
@@ -2756,17 +2510,17 @@ extension SWF {
         /// When set to true, returns the results in reverse order. By default, the results are returned in ascending alphabetical order by name of the domains.
         public let reverseOrder: Bool?
 
-        public init(maximumPageSize: Int32? = nil, nextPageToken: String? = nil, registrationStatus: RegistrationStatus, reverseOrder: Bool? = nil) {
+        public init(maximumPageSize: Int? = nil, nextPageToken: String? = nil, registrationStatus: RegistrationStatus, reverseOrder: Bool? = nil) {
             self.maximumPageSize = maximumPageSize
             self.nextPageToken = nextPageToken
             self.registrationStatus = registrationStatus
             self.reverseOrder = reverseOrder
         }
 
-        public func validate() throws {
-            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
-            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+        public func validate(name: String) throws {
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, min: 0)
+            try validate(nextPageToken, name:"nextPageToken", parent: name, max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2794,7 +2548,7 @@ extension SWF {
         /// If specified, only workflow executions matching the workflow ID specified in the filter are returned.   executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
         public let executionFilter: WorkflowExecutionFilter?
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
-        public let maximumPageSize: Int32?
+        public let maximumPageSize: Int?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call. 
         public let nextPageToken: String?
         /// When set to true, returns the results in reverse order. By default the results are returned in descending order of the start time of the executions.
@@ -2806,7 +2560,7 @@ extension SWF {
         /// If specified, only executions of the type specified in the filter are returned.   executionFilter, typeFilter and tagFilter are mutually exclusive. You can specify at most one of these in a request. 
         public let typeFilter: WorkflowTypeFilter?
 
-        public init(domain: String, executionFilter: WorkflowExecutionFilter? = nil, maximumPageSize: Int32? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil, startTimeFilter: ExecutionTimeFilter, tagFilter: TagFilter? = nil, typeFilter: WorkflowTypeFilter? = nil) {
+        public init(domain: String, executionFilter: WorkflowExecutionFilter? = nil, maximumPageSize: Int? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil, startTimeFilter: ExecutionTimeFilter, tagFilter: TagFilter? = nil, typeFilter: WorkflowTypeFilter? = nil) {
             self.domain = domain
             self.executionFilter = executionFilter
             self.maximumPageSize = maximumPageSize
@@ -2817,15 +2571,15 @@ extension SWF {
             self.typeFilter = typeFilter
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try executionFilter?.validate()
-            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
-            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
-            try tagFilter?.validate()
-            try typeFilter?.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try executionFilter?.validate(name: "\(name).executionFilter")
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, min: 0)
+            try validate(nextPageToken, name:"nextPageToken", parent: name, max: 2048)
+            try tagFilter?.validate(name: "\(name).tagFilter")
+            try typeFilter?.validate(name: "\(name).typeFilter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2852,9 +2606,9 @@ extension SWF {
             self.resourceArn = resourceArn
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 1600)
-            try validate(resourceArn, name:"resourceArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 1600)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2872,12 +2626,6 @@ extension SWF {
 
         public init(tags: [ResourceTag]? = nil) {
             self.tags = tags
-        }
-
-        public func validate() throws {
-            try tags?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2898,7 +2646,7 @@ extension SWF {
         /// The name of the domain in which the workflow types have been registered.
         public let domain: String
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results. 
-        public let maximumPageSize: Int32?
+        public let maximumPageSize: Int?
         /// If specified, lists the workflow type with this name.
         public let name: String?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call. 
@@ -2908,7 +2656,7 @@ extension SWF {
         /// When set to true, returns the results in reverse order. By default the results are returned in ascending alphabetical order of the name of the workflow types.
         public let reverseOrder: Bool?
 
-        public init(domain: String, maximumPageSize: Int32? = nil, name: String? = nil, nextPageToken: String? = nil, registrationStatus: RegistrationStatus, reverseOrder: Bool? = nil) {
+        public init(domain: String, maximumPageSize: Int? = nil, name: String? = nil, nextPageToken: String? = nil, registrationStatus: RegistrationStatus, reverseOrder: Bool? = nil) {
             self.domain = domain
             self.maximumPageSize = maximumPageSize
             self.name = name
@@ -2917,14 +2665,14 @@ extension SWF {
             self.reverseOrder = reverseOrder
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
-            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, min: 0)
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(nextPageToken, name:"nextPageToken", parent: name, max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2957,12 +2705,6 @@ extension SWF {
             self.markerName = markerName
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(markerName, name:"markerName", max: 256)
-            try validate(markerName, name:"markerName", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
             case details = "details"
@@ -2977,17 +2719,13 @@ extension SWF {
         ]
 
         /// The number of tasks in the task list.
-        public let count: Int32
+        public let count: Int
         /// If set to true, indicates that the actual count was more than the maximum supported by this API and the count returned is the truncated value.
         public let truncated: Bool?
 
-        public init(count: Int32, truncated: Bool? = nil) {
+        public init(count: Int, truncated: Bool? = nil) {
             self.count = count
             self.truncated = truncated
-        }
-
-        public func validate() throws {
-            try validate(count, name:"count", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3016,11 +2754,11 @@ extension SWF {
             self.taskList = taskList
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(identity, name:"identity", max: 256)
-            try taskList.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(identity, name:"identity", parent: name, max: 256)
+            try taskList.validate(name: "\(name).taskList")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3045,7 +2783,7 @@ extension SWF {
         /// Identity of the decider making the request, which is recorded in the DecisionTaskStarted event in the workflow history. This enables diagnostic tracing when problems arise. The form of this identity is user defined.
         public let identity: String?
         /// The maximum number of results that are returned per call. Use nextPageToken to obtain further pages of results.  This is an upper limit only; the actual number of results returned per call may be fewer than the specified maximum.
-        public let maximumPageSize: Int32?
+        public let maximumPageSize: Int?
         /// If NextPageToken is returned there are more results available. The value of NextPageToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 60 seconds. Using an expired pagination token will return a 400 error: "Specified token has exceeded its maximum lifetime".  The configured maximumPageSize determines how many results can be returned in a single call.   The nextPageToken returned by this action cannot be used with GetWorkflowExecutionHistory to get the next page. You must call PollForDecisionTask again (with the nextPageToken) to retrieve the next page of history records. Calling PollForDecisionTask with a nextPageToken doesn't return a new decision task. 
         public let nextPageToken: String?
         /// When set to true, returns the events in reverse order. By default the results are returned in ascending order of the eventTimestamp of the events.
@@ -3053,7 +2791,7 @@ extension SWF {
         /// Specifies the task list to poll for decision tasks. The specified string must not start or end with whitespace. It must not contain a : (colon), / (slash), | (vertical bar), or any control characters (\u0000-\u001f | \u007f-\u009f). Also, it must not be the literal string arn.
         public let taskList: TaskList
 
-        public init(domain: String, identity: String? = nil, maximumPageSize: Int32? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil, taskList: TaskList) {
+        public init(domain: String, identity: String? = nil, maximumPageSize: Int? = nil, nextPageToken: String? = nil, reverseOrder: Bool? = nil, taskList: TaskList) {
             self.domain = domain
             self.identity = identity
             self.maximumPageSize = maximumPageSize
@@ -3062,14 +2800,14 @@ extension SWF {
             self.taskList = taskList
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(identity, name:"identity", max: 256)
-            try validate(maximumPageSize, name:"maximumPageSize", max: 1000)
-            try validate(maximumPageSize, name:"maximumPageSize", min: 0)
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
-            try taskList.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(identity, name:"identity", parent: name, max: 256)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, max: 1000)
+            try validate(maximumPageSize, name:"maximumPageSize", parent: name, min: 0)
+            try validate(nextPageToken, name:"nextPageToken", parent: name, max: 2048)
+            try taskList.validate(name: "\(name).taskList")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3098,10 +2836,10 @@ extension SWF {
             self.taskToken = taskToken
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 2048)
-            try validate(taskToken, name:"taskToken", max: 1024)
-            try validate(taskToken, name:"taskToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(details, name:"details", parent: name, max: 2048)
+            try validate(taskToken, name:"taskToken", parent: name, max: 1024)
+            try validate(taskToken, name:"taskToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3126,10 +2864,10 @@ extension SWF {
             self.markerName = markerName
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(markerName, name:"markerName", max: 256)
-            try validate(markerName, name:"markerName", min: 1)
+        public func validate(name: String) throws {
+            try validate(details, name:"details", parent: name, max: 32768)
+            try validate(markerName, name:"markerName", parent: name, max: 256)
+            try validate(markerName, name:"markerName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3161,11 +2899,6 @@ extension SWF {
             self.cause = cause
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.markerName = markerName
-        }
-
-        public func validate() throws {
-            try validate(markerName, name:"markerName", max: 256)
-            try validate(markerName, name:"markerName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3223,19 +2956,19 @@ extension SWF {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(defaultTaskHeartbeatTimeout, name:"defaultTaskHeartbeatTimeout", max: 8)
-            try defaultTaskList?.validate()
-            try validate(defaultTaskScheduleToCloseTimeout, name:"defaultTaskScheduleToCloseTimeout", max: 8)
-            try validate(defaultTaskScheduleToStartTimeout, name:"defaultTaskScheduleToStartTimeout", max: 8)
-            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
-            try validate(description, name:"description", max: 1024)
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
+        public func validate(name: String) throws {
+            try validate(defaultTaskHeartbeatTimeout, name:"defaultTaskHeartbeatTimeout", parent: name, max: 8)
+            try defaultTaskList?.validate(name: "\(name).defaultTaskList")
+            try validate(defaultTaskScheduleToCloseTimeout, name:"defaultTaskScheduleToCloseTimeout", parent: name, max: 8)
+            try validate(defaultTaskScheduleToStartTimeout, name:"defaultTaskScheduleToStartTimeout", parent: name, max: 8)
+            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", parent: name, max: 8)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3276,15 +3009,15 @@ extension SWF {
             self.workflowExecutionRetentionPeriodInDays = workflowExecutionRetentionPeriodInDays
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", max: 8)
-            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", min: 1)
+            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", parent: name, max: 8)
+            try validate(workflowExecutionRetentionPeriodInDays, name:"workflowExecutionRetentionPeriodInDays", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3343,19 +3076,19 @@ extension SWF {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(defaultExecutionStartToCloseTimeout, name:"defaultExecutionStartToCloseTimeout", max: 8)
-            try validate(defaultLambdaRole, name:"defaultLambdaRole", max: 1600)
-            try validate(defaultLambdaRole, name:"defaultLambdaRole", min: 1)
-            try defaultTaskList?.validate()
-            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
-            try validate(description, name:"description", max: 1024)
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
+        public func validate(name: String) throws {
+            try validate(defaultExecutionStartToCloseTimeout, name:"defaultExecutionStartToCloseTimeout", parent: name, max: 8)
+            try validate(defaultLambdaRole, name:"defaultLambdaRole", parent: name, max: 1600)
+            try validate(defaultLambdaRole, name:"defaultLambdaRole", parent: name, min: 1)
+            try defaultTaskList?.validate(name: "\(name).defaultTaskList")
+            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", parent: name, max: 8)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3390,9 +3123,9 @@ extension SWF {
             self.activityId = activityId
         }
 
-        public func validate() throws {
-            try validate(activityId, name:"activityId", max: 256)
-            try validate(activityId, name:"activityId", min: 1)
+        public func validate(name: String) throws {
+            try validate(activityId, name:"activityId", parent: name, max: 256)
+            try validate(activityId, name:"activityId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3426,11 +3159,6 @@ extension SWF {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
         }
 
-        public func validate() throws {
-            try validate(activityId, name:"activityId", max: 256)
-            try validate(activityId, name:"activityId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case activityId = "activityId"
             case cause = "cause"
@@ -3458,11 +3186,11 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(runId, name:"runId", max: 64)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
+        public func validate(name: String) throws {
+            try validate(control, name:"control", parent: name, max: 32768)
+            try validate(runId, name:"runId", parent: name, max: 64)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3511,13 +3239,6 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(runId, name:"runId", max: 64)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case control = "control"
@@ -3552,13 +3273,6 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(runId, name:"runId", max: 64)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case control = "control"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -3587,12 +3301,12 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(runId, name:"runId", max: 64)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(runId, name:"runId", parent: name, max: 64)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3618,10 +3332,10 @@ extension SWF {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 256)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(value, name:"value", parent: name, max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3646,10 +3360,10 @@ extension SWF {
             self.taskToken = taskToken
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(taskToken, name:"taskToken", max: 1024)
-            try validate(taskToken, name:"taskToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(details, name:"details", parent: name, max: 32768)
+            try validate(taskToken, name:"taskToken", parent: name, max: 1024)
+            try validate(taskToken, name:"taskToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3674,10 +3388,10 @@ extension SWF {
             self.taskToken = taskToken
         }
 
-        public func validate() throws {
-            try validate(result, name:"result", max: 32768)
-            try validate(taskToken, name:"taskToken", max: 1024)
-            try validate(taskToken, name:"taskToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(result, name:"result", parent: name, max: 32768)
+            try validate(taskToken, name:"taskToken", parent: name, max: 1024)
+            try validate(taskToken, name:"taskToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3706,11 +3420,11 @@ extension SWF {
             self.taskToken = taskToken
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(reason, name:"reason", max: 256)
-            try validate(taskToken, name:"taskToken", max: 1024)
-            try validate(taskToken, name:"taskToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(details, name:"details", parent: name, max: 32768)
+            try validate(reason, name:"reason", parent: name, max: 256)
+            try validate(taskToken, name:"taskToken", parent: name, max: 1024)
+            try validate(taskToken, name:"taskToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3740,13 +3454,13 @@ extension SWF {
             self.taskToken = taskToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try decisions?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).decisions[]")
             }
-            try validate(executionContext, name:"executionContext", max: 32768)
-            try validate(taskToken, name:"taskToken", max: 1024)
-            try validate(taskToken, name:"taskToken", min: 1)
+            try validate(executionContext, name:"executionContext", parent: name, max: 32768)
+            try validate(taskToken, name:"taskToken", parent: name, max: 1024)
+            try validate(taskToken, name:"taskToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3766,11 +3480,6 @@ extension SWF {
 
         public init(runId: String? = nil) {
             self.runId = runId
-        }
-
-        public func validate() throws {
-            try validate(runId, name:"runId", max: 64)
-            try validate(runId, name:"runId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3826,17 +3535,17 @@ extension SWF {
             self.taskPriority = taskPriority
         }
 
-        public func validate() throws {
-            try validate(activityId, name:"activityId", max: 256)
-            try validate(activityId, name:"activityId", min: 1)
-            try activityType.validate()
-            try validate(control, name:"control", max: 32768)
-            try validate(heartbeatTimeout, name:"heartbeatTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(scheduleToCloseTimeout, name:"scheduleToCloseTimeout", max: 8)
-            try validate(scheduleToStartTimeout, name:"scheduleToStartTimeout", max: 8)
-            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
-            try taskList?.validate()
+        public func validate(name: String) throws {
+            try validate(activityId, name:"activityId", parent: name, max: 256)
+            try validate(activityId, name:"activityId", parent: name, min: 1)
+            try activityType.validate(name: "\(name).activityType")
+            try validate(control, name:"control", parent: name, max: 32768)
+            try validate(heartbeatTimeout, name:"heartbeatTimeout", parent: name, max: 8)
+            try validate(input, name:"input", parent: name, max: 32768)
+            try validate(scheduleToCloseTimeout, name:"scheduleToCloseTimeout", parent: name, max: 8)
+            try validate(scheduleToStartTimeout, name:"scheduleToStartTimeout", parent: name, max: 8)
+            try validate(startToCloseTimeout, name:"startToCloseTimeout", parent: name, max: 8)
+            try taskList?.validate(name: "\(name).taskList")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3892,12 +3601,6 @@ extension SWF {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
         }
 
-        public func validate() throws {
-            try validate(activityId, name:"activityId", max: 256)
-            try validate(activityId, name:"activityId", min: 1)
-            try activityType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case activityId = "activityId"
             case activityType = "activityType"
@@ -3934,15 +3637,15 @@ extension SWF {
             self.startToCloseTimeout = startToCloseTimeout
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(id, name:"id", max: 256)
-            try validate(id, name:"id", min: 1)
-            try validate(input, name:"input", max: 32768)
-            try validate(input, name:"input", min: 0)
-            try validate(name, name:"name", max: 64)
-            try validate(name, name:"name", min: 1)
-            try validate(startToCloseTimeout, name:"startToCloseTimeout", max: 8)
+        public func validate(name: String) throws {
+            try validate(control, name:"control", parent: name, max: 32768)
+            try validate(id, name:"id", parent: name, max: 256)
+            try validate(id, name:"id", parent: name, min: 1)
+            try validate(input, name:"input", parent: name, max: 32768)
+            try validate(input, name:"input", parent: name, min: 0)
+            try validate(name, name:"name", parent: name, max: 64)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(startToCloseTimeout, name:"startToCloseTimeout", parent: name, max: 8)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3986,13 +3689,6 @@ extension SWF {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 256)
-            try validate(id, name:"id", min: 1)
-            try validate(name, name:"name", max: 64)
-            try validate(name, name:"name", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -4029,14 +3725,14 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(input, name:"input", max: 32768)
-            try validate(runId, name:"runId", max: 64)
-            try validate(signalName, name:"signalName", max: 256)
-            try validate(signalName, name:"signalName", min: 1)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
+        public func validate(name: String) throws {
+            try validate(control, name:"control", parent: name, max: 32768)
+            try validate(input, name:"input", parent: name, max: 32768)
+            try validate(runId, name:"runId", parent: name, max: 64)
+            try validate(signalName, name:"signalName", parent: name, max: 256)
+            try validate(signalName, name:"signalName", parent: name, min: 1)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4087,13 +3783,6 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(runId, name:"runId", max: 64)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case control = "control"
@@ -4136,16 +3825,6 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(input, name:"input", max: 32768)
-            try validate(runId, name:"runId", max: 64)
-            try validate(signalName, name:"signalName", max: 256)
-            try validate(signalName, name:"signalName", min: 1)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case control = "control"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -4184,15 +3863,15 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(input, name:"input", max: 32768)
-            try validate(runId, name:"runId", max: 64)
-            try validate(signalName, name:"signalName", max: 256)
-            try validate(signalName, name:"signalName", min: 1)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(input, name:"input", parent: name, max: 32768)
+            try validate(runId, name:"runId", parent: name, max: 64)
+            try validate(signalName, name:"signalName", parent: name, max: 256)
+            try validate(signalName, name:"signalName", parent: name, min: 1)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4256,22 +3935,22 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(lambdaRole, name:"lambdaRole", max: 1600)
-            try validate(lambdaRole, name:"lambdaRole", min: 1)
+        public func validate(name: String) throws {
+            try validate(control, name:"control", parent: name, max: 32768)
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", parent: name, max: 8)
+            try validate(input, name:"input", parent: name, max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", parent: name, max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", parent: name, min: 1)
             try tagList?.forEach {
-                try validate($0, name:"tagList[]", max: 256)
-                try validate($0, name:"tagList[]", min: 0)
+                try validate($0, name: "tagList[]", parent: name, max: 256)
+                try validate($0, name: "tagList[]", parent: name, min: 0)
             }
-            try validate(tagList, name:"tagList", max: 5)
-            try taskList?.validate()
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-            try workflowType.validate()
+            try validate(tagList, name:"tagList", parent: name, max: 5)
+            try taskList?.validate(name: "\(name).taskList")
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", parent: name, max: 8)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
+            try workflowType.validate(name: "\(name).workflowType")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4334,13 +4013,6 @@ extension SWF {
             self.initiatedEventId = initiatedEventId
             self.workflowId = workflowId
             self.workflowType = workflowType
-        }
-
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-            try workflowType.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4409,24 +4081,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(lambdaRole, name:"lambdaRole", max: 1600)
-            try validate(lambdaRole, name:"lambdaRole", min: 1)
-            try tagList?.forEach {
-                try validate($0, name:"tagList[]", max: 256)
-                try validate($0, name:"tagList[]", min: 0)
-            }
-            try validate(tagList, name:"tagList", max: 5)
-            try taskList.validate()
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case control = "control"
@@ -4468,10 +4122,6 @@ extension SWF {
             self.scheduledEventId = scheduledEventId
         }
 
-        public func validate() throws {
-            try validate(message, name:"message", max: 1728)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case message = "message"
@@ -4499,12 +4149,12 @@ extension SWF {
             self.timerId = timerId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(startToFireTimeout, name:"startToFireTimeout", max: 8)
-            try validate(startToFireTimeout, name:"startToFireTimeout", min: 1)
-            try validate(timerId, name:"timerId", max: 256)
-            try validate(timerId, name:"timerId", min: 1)
+        public func validate(name: String) throws {
+            try validate(control, name:"control", parent: name, max: 32768)
+            try validate(startToFireTimeout, name:"startToFireTimeout", parent: name, max: 8)
+            try validate(startToFireTimeout, name:"startToFireTimeout", parent: name, min: 1)
+            try validate(timerId, name:"timerId", parent: name, max: 256)
+            try validate(timerId, name:"timerId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4540,11 +4190,6 @@ extension SWF {
             self.cause = cause
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.timerId = timerId
-        }
-
-        public func validate() throws {
-            try validate(timerId, name:"timerId", max: 256)
-            try validate(timerId, name:"timerId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4606,23 +4251,23 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(lambdaRole, name:"lambdaRole", max: 1600)
-            try validate(lambdaRole, name:"lambdaRole", min: 1)
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", parent: name, max: 8)
+            try validate(input, name:"input", parent: name, max: 32768)
+            try validate(lambdaRole, name:"lambdaRole", parent: name, max: 1600)
+            try validate(lambdaRole, name:"lambdaRole", parent: name, min: 1)
             try tagList?.forEach {
-                try validate($0, name:"tagList[]", max: 256)
-                try validate($0, name:"tagList[]", min: 0)
+                try validate($0, name: "tagList[]", parent: name, max: 256)
+                try validate($0, name: "tagList[]", parent: name, min: 0)
             }
-            try validate(tagList, name:"tagList", max: 5)
-            try taskList?.validate()
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
-            try workflowType.validate()
+            try validate(tagList, name:"tagList", parent: name, max: 5)
+            try taskList?.validate(name: "\(name).taskList")
+            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", parent: name, max: 8)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
+            try workflowType.validate(name: "\(name).workflowType")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4652,9 +4297,9 @@ extension SWF {
             self.tag = tag
         }
 
-        public func validate() throws {
-            try validate(tag, name:"tag", max: 256)
-            try validate(tag, name:"tag", min: 0)
+        public func validate(name: String) throws {
+            try validate(tag, name:"tag", parent: name, max: 256)
+            try validate(tag, name:"tag", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4678,11 +4323,11 @@ extension SWF {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 1600)
-            try validate(resourceArn, name:"resourceArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 1600)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
             try tags.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
         }
 
@@ -4704,9 +4349,9 @@ extension SWF {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4746,14 +4391,14 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try validate(reason, name:"reason", max: 256)
-            try validate(runId, name:"runId", max: 64)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
+        public func validate(name: String) throws {
+            try validate(details, name:"details", parent: name, max: 32768)
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(reason, name:"reason", parent: name, max: 256)
+            try validate(runId, name:"runId", parent: name, max: 64)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4786,11 +4431,6 @@ extension SWF {
             self.timerId = timerId
         }
 
-        public func validate() throws {
-            try validate(timerId, name:"timerId", max: 256)
-            try validate(timerId, name:"timerId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
             case startedEventId = "startedEventId"
@@ -4812,11 +4452,6 @@ extension SWF {
         public init(startedEventId: Int64, timerId: String) {
             self.startedEventId = startedEventId
             self.timerId = timerId
-        }
-
-        public func validate() throws {
-            try validate(timerId, name:"timerId", max: 256)
-            try validate(timerId, name:"timerId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4849,14 +4484,6 @@ extension SWF {
             self.timerId = timerId
         }
 
-        public func validate() throws {
-            try validate(control, name:"control", max: 32768)
-            try validate(startToFireTimeout, name:"startToFireTimeout", max: 8)
-            try validate(startToFireTimeout, name:"startToFireTimeout", min: 1)
-            try validate(timerId, name:"timerId", max: 256)
-            try validate(timerId, name:"timerId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case control = "control"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -4881,10 +4508,10 @@ extension SWF {
             self.domain = domain
         }
 
-        public func validate() throws {
-            try activityType.validate()
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
+        public func validate(name: String) throws {
+            try activityType.validate(name: "\(name).activityType")
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4905,9 +4532,9 @@ extension SWF {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4931,10 +4558,10 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 256)
-            try validate(domain, name:"domain", min: 1)
-            try workflowType.validate()
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 256)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try workflowType.validate(name: "\(name).workflowType")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4959,12 +4586,12 @@ extension SWF {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 1600)
-            try validate(resourceArn, name:"resourceArn", min: 1)
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 1600)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 1)
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
             }
         }
 
@@ -4990,11 +4617,11 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(runId, name:"runId", max: 64)
-            try validate(runId, name:"runId", min: 1)
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
+        public func validate(name: String) throws {
+            try validate(runId, name:"runId", parent: name, max: 64)
+            try validate(runId, name:"runId", parent: name, min: 1)
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5028,10 +4655,6 @@ extension SWF {
             self.externalWorkflowExecution = externalWorkflowExecution
         }
 
-        public func validate() throws {
-            try externalWorkflowExecution?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cause = "cause"
             case externalInitiatedEventId = "externalInitiatedEventId"
@@ -5055,10 +4678,6 @@ extension SWF {
             self.details = details
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
             case details = "details"
@@ -5079,10 +4698,6 @@ extension SWF {
         public init(decisionTaskCompletedEventId: Int64, result: String? = nil) {
             self.decisionTaskCompletedEventId = decisionTaskCompletedEventId
             self.result = result
-        }
-
-        public func validate() throws {
-            try validate(result, name:"result", max: 32768)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5121,16 +4736,6 @@ extension SWF {
             self.taskList = taskList
             self.taskPriority = taskPriority
             self.taskStartToCloseTimeout = taskStartToCloseTimeout
-        }
-
-        public func validate() throws {
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", min: 1)
-            try validate(lambdaRole, name:"lambdaRole", max: 1600)
-            try validate(lambdaRole, name:"lambdaRole", min: 1)
-            try taskList.validate()
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5195,23 +4800,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(lambdaRole, name:"lambdaRole", max: 1600)
-            try validate(lambdaRole, name:"lambdaRole", min: 1)
-            try validate(newExecutionRunId, name:"newExecutionRunId", max: 64)
-            try validate(newExecutionRunId, name:"newExecutionRunId", min: 1)
-            try tagList?.forEach {
-                try validate($0, name:"tagList[]", max: 256)
-                try validate($0, name:"tagList[]", min: 0)
-            }
-            try validate(tagList, name:"tagList", max: 5)
-            try taskList.validate()
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
@@ -5234,17 +4822,13 @@ extension SWF {
         ]
 
         /// The number of workflow executions.
-        public let count: Int32
+        public let count: Int
         /// If set to true, indicates that the actual count was more than the maximum supported by this API and the count returned is the truncated value.
         public let truncated: Bool?
 
-        public init(count: Int32, truncated: Bool? = nil) {
+        public init(count: Int, truncated: Bool? = nil) {
             self.count = count
             self.truncated = truncated
-        }
-
-        public func validate() throws {
-            try validate(count, name:"count", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5281,13 +4865,6 @@ extension SWF {
             self.openCounts = openCounts
         }
 
-        public func validate() throws {
-            try executionConfiguration.validate()
-            try executionInfo.validate()
-            try validate(latestExecutionContext, name:"latestExecutionContext", max: 32768)
-            try openCounts.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case executionConfiguration = "executionConfiguration"
             case executionInfo = "executionInfo"
@@ -5317,11 +4894,6 @@ extension SWF {
             self.reason = reason
         }
 
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(reason, name:"reason", max: 256)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case decisionTaskCompletedEventId = "decisionTaskCompletedEventId"
             case details = "details"
@@ -5341,9 +4913,9 @@ extension SWF {
             self.workflowId = workflowId
         }
 
-        public func validate() throws {
-            try validate(workflowId, name:"workflowId", max: 256)
-            try validate(workflowId, name:"workflowId", min: 1)
+        public func validate(name: String) throws {
+            try validate(workflowId, name:"workflowId", parent: name, max: 256)
+            try validate(workflowId, name:"workflowId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5395,17 +4967,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try execution.validate()
-            try parent?.validate()
-            try tagList?.forEach {
-                try validate($0, name:"tagList[]", max: 256)
-                try validate($0, name:"tagList[]", min: 0)
-            }
-            try validate(tagList, name:"tagList", max: 5)
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cancelRequested = "cancelRequested"
             case closeStatus = "closeStatus"
@@ -5435,13 +4996,6 @@ extension SWF {
             self.nextPageToken = nextPageToken
         }
 
-        public func validate() throws {
-            try executionInfos.forEach {
-                try $0.validate()
-            }
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case executionInfos = "executionInfos"
             case nextPageToken = "nextPageToken"
@@ -5458,31 +5012,22 @@ extension SWF {
         ]
 
         /// The count of activity tasks whose status is OPEN.
-        public let openActivityTasks: Int32
+        public let openActivityTasks: Int
         /// The count of child workflow executions whose status is OPEN.
-        public let openChildWorkflowExecutions: Int32
+        public let openChildWorkflowExecutions: Int
         /// The count of decision tasks whose status is OPEN. A workflow execution can have at most one open decision task.
-        public let openDecisionTasks: Int32
+        public let openDecisionTasks: Int
         /// The count of Lambda tasks whose status is OPEN.
-        public let openLambdaFunctions: Int32?
+        public let openLambdaFunctions: Int?
         /// The count of timers started by this workflow execution that have not fired yet.
-        public let openTimers: Int32
+        public let openTimers: Int
 
-        public init(openActivityTasks: Int32, openChildWorkflowExecutions: Int32, openDecisionTasks: Int32, openLambdaFunctions: Int32? = nil, openTimers: Int32) {
+        public init(openActivityTasks: Int, openChildWorkflowExecutions: Int, openDecisionTasks: Int, openLambdaFunctions: Int? = nil, openTimers: Int) {
             self.openActivityTasks = openActivityTasks
             self.openChildWorkflowExecutions = openChildWorkflowExecutions
             self.openDecisionTasks = openDecisionTasks
             self.openLambdaFunctions = openLambdaFunctions
             self.openTimers = openTimers
-        }
-
-        public func validate() throws {
-            try validate(openActivityTasks, name:"openActivityTasks", min: 0)
-            try validate(openChildWorkflowExecutions, name:"openChildWorkflowExecutions", min: 0)
-            try validate(openDecisionTasks, name:"openDecisionTasks", max: 1)
-            try validate(openDecisionTasks, name:"openDecisionTasks", min: 0)
-            try validate(openLambdaFunctions, name:"openLambdaFunctions", min: 0)
-            try validate(openTimers, name:"openTimers", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5516,13 +5061,6 @@ extension SWF {
             self.externalWorkflowExecution = externalWorkflowExecution
             self.input = input
             self.signalName = signalName
-        }
-
-        public func validate() throws {
-            try externalWorkflowExecution?.validate()
-            try validate(input, name:"input", max: 32768)
-            try validate(signalName, name:"signalName", max: 256)
-            try validate(signalName, name:"signalName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5589,23 +5127,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(continuedExecutionRunId, name:"continuedExecutionRunId", max: 64)
-            try validate(executionStartToCloseTimeout, name:"executionStartToCloseTimeout", max: 8)
-            try validate(input, name:"input", max: 32768)
-            try validate(lambdaRole, name:"lambdaRole", max: 1600)
-            try validate(lambdaRole, name:"lambdaRole", min: 1)
-            try parentWorkflowExecution?.validate()
-            try tagList?.forEach {
-                try validate($0, name:"tagList[]", max: 256)
-                try validate($0, name:"tagList[]", min: 0)
-            }
-            try validate(tagList, name:"tagList", max: 5)
-            try taskList.validate()
-            try validate(taskStartToCloseTimeout, name:"taskStartToCloseTimeout", max: 8)
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case childPolicy = "childPolicy"
             case continuedExecutionRunId = "continuedExecutionRunId"
@@ -5651,11 +5172,6 @@ extension SWF {
             self.childPolicy = childPolicy
             self.details = details
             self.reason = reason
-        }
-
-        public func validate() throws {
-            try validate(details, name:"details", max: 32768)
-            try validate(reason, name:"reason", max: 256)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5709,11 +5225,11 @@ extension SWF {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5754,14 +5270,6 @@ extension SWF {
             self.defaultTaskStartToCloseTimeout = defaultTaskStartToCloseTimeout
         }
 
-        public func validate() throws {
-            try validate(defaultExecutionStartToCloseTimeout, name:"defaultExecutionStartToCloseTimeout", max: 8)
-            try validate(defaultLambdaRole, name:"defaultLambdaRole", max: 1600)
-            try validate(defaultLambdaRole, name:"defaultLambdaRole", min: 1)
-            try defaultTaskList?.validate()
-            try validate(defaultTaskStartToCloseTimeout, name:"defaultTaskStartToCloseTimeout", max: 8)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case defaultChildPolicy = "defaultChildPolicy"
             case defaultExecutionStartToCloseTimeout = "defaultExecutionStartToCloseTimeout"
@@ -5788,11 +5296,6 @@ extension SWF {
             self.typeInfo = typeInfo
         }
 
-        public func validate() throws {
-            try configuration.validate()
-            try typeInfo.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case configuration = "configuration"
             case typeInfo = "typeInfo"
@@ -5815,10 +5318,10 @@ extension SWF {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(version, name:"version", max: 64)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5855,11 +5358,6 @@ extension SWF {
             self.workflowType = workflowType
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try workflowType.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case creationDate = "creationDate"
             case deprecationDate = "deprecationDate"
@@ -5883,13 +5381,6 @@ extension SWF {
         public init(nextPageToken: String? = nil, typeInfos: [WorkflowTypeInfo]) {
             self.nextPageToken = nextPageToken
             self.typeInfos = typeInfos
-        }
-
-        public func validate() throws {
-            try validate(nextPageToken, name:"nextPageToken", max: 2048)
-            try typeInfos.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {

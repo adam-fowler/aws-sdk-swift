@@ -153,8 +153,8 @@ extension SES {
             self.replacementTemplateData = replacementTemplateData
         }
 
-        public func validate() throws {
-            try validate(replacementTemplateData, name:"replacementTemplateData", max: 262144)
+        public func validate(name: String) throws {
+            try validate(replacementTemplateData, name:"replacementTemplateData", parent: name, max: 262144)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -724,9 +724,9 @@ extension SES {
             self.policyName = policyName
         }
 
-        public func validate() throws {
-            try validate(policyName, name:"policyName", max: 64)
-            try validate(policyName, name:"policyName", min: 1)
+        public func validate(name: String) throws {
+            try validate(policyName, name:"policyName", parent: name, max: 64)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1386,10 +1386,10 @@ extension SES {
             self.policyNames = policyNames
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try policyNames.forEach {
-                try validate($0, name:"policyNames[]", max: 64)
-                try validate($0, name:"policyNames[]", min: 1)
+                try validate($0, name: "policyNames[]", parent: name, max: 64)
+                try validate($0, name: "policyNames[]", parent: name, min: 1)
             }
         }
 
@@ -1718,11 +1718,11 @@ extension SES {
         ]
 
         /// The number of configuration sets to return.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// A token returned from a previous call to ListConfigurationSets to indicate the position of the configuration set in the configuration set list.
         public let nextToken: String?
 
-        public init(maxItems: Int32? = nil, nextToken: String? = nil) {
+        public init(maxItems: Int? = nil, nextToken: String? = nil) {
             self.maxItems = maxItems
             self.nextToken = nextToken
         }
@@ -1762,18 +1762,18 @@ extension SES {
         ]
 
         /// The maximum number of custom verification email templates to return. This value must be at least 1 and less than or equal to 50. If you do not specify a value, or if you specify a value less than 1 or greater than 50, the operation will return up to 50 results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// An array the contains the name and creation time stamp for each template in your Amazon SES account.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1814,11 +1814,11 @@ extension SES {
         /// The type of the identities to list. Possible values are "EmailAddress" and "Domain". If this parameter is omitted, then all identities will be listed.
         public let identityType: IdentityType?
         /// The maximum number of identities per page. Possible values are 1-1000 inclusive.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The token to use for pagination.
         public let nextToken: String?
 
-        public init(identityType: IdentityType? = nil, maxItems: Int32? = nil, nextToken: String? = nil) {
+        public init(identityType: IdentityType? = nil, maxItems: Int? = nil, nextToken: String? = nil) {
             self.identityType = identityType
             self.maxItems = maxItems
             self.nextToken = nextToken
@@ -1880,13 +1880,6 @@ extension SES {
 
         public init(policyNames: [String]) {
             self.policyNames = policyNames
-        }
-
-        public func validate() throws {
-            try policyNames.forEach {
-                try validate($0, name:"policyNames[]", max: 64)
-                try validate($0, name:"policyNames[]", min: 1)
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1965,11 +1958,11 @@ extension SES {
         ]
 
         /// The maximum number of templates to return. This value must be at least 1 and less than or equal to 10. If you do not specify a value, or if you specify a value less than 1 or greater than 10, the operation will return up to 10 results.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// A token returned from a previous call to ListTemplates to indicate the position in the list of email templates.
         public let nextToken: String?
 
-        public init(maxItems: Int32? = nil, nextToken: String? = nil) {
+        public init(maxItems: Int? = nil, nextToken: String? = nil) {
             self.maxItems = maxItems
             self.nextToken = nextToken
         }
@@ -2147,10 +2140,10 @@ extension SES {
             self.policyName = policyName
         }
 
-        public func validate() throws {
-            try validate(policy, name:"policy", min: 1)
-            try validate(policyName, name:"policyName", max: 64)
-            try validate(policyName, name:"policyName", min: 1)
+        public func validate(name: String) throws {
+            try validate(policy, name:"policy", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, max: 64)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2638,10 +2631,10 @@ extension SES {
             self.templateArn = templateArn
         }
 
-        public func validate() throws {
-            try validate(defaultTemplateData, name:"defaultTemplateData", max: 262144)
+        public func validate(name: String) throws {
+            try validate(defaultTemplateData, name:"defaultTemplateData", parent: name, max: 262144)
             try destinations.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).destinations[]")
             }
         }
 
@@ -2953,8 +2946,8 @@ extension SES {
             self.templateData = templateData
         }
 
-        public func validate() throws {
-            try validate(templateData, name:"templateData", max: 262144)
+        public func validate(name: String) throws {
+            try validate(templateData, name:"templateData", parent: name, max: 262144)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3311,8 +3304,8 @@ extension SES {
             self.templateName = templateName
         }
 
-        public func validate() throws {
-            try validate(templateData, name:"templateData", max: 262144)
+        public func validate(name: String) throws {
+            try validate(templateData, name:"templateData", parent: name, max: 262144)
         }
 
         private enum CodingKeys: String, CodingKey {

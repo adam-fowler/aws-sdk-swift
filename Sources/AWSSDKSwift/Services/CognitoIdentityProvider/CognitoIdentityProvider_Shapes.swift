@@ -78,8 +78,8 @@ extension CognitoIdentityProvider {
             self.notifyConfiguration = notifyConfiguration
         }
 
-        public func validate() throws {
-            try notifyConfiguration?.validate()
+        public func validate(name: String) throws {
+            try notifyConfiguration?.validate(name: "\(name).notifyConfiguration")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -104,15 +104,15 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try customAttributes.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).customAttributes[]")
             }
-            try validate(customAttributes, name:"customAttributes", max: 25)
-            try validate(customAttributes, name:"customAttributes", min: 1)
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(customAttributes, name:"customAttributes", parent: name, max: 25)
+            try validate(customAttributes, name:"customAttributes", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -149,16 +149,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -184,13 +184,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -219,18 +219,18 @@ extension CognitoIdentityProvider {
         /// The message template to be used for the welcome message to new users. See also Customizing User Invitation Messages.
         public let inviteMessageTemplate: MessageTemplateType?
         /// The user account expiration limit, in days, after which the account is no longer usable. To reset the account after that time limit, you must call AdminCreateUser again, specifying "RESEND" for the MessageAction parameter. The default value for this parameter is 7.   If you set a value for TemporaryPasswordValidityDays in PasswordPolicy, that value will be used and UnusedAccountValidityDays will be deprecated for that user pool.  
-        public let unusedAccountValidityDays: Int32?
+        public let unusedAccountValidityDays: Int?
 
-        public init(allowAdminCreateUserOnly: Bool? = nil, inviteMessageTemplate: MessageTemplateType? = nil, unusedAccountValidityDays: Int32? = nil) {
+        public init(allowAdminCreateUserOnly: Bool? = nil, inviteMessageTemplate: MessageTemplateType? = nil, unusedAccountValidityDays: Int? = nil) {
             self.allowAdminCreateUserOnly = allowAdminCreateUserOnly
             self.inviteMessageTemplate = inviteMessageTemplate
             self.unusedAccountValidityDays = unusedAccountValidityDays
         }
 
-        public func validate() throws {
-            try inviteMessageTemplate?.validate()
-            try validate(unusedAccountValidityDays, name:"unusedAccountValidityDays", max: 365)
-            try validate(unusedAccountValidityDays, name:"unusedAccountValidityDays", min: 0)
+        public func validate(name: String) throws {
+            try inviteMessageTemplate?.validate(name: "\(name).inviteMessageTemplate")
+            try validate(unusedAccountValidityDays, name:"unusedAccountValidityDays", parent: name, max: 365)
+            try validate(unusedAccountValidityDays, name:"unusedAccountValidityDays", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -280,21 +280,21 @@ extension CognitoIdentityProvider {
             self.validationData = validationData
         }
 
-        public func validate() throws {
-            try validate(temporaryPassword, name:"temporaryPassword", max: 256)
-            try validate(temporaryPassword, name:"temporaryPassword", min: 6)
-            try validate(temporaryPassword, name:"temporaryPassword", pattern: "[\\S]+")
+        public func validate(name: String) throws {
+            try validate(temporaryPassword, name:"temporaryPassword", parent: name, max: 256)
+            try validate(temporaryPassword, name:"temporaryPassword", parent: name, min: 6)
+            try validate(temporaryPassword, name:"temporaryPassword", parent: name, pattern: "[\\S]+")
             try userAttributes?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).userAttributes[]")
             }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
             try validationData?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).validationData[]")
             }
         }
 
@@ -322,10 +322,6 @@ extension CognitoIdentityProvider {
             self.user = user
         }
 
-        public func validate() throws {
-            try user?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case user = "User"
         }
@@ -351,18 +347,18 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try userAttributeNames.forEach {
-                try validate($0, name:"userAttributeNames[]", max: 32)
-                try validate($0, name:"userAttributeNames[]", min: 1)
-                try validate($0, name:"userAttributeNames[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "userAttributeNames[]", parent: name, max: 32)
+                try validate($0, name: "userAttributeNames[]", parent: name, min: 1)
+                try validate($0, name: "userAttributeNames[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -396,13 +392,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -427,8 +423,8 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try user.validate()
+        public func validate(name: String) throws {
+            try user.validate(name: "\(name).user")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -461,13 +457,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -500,13 +496,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -543,16 +539,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(deviceKey, name:"deviceKey", parent: name, max: 55)
+            try validate(deviceKey, name:"deviceKey", parent: name, min: 1)
+            try validate(deviceKey, name:"deviceKey", parent: name, pattern: "[\\w-]+_[0-9a-f-]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -582,16 +578,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(deviceKey, name:"deviceKey", parent: name, max: 55)
+            try validate(deviceKey, name:"deviceKey", parent: name, min: 1)
+            try validate(deviceKey, name:"deviceKey", parent: name, pattern: "[\\w-]+_[0-9a-f-]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -611,10 +607,6 @@ extension CognitoIdentityProvider {
 
         public init(device: DeviceType) {
             self.device = device
-        }
-
-        public func validate() throws {
-            try device.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -638,13 +630,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -697,18 +689,6 @@ extension CognitoIdentityProvider {
             self.userStatus = userStatus
         }
 
-        public func validate() throws {
-            try mFAOptions?.forEach {
-                try $0.validate()
-            }
-            try userAttributes?.forEach {
-                try $0.validate()
-            }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case enabled = "Enabled"
             case mFAOptions = "MFAOptions"
@@ -758,13 +738,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -802,12 +782,6 @@ extension CognitoIdentityProvider {
             self.session = session
         }
 
-        public func validate() throws {
-            try authenticationResult?.validate()
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case authenticationResult = "AuthenticationResult"
             case challengeName = "ChallengeName"
@@ -836,9 +810,9 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try destinationUser.validate()
-            try sourceUser.validate()
+        public func validate(name: String) throws {
+            try destinationUser.validate(name: "\(name).destinationUser")
+            try sourceUser.validate(name: "\(name).sourceUser")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -865,7 +839,7 @@ extension CognitoIdentityProvider {
         ]
 
         /// The limit of the devices request.
-        public let limit: Int32?
+        public let limit: Int?
         /// The pagination token.
         public let paginationToken: String?
         /// The user name.
@@ -873,24 +847,24 @@ extension CognitoIdentityProvider {
         /// The user pool ID.
         public let userPoolId: String
 
-        public init(limit: Int32? = nil, paginationToken: String? = nil, username: String, userPoolId: String) {
+        public init(limit: Int? = nil, paginationToken: String? = nil, username: String, userPoolId: String) {
             self.limit = limit
             self.paginationToken = paginationToken
             self.username = username
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(limit, name:"limit", max: 60)
-            try validate(limit, name:"limit", min: 0)
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(limit, name:"limit", parent: name, max: 60)
+            try validate(limit, name:"limit", parent: name, min: 0)
+            try validate(paginationToken, name:"paginationToken", parent: name, min: 1)
+            try validate(paginationToken, name:"paginationToken", parent: name, pattern: "[\\S]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -917,14 +891,6 @@ extension CognitoIdentityProvider {
             self.paginationToken = paginationToken
         }
 
-        public func validate() throws {
-            try devices?.forEach {
-                try $0.validate()
-            }
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case devices = "Devices"
             case paginationToken = "PaginationToken"
@@ -940,7 +906,7 @@ extension CognitoIdentityProvider {
         ]
 
         /// The limit of the request to list groups.
-        public let limit: Int32?
+        public let limit: Int?
         /// An identifier that was returned from the previous call to this operation, which can be used to return the next set of items in the list.
         public let nextToken: String?
         /// The username for the user.
@@ -948,24 +914,24 @@ extension CognitoIdentityProvider {
         /// The user pool ID for the user pool.
         public let userPoolId: String
 
-        public init(limit: Int32? = nil, nextToken: String? = nil, username: String, userPoolId: String) {
+        public init(limit: Int? = nil, nextToken: String? = nil, username: String, userPoolId: String) {
             self.limit = limit
             self.nextToken = nextToken
             self.username = username
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(limit, name:"limit", max: 60)
-            try validate(limit, name:"limit", min: 0)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(limit, name:"limit", parent: name, max: 60)
+            try validate(limit, name:"limit", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -992,14 +958,6 @@ extension CognitoIdentityProvider {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try groups?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groups = "Groups"
             case nextToken = "NextToken"
@@ -1015,7 +973,7 @@ extension CognitoIdentityProvider {
         ]
 
         /// The maximum number of authentication events to return.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A pagination token.
         public let nextToken: String?
         /// The user pool username or an alias.
@@ -1023,24 +981,24 @@ extension CognitoIdentityProvider {
         /// The user pool ID.
         public let userPoolId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, username: String, userPoolId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, username: String, userPoolId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.username = username
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 60)
-            try validate(maxResults, name:"maxResults", min: 0)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 60)
+            try validate(maxResults, name:"maxResults", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1065,11 +1023,6 @@ extension CognitoIdentityProvider {
         public init(authEvents: [AuthEventType]? = nil, nextToken: String? = nil) {
             self.authEvents = authEvents
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1098,16 +1051,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1133,13 +1086,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1192,15 +1145,15 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(session, name:"session", parent: name, max: 2048)
+            try validate(session, name:"session", parent: name, min: 20)
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1238,12 +1191,6 @@ extension CognitoIdentityProvider {
             self.session = session
         }
 
-        public func validate() throws {
-            try authenticationResult?.validate()
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case authenticationResult = "AuthenticationResult"
             case challengeName = "ChallengeName"
@@ -1276,13 +1223,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1321,16 +1268,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(password, name:"password", max: 256)
-            try validate(password, name:"password", min: 6)
-            try validate(password, name:"password", pattern: "[\\S]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(password, name:"password", parent: name, max: 256)
+            try validate(password, name:"password", parent: name, min: 6)
+            try validate(password, name:"password", parent: name, pattern: "[\\S]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1369,16 +1316,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try mFAOptions.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).mFAOptions[]")
             }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1420,16 +1367,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(eventId, name:"eventId", max: 50)
-            try validate(eventId, name:"eventId", min: 1)
-            try validate(eventId, name:"eventId", pattern: "[\\w+-]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(eventId, name:"eventId", parent: name, max: 50)
+            try validate(eventId, name:"eventId", parent: name, min: 1)
+            try validate(eventId, name:"eventId", parent: name, pattern: "[\\w+-]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1472,16 +1419,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(deviceKey, name:"deviceKey", parent: name, max: 55)
+            try validate(deviceKey, name:"deviceKey", parent: name, min: 1)
+            try validate(deviceKey, name:"deviceKey", parent: name, pattern: "[\\w-]+_[0-9a-f-]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1520,16 +1467,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try userAttributes.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).userAttributes[]")
             }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1563,13 +1510,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1624,11 +1571,11 @@ extension CognitoIdentityProvider {
             self.userDataShared = userDataShared
         }
 
-        public func validate() throws {
-            try validate(applicationId, name:"applicationId", pattern: "^[0-9a-fA-F]+$")
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 20)
-            try validate(roleArn, name:"roleArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(applicationId, name:"applicationId", parent: name, pattern: "^[0-9a-fA-F]+$")
+            try validate(roleArn, name:"roleArn", parent: name, max: 2048)
+            try validate(roleArn, name:"roleArn", parent: name, min: 20)
+            try validate(roleArn, name:"roleArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1672,10 +1619,10 @@ extension CognitoIdentityProvider {
             self.session = session
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(session, name:"session", parent: name, max: 2048)
+            try validate(session, name:"session", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1698,13 +1645,6 @@ extension CognitoIdentityProvider {
         public init(secretCode: String? = nil, session: String? = nil) {
             self.secretCode = secretCode
             self.session = session
-        }
-
-        public func validate() throws {
-            try validate(secretCode, name:"secretCode", min: 16)
-            try validate(secretCode, name:"secretCode", pattern: "[A-Za-z0-9]+")
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1737,11 +1677,11 @@ extension CognitoIdentityProvider {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 32)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(value, name:"value", max: 2048)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 32)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(value, name:"value", parent: name, max: 2048)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1825,7 +1765,7 @@ extension CognitoIdentityProvider {
         /// The access token.
         public let accessToken: String?
         /// The expiration period of the authentication result in seconds.
-        public let expiresIn: Int32?
+        public let expiresIn: Int?
         /// The ID token.
         public let idToken: String?
         /// The new device metadata from an authentication result.
@@ -1835,20 +1775,13 @@ extension CognitoIdentityProvider {
         /// The token type.
         public let tokenType: String?
 
-        public init(accessToken: String? = nil, expiresIn: Int32? = nil, idToken: String? = nil, newDeviceMetadata: NewDeviceMetadataType? = nil, refreshToken: String? = nil, tokenType: String? = nil) {
+        public init(accessToken: String? = nil, expiresIn: Int? = nil, idToken: String? = nil, newDeviceMetadata: NewDeviceMetadataType? = nil, refreshToken: String? = nil, tokenType: String? = nil) {
             self.accessToken = accessToken
             self.expiresIn = expiresIn
             self.idToken = idToken
             self.newDeviceMetadata = newDeviceMetadata
             self.refreshToken = refreshToken
             self.tokenType = tokenType
-        }
-
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(idToken, name:"idToken", pattern: "[A-Za-z0-9-_=.]+")
-            try newDeviceMetadata?.validate()
-            try validate(refreshToken, name:"refreshToken", pattern: "[A-Za-z0-9-_=.]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1929,14 +1862,14 @@ extension CognitoIdentityProvider {
             self.proposedPassword = proposedPassword
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(previousPassword, name:"previousPassword", max: 256)
-            try validate(previousPassword, name:"previousPassword", min: 6)
-            try validate(previousPassword, name:"previousPassword", pattern: "[\\S]+")
-            try validate(proposedPassword, name:"proposedPassword", max: 256)
-            try validate(proposedPassword, name:"proposedPassword", min: 6)
-            try validate(proposedPassword, name:"proposedPassword", pattern: "[\\S]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(previousPassword, name:"previousPassword", parent: name, max: 256)
+            try validate(previousPassword, name:"previousPassword", parent: name, min: 6)
+            try validate(previousPassword, name:"previousPassword", parent: name, pattern: "[\\S]+")
+            try validate(proposedPassword, name:"proposedPassword", parent: name, max: 256)
+            try validate(proposedPassword, name:"proposedPassword", parent: name, min: 6)
+            try validate(proposedPassword, name:"proposedPassword", parent: name, pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1972,12 +1905,6 @@ extension CognitoIdentityProvider {
             self.attributeName = attributeName
             self.deliveryMedium = deliveryMedium
             self.destination = destination
-        }
-
-        public func validate() throws {
-            try validate(attributeName, name:"attributeName", max: 32)
-            try validate(attributeName, name:"attributeName", min: 1)
-            try validate(attributeName, name:"attributeName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2056,13 +1983,13 @@ extension CognitoIdentityProvider {
             self.deviceSecretVerifierConfig = deviceSecretVerifierConfig
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
-            try validate(deviceName, name:"deviceName", max: 1024)
-            try validate(deviceName, name:"deviceName", min: 1)
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(deviceKey, name:"deviceKey", parent: name, max: 55)
+            try validate(deviceKey, name:"deviceKey", parent: name, min: 1)
+            try validate(deviceKey, name:"deviceKey", parent: name, pattern: "[\\w-]+_[0-9a-f-]+")
+            try validate(deviceName, name:"deviceName", parent: name, max: 1024)
+            try validate(deviceName, name:"deviceName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2126,22 +2053,22 @@ extension CognitoIdentityProvider {
             self.username = username
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(confirmationCode, name:"confirmationCode", max: 2048)
-            try validate(confirmationCode, name:"confirmationCode", min: 1)
-            try validate(confirmationCode, name:"confirmationCode", pattern: "[\\S]+")
-            try validate(password, name:"password", max: 256)
-            try validate(password, name:"password", min: 6)
-            try validate(password, name:"password", pattern: "[\\S]+")
-            try validate(secretHash, name:"secretHash", max: 128)
-            try validate(secretHash, name:"secretHash", min: 1)
-            try validate(secretHash, name:"secretHash", pattern: "[\\w+=/]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(confirmationCode, name:"confirmationCode", parent: name, max: 2048)
+            try validate(confirmationCode, name:"confirmationCode", parent: name, min: 1)
+            try validate(confirmationCode, name:"confirmationCode", parent: name, pattern: "[\\S]+")
+            try validate(password, name:"password", parent: name, max: 256)
+            try validate(password, name:"password", parent: name, min: 6)
+            try validate(password, name:"password", parent: name, pattern: "[\\S]+")
+            try validate(secretHash, name:"secretHash", parent: name, max: 128)
+            try validate(secretHash, name:"secretHash", parent: name, min: 1)
+            try validate(secretHash, name:"secretHash", parent: name, pattern: "[\\w+=/]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2199,19 +2126,19 @@ extension CognitoIdentityProvider {
             self.username = username
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(confirmationCode, name:"confirmationCode", max: 2048)
-            try validate(confirmationCode, name:"confirmationCode", min: 1)
-            try validate(confirmationCode, name:"confirmationCode", pattern: "[\\S]+")
-            try validate(secretHash, name:"secretHash", max: 128)
-            try validate(secretHash, name:"secretHash", min: 1)
-            try validate(secretHash, name:"secretHash", pattern: "[\\w+=/]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(confirmationCode, name:"confirmationCode", parent: name, max: 2048)
+            try validate(confirmationCode, name:"confirmationCode", parent: name, min: 1)
+            try validate(confirmationCode, name:"confirmationCode", parent: name, pattern: "[\\S]+")
+            try validate(secretHash, name:"secretHash", parent: name, max: 128)
+            try validate(secretHash, name:"secretHash", parent: name, min: 1)
+            try validate(secretHash, name:"secretHash", parent: name, pattern: "[\\w+=/]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2284,13 +2211,13 @@ extension CognitoIdentityProvider {
         /// The name of the group. Must be unique.
         public let groupName: String
         /// A nonnegative integer value that specifies the precedence of this group relative to the other groups that a user can belong to in the user pool. Zero is the highest precedence value. Groups with lower Precedence values take precedence over groups with higher or null Precedence values. If a user belongs to two or more groups, it is the group with the lowest precedence value whose role ARN will be used in the cognito:roles and cognito:preferred_role claims in the user's tokens. Two groups can have the same Precedence value. If this happens, neither group takes precedence over the other. If two groups with the same Precedence have the same role ARN, that role is used in the cognito:preferred_role claim in tokens for users in each group. If the two groups have different role ARNs, the cognito:preferred_role claim is not set in users' tokens. The default Precedence value is null.
-        public let precedence: Int32?
+        public let precedence: Int?
         /// The role ARN for the group.
         public let roleArn: String?
         /// The user pool ID for the user pool.
         public let userPoolId: String
 
-        public init(description: String? = nil, groupName: String, precedence: Int32? = nil, roleArn: String? = nil, userPoolId: String) {
+        public init(description: String? = nil, groupName: String, precedence: Int? = nil, roleArn: String? = nil, userPoolId: String) {
             self.description = description
             self.groupName = groupName
             self.precedence = precedence
@@ -2298,18 +2225,18 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 2048)
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(precedence, name:"precedence", min: 0)
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 20)
-            try validate(roleArn, name:"roleArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 2048)
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(precedence, name:"precedence", parent: name, min: 0)
+            try validate(roleArn, name:"roleArn", parent: name, max: 2048)
+            try validate(roleArn, name:"roleArn", parent: name, min: 20)
+            try validate(roleArn, name:"roleArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2331,10 +2258,6 @@ extension CognitoIdentityProvider {
 
         public init(group: GroupType? = nil) {
             self.group = group
-        }
-
-        public func validate() throws {
-            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2374,20 +2297,24 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try idpIdentifiers?.forEach {
-                try validate($0, name:"idpIdentifiers[]", max: 40)
-                try validate($0, name:"idpIdentifiers[]", min: 1)
-                try validate($0, name:"idpIdentifiers[]", pattern: "[\\w\\s+=.@-]+")
+        public func validate(name: String) throws {
+            try attributeMapping?.forEach {
+                try validate($0.key, name:"attributeMapping.key", parent: name, max: 32)
+                try validate($0.key, name:"attributeMapping.key", parent: name, min: 1)
             }
-            try validate(idpIdentifiers, name:"idpIdentifiers", max: 50)
-            try validate(idpIdentifiers, name:"idpIdentifiers", min: 0)
-            try validate(providerName, name:"providerName", max: 32)
-            try validate(providerName, name:"providerName", min: 1)
-            try validate(providerName, name:"providerName", pattern: "[^_][\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}][^_]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try idpIdentifiers?.forEach {
+                try validate($0, name: "idpIdentifiers[]", parent: name, max: 40)
+                try validate($0, name: "idpIdentifiers[]", parent: name, min: 1)
+                try validate($0, name: "idpIdentifiers[]", parent: name, pattern: "[\\w\\s+=.@-]+")
+            }
+            try validate(idpIdentifiers, name:"idpIdentifiers", parent: name, max: 50)
+            try validate(idpIdentifiers, name:"idpIdentifiers", parent: name, min: 0)
+            try validate(providerName, name:"providerName", parent: name, max: 32)
+            try validate(providerName, name:"providerName", parent: name, min: 1)
+            try validate(providerName, name:"providerName", parent: name, pattern: "[^_][\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}][^_]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2410,10 +2337,6 @@ extension CognitoIdentityProvider {
 
         public init(identityProvider: IdentityProviderType) {
             self.identityProvider = identityProvider
-        }
-
-        public func validate() throws {
-            try identityProvider.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2445,20 +2368,20 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(identifier, name:"identifier", max: 256)
-            try validate(identifier, name:"identifier", min: 1)
-            try validate(identifier, name:"identifier", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\w\\s+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(identifier, name:"identifier", parent: name, max: 256)
+            try validate(identifier, name:"identifier", parent: name, min: 1)
+            try validate(identifier, name:"identifier", parent: name, pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[\\w\\s+=,.@-]+")
             try scopes?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).scopes[]")
             }
-            try validate(scopes, name:"scopes", max: 25)
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(scopes, name:"scopes", parent: name, max: 25)
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2479,10 +2402,6 @@ extension CognitoIdentityProvider {
 
         public init(resourceServer: ResourceServerType) {
             self.resourceServer = resourceServer
-        }
-
-        public func validate() throws {
-            try resourceServer.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2510,16 +2429,16 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", max: 2048)
-            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", min: 20)
-            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(jobName, name:"jobName", max: 128)
-            try validate(jobName, name:"jobName", min: 1)
-            try validate(jobName, name:"jobName", pattern: "[\\w\\s+=,.@-]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", parent: name, max: 2048)
+            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", parent: name, min: 20)
+            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(jobName, name:"jobName", parent: name, max: 128)
+            try validate(jobName, name:"jobName", parent: name, min: 1)
+            try validate(jobName, name:"jobName", parent: name, pattern: "[\\w\\s+=,.@-]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2539,10 +2458,6 @@ extension CognitoIdentityProvider {
 
         public init(userImportJob: UserImportJobType? = nil) {
             self.userImportJob = userImportJob
-        }
-
-        public func validate() throws {
-            try userImportJob?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2592,7 +2507,7 @@ extension CognitoIdentityProvider {
         /// The read attributes.
         public let readAttributes: [String]?
         /// The time limit, in days, after which the refresh token is no longer valid and cannot be used.
-        public let refreshTokenValidity: Int32?
+        public let refreshTokenValidity: Int?
         /// A list of provider names for the identity providers that are supported on this client. The following are supported: COGNITO, Facebook, Google and LoginWithAmazon.
         public let supportedIdentityProviders: [String]?
         /// The user pool ID for the user pool where you want to create a user pool client.
@@ -2600,7 +2515,7 @@ extension CognitoIdentityProvider {
         /// The user pool attributes that the app client can write to. If your app client allows users to sign in through an identity provider, this array must include all attributes that are mapped to identity provider attributes. Amazon Cognito updates mapped attributes when users sign in to your application through an identity provider. If your app client lacks write access to a mapped attribute, Amazon Cognito throws an error when it attempts to update the attribute. For more information, see Specifying Identity Provider Attribute Mappings for Your User Pool.
         public let writeAttributes: [String]?
 
-        public init(allowedOAuthFlows: [OAuthFlowType]? = nil, allowedOAuthFlowsUserPoolClient: Bool? = nil, allowedOAuthScopes: [String]? = nil, analyticsConfiguration: AnalyticsConfigurationType? = nil, callbackURLs: [String]? = nil, clientName: String, defaultRedirectURI: String? = nil, explicitAuthFlows: [ExplicitAuthFlowsType]? = nil, generateSecret: Bool? = nil, logoutURLs: [String]? = nil, readAttributes: [String]? = nil, refreshTokenValidity: Int32? = nil, supportedIdentityProviders: [String]? = nil, userPoolId: String, writeAttributes: [String]? = nil) {
+        public init(allowedOAuthFlows: [OAuthFlowType]? = nil, allowedOAuthFlowsUserPoolClient: Bool? = nil, allowedOAuthScopes: [String]? = nil, analyticsConfiguration: AnalyticsConfigurationType? = nil, callbackURLs: [String]? = nil, clientName: String, defaultRedirectURI: String? = nil, explicitAuthFlows: [ExplicitAuthFlowsType]? = nil, generateSecret: Bool? = nil, logoutURLs: [String]? = nil, readAttributes: [String]? = nil, refreshTokenValidity: Int? = nil, supportedIdentityProviders: [String]? = nil, userPoolId: String, writeAttributes: [String]? = nil) {
             self.allowedOAuthFlows = allowedOAuthFlows
             self.allowedOAuthFlowsUserPoolClient = allowedOAuthFlowsUserPoolClient
             self.allowedOAuthScopes = allowedOAuthScopes
@@ -2618,53 +2533,53 @@ extension CognitoIdentityProvider {
             self.writeAttributes = writeAttributes
         }
 
-        public func validate() throws {
-            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", max: 3)
-            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", min: 0)
+        public func validate(name: String) throws {
+            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", parent: name, max: 3)
+            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", parent: name, min: 0)
             try allowedOAuthScopes?.forEach {
-                try validate($0, name:"allowedOAuthScopes[]", max: 256)
-                try validate($0, name:"allowedOAuthScopes[]", min: 1)
-                try validate($0, name:"allowedOAuthScopes[]", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
+                try validate($0, name: "allowedOAuthScopes[]", parent: name, max: 256)
+                try validate($0, name: "allowedOAuthScopes[]", parent: name, min: 1)
+                try validate($0, name: "allowedOAuthScopes[]", parent: name, pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
             }
-            try validate(allowedOAuthScopes, name:"allowedOAuthScopes", max: 25)
-            try analyticsConfiguration?.validate()
+            try validate(allowedOAuthScopes, name:"allowedOAuthScopes", parent: name, max: 25)
+            try analyticsConfiguration?.validate(name: "\(name).analyticsConfiguration")
             try callbackURLs?.forEach {
-                try validate($0, name:"callbackURLs[]", max: 1024)
-                try validate($0, name:"callbackURLs[]", min: 1)
-                try validate($0, name:"callbackURLs[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "callbackURLs[]", parent: name, max: 1024)
+                try validate($0, name: "callbackURLs[]", parent: name, min: 1)
+                try validate($0, name: "callbackURLs[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(callbackURLs, name:"callbackURLs", max: 100)
-            try validate(callbackURLs, name:"callbackURLs", min: 0)
-            try validate(clientName, name:"clientName", max: 128)
-            try validate(clientName, name:"clientName", min: 1)
-            try validate(clientName, name:"clientName", pattern: "[\\w\\s+=,.@-]+")
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", max: 1024)
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", min: 1)
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(callbackURLs, name:"callbackURLs", parent: name, max: 100)
+            try validate(callbackURLs, name:"callbackURLs", parent: name, min: 0)
+            try validate(clientName, name:"clientName", parent: name, max: 128)
+            try validate(clientName, name:"clientName", parent: name, min: 1)
+            try validate(clientName, name:"clientName", parent: name, pattern: "[\\w\\s+=,.@-]+")
+            try validate(defaultRedirectURI, name:"defaultRedirectURI", parent: name, max: 1024)
+            try validate(defaultRedirectURI, name:"defaultRedirectURI", parent: name, min: 1)
+            try validate(defaultRedirectURI, name:"defaultRedirectURI", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             try logoutURLs?.forEach {
-                try validate($0, name:"logoutURLs[]", max: 1024)
-                try validate($0, name:"logoutURLs[]", min: 1)
-                try validate($0, name:"logoutURLs[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "logoutURLs[]", parent: name, max: 1024)
+                try validate($0, name: "logoutURLs[]", parent: name, min: 1)
+                try validate($0, name: "logoutURLs[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(logoutURLs, name:"logoutURLs", max: 100)
-            try validate(logoutURLs, name:"logoutURLs", min: 0)
+            try validate(logoutURLs, name:"logoutURLs", parent: name, max: 100)
+            try validate(logoutURLs, name:"logoutURLs", parent: name, min: 0)
             try readAttributes?.forEach {
-                try validate($0, name:"readAttributes[]", max: 2048)
-                try validate($0, name:"readAttributes[]", min: 1)
+                try validate($0, name: "readAttributes[]", parent: name, max: 2048)
+                try validate($0, name: "readAttributes[]", parent: name, min: 1)
             }
-            try validate(refreshTokenValidity, name:"refreshTokenValidity", max: 3650)
-            try validate(refreshTokenValidity, name:"refreshTokenValidity", min: 0)
+            try validate(refreshTokenValidity, name:"refreshTokenValidity", parent: name, max: 3650)
+            try validate(refreshTokenValidity, name:"refreshTokenValidity", parent: name, min: 0)
             try supportedIdentityProviders?.forEach {
-                try validate($0, name:"supportedIdentityProviders[]", max: 32)
-                try validate($0, name:"supportedIdentityProviders[]", min: 1)
-                try validate($0, name:"supportedIdentityProviders[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "supportedIdentityProviders[]", parent: name, max: 32)
+                try validate($0, name: "supportedIdentityProviders[]", parent: name, min: 1)
+                try validate($0, name: "supportedIdentityProviders[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
             try writeAttributes?.forEach {
-                try validate($0, name:"writeAttributes[]", max: 2048)
-                try validate($0, name:"writeAttributes[]", min: 1)
+                try validate($0, name: "writeAttributes[]", parent: name, max: 2048)
+                try validate($0, name: "writeAttributes[]", parent: name, min: 1)
             }
         }
 
@@ -2699,10 +2614,6 @@ extension CognitoIdentityProvider {
             self.userPoolClient = userPoolClient
         }
 
-        public func validate() throws {
-            try userPoolClient?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case userPoolClient = "UserPoolClient"
         }
@@ -2728,14 +2639,14 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try customDomainConfig?.validate()
-            try validate(domain, name:"domain", max: 63)
-            try validate(domain, name:"domain", min: 1)
-            try validate(domain, name:"domain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try customDomainConfig?.validate(name: "\(name).customDomainConfig")
+            try validate(domain, name:"domain", parent: name, max: 63)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(domain, name:"domain", parent: name, pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2755,12 +2666,6 @@ extension CognitoIdentityProvider {
 
         public init(cloudFrontDomain: String? = nil) {
             self.cloudFrontDomain = cloudFrontDomain
-        }
-
-        public func validate() throws {
-            try validate(cloudFrontDomain, name:"cloudFrontDomain", max: 63)
-            try validate(cloudFrontDomain, name:"cloudFrontDomain", min: 1)
-            try validate(cloudFrontDomain, name:"cloudFrontDomain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2852,33 +2757,39 @@ extension CognitoIdentityProvider {
             self.verificationMessageTemplate = verificationMessageTemplate
         }
 
-        public func validate() throws {
-            try adminCreateUserConfig?.validate()
-            try emailConfiguration?.validate()
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", max: 20000)
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", min: 6)
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", max: 140)
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", min: 1)
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
-            try lambdaConfig?.validate()
-            try policies?.validate()
-            try validate(poolName, name:"poolName", max: 128)
-            try validate(poolName, name:"poolName", min: 1)
-            try validate(poolName, name:"poolName", pattern: "[\\w\\s+=,.@-]+")
+        public func validate(name: String) throws {
+            try adminCreateUserConfig?.validate(name: "\(name).adminCreateUserConfig")
+            try emailConfiguration?.validate(name: "\(name).emailConfiguration")
+            try validate(emailVerificationMessage, name:"emailVerificationMessage", parent: name, max: 20000)
+            try validate(emailVerificationMessage, name:"emailVerificationMessage", parent: name, min: 6)
+            try validate(emailVerificationMessage, name:"emailVerificationMessage", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
+            try validate(emailVerificationSubject, name:"emailVerificationSubject", parent: name, max: 140)
+            try validate(emailVerificationSubject, name:"emailVerificationSubject", parent: name, min: 1)
+            try validate(emailVerificationSubject, name:"emailVerificationSubject", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
+            try lambdaConfig?.validate(name: "\(name).lambdaConfig")
+            try policies?.validate(name: "\(name).policies")
+            try validate(poolName, name:"poolName", parent: name, max: 128)
+            try validate(poolName, name:"poolName", parent: name, min: 1)
+            try validate(poolName, name:"poolName", parent: name, pattern: "[\\w\\s+=,.@-]+")
             try schema?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).schema[]")
             }
-            try validate(schema, name:"schema", max: 50)
-            try validate(schema, name:"schema", min: 1)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", max: 140)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", min: 6)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", pattern: ".*\\{####\\}.*")
-            try smsConfiguration?.validate()
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", max: 140)
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", min: 6)
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", pattern: ".*\\{####\\}.*")
-            try verificationMessageTemplate?.validate()
+            try validate(schema, name:"schema", parent: name, max: 50)
+            try validate(schema, name:"schema", parent: name, min: 1)
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, max: 140)
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, min: 6)
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, pattern: ".*\\{####\\}.*")
+            try smsConfiguration?.validate(name: "\(name).smsConfiguration")
+            try validate(smsVerificationMessage, name:"smsVerificationMessage", parent: name, max: 140)
+            try validate(smsVerificationMessage, name:"smsVerificationMessage", parent: name, min: 6)
+            try validate(smsVerificationMessage, name:"smsVerificationMessage", parent: name, pattern: ".*\\{####\\}.*")
+            try userPoolTags?.forEach {
+                try validate($0.key, name:"userPoolTags.key", parent: name, max: 128)
+                try validate($0.key, name:"userPoolTags.key", parent: name, min: 1)
+                try validate($0.value, name:"userPoolTags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"userPoolTags[\"\($0.key)\"]", parent: name, min: 0)
+            }
+            try verificationMessageTemplate?.validate(name: "\(name).verificationMessageTemplate")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2916,10 +2827,6 @@ extension CognitoIdentityProvider {
             self.userPool = userPool
         }
 
-        public func validate() throws {
-            try userPool?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case userPool = "UserPool"
         }
@@ -2937,10 +2844,10 @@ extension CognitoIdentityProvider {
             self.certificateArn = certificateArn
         }
 
-        public func validate() throws {
-            try validate(certificateArn, name:"certificateArn", max: 2048)
-            try validate(certificateArn, name:"certificateArn", min: 20)
-            try validate(certificateArn, name:"certificateArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(certificateArn, name:"certificateArn", parent: name, max: 2048)
+            try validate(certificateArn, name:"certificateArn", parent: name, min: 20)
+            try validate(certificateArn, name:"certificateArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2970,13 +2877,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3001,13 +2908,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(providerName, name:"providerName", max: 32)
-            try validate(providerName, name:"providerName", min: 1)
-            try validate(providerName, name:"providerName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(providerName, name:"providerName", parent: name, max: 32)
+            try validate(providerName, name:"providerName", parent: name, min: 1)
+            try validate(providerName, name:"providerName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3032,13 +2939,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(identifier, name:"identifier", max: 256)
-            try validate(identifier, name:"identifier", min: 1)
-            try validate(identifier, name:"identifier", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(identifier, name:"identifier", parent: name, max: 256)
+            try validate(identifier, name:"identifier", parent: name, min: 1)
+            try validate(identifier, name:"identifier", parent: name, pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3063,12 +2970,12 @@ extension CognitoIdentityProvider {
             self.userAttributeNames = userAttributeNames
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
             try userAttributeNames.forEach {
-                try validate($0, name:"userAttributeNames[]", max: 32)
-                try validate($0, name:"userAttributeNames[]", min: 1)
-                try validate($0, name:"userAttributeNames[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "userAttributeNames[]", parent: name, max: 32)
+                try validate($0, name: "userAttributeNames[]", parent: name, min: 1)
+                try validate($0, name: "userAttributeNames[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
         }
 
@@ -3102,13 +3009,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3133,13 +3040,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 63)
-            try validate(domain, name:"domain", min: 1)
-            try validate(domain, name:"domain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 63)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(domain, name:"domain", parent: name, pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3168,10 +3075,10 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3191,8 +3098,8 @@ extension CognitoIdentityProvider {
             self.accessToken = accessToken
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3222,13 +3129,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(providerName, name:"providerName", max: 32)
-            try validate(providerName, name:"providerName", min: 1)
-            try validate(providerName, name:"providerName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(providerName, name:"providerName", parent: name, max: 32)
+            try validate(providerName, name:"providerName", parent: name, min: 1)
+            try validate(providerName, name:"providerName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3247,10 +3154,6 @@ extension CognitoIdentityProvider {
 
         public init(identityProvider: IdentityProviderType) {
             self.identityProvider = identityProvider
-        }
-
-        public func validate() throws {
-            try identityProvider.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3274,13 +3177,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(identifier, name:"identifier", max: 256)
-            try validate(identifier, name:"identifier", min: 1)
-            try validate(identifier, name:"identifier", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(identifier, name:"identifier", parent: name, max: 256)
+            try validate(identifier, name:"identifier", parent: name, min: 1)
+            try validate(identifier, name:"identifier", parent: name, pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3299,10 +3202,6 @@ extension CognitoIdentityProvider {
 
         public init(resourceServer: ResourceServerType) {
             self.resourceServer = resourceServer
-        }
-
-        public func validate() throws {
-            try resourceServer.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3326,13 +3225,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3351,10 +3250,6 @@ extension CognitoIdentityProvider {
 
         public init(riskConfiguration: RiskConfigurationType) {
             self.riskConfiguration = riskConfiguration
-        }
-
-        public func validate() throws {
-            try riskConfiguration.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3378,13 +3273,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 55)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "import-[0-9a-zA-Z-]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 55)
+            try validate(jobId, name:"jobId", parent: name, min: 1)
+            try validate(jobId, name:"jobId", parent: name, pattern: "import-[0-9a-zA-Z-]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3403,10 +3298,6 @@ extension CognitoIdentityProvider {
 
         public init(userImportJob: UserImportJobType? = nil) {
             self.userImportJob = userImportJob
-        }
-
-        public func validate() throws {
-            try userImportJob?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3430,13 +3321,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3457,10 +3348,6 @@ extension CognitoIdentityProvider {
             self.userPoolClient = userPoolClient
         }
 
-        public func validate() throws {
-            try userPoolClient?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case userPoolClient = "UserPoolClient"
         }
@@ -3478,10 +3365,10 @@ extension CognitoIdentityProvider {
             self.domain = domain
         }
 
-        public func validate() throws {
-            try validate(domain, name:"domain", max: 63)
-            try validate(domain, name:"domain", min: 1)
-            try validate(domain, name:"domain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
+        public func validate(name: String) throws {
+            try validate(domain, name:"domain", parent: name, max: 63)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(domain, name:"domain", parent: name, pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3501,10 +3388,6 @@ extension CognitoIdentityProvider {
             self.domainDescription = domainDescription
         }
 
-        public func validate() throws {
-            try domainDescription?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case domainDescription = "DomainDescription"
         }
@@ -3522,10 +3405,10 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3543,10 +3426,6 @@ extension CognitoIdentityProvider {
 
         public init(userPool: UserPoolType? = nil) {
             self.userPool = userPool
-        }
-
-        public func validate() throws {
-            try userPool?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3632,15 +3511,6 @@ extension CognitoIdentityProvider {
             self.deviceLastModifiedDate = deviceLastModifiedDate
         }
 
-        public func validate() throws {
-            try deviceAttributes?.forEach {
-                try $0.validate()
-            }
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case deviceAttributes = "DeviceAttributes"
             case deviceCreateDate = "DeviceCreateDate"
@@ -3690,21 +3560,6 @@ extension CognitoIdentityProvider {
             self.version = version
         }
 
-        public func validate() throws {
-            try customDomainConfig?.validate()
-            try validate(domain, name:"domain", max: 63)
-            try validate(domain, name:"domain", min: 1)
-            try validate(domain, name:"domain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
-            try validate(s3Bucket, name:"s3Bucket", max: 1024)
-            try validate(s3Bucket, name:"s3Bucket", min: 3)
-            try validate(s3Bucket, name:"s3Bucket", pattern: "^[0-9A-Za-z\\.\\-_]*(?<!\\.)$")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-            try validate(version, name:"version", max: 20)
-            try validate(version, name:"version", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case aWSAccountId = "AWSAccountId"
             case cloudFrontDistribution = "CloudFrontDistribution"
@@ -3746,11 +3601,11 @@ extension CognitoIdentityProvider {
             self.sourceArn = sourceArn
         }
 
-        public func validate() throws {
-            try validate(replyToEmailAddress, name:"replyToEmailAddress", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+@[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(sourceArn, name:"sourceArn", max: 2048)
-            try validate(sourceArn, name:"sourceArn", min: 20)
-            try validate(sourceArn, name:"sourceArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(replyToEmailAddress, name:"replyToEmailAddress", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+@[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(sourceArn, name:"sourceArn", parent: name, max: 2048)
+            try validate(sourceArn, name:"sourceArn", parent: name, min: 20)
+            try validate(sourceArn, name:"sourceArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3901,11 +3756,11 @@ extension CognitoIdentityProvider {
             self.deviceKey = deviceKey
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(deviceKey, name:"deviceKey", parent: name, max: 55)
+            try validate(deviceKey, name:"deviceKey", parent: name, min: 1)
+            try validate(deviceKey, name:"deviceKey", parent: name, pattern: "[\\w-]+_[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3942,16 +3797,16 @@ extension CognitoIdentityProvider {
             self.username = username
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(secretHash, name:"secretHash", max: 128)
-            try validate(secretHash, name:"secretHash", min: 1)
-            try validate(secretHash, name:"secretHash", pattern: "[\\w+=/]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(secretHash, name:"secretHash", parent: name, max: 128)
+            try validate(secretHash, name:"secretHash", parent: name, min: 1)
+            try validate(secretHash, name:"secretHash", parent: name, pattern: "[\\w+=/]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3975,10 +3830,6 @@ extension CognitoIdentityProvider {
             self.codeDeliveryDetails = codeDeliveryDetails
         }
 
-        public func validate() throws {
-            try codeDeliveryDetails?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case codeDeliveryDetails = "CodeDeliveryDetails"
         }
@@ -3996,10 +3847,10 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4021,12 +3872,6 @@ extension CognitoIdentityProvider {
         public init(cSVHeader: [String]? = nil, userPoolId: String? = nil) {
             self.cSVHeader = cSVHeader
             self.userPoolId = userPoolId
-        }
-
-        public func validate() throws {
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4051,11 +3896,11 @@ extension CognitoIdentityProvider {
             self.deviceKey = deviceKey
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(deviceKey, name:"deviceKey", parent: name, max: 55)
+            try validate(deviceKey, name:"deviceKey", parent: name, min: 1)
+            try validate(deviceKey, name:"deviceKey", parent: name, pattern: "[\\w-]+_[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4074,10 +3919,6 @@ extension CognitoIdentityProvider {
 
         public init(device: DeviceType) {
             self.device = device
-        }
-
-        public func validate() throws {
-            try device.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4101,13 +3942,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4126,10 +3967,6 @@ extension CognitoIdentityProvider {
 
         public init(group: GroupType? = nil) {
             self.group = group
-        }
-
-        public func validate() throws {
-            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4153,13 +3990,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(idpIdentifier, name:"idpIdentifier", max: 40)
-            try validate(idpIdentifier, name:"idpIdentifier", min: 1)
-            try validate(idpIdentifier, name:"idpIdentifier", pattern: "[\\w\\s+=.@-]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(idpIdentifier, name:"idpIdentifier", parent: name, max: 40)
+            try validate(idpIdentifier, name:"idpIdentifier", parent: name, min: 1)
+            try validate(idpIdentifier, name:"idpIdentifier", parent: name, pattern: "[\\w\\s+=.@-]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4180,10 +4017,6 @@ extension CognitoIdentityProvider {
             self.identityProvider = identityProvider
         }
 
-        public func validate() throws {
-            try identityProvider.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case identityProvider = "IdentityProvider"
         }
@@ -4201,10 +4034,10 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4245,13 +4078,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4270,10 +4103,6 @@ extension CognitoIdentityProvider {
 
         public init(uICustomization: UICustomizationType) {
             self.uICustomization = uICustomization
-        }
-
-        public func validate() throws {
-            try uICustomization.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4297,11 +4126,11 @@ extension CognitoIdentityProvider {
             self.attributeName = attributeName
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(attributeName, name:"attributeName", max: 32)
-            try validate(attributeName, name:"attributeName", min: 1)
-            try validate(attributeName, name:"attributeName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(attributeName, name:"attributeName", parent: name, max: 32)
+            try validate(attributeName, name:"attributeName", parent: name, min: 1)
+            try validate(attributeName, name:"attributeName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4322,10 +4151,6 @@ extension CognitoIdentityProvider {
             self.codeDeliveryDetails = codeDeliveryDetails
         }
 
-        public func validate() throws {
-            try codeDeliveryDetails?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case codeDeliveryDetails = "CodeDeliveryDetails"
         }
@@ -4343,10 +4168,10 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4374,10 +4199,6 @@ extension CognitoIdentityProvider {
             self.softwareTokenMfaConfiguration = softwareTokenMfaConfiguration
         }
 
-        public func validate() throws {
-            try smsMfaConfiguration?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case mfaConfiguration = "MfaConfiguration"
             case smsMfaConfiguration = "SmsMfaConfiguration"
@@ -4397,8 +4218,8 @@ extension CognitoIdentityProvider {
             self.accessToken = accessToken
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4434,18 +4255,6 @@ extension CognitoIdentityProvider {
             self.username = username
         }
 
-        public func validate() throws {
-            try mFAOptions?.forEach {
-                try $0.validate()
-            }
-            try userAttributes.forEach {
-                try $0.validate()
-            }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case mFAOptions = "MFAOptions"
             case preferredMfaSetting = "PreferredMfaSetting"
@@ -4467,8 +4276,8 @@ extension CognitoIdentityProvider {
             self.accessToken = accessToken
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4504,13 +4313,13 @@ extension CognitoIdentityProvider {
         /// The date the group was last modified.
         public let lastModifiedDate: TimeStamp?
         /// A nonnegative integer value that specifies the precedence of this group relative to the other groups that a user can belong to in the user pool. If a user belongs to two or more groups, it is the group with the highest precedence whose role ARN will be used in the cognito:roles and cognito:preferred_role claims in the user's tokens. Groups with higher Precedence values take precedence over groups with lower Precedence values or with null Precedence values. Two groups can have the same Precedence value. If this happens, neither group takes precedence over the other. If two groups with the same Precedence have the same role ARN, that role is used in the cognito:preferred_role claim in tokens for users in each group. If the two groups have different role ARNs, the cognito:preferred_role claim is not set in users' tokens. The default Precedence value is null.
-        public let precedence: Int32?
+        public let precedence: Int?
         /// The role ARN for the group.
         public let roleArn: String?
         /// The user pool ID for the user pool.
         public let userPoolId: String?
 
-        public init(creationDate: TimeStamp? = nil, description: String? = nil, groupName: String? = nil, lastModifiedDate: TimeStamp? = nil, precedence: Int32? = nil, roleArn: String? = nil, userPoolId: String? = nil) {
+        public init(creationDate: TimeStamp? = nil, description: String? = nil, groupName: String? = nil, lastModifiedDate: TimeStamp? = nil, precedence: Int? = nil, roleArn: String? = nil, userPoolId: String? = nil) {
             self.creationDate = creationDate
             self.description = description
             self.groupName = groupName
@@ -4518,20 +4327,6 @@ extension CognitoIdentityProvider {
             self.precedence = precedence
             self.roleArn = roleArn
             self.userPoolId = userPoolId
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 2048)
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(precedence, name:"precedence", min: 0)
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 20)
-            try validate(roleArn, name:"roleArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4607,22 +4402,6 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try idpIdentifiers?.forEach {
-                try validate($0, name:"idpIdentifiers[]", max: 40)
-                try validate($0, name:"idpIdentifiers[]", min: 1)
-                try validate($0, name:"idpIdentifiers[]", pattern: "[\\w\\s+=.@-]+")
-            }
-            try validate(idpIdentifiers, name:"idpIdentifiers", max: 50)
-            try validate(idpIdentifiers, name:"idpIdentifiers", min: 0)
-            try validate(providerName, name:"providerName", max: 32)
-            try validate(providerName, name:"providerName", min: 1)
-            try validate(providerName, name:"providerName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attributeMapping = "AttributeMapping"
             case creationDate = "CreationDate"
@@ -4676,10 +4455,10 @@ extension CognitoIdentityProvider {
             self.userContextData = userContextData
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4714,12 +4493,6 @@ extension CognitoIdentityProvider {
             self.challengeName = challengeName
             self.challengeParameters = challengeParameters
             self.session = session
-        }
-
-        public func validate() throws {
-            try authenticationResult?.validate()
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4778,37 +4551,37 @@ extension CognitoIdentityProvider {
             self.verifyAuthChallengeResponse = verifyAuthChallengeResponse
         }
 
-        public func validate() throws {
-            try validate(createAuthChallenge, name:"createAuthChallenge", max: 2048)
-            try validate(createAuthChallenge, name:"createAuthChallenge", min: 20)
-            try validate(createAuthChallenge, name:"createAuthChallenge", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(customMessage, name:"customMessage", max: 2048)
-            try validate(customMessage, name:"customMessage", min: 20)
-            try validate(customMessage, name:"customMessage", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(defineAuthChallenge, name:"defineAuthChallenge", max: 2048)
-            try validate(defineAuthChallenge, name:"defineAuthChallenge", min: 20)
-            try validate(defineAuthChallenge, name:"defineAuthChallenge", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(postAuthentication, name:"postAuthentication", max: 2048)
-            try validate(postAuthentication, name:"postAuthentication", min: 20)
-            try validate(postAuthentication, name:"postAuthentication", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(postConfirmation, name:"postConfirmation", max: 2048)
-            try validate(postConfirmation, name:"postConfirmation", min: 20)
-            try validate(postConfirmation, name:"postConfirmation", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(preAuthentication, name:"preAuthentication", max: 2048)
-            try validate(preAuthentication, name:"preAuthentication", min: 20)
-            try validate(preAuthentication, name:"preAuthentication", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(preSignUp, name:"preSignUp", max: 2048)
-            try validate(preSignUp, name:"preSignUp", min: 20)
-            try validate(preSignUp, name:"preSignUp", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(preTokenGeneration, name:"preTokenGeneration", max: 2048)
-            try validate(preTokenGeneration, name:"preTokenGeneration", min: 20)
-            try validate(preTokenGeneration, name:"preTokenGeneration", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(userMigration, name:"userMigration", max: 2048)
-            try validate(userMigration, name:"userMigration", min: 20)
-            try validate(userMigration, name:"userMigration", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(verifyAuthChallengeResponse, name:"verifyAuthChallengeResponse", max: 2048)
-            try validate(verifyAuthChallengeResponse, name:"verifyAuthChallengeResponse", min: 20)
-            try validate(verifyAuthChallengeResponse, name:"verifyAuthChallengeResponse", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(createAuthChallenge, name:"createAuthChallenge", parent: name, max: 2048)
+            try validate(createAuthChallenge, name:"createAuthChallenge", parent: name, min: 20)
+            try validate(createAuthChallenge, name:"createAuthChallenge", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(customMessage, name:"customMessage", parent: name, max: 2048)
+            try validate(customMessage, name:"customMessage", parent: name, min: 20)
+            try validate(customMessage, name:"customMessage", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(defineAuthChallenge, name:"defineAuthChallenge", parent: name, max: 2048)
+            try validate(defineAuthChallenge, name:"defineAuthChallenge", parent: name, min: 20)
+            try validate(defineAuthChallenge, name:"defineAuthChallenge", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(postAuthentication, name:"postAuthentication", parent: name, max: 2048)
+            try validate(postAuthentication, name:"postAuthentication", parent: name, min: 20)
+            try validate(postAuthentication, name:"postAuthentication", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(postConfirmation, name:"postConfirmation", parent: name, max: 2048)
+            try validate(postConfirmation, name:"postConfirmation", parent: name, min: 20)
+            try validate(postConfirmation, name:"postConfirmation", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(preAuthentication, name:"preAuthentication", parent: name, max: 2048)
+            try validate(preAuthentication, name:"preAuthentication", parent: name, min: 20)
+            try validate(preAuthentication, name:"preAuthentication", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(preSignUp, name:"preSignUp", parent: name, max: 2048)
+            try validate(preSignUp, name:"preSignUp", parent: name, min: 20)
+            try validate(preSignUp, name:"preSignUp", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(preTokenGeneration, name:"preTokenGeneration", parent: name, max: 2048)
+            try validate(preTokenGeneration, name:"preTokenGeneration", parent: name, min: 20)
+            try validate(preTokenGeneration, name:"preTokenGeneration", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(userMigration, name:"userMigration", parent: name, max: 2048)
+            try validate(userMigration, name:"userMigration", parent: name, min: 20)
+            try validate(userMigration, name:"userMigration", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(verifyAuthChallengeResponse, name:"verifyAuthChallengeResponse", parent: name, max: 2048)
+            try validate(verifyAuthChallengeResponse, name:"verifyAuthChallengeResponse", parent: name, min: 20)
+            try validate(verifyAuthChallengeResponse, name:"verifyAuthChallengeResponse", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4835,22 +4608,22 @@ extension CognitoIdentityProvider {
         /// The access tokens for the request to list devices.
         public let accessToken: String
         /// The limit of the device request.
-        public let limit: Int32?
+        public let limit: Int?
         /// The pagination token for the list request.
         public let paginationToken: String?
 
-        public init(accessToken: String, limit: Int32? = nil, paginationToken: String? = nil) {
+        public init(accessToken: String, limit: Int? = nil, paginationToken: String? = nil) {
             self.accessToken = accessToken
             self.limit = limit
             self.paginationToken = paginationToken
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(limit, name:"limit", max: 60)
-            try validate(limit, name:"limit", min: 0)
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(limit, name:"limit", parent: name, max: 60)
+            try validate(limit, name:"limit", parent: name, min: 0)
+            try validate(paginationToken, name:"paginationToken", parent: name, min: 1)
+            try validate(paginationToken, name:"paginationToken", parent: name, pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4876,14 +4649,6 @@ extension CognitoIdentityProvider {
             self.paginationToken = paginationToken
         }
 
-        public func validate() throws {
-            try devices?.forEach {
-                try $0.validate()
-            }
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case devices = "Devices"
             case paginationToken = "PaginationToken"
@@ -4898,26 +4663,26 @@ extension CognitoIdentityProvider {
         ]
 
         /// The limit of the request to list groups.
-        public let limit: Int32?
+        public let limit: Int?
         /// An identifier that was returned from the previous call to this operation, which can be used to return the next set of items in the list.
         public let nextToken: String?
         /// The user pool ID for the user pool.
         public let userPoolId: String
 
-        public init(limit: Int32? = nil, nextToken: String? = nil, userPoolId: String) {
+        public init(limit: Int? = nil, nextToken: String? = nil, userPoolId: String) {
             self.limit = limit
             self.nextToken = nextToken
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(limit, name:"limit", max: 60)
-            try validate(limit, name:"limit", min: 0)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(limit, name:"limit", parent: name, max: 60)
+            try validate(limit, name:"limit", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4943,14 +4708,6 @@ extension CognitoIdentityProvider {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try groups?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groups = "Groups"
             case nextToken = "NextToken"
@@ -4965,26 +4722,26 @@ extension CognitoIdentityProvider {
         ]
 
         /// The maximum number of identity providers to return.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A pagination token.
         public let nextToken: String?
         /// The user pool ID.
         public let userPoolId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, userPoolId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, userPoolId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 60)
-            try validate(maxResults, name:"maxResults", min: 0)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 60)
+            try validate(maxResults, name:"maxResults", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5010,16 +4767,6 @@ extension CognitoIdentityProvider {
             self.providers = providers
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try providers.forEach {
-                try $0.validate()
-            }
-            try validate(providers, name:"providers", max: 50)
-            try validate(providers, name:"providers", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case providers = "Providers"
@@ -5034,26 +4781,26 @@ extension CognitoIdentityProvider {
         ]
 
         /// The maximum number of resource servers to return.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A pagination token.
         public let nextToken: String?
         /// The user pool ID for the user pool.
         public let userPoolId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, userPoolId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, userPoolId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5079,14 +4826,6 @@ extension CognitoIdentityProvider {
             self.resourceServers = resourceServers
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try resourceServers.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case resourceServers = "ResourceServers"
@@ -5105,10 +4844,10 @@ extension CognitoIdentityProvider {
             self.resourceArn = resourceArn
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 2048)
-            try validate(resourceArn, name:"resourceArn", min: 20)
-            try validate(resourceArn, name:"resourceArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 2048)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 20)
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5141,26 +4880,26 @@ extension CognitoIdentityProvider {
         ]
 
         /// The maximum number of import jobs you want the request to return.
-        public let maxResults: Int32
+        public let maxResults: Int
         /// An identifier that was returned from the previous call to ListUserImportJobs, which can be used to return the next set of import jobs in the list.
         public let paginationToken: String?
         /// The user pool ID for the user pool that the users are being imported into.
         public let userPoolId: String
 
-        public init(maxResults: Int32, paginationToken: String? = nil, userPoolId: String) {
+        public init(maxResults: Int, paginationToken: String? = nil, userPoolId: String) {
             self.maxResults = maxResults
             self.paginationToken = paginationToken
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 60)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 60)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(paginationToken, name:"paginationToken", parent: name, min: 1)
+            try validate(paginationToken, name:"paginationToken", parent: name, pattern: "[\\S]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5186,16 +4925,6 @@ extension CognitoIdentityProvider {
             self.userImportJobs = userImportJobs
         }
 
-        public func validate() throws {
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
-            try userImportJobs?.forEach {
-                try $0.validate()
-            }
-            try validate(userImportJobs, name:"userImportJobs", max: 50)
-            try validate(userImportJobs, name:"userImportJobs", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case paginationToken = "PaginationToken"
             case userImportJobs = "UserImportJobs"
@@ -5210,26 +4939,26 @@ extension CognitoIdentityProvider {
         ]
 
         /// The maximum number of results you want the request to return when listing the user pool clients.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// An identifier that was returned from the previous call to this operation, which can be used to return the next set of items in the list.
         public let nextToken: String?
         /// The user pool ID for the user pool where you want to list user pool clients.
         public let userPoolId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, userPoolId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, userPoolId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 60)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 60)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5255,14 +4984,6 @@ extension CognitoIdentityProvider {
             self.userPoolClients = userPoolClients
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try userPoolClients?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case userPoolClients = "UserPoolClients"
@@ -5276,20 +4997,20 @@ extension CognitoIdentityProvider {
         ]
 
         /// The maximum number of results you want the request to return when listing the user pools.
-        public let maxResults: Int32
+        public let maxResults: Int
         /// An identifier that was returned from the previous call to this operation, which can be used to return the next set of items in the list.
         public let nextToken: String?
 
-        public init(maxResults: Int32, nextToken: String? = nil) {
+        public init(maxResults: Int, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 60)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 60)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5314,14 +5035,6 @@ extension CognitoIdentityProvider {
             self.userPools = userPools
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try userPools?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case userPools = "UserPools"
@@ -5339,30 +5052,30 @@ extension CognitoIdentityProvider {
         /// The name of the group.
         public let groupName: String
         /// The limit of the request to list users.
-        public let limit: Int32?
+        public let limit: Int?
         /// An identifier that was returned from the previous call to this operation, which can be used to return the next set of items in the list.
         public let nextToken: String?
         /// The user pool ID for the user pool.
         public let userPoolId: String
 
-        public init(groupName: String, limit: Int32? = nil, nextToken: String? = nil, userPoolId: String) {
+        public init(groupName: String, limit: Int? = nil, nextToken: String? = nil, userPoolId: String) {
             self.groupName = groupName
             self.limit = limit
             self.nextToken = nextToken
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(limit, name:"limit", max: 60)
-            try validate(limit, name:"limit", min: 0)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(limit, name:"limit", parent: name, max: 60)
+            try validate(limit, name:"limit", parent: name, min: 0)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "[\\S]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5389,14 +5102,6 @@ extension CognitoIdentityProvider {
             self.users = users
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: "[\\S]+")
-            try users?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case users = "Users"
@@ -5417,13 +5122,13 @@ extension CognitoIdentityProvider {
         /// A filter string of the form "AttributeName Filter-Type "AttributeValue"". Quotation marks within the filter string must be escaped using the backslash (\) character. For example, "family_name = \"Reddy\"".    AttributeName: The name of the attribute to search for. You can only search for one attribute at a time.    Filter-Type: For an exact match, use =, for example, "given_name = \"Jon\"". For a prefix ("starts with") match, use ^=, for example, "given_name ^= \"Jon\"".     AttributeValue: The attribute value that must be matched for each user.   If the filter string is empty, ListUsers returns all users in the user pool. You can only search for the following standard attributes:    username (case-sensitive)    email     phone_number     name     given_name     family_name     preferred_username     cognito:user_status (called Status in the Console) (case-insensitive)    status (called Enabled in the Console) (case-sensitive)     sub    Custom attributes are not searchable. For more information, see Searching for Users Using the ListUsers API and Examples of Using the ListUsers API in the Amazon Cognito Developer Guide.
         public let filter: String?
         /// Maximum number of users to be returned.
-        public let limit: Int32?
+        public let limit: Int?
         /// An identifier that was returned from the previous call to this operation, which can be used to return the next set of items in the list.
         public let paginationToken: String?
         /// The user pool ID for the user pool on which the search should be performed.
         public let userPoolId: String
 
-        public init(attributesToGet: [String]? = nil, filter: String? = nil, limit: Int32? = nil, paginationToken: String? = nil, userPoolId: String) {
+        public init(attributesToGet: [String]? = nil, filter: String? = nil, limit: Int? = nil, paginationToken: String? = nil, userPoolId: String) {
             self.attributesToGet = attributesToGet
             self.filter = filter
             self.limit = limit
@@ -5431,20 +5136,20 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try attributesToGet?.forEach {
-                try validate($0, name:"attributesToGet[]", max: 32)
-                try validate($0, name:"attributesToGet[]", min: 1)
-                try validate($0, name:"attributesToGet[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "attributesToGet[]", parent: name, max: 32)
+                try validate($0, name: "attributesToGet[]", parent: name, min: 1)
+                try validate($0, name: "attributesToGet[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(filter, name:"filter", max: 256)
-            try validate(limit, name:"limit", max: 60)
-            try validate(limit, name:"limit", min: 0)
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(filter, name:"filter", parent: name, max: 256)
+            try validate(limit, name:"limit", parent: name, max: 60)
+            try validate(limit, name:"limit", parent: name, min: 0)
+            try validate(paginationToken, name:"paginationToken", parent: name, min: 1)
+            try validate(paginationToken, name:"paginationToken", parent: name, pattern: "[\\S]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5472,14 +5177,6 @@ extension CognitoIdentityProvider {
             self.users = users
         }
 
-        public func validate() throws {
-            try validate(paginationToken, name:"paginationToken", min: 1)
-            try validate(paginationToken, name:"paginationToken", pattern: "[\\S]+")
-            try users?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case paginationToken = "PaginationToken"
             case users = "Users"
@@ -5502,10 +5199,10 @@ extension CognitoIdentityProvider {
             self.deliveryMedium = deliveryMedium
         }
 
-        public func validate() throws {
-            try validate(attributeName, name:"attributeName", max: 32)
-            try validate(attributeName, name:"attributeName", min: 1)
-            try validate(attributeName, name:"attributeName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(attributeName, name:"attributeName", parent: name, max: 32)
+            try validate(attributeName, name:"attributeName", parent: name, min: 1)
+            try validate(attributeName, name:"attributeName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5540,16 +5237,16 @@ extension CognitoIdentityProvider {
             self.sMSMessage = sMSMessage
         }
 
-        public func validate() throws {
-            try validate(emailMessage, name:"emailMessage", max: 20000)
-            try validate(emailMessage, name:"emailMessage", min: 6)
-            try validate(emailMessage, name:"emailMessage", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
-            try validate(emailSubject, name:"emailSubject", max: 140)
-            try validate(emailSubject, name:"emailSubject", min: 1)
-            try validate(emailSubject, name:"emailSubject", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
-            try validate(sMSMessage, name:"sMSMessage", max: 140)
-            try validate(sMSMessage, name:"sMSMessage", min: 6)
-            try validate(sMSMessage, name:"sMSMessage", pattern: ".*\\{####\\}.*")
+        public func validate(name: String) throws {
+            try validate(emailMessage, name:"emailMessage", parent: name, max: 20000)
+            try validate(emailMessage, name:"emailMessage", parent: name, min: 6)
+            try validate(emailMessage, name:"emailMessage", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
+            try validate(emailSubject, name:"emailSubject", parent: name, max: 140)
+            try validate(emailSubject, name:"emailSubject", parent: name, min: 1)
+            try validate(emailSubject, name:"emailSubject", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
+            try validate(sMSMessage, name:"sMSMessage", parent: name, max: 140)
+            try validate(sMSMessage, name:"sMSMessage", parent: name, min: 6)
+            try validate(sMSMessage, name:"sMSMessage", parent: name, pattern: ".*\\{####\\}.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5573,12 +5270,6 @@ extension CognitoIdentityProvider {
         public init(deviceGroupKey: String? = nil, deviceKey: String? = nil) {
             self.deviceGroupKey = deviceGroupKey
             self.deviceKey = deviceKey
-        }
-
-        public func validate() throws {
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5619,13 +5310,13 @@ extension CognitoIdentityProvider {
             self.sourceArn = sourceArn
         }
 
-        public func validate() throws {
-            try blockEmail?.validate()
-            try mfaEmail?.validate()
-            try noActionEmail?.validate()
-            try validate(sourceArn, name:"sourceArn", max: 2048)
-            try validate(sourceArn, name:"sourceArn", min: 20)
-            try validate(sourceArn, name:"sourceArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try blockEmail?.validate(name: "\(name).blockEmail")
+            try mfaEmail?.validate(name: "\(name).mfaEmail")
+            try noActionEmail?.validate(name: "\(name).noActionEmail")
+            try validate(sourceArn, name:"sourceArn", parent: name, max: 2048)
+            try validate(sourceArn, name:"sourceArn", parent: name, min: 20)
+            try validate(sourceArn, name:"sourceArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5658,16 +5349,16 @@ extension CognitoIdentityProvider {
             self.textBody = textBody
         }
 
-        public func validate() throws {
-            try validate(htmlBody, name:"htmlBody", max: 20000)
-            try validate(htmlBody, name:"htmlBody", min: 6)
-            try validate(htmlBody, name:"htmlBody", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]+")
-            try validate(subject, name:"subject", max: 140)
-            try validate(subject, name:"subject", min: 1)
-            try validate(subject, name:"subject", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
-            try validate(textBody, name:"textBody", max: 20000)
-            try validate(textBody, name:"textBody", min: 6)
-            try validate(textBody, name:"textBody", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]+")
+        public func validate(name: String) throws {
+            try validate(htmlBody, name:"htmlBody", parent: name, max: 20000)
+            try validate(htmlBody, name:"htmlBody", parent: name, min: 6)
+            try validate(htmlBody, name:"htmlBody", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]+")
+            try validate(subject, name:"subject", parent: name, max: 140)
+            try validate(subject, name:"subject", parent: name, min: 1)
+            try validate(subject, name:"subject", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
+            try validate(textBody, name:"textBody", parent: name, max: 20000)
+            try validate(textBody, name:"textBody", parent: name, min: 6)
+            try validate(textBody, name:"textBody", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5717,7 +5408,7 @@ extension CognitoIdentityProvider {
         ]
 
         /// The minimum length of the password policy that you have set. Cannot be less than 6.
-        public let minimumLength: Int32?
+        public let minimumLength: Int?
         /// In the password policy that you have set, refers to whether you have required users to use at least one lowercase letter in their password.
         public let requireLowercase: Bool?
         /// In the password policy that you have set, refers to whether you have required users to use at least one number in their password.
@@ -5726,9 +5417,9 @@ extension CognitoIdentityProvider {
         public let requireSymbols: Bool?
         /// In the password policy that you have set, refers to whether you have required users to use at least one uppercase letter in their password.
         public let requireUppercase: Bool?
-        public let temporaryPasswordValidityDays: Int32?
+        public let temporaryPasswordValidityDays: Int?
 
-        public init(minimumLength: Int32? = nil, requireLowercase: Bool? = nil, requireNumbers: Bool? = nil, requireSymbols: Bool? = nil, requireUppercase: Bool? = nil, temporaryPasswordValidityDays: Int32? = nil) {
+        public init(minimumLength: Int? = nil, requireLowercase: Bool? = nil, requireNumbers: Bool? = nil, requireSymbols: Bool? = nil, requireUppercase: Bool? = nil, temporaryPasswordValidityDays: Int? = nil) {
             self.minimumLength = minimumLength
             self.requireLowercase = requireLowercase
             self.requireNumbers = requireNumbers
@@ -5737,11 +5428,11 @@ extension CognitoIdentityProvider {
             self.temporaryPasswordValidityDays = temporaryPasswordValidityDays
         }
 
-        public func validate() throws {
-            try validate(minimumLength, name:"minimumLength", max: 99)
-            try validate(minimumLength, name:"minimumLength", min: 6)
-            try validate(temporaryPasswordValidityDays, name:"temporaryPasswordValidityDays", max: 365)
-            try validate(temporaryPasswordValidityDays, name:"temporaryPasswordValidityDays", min: 0)
+        public func validate(name: String) throws {
+            try validate(minimumLength, name:"minimumLength", parent: name, max: 99)
+            try validate(minimumLength, name:"minimumLength", parent: name, min: 6)
+            try validate(temporaryPasswordValidityDays, name:"temporaryPasswordValidityDays", parent: name, max: 365)
+            try validate(temporaryPasswordValidityDays, name:"temporaryPasswordValidityDays", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5778,12 +5469,6 @@ extension CognitoIdentityProvider {
             self.providerType = providerType
         }
 
-        public func validate() throws {
-            try validate(providerName, name:"providerName", max: 32)
-            try validate(providerName, name:"providerName", min: 1)
-            try validate(providerName, name:"providerName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case creationDate = "CreationDate"
             case lastModifiedDate = "LastModifiedDate"
@@ -5812,10 +5497,10 @@ extension CognitoIdentityProvider {
             self.providerName = providerName
         }
 
-        public func validate() throws {
-            try validate(providerName, name:"providerName", max: 32)
-            try validate(providerName, name:"providerName", min: 1)
-            try validate(providerName, name:"providerName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(providerName, name:"providerName", parent: name, max: 32)
+            try validate(providerName, name:"providerName", parent: name, min: 1)
+            try validate(providerName, name:"providerName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5853,16 +5538,16 @@ extension CognitoIdentityProvider {
             self.username = username
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(secretHash, name:"secretHash", max: 128)
-            try validate(secretHash, name:"secretHash", min: 1)
-            try validate(secretHash, name:"secretHash", pattern: "[\\w+=/]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(secretHash, name:"secretHash", parent: name, max: 128)
+            try validate(secretHash, name:"secretHash", parent: name, min: 1)
+            try validate(secretHash, name:"secretHash", parent: name, pattern: "[\\w+=/]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5886,10 +5571,6 @@ extension CognitoIdentityProvider {
             self.codeDeliveryDetails = codeDeliveryDetails
         }
 
-        public func validate() throws {
-            try codeDeliveryDetails?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case codeDeliveryDetails = "CodeDeliveryDetails"
         }
@@ -5911,12 +5592,12 @@ extension CognitoIdentityProvider {
             self.scopeName = scopeName
         }
 
-        public func validate() throws {
-            try validate(scopeDescription, name:"scopeDescription", max: 256)
-            try validate(scopeDescription, name:"scopeDescription", min: 1)
-            try validate(scopeName, name:"scopeName", max: 256)
-            try validate(scopeName, name:"scopeName", min: 1)
-            try validate(scopeName, name:"scopeName", pattern: "[\\x21\\x23-\\x2E\\x30-\\x5B\\x5D-\\x7E]+")
+        public func validate(name: String) throws {
+            try validate(scopeDescription, name:"scopeDescription", parent: name, max: 256)
+            try validate(scopeDescription, name:"scopeDescription", parent: name, min: 1)
+            try validate(scopeName, name:"scopeName", parent: name, max: 256)
+            try validate(scopeName, name:"scopeName", parent: name, min: 1)
+            try validate(scopeName, name:"scopeName", parent: name, pattern: "[\\x21\\x23-\\x2E\\x30-\\x5B\\x5D-\\x7E]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5947,22 +5628,6 @@ extension CognitoIdentityProvider {
             self.name = name
             self.scopes = scopes
             self.userPoolId = userPoolId
-        }
-
-        public func validate() throws {
-            try validate(identifier, name:"identifier", max: 256)
-            try validate(identifier, name:"identifier", min: 1)
-            try validate(identifier, name:"identifier", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\w\\s+=,.@-]+")
-            try scopes?.forEach {
-                try $0.validate()
-            }
-            try validate(scopes, name:"scopes", max: 25)
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6005,12 +5670,12 @@ extension CognitoIdentityProvider {
             self.userContextData = userContextData
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(session, name:"session", parent: name, max: 2048)
+            try validate(session, name:"session", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6045,12 +5710,6 @@ extension CognitoIdentityProvider {
             self.challengeName = challengeName
             self.challengeParameters = challengeParameters
             self.session = session
-        }
-
-        public func validate() throws {
-            try authenticationResult?.validate()
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6093,17 +5752,6 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try accountTakeoverRiskConfiguration?.validate()
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try riskExceptionConfiguration?.validate()
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accountTakeoverRiskConfiguration = "AccountTakeoverRiskConfiguration"
             case clientId = "ClientId"
@@ -6137,9 +5785,9 @@ extension CognitoIdentityProvider {
             self.skippedIPRangeList = skippedIPRangeList
         }
 
-        public func validate() throws {
-            try validate(blockedIPRangeList, name:"blockedIPRangeList", max: 20)
-            try validate(skippedIPRangeList, name:"skippedIPRangeList", max: 20)
+        public func validate(name: String) throws {
+            try validate(blockedIPRangeList, name:"blockedIPRangeList", parent: name, max: 20)
+            try validate(skippedIPRangeList, name:"skippedIPRangeList", parent: name, max: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6213,10 +5861,10 @@ extension CognitoIdentityProvider {
             self.stringAttributeConstraints = stringAttributeConstraints
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 20)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 20)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6258,15 +5906,15 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try accountTakeoverRiskConfiguration?.validate()
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try riskExceptionConfiguration?.validate()
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try accountTakeoverRiskConfiguration?.validate(name: "\(name).accountTakeoverRiskConfiguration")
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try riskExceptionConfiguration?.validate(name: "\(name).riskExceptionConfiguration")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6288,10 +5936,6 @@ extension CognitoIdentityProvider {
 
         public init(riskConfiguration: RiskConfigurationType) {
             self.riskConfiguration = riskConfiguration
-        }
-
-        public func validate() throws {
-            try riskConfiguration.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6323,13 +5967,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6350,10 +5994,6 @@ extension CognitoIdentityProvider {
 
         public init(uICustomization: UICustomizationType) {
             self.uICustomization = uICustomization
-        }
-
-        public func validate() throws {
-            try uICustomization.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6381,8 +6021,8 @@ extension CognitoIdentityProvider {
             self.softwareTokenMfaSettings = softwareTokenMfaSettings
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6424,11 +6064,11 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try smsMfaConfiguration?.validate()
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try smsMfaConfiguration?.validate(name: "\(name).smsMfaConfiguration")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6459,10 +6099,6 @@ extension CognitoIdentityProvider {
             self.softwareTokenMfaConfiguration = softwareTokenMfaConfiguration
         }
 
-        public func validate() throws {
-            try smsMfaConfiguration?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case mfaConfiguration = "MfaConfiguration"
             case smsMfaConfiguration = "SmsMfaConfiguration"
@@ -6486,10 +6122,10 @@ extension CognitoIdentityProvider {
             self.mFAOptions = mFAOptions
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
             try mFAOptions.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).mFAOptions[]")
             }
         }
 
@@ -6547,24 +6183,24 @@ extension CognitoIdentityProvider {
             self.validationData = validationData
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(password, name:"password", max: 256)
-            try validate(password, name:"password", min: 6)
-            try validate(password, name:"password", pattern: "[\\S]+")
-            try validate(secretHash, name:"secretHash", max: 128)
-            try validate(secretHash, name:"secretHash", min: 1)
-            try validate(secretHash, name:"secretHash", pattern: "[\\w+=/]+")
+        public func validate(name: String) throws {
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(password, name:"password", parent: name, max: 256)
+            try validate(password, name:"password", parent: name, min: 6)
+            try validate(password, name:"password", parent: name, pattern: "[\\S]+")
+            try validate(secretHash, name:"secretHash", parent: name, max: 128)
+            try validate(secretHash, name:"secretHash", parent: name, min: 1)
+            try validate(secretHash, name:"secretHash", parent: name, pattern: "[\\w+=/]+")
             try userAttributes?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).userAttributes[]")
             }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             try validationData?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).validationData[]")
             }
         }
 
@@ -6600,10 +6236,6 @@ extension CognitoIdentityProvider {
             self.userSub = userSub
         }
 
-        public func validate() throws {
-            try codeDeliveryDetails?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case codeDeliveryDetails = "CodeDeliveryDetails"
             case userConfirmed = "UserConfirmed"
@@ -6627,10 +6259,10 @@ extension CognitoIdentityProvider {
             self.snsCallerArn = snsCallerArn
         }
 
-        public func validate() throws {
-            try validate(snsCallerArn, name:"snsCallerArn", max: 2048)
-            try validate(snsCallerArn, name:"snsCallerArn", min: 20)
-            try validate(snsCallerArn, name:"snsCallerArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(snsCallerArn, name:"snsCallerArn", parent: name, max: 2048)
+            try validate(snsCallerArn, name:"snsCallerArn", parent: name, min: 20)
+            try validate(snsCallerArn, name:"snsCallerArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6655,11 +6287,11 @@ extension CognitoIdentityProvider {
             self.smsConfiguration = smsConfiguration
         }
 
-        public func validate() throws {
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", max: 140)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", min: 6)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", pattern: ".*\\{####\\}.*")
-            try smsConfiguration?.validate()
+        public func validate(name: String) throws {
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, max: 140)
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, min: 6)
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, pattern: ".*\\{####\\}.*")
+            try smsConfiguration?.validate(name: "\(name).smsConfiguration")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6723,13 +6355,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 55)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "import-[0-9a-zA-Z-]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 55)
+            try validate(jobId, name:"jobId", parent: name, min: 1)
+            try validate(jobId, name:"jobId", parent: name, pattern: "import-[0-9a-zA-Z-]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6748,10 +6380,6 @@ extension CognitoIdentityProvider {
 
         public init(userImportJob: UserImportJobType? = nil) {
             self.userImportJob = userImportJob
-        }
-
-        public func validate() throws {
-            try userImportJob?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6781,13 +6409,13 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 55)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "import-[0-9a-zA-Z-]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 55)
+            try validate(jobId, name:"jobId", parent: name, min: 1)
+            try validate(jobId, name:"jobId", parent: name, pattern: "import-[0-9a-zA-Z-]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6806,10 +6434,6 @@ extension CognitoIdentityProvider {
 
         public init(userImportJob: UserImportJobType? = nil) {
             self.userImportJob = userImportJob
-        }
-
-        public func validate() throws {
-            try userImportJob?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6855,10 +6479,16 @@ extension CognitoIdentityProvider {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 2048)
-            try validate(resourceArn, name:"resourceArn", min: 20)
-            try validate(resourceArn, name:"resourceArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 2048)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 20)
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try tags?.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, min: 0)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6911,15 +6541,6 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case clientId = "ClientId"
             case creationDate = "CreationDate"
@@ -6947,13 +6568,13 @@ extension CognitoIdentityProvider {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", max: 2048)
-            try validate(resourceArn, name:"resourceArn", min: 20)
-            try validate(resourceArn, name:"resourceArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, max: 2048)
+            try validate(resourceArn, name:"resourceArn", parent: name, min: 20)
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
             try tagKeys?.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
             }
         }
 
@@ -6999,17 +6620,17 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(eventId, name:"eventId", max: 50)
-            try validate(eventId, name:"eventId", min: 1)
-            try validate(eventId, name:"eventId", pattern: "[\\w+-]+")
-            try validate(feedbackToken, name:"feedbackToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(eventId, name:"eventId", parent: name, max: 50)
+            try validate(eventId, name:"eventId", parent: name, min: 1)
+            try validate(eventId, name:"eventId", parent: name, pattern: "[\\w+-]+")
+            try validate(feedbackToken, name:"feedbackToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(username, name:"username", parent: name, max: 128)
+            try validate(username, name:"username", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7049,11 +6670,11 @@ extension CognitoIdentityProvider {
             self.deviceRememberedStatus = deviceRememberedStatus
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(deviceKey, name:"deviceKey", max: 55)
-            try validate(deviceKey, name:"deviceKey", min: 1)
-            try validate(deviceKey, name:"deviceKey", pattern: "[\\w-]+_[0-9a-f-]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(deviceKey, name:"deviceKey", parent: name, max: 55)
+            try validate(deviceKey, name:"deviceKey", parent: name, min: 1)
+            try validate(deviceKey, name:"deviceKey", parent: name, pattern: "[\\w-]+_[0-9a-f-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7085,13 +6706,13 @@ extension CognitoIdentityProvider {
         /// The name of the group.
         public let groupName: String
         /// The new precedence value for the group. For more information about this parameter, see .
-        public let precedence: Int32?
+        public let precedence: Int?
         /// The new role ARN for the group. This is used for setting the cognito:roles and cognito:preferred_role claims in the token.
         public let roleArn: String?
         /// The user pool ID for the user pool.
         public let userPoolId: String
 
-        public init(description: String? = nil, groupName: String, precedence: Int32? = nil, roleArn: String? = nil, userPoolId: String) {
+        public init(description: String? = nil, groupName: String, precedence: Int? = nil, roleArn: String? = nil, userPoolId: String) {
             self.description = description
             self.groupName = groupName
             self.precedence = precedence
@@ -7099,18 +6720,18 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 2048)
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(precedence, name:"precedence", min: 0)
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 20)
-            try validate(roleArn, name:"roleArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 2048)
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(precedence, name:"precedence", parent: name, min: 0)
+            try validate(roleArn, name:"roleArn", parent: name, max: 2048)
+            try validate(roleArn, name:"roleArn", parent: name, min: 20)
+            try validate(roleArn, name:"roleArn", parent: name, pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7132,10 +6753,6 @@ extension CognitoIdentityProvider {
 
         public init(group: GroupType? = nil) {
             self.group = group
-        }
-
-        public func validate() throws {
-            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7171,20 +6788,24 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try idpIdentifiers?.forEach {
-                try validate($0, name:"idpIdentifiers[]", max: 40)
-                try validate($0, name:"idpIdentifiers[]", min: 1)
-                try validate($0, name:"idpIdentifiers[]", pattern: "[\\w\\s+=.@-]+")
+        public func validate(name: String) throws {
+            try attributeMapping?.forEach {
+                try validate($0.key, name:"attributeMapping.key", parent: name, max: 32)
+                try validate($0.key, name:"attributeMapping.key", parent: name, min: 1)
             }
-            try validate(idpIdentifiers, name:"idpIdentifiers", max: 50)
-            try validate(idpIdentifiers, name:"idpIdentifiers", min: 0)
-            try validate(providerName, name:"providerName", max: 32)
-            try validate(providerName, name:"providerName", min: 1)
-            try validate(providerName, name:"providerName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try idpIdentifiers?.forEach {
+                try validate($0, name: "idpIdentifiers[]", parent: name, max: 40)
+                try validate($0, name: "idpIdentifiers[]", parent: name, min: 1)
+                try validate($0, name: "idpIdentifiers[]", parent: name, pattern: "[\\w\\s+=.@-]+")
+            }
+            try validate(idpIdentifiers, name:"idpIdentifiers", parent: name, max: 50)
+            try validate(idpIdentifiers, name:"idpIdentifiers", parent: name, min: 0)
+            try validate(providerName, name:"providerName", parent: name, max: 32)
+            try validate(providerName, name:"providerName", parent: name, min: 1)
+            try validate(providerName, name:"providerName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7206,10 +6827,6 @@ extension CognitoIdentityProvider {
 
         public init(identityProvider: IdentityProviderType) {
             self.identityProvider = identityProvider
-        }
-
-        public func validate() throws {
-            try identityProvider.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7241,20 +6858,20 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(identifier, name:"identifier", max: 256)
-            try validate(identifier, name:"identifier", min: 1)
-            try validate(identifier, name:"identifier", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
-            try validate(name, name:"name", max: 256)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\w\\s+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(identifier, name:"identifier", parent: name, max: 256)
+            try validate(identifier, name:"identifier", parent: name, min: 1)
+            try validate(identifier, name:"identifier", parent: name, pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
+            try validate(name, name:"name", parent: name, max: 256)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[\\w\\s+=,.@-]+")
             try scopes?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).scopes[]")
             }
-            try validate(scopes, name:"scopes", max: 25)
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(scopes, name:"scopes", parent: name, max: 25)
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7275,10 +6892,6 @@ extension CognitoIdentityProvider {
 
         public init(resourceServer: ResourceServerType) {
             self.resourceServer = resourceServer
-        }
-
-        public func validate() throws {
-            try resourceServer.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7302,10 +6915,10 @@ extension CognitoIdentityProvider {
             self.userAttributes = userAttributes
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
             try userAttributes.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).userAttributes[]")
             }
         }
 
@@ -7325,12 +6938,6 @@ extension CognitoIdentityProvider {
 
         public init(codeDeliveryDetailsList: [CodeDeliveryDetailsType]? = nil) {
             self.codeDeliveryDetailsList = codeDeliveryDetailsList
-        }
-
-        public func validate() throws {
-            try codeDeliveryDetailsList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7380,7 +6987,7 @@ extension CognitoIdentityProvider {
         /// The read-only attributes of the user pool.
         public let readAttributes: [String]?
         /// The time limit, in days, after which the refresh token is no longer valid and cannot be used.
-        public let refreshTokenValidity: Int32?
+        public let refreshTokenValidity: Int?
         /// A list of provider names for the identity providers that are supported on this client.
         public let supportedIdentityProviders: [String]?
         /// The user pool ID for the user pool where you want to update the user pool client.
@@ -7388,7 +6995,7 @@ extension CognitoIdentityProvider {
         /// The writeable attributes of the user pool.
         public let writeAttributes: [String]?
 
-        public init(allowedOAuthFlows: [OAuthFlowType]? = nil, allowedOAuthFlowsUserPoolClient: Bool? = nil, allowedOAuthScopes: [String]? = nil, analyticsConfiguration: AnalyticsConfigurationType? = nil, callbackURLs: [String]? = nil, clientId: String, clientName: String? = nil, defaultRedirectURI: String? = nil, explicitAuthFlows: [ExplicitAuthFlowsType]? = nil, logoutURLs: [String]? = nil, readAttributes: [String]? = nil, refreshTokenValidity: Int32? = nil, supportedIdentityProviders: [String]? = nil, userPoolId: String, writeAttributes: [String]? = nil) {
+        public init(allowedOAuthFlows: [OAuthFlowType]? = nil, allowedOAuthFlowsUserPoolClient: Bool? = nil, allowedOAuthScopes: [String]? = nil, analyticsConfiguration: AnalyticsConfigurationType? = nil, callbackURLs: [String]? = nil, clientId: String, clientName: String? = nil, defaultRedirectURI: String? = nil, explicitAuthFlows: [ExplicitAuthFlowsType]? = nil, logoutURLs: [String]? = nil, readAttributes: [String]? = nil, refreshTokenValidity: Int? = nil, supportedIdentityProviders: [String]? = nil, userPoolId: String, writeAttributes: [String]? = nil) {
             self.allowedOAuthFlows = allowedOAuthFlows
             self.allowedOAuthFlowsUserPoolClient = allowedOAuthFlowsUserPoolClient
             self.allowedOAuthScopes = allowedOAuthScopes
@@ -7406,56 +7013,56 @@ extension CognitoIdentityProvider {
             self.writeAttributes = writeAttributes
         }
 
-        public func validate() throws {
-            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", max: 3)
-            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", min: 0)
+        public func validate(name: String) throws {
+            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", parent: name, max: 3)
+            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", parent: name, min: 0)
             try allowedOAuthScopes?.forEach {
-                try validate($0, name:"allowedOAuthScopes[]", max: 256)
-                try validate($0, name:"allowedOAuthScopes[]", min: 1)
-                try validate($0, name:"allowedOAuthScopes[]", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
+                try validate($0, name: "allowedOAuthScopes[]", parent: name, max: 256)
+                try validate($0, name: "allowedOAuthScopes[]", parent: name, min: 1)
+                try validate($0, name: "allowedOAuthScopes[]", parent: name, pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
             }
-            try validate(allowedOAuthScopes, name:"allowedOAuthScopes", max: 25)
-            try analyticsConfiguration?.validate()
+            try validate(allowedOAuthScopes, name:"allowedOAuthScopes", parent: name, max: 25)
+            try analyticsConfiguration?.validate(name: "\(name).analyticsConfiguration")
             try callbackURLs?.forEach {
-                try validate($0, name:"callbackURLs[]", max: 1024)
-                try validate($0, name:"callbackURLs[]", min: 1)
-                try validate($0, name:"callbackURLs[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "callbackURLs[]", parent: name, max: 1024)
+                try validate($0, name: "callbackURLs[]", parent: name, min: 1)
+                try validate($0, name: "callbackURLs[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(callbackURLs, name:"callbackURLs", max: 100)
-            try validate(callbackURLs, name:"callbackURLs", min: 0)
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(clientName, name:"clientName", max: 128)
-            try validate(clientName, name:"clientName", min: 1)
-            try validate(clientName, name:"clientName", pattern: "[\\w\\s+=,.@-]+")
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", max: 1024)
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", min: 1)
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(callbackURLs, name:"callbackURLs", parent: name, max: 100)
+            try validate(callbackURLs, name:"callbackURLs", parent: name, min: 0)
+            try validate(clientId, name:"clientId", parent: name, max: 128)
+            try validate(clientId, name:"clientId", parent: name, min: 1)
+            try validate(clientId, name:"clientId", parent: name, pattern: "[\\w+]+")
+            try validate(clientName, name:"clientName", parent: name, max: 128)
+            try validate(clientName, name:"clientName", parent: name, min: 1)
+            try validate(clientName, name:"clientName", parent: name, pattern: "[\\w\\s+=,.@-]+")
+            try validate(defaultRedirectURI, name:"defaultRedirectURI", parent: name, max: 1024)
+            try validate(defaultRedirectURI, name:"defaultRedirectURI", parent: name, min: 1)
+            try validate(defaultRedirectURI, name:"defaultRedirectURI", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             try logoutURLs?.forEach {
-                try validate($0, name:"logoutURLs[]", max: 1024)
-                try validate($0, name:"logoutURLs[]", min: 1)
-                try validate($0, name:"logoutURLs[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "logoutURLs[]", parent: name, max: 1024)
+                try validate($0, name: "logoutURLs[]", parent: name, min: 1)
+                try validate($0, name: "logoutURLs[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(logoutURLs, name:"logoutURLs", max: 100)
-            try validate(logoutURLs, name:"logoutURLs", min: 0)
+            try validate(logoutURLs, name:"logoutURLs", parent: name, max: 100)
+            try validate(logoutURLs, name:"logoutURLs", parent: name, min: 0)
             try readAttributes?.forEach {
-                try validate($0, name:"readAttributes[]", max: 2048)
-                try validate($0, name:"readAttributes[]", min: 1)
+                try validate($0, name: "readAttributes[]", parent: name, max: 2048)
+                try validate($0, name: "readAttributes[]", parent: name, min: 1)
             }
-            try validate(refreshTokenValidity, name:"refreshTokenValidity", max: 3650)
-            try validate(refreshTokenValidity, name:"refreshTokenValidity", min: 0)
+            try validate(refreshTokenValidity, name:"refreshTokenValidity", parent: name, max: 3650)
+            try validate(refreshTokenValidity, name:"refreshTokenValidity", parent: name, min: 0)
             try supportedIdentityProviders?.forEach {
-                try validate($0, name:"supportedIdentityProviders[]", max: 32)
-                try validate($0, name:"supportedIdentityProviders[]", min: 1)
-                try validate($0, name:"supportedIdentityProviders[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+                try validate($0, name: "supportedIdentityProviders[]", parent: name, max: 32)
+                try validate($0, name: "supportedIdentityProviders[]", parent: name, min: 1)
+                try validate($0, name: "supportedIdentityProviders[]", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
             }
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
             try writeAttributes?.forEach {
-                try validate($0, name:"writeAttributes[]", max: 2048)
-                try validate($0, name:"writeAttributes[]", min: 1)
+                try validate($0, name: "writeAttributes[]", parent: name, max: 2048)
+                try validate($0, name: "writeAttributes[]", parent: name, min: 1)
             }
         }
 
@@ -7490,10 +7097,6 @@ extension CognitoIdentityProvider {
             self.userPoolClient = userPoolClient
         }
 
-        public func validate() throws {
-            try userPoolClient?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case userPoolClient = "UserPoolClient"
         }
@@ -7519,14 +7122,14 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try customDomainConfig.validate()
-            try validate(domain, name:"domain", max: 63)
-            try validate(domain, name:"domain", min: 1)
-            try validate(domain, name:"domain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
+        public func validate(name: String) throws {
+            try customDomainConfig.validate(name: "\(name).customDomainConfig")
+            try validate(domain, name:"domain", parent: name, max: 63)
+            try validate(domain, name:"domain", parent: name, min: 1)
+            try validate(domain, name:"domain", parent: name, pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7546,12 +7149,6 @@ extension CognitoIdentityProvider {
 
         public init(cloudFrontDomain: String? = nil) {
             self.cloudFrontDomain = cloudFrontDomain
-        }
-
-        public func validate() throws {
-            try validate(cloudFrontDomain, name:"cloudFrontDomain", max: 63)
-            try validate(cloudFrontDomain, name:"cloudFrontDomain", min: 1)
-            try validate(cloudFrontDomain, name:"cloudFrontDomain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7631,28 +7228,34 @@ extension CognitoIdentityProvider {
             self.verificationMessageTemplate = verificationMessageTemplate
         }
 
-        public func validate() throws {
-            try adminCreateUserConfig?.validate()
-            try emailConfiguration?.validate()
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", max: 20000)
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", min: 6)
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", max: 140)
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", min: 1)
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
-            try lambdaConfig?.validate()
-            try policies?.validate()
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", max: 140)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", min: 6)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", pattern: ".*\\{####\\}.*")
-            try smsConfiguration?.validate()
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", max: 140)
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", min: 6)
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", pattern: ".*\\{####\\}.*")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-            try verificationMessageTemplate?.validate()
+        public func validate(name: String) throws {
+            try adminCreateUserConfig?.validate(name: "\(name).adminCreateUserConfig")
+            try emailConfiguration?.validate(name: "\(name).emailConfiguration")
+            try validate(emailVerificationMessage, name:"emailVerificationMessage", parent: name, max: 20000)
+            try validate(emailVerificationMessage, name:"emailVerificationMessage", parent: name, min: 6)
+            try validate(emailVerificationMessage, name:"emailVerificationMessage", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
+            try validate(emailVerificationSubject, name:"emailVerificationSubject", parent: name, max: 140)
+            try validate(emailVerificationSubject, name:"emailVerificationSubject", parent: name, min: 1)
+            try validate(emailVerificationSubject, name:"emailVerificationSubject", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
+            try lambdaConfig?.validate(name: "\(name).lambdaConfig")
+            try policies?.validate(name: "\(name).policies")
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, max: 140)
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, min: 6)
+            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", parent: name, pattern: ".*\\{####\\}.*")
+            try smsConfiguration?.validate(name: "\(name).smsConfiguration")
+            try validate(smsVerificationMessage, name:"smsVerificationMessage", parent: name, max: 140)
+            try validate(smsVerificationMessage, name:"smsVerificationMessage", parent: name, min: 6)
+            try validate(smsVerificationMessage, name:"smsVerificationMessage", parent: name, pattern: ".*\\{####\\}.*")
+            try validate(userPoolId, name:"userPoolId", parent: name, max: 55)
+            try validate(userPoolId, name:"userPoolId", parent: name, min: 1)
+            try validate(userPoolId, name:"userPoolId", parent: name, pattern: "[\\w-]+_[0-9a-zA-Z]+")
+            try userPoolTags?.forEach {
+                try validate($0.key, name:"userPoolTags.key", parent: name, max: 128)
+                try validate($0.key, name:"userPoolTags.key", parent: name, min: 1)
+                try validate($0.value, name:"userPoolTags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"userPoolTags[\"\($0.key)\"]", parent: name, min: 0)
+            }
+            try verificationMessageTemplate?.validate(name: "\(name).verificationMessageTemplate")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7772,26 +7375,6 @@ extension CognitoIdentityProvider {
             self.userPoolId = userPoolId
         }
 
-        public func validate() throws {
-            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", max: 2048)
-            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", min: 20)
-            try validate(cloudWatchLogsRoleArn, name:"cloudWatchLogsRoleArn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(completionMessage, name:"completionMessage", max: 128)
-            try validate(completionMessage, name:"completionMessage", min: 1)
-            try validate(completionMessage, name:"completionMessage", pattern: "[\\w]+")
-            try validate(jobId, name:"jobId", max: 55)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "import-[0-9a-zA-Z-]+")
-            try validate(jobName, name:"jobName", max: 128)
-            try validate(jobName, name:"jobName", min: 1)
-            try validate(jobName, name:"jobName", pattern: "[\\w\\s+=,.@-]+")
-            try validate(preSignedUrl, name:"preSignedUrl", max: 2048)
-            try validate(preSignedUrl, name:"preSignedUrl", min: 0)
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cloudWatchLogsRoleArn = "CloudWatchLogsRoleArn"
             case completionDate = "CompletionDate"
@@ -7844,18 +7427,6 @@ extension CognitoIdentityProvider {
             self.clientId = clientId
             self.clientName = clientName
             self.userPoolId = userPoolId
-        }
-
-        public func validate() throws {
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(clientName, name:"clientName", max: 128)
-            try validate(clientName, name:"clientName", min: 1)
-            try validate(clientName, name:"clientName", pattern: "[\\w\\s+=,.@-]+")
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7916,7 +7487,7 @@ extension CognitoIdentityProvider {
         /// The Read-only attributes.
         public let readAttributes: [String]?
         /// The time limit, in days, after which the refresh token is no longer valid and cannot be used.
-        public let refreshTokenValidity: Int32?
+        public let refreshTokenValidity: Int?
         /// A list of provider names for the identity providers that are supported on this client.
         public let supportedIdentityProviders: [String]?
         /// The user pool ID for the user pool client.
@@ -7924,7 +7495,7 @@ extension CognitoIdentityProvider {
         /// The writeable attributes.
         public let writeAttributes: [String]?
 
-        public init(allowedOAuthFlows: [OAuthFlowType]? = nil, allowedOAuthFlowsUserPoolClient: Bool? = nil, allowedOAuthScopes: [String]? = nil, analyticsConfiguration: AnalyticsConfigurationType? = nil, callbackURLs: [String]? = nil, clientId: String? = nil, clientName: String? = nil, clientSecret: String? = nil, creationDate: TimeStamp? = nil, defaultRedirectURI: String? = nil, explicitAuthFlows: [ExplicitAuthFlowsType]? = nil, lastModifiedDate: TimeStamp? = nil, logoutURLs: [String]? = nil, readAttributes: [String]? = nil, refreshTokenValidity: Int32? = nil, supportedIdentityProviders: [String]? = nil, userPoolId: String? = nil, writeAttributes: [String]? = nil) {
+        public init(allowedOAuthFlows: [OAuthFlowType]? = nil, allowedOAuthFlowsUserPoolClient: Bool? = nil, allowedOAuthScopes: [String]? = nil, analyticsConfiguration: AnalyticsConfigurationType? = nil, callbackURLs: [String]? = nil, clientId: String? = nil, clientName: String? = nil, clientSecret: String? = nil, creationDate: TimeStamp? = nil, defaultRedirectURI: String? = nil, explicitAuthFlows: [ExplicitAuthFlowsType]? = nil, lastModifiedDate: TimeStamp? = nil, logoutURLs: [String]? = nil, readAttributes: [String]? = nil, refreshTokenValidity: Int? = nil, supportedIdentityProviders: [String]? = nil, userPoolId: String? = nil, writeAttributes: [String]? = nil) {
             self.allowedOAuthFlows = allowedOAuthFlows
             self.allowedOAuthFlowsUserPoolClient = allowedOAuthFlowsUserPoolClient
             self.allowedOAuthScopes = allowedOAuthScopes
@@ -7943,62 +7514,6 @@ extension CognitoIdentityProvider {
             self.supportedIdentityProviders = supportedIdentityProviders
             self.userPoolId = userPoolId
             self.writeAttributes = writeAttributes
-        }
-
-        public func validate() throws {
-            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", max: 3)
-            try validate(allowedOAuthFlows, name:"allowedOAuthFlows", min: 0)
-            try allowedOAuthScopes?.forEach {
-                try validate($0, name:"allowedOAuthScopes[]", max: 256)
-                try validate($0, name:"allowedOAuthScopes[]", min: 1)
-                try validate($0, name:"allowedOAuthScopes[]", pattern: "[\\x21\\x23-\\x5B\\x5D-\\x7E]+")
-            }
-            try validate(allowedOAuthScopes, name:"allowedOAuthScopes", max: 25)
-            try analyticsConfiguration?.validate()
-            try callbackURLs?.forEach {
-                try validate($0, name:"callbackURLs[]", max: 1024)
-                try validate($0, name:"callbackURLs[]", min: 1)
-                try validate($0, name:"callbackURLs[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            }
-            try validate(callbackURLs, name:"callbackURLs", max: 100)
-            try validate(callbackURLs, name:"callbackURLs", min: 0)
-            try validate(clientId, name:"clientId", max: 128)
-            try validate(clientId, name:"clientId", min: 1)
-            try validate(clientId, name:"clientId", pattern: "[\\w+]+")
-            try validate(clientName, name:"clientName", max: 128)
-            try validate(clientName, name:"clientName", min: 1)
-            try validate(clientName, name:"clientName", pattern: "[\\w\\s+=,.@-]+")
-            try validate(clientSecret, name:"clientSecret", max: 64)
-            try validate(clientSecret, name:"clientSecret", min: 1)
-            try validate(clientSecret, name:"clientSecret", pattern: "[\\w+]+")
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", max: 1024)
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", min: 1)
-            try validate(defaultRedirectURI, name:"defaultRedirectURI", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try logoutURLs?.forEach {
-                try validate($0, name:"logoutURLs[]", max: 1024)
-                try validate($0, name:"logoutURLs[]", min: 1)
-                try validate($0, name:"logoutURLs[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            }
-            try validate(logoutURLs, name:"logoutURLs", max: 100)
-            try validate(logoutURLs, name:"logoutURLs", min: 0)
-            try readAttributes?.forEach {
-                try validate($0, name:"readAttributes[]", max: 2048)
-                try validate($0, name:"readAttributes[]", min: 1)
-            }
-            try validate(refreshTokenValidity, name:"refreshTokenValidity", max: 3650)
-            try validate(refreshTokenValidity, name:"refreshTokenValidity", min: 0)
-            try supportedIdentityProviders?.forEach {
-                try validate($0, name:"supportedIdentityProviders[]", max: 32)
-                try validate($0, name:"supportedIdentityProviders[]", min: 1)
-                try validate($0, name:"supportedIdentityProviders[]", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            }
-            try validate(userPoolId, name:"userPoolId", max: 55)
-            try validate(userPoolId, name:"userPoolId", min: 1)
-            try validate(userPoolId, name:"userPoolId", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-            try writeAttributes?.forEach {
-                try validate($0, name:"writeAttributes[]", max: 2048)
-                try validate($0, name:"writeAttributes[]", min: 1)
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8055,16 +7570,6 @@ extension CognitoIdentityProvider {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 55)
-            try validate(id, name:"id", min: 1)
-            try validate(id, name:"id", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-            try lambdaConfig?.validate()
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\w\\s+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case creationDate = "CreationDate"
             case id = "Id"
@@ -8094,8 +7599,8 @@ extension CognitoIdentityProvider {
             self.passwordPolicy = passwordPolicy
         }
 
-        public func validate() throws {
-            try passwordPolicy?.validate()
+        public func validate(name: String) throws {
+            try passwordPolicy?.validate(name: "\(name).passwordPolicy")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8161,7 +7666,7 @@ extension CognitoIdentityProvider {
         /// The subject of the email verification message.
         public let emailVerificationSubject: String?
         /// A number estimating the size of the user pool.
-        public let estimatedNumberOfUsers: Int32?
+        public let estimatedNumberOfUsers: Int?
         /// The ID of the user pool.
         public let id: String?
         /// The AWS Lambda triggers associated with the user pool.
@@ -8195,7 +7700,7 @@ extension CognitoIdentityProvider {
         /// The template for verification messages.
         public let verificationMessageTemplate: VerificationMessageTemplateType?
 
-        public init(adminCreateUserConfig: AdminCreateUserConfigType? = nil, aliasAttributes: [AliasAttributeType]? = nil, arn: String? = nil, autoVerifiedAttributes: [VerifiedAttributeType]? = nil, creationDate: TimeStamp? = nil, customDomain: String? = nil, deviceConfiguration: DeviceConfigurationType? = nil, domain: String? = nil, emailConfiguration: EmailConfigurationType? = nil, emailConfigurationFailure: String? = nil, emailVerificationMessage: String? = nil, emailVerificationSubject: String? = nil, estimatedNumberOfUsers: Int32? = nil, id: String? = nil, lambdaConfig: LambdaConfigType? = nil, lastModifiedDate: TimeStamp? = nil, mfaConfiguration: UserPoolMfaType? = nil, name: String? = nil, policies: UserPoolPolicyType? = nil, schemaAttributes: [SchemaAttributeType]? = nil, smsAuthenticationMessage: String? = nil, smsConfiguration: SmsConfigurationType? = nil, smsConfigurationFailure: String? = nil, smsVerificationMessage: String? = nil, status: StatusType? = nil, usernameAttributes: [UsernameAttributeType]? = nil, userPoolAddOns: UserPoolAddOnsType? = nil, userPoolTags: [String: String]? = nil, verificationMessageTemplate: VerificationMessageTemplateType? = nil) {
+        public init(adminCreateUserConfig: AdminCreateUserConfigType? = nil, aliasAttributes: [AliasAttributeType]? = nil, arn: String? = nil, autoVerifiedAttributes: [VerifiedAttributeType]? = nil, creationDate: TimeStamp? = nil, customDomain: String? = nil, deviceConfiguration: DeviceConfigurationType? = nil, domain: String? = nil, emailConfiguration: EmailConfigurationType? = nil, emailConfigurationFailure: String? = nil, emailVerificationMessage: String? = nil, emailVerificationSubject: String? = nil, estimatedNumberOfUsers: Int? = nil, id: String? = nil, lambdaConfig: LambdaConfigType? = nil, lastModifiedDate: TimeStamp? = nil, mfaConfiguration: UserPoolMfaType? = nil, name: String? = nil, policies: UserPoolPolicyType? = nil, schemaAttributes: [SchemaAttributeType]? = nil, smsAuthenticationMessage: String? = nil, smsConfiguration: SmsConfigurationType? = nil, smsConfigurationFailure: String? = nil, smsVerificationMessage: String? = nil, status: StatusType? = nil, usernameAttributes: [UsernameAttributeType]? = nil, userPoolAddOns: UserPoolAddOnsType? = nil, userPoolTags: [String: String]? = nil, verificationMessageTemplate: VerificationMessageTemplateType? = nil) {
             self.adminCreateUserConfig = adminCreateUserConfig
             self.aliasAttributes = aliasAttributes
             self.arn = arn
@@ -8225,47 +7730,6 @@ extension CognitoIdentityProvider {
             self.userPoolAddOns = userPoolAddOns
             self.userPoolTags = userPoolTags
             self.verificationMessageTemplate = verificationMessageTemplate
-        }
-
-        public func validate() throws {
-            try adminCreateUserConfig?.validate()
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(arn, name:"arn", pattern: "arn:[\\w+=/,.@-]+:[\\w+=/,.@-]+:([\\w+=/,.@-]*)?:[0-9]+:[\\w+=/,.@-]+(:[\\w+=/,.@-]+)?(:[\\w+=/,.@-]+)?")
-            try validate(customDomain, name:"customDomain", max: 63)
-            try validate(customDomain, name:"customDomain", min: 1)
-            try validate(customDomain, name:"customDomain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
-            try validate(domain, name:"domain", max: 63)
-            try validate(domain, name:"domain", min: 1)
-            try validate(domain, name:"domain", pattern: "^[a-z0-9](?:[a-z0-9\\-]{0,61}[a-z0-9])?$")
-            try emailConfiguration?.validate()
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", max: 20000)
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", min: 6)
-            try validate(emailVerificationMessage, name:"emailVerificationMessage", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", max: 140)
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", min: 1)
-            try validate(emailVerificationSubject, name:"emailVerificationSubject", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
-            try validate(id, name:"id", max: 55)
-            try validate(id, name:"id", min: 1)
-            try validate(id, name:"id", pattern: "[\\w-]+_[0-9a-zA-Z]+")
-            try lambdaConfig?.validate()
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\w\\s+=,.@-]+")
-            try policies?.validate()
-            try schemaAttributes?.forEach {
-                try $0.validate()
-            }
-            try validate(schemaAttributes, name:"schemaAttributes", max: 50)
-            try validate(schemaAttributes, name:"schemaAttributes", min: 1)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", max: 140)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", min: 6)
-            try validate(smsAuthenticationMessage, name:"smsAuthenticationMessage", pattern: ".*\\{####\\}.*")
-            try smsConfiguration?.validate()
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", max: 140)
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", min: 6)
-            try validate(smsVerificationMessage, name:"smsVerificationMessage", pattern: ".*\\{####\\}.*")
-            try verificationMessageTemplate?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8348,18 +7812,6 @@ extension CognitoIdentityProvider {
             self.userStatus = userStatus
         }
 
-        public func validate() throws {
-            try attributes?.forEach {
-                try $0.validate()
-            }
-            try mFAOptions?.forEach {
-                try $0.validate()
-            }
-            try validate(username, name:"username", max: 128)
-            try validate(username, name:"username", min: 1)
-            try validate(username, name:"username", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attributes = "Attributes"
             case enabled = "Enabled"
@@ -8409,22 +7861,22 @@ extension CognitoIdentityProvider {
             self.smsMessage = smsMessage
         }
 
-        public func validate() throws {
-            try validate(emailMessage, name:"emailMessage", max: 20000)
-            try validate(emailMessage, name:"emailMessage", min: 6)
-            try validate(emailMessage, name:"emailMessage", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
-            try validate(emailMessageByLink, name:"emailMessageByLink", max: 20000)
-            try validate(emailMessageByLink, name:"emailMessageByLink", min: 6)
-            try validate(emailMessageByLink, name:"emailMessageByLink", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{##[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*##\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
-            try validate(emailSubject, name:"emailSubject", max: 140)
-            try validate(emailSubject, name:"emailSubject", min: 1)
-            try validate(emailSubject, name:"emailSubject", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
-            try validate(emailSubjectByLink, name:"emailSubjectByLink", max: 140)
-            try validate(emailSubjectByLink, name:"emailSubjectByLink", min: 1)
-            try validate(emailSubjectByLink, name:"emailSubjectByLink", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
-            try validate(smsMessage, name:"smsMessage", max: 140)
-            try validate(smsMessage, name:"smsMessage", min: 6)
-            try validate(smsMessage, name:"smsMessage", pattern: ".*\\{####\\}.*")
+        public func validate(name: String) throws {
+            try validate(emailMessage, name:"emailMessage", parent: name, max: 20000)
+            try validate(emailMessage, name:"emailMessage", parent: name, min: 6)
+            try validate(emailMessage, name:"emailMessage", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{####\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
+            try validate(emailMessageByLink, name:"emailMessageByLink", parent: name, max: 20000)
+            try validate(emailMessageByLink, name:"emailMessageByLink", parent: name, min: 6)
+            try validate(emailMessageByLink, name:"emailMessageByLink", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*\\{##[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*##\\}[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s*]*")
+            try validate(emailSubject, name:"emailSubject", parent: name, max: 140)
+            try validate(emailSubject, name:"emailSubject", parent: name, min: 1)
+            try validate(emailSubject, name:"emailSubject", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
+            try validate(emailSubjectByLink, name:"emailSubjectByLink", parent: name, max: 140)
+            try validate(emailSubjectByLink, name:"emailSubjectByLink", parent: name, min: 1)
+            try validate(emailSubjectByLink, name:"emailSubjectByLink", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}\\s]+")
+            try validate(smsMessage, name:"smsMessage", parent: name, max: 140)
+            try validate(smsMessage, name:"smsMessage", parent: name, min: 6)
+            try validate(smsMessage, name:"smsMessage", parent: name, pattern: ".*\\{####\\}.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8467,13 +7919,13 @@ extension CognitoIdentityProvider {
             self.userCode = userCode
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
-            try validate(userCode, name:"userCode", max: 6)
-            try validate(userCode, name:"userCode", min: 6)
-            try validate(userCode, name:"userCode", pattern: "[0-9]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(session, name:"session", parent: name, max: 2048)
+            try validate(session, name:"session", parent: name, min: 20)
+            try validate(userCode, name:"userCode", parent: name, max: 6)
+            try validate(userCode, name:"userCode", parent: name, min: 6)
+            try validate(userCode, name:"userCode", parent: name, pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8498,11 +7950,6 @@ extension CognitoIdentityProvider {
         public init(session: String? = nil, status: VerifySoftwareTokenResponseType? = nil) {
             self.session = session
             self.status = status
-        }
-
-        public func validate() throws {
-            try validate(session, name:"session", max: 2048)
-            try validate(session, name:"session", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8537,14 +7984,14 @@ extension CognitoIdentityProvider {
             self.code = code
         }
 
-        public func validate() throws {
-            try validate(accessToken, name:"accessToken", pattern: "[A-Za-z0-9-_=.]+")
-            try validate(attributeName, name:"attributeName", max: 32)
-            try validate(attributeName, name:"attributeName", min: 1)
-            try validate(attributeName, name:"attributeName", pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
-            try validate(code, name:"code", max: 2048)
-            try validate(code, name:"code", min: 1)
-            try validate(code, name:"code", pattern: "[\\S]+")
+        public func validate(name: String) throws {
+            try validate(accessToken, name:"accessToken", parent: name, pattern: "[A-Za-z0-9-_=.]+")
+            try validate(attributeName, name:"attributeName", parent: name, max: 32)
+            try validate(attributeName, name:"attributeName", parent: name, min: 1)
+            try validate(attributeName, name:"attributeName", parent: name, pattern: "[\\p{L}\\p{M}\\p{S}\\p{N}\\p{P}]+")
+            try validate(code, name:"code", parent: name, max: 2048)
+            try validate(code, name:"code", parent: name, min: 1)
+            try validate(code, name:"code", parent: name, pattern: "[\\S]+")
         }
 
         private enum CodingKeys: String, CodingKey {

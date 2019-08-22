@@ -68,19 +68,19 @@ extension MediaConnect {
         /// The type of key used for the encryption. If no keyType is provided, the service will use the default setting (static-key).
         public let encryption: Encryption?
         /// The maximum latency in milliseconds for Zixi-based streams.
-        public let maxLatency: Int32?
+        public let maxLatency: Int?
         /// The name of the output. This value must be unique within the current flow.
         public let name: String?
         /// The port to use when content is distributed to this output.
-        public let port: Int32
+        public let port: Int
         /// The protocol to use for the output.
         public let `protocol`: Protocol
         /// The smoothing latency in milliseconds for RTP and RTP-FEC streams.
-        public let smoothingLatency: Int32?
+        public let smoothingLatency: Int?
         /// The stream ID that you want to use for this transport. This parameter applies only to Zixi-based streams.
         public let streamId: String?
 
-        public init(description: String? = nil, destination: String, encryption: Encryption? = nil, maxLatency: Int32? = nil, name: String? = nil, port: Int32, protocol: Protocol, smoothingLatency: Int32? = nil, streamId: String? = nil) {
+        public init(description: String? = nil, destination: String, encryption: Encryption? = nil, maxLatency: Int? = nil, name: String? = nil, port: Int, protocol: Protocol, smoothingLatency: Int? = nil, streamId: String? = nil) {
             self.description = description
             self.destination = destination
             self.encryption = encryption
@@ -475,17 +475,17 @@ extension MediaConnect {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -522,17 +522,17 @@ extension MediaConnect {
             AWSShapeMember(label: "NextToken", location: .querystring(locationName: "nextToken"), required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -705,11 +705,11 @@ extension MediaConnect {
         /// The ARN of the output.
         public let outputArn: String
         /// The port to use when content is distributed to this output.
-        public let port: Int32?
+        public let port: Int?
         /// Attributes related to the transport stream that are used in the output.
         public let transport: Transport?
 
-        public init(description: String? = nil, destination: String? = nil, encryption: Encryption? = nil, entitlementArn: String? = nil, mediaLiveInputArn: String? = nil, name: String, outputArn: String, port: Int32? = nil, transport: Transport? = nil) {
+        public init(description: String? = nil, destination: String? = nil, encryption: Encryption? = nil, entitlementArn: String? = nil, mediaLiveInputArn: String? = nil, name: String, outputArn: String, port: Int? = nil, transport: Transport? = nil) {
             self.description = description
             self.destination = destination
             self.encryption = encryption
@@ -783,23 +783,6 @@ extension MediaConnect {
         }
     }
 
-    public struct ResponseError: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Message", location: .body(locationName: "message"), required: true, type: .string)
-        ]
-
-        /// The error message returned by AWS Elemental MediaConnect.
-        public let message: String
-
-        public init(message: String) {
-            self.message = message
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case message = "message"
-        }
-    }
-
     public struct RevokeFlowEntitlementRequest: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "EntitlementArn", location: .uri(locationName: "entitlementArn"), required: true, type: .string), 
@@ -863,11 +846,11 @@ extension MediaConnect {
         /// The ARN of the entitlement that allows you to subscribe to this flow. The entitlement is set by the flow originator, and the ARN is generated as part of the originator's flow.
         public let entitlementArn: String?
         /// The port that the flow will be listening on for incoming content.
-        public let ingestPort: Int32?
+        public let ingestPort: Int?
         /// The smoothing max bitrate for RTP and RTP-FEC streams.
-        public let maxBitrate: Int32?
+        public let maxBitrate: Int?
         /// The maximum latency in milliseconds for Zixi-based streams.
-        public let maxLatency: Int32?
+        public let maxLatency: Int?
         /// The name of the source.
         public let name: String?
         /// The protocol that is used by the source.
@@ -877,7 +860,7 @@ extension MediaConnect {
         /// The range of IP addresses that should be allowed to contribute content to your source. These IP addresses should in the form of a Classless Inter-Domain Routing (CIDR) block; for example, 10.0.0.0/16.
         public let whitelistCidr: String?
 
-        public init(decryption: Encryption? = nil, description: String? = nil, entitlementArn: String? = nil, ingestPort: Int32? = nil, maxBitrate: Int32? = nil, maxLatency: Int32? = nil, name: String? = nil, protocol: Protocol? = nil, streamId: String? = nil, whitelistCidr: String? = nil) {
+        public init(decryption: Encryption? = nil, description: String? = nil, entitlementArn: String? = nil, ingestPort: Int? = nil, maxBitrate: Int? = nil, maxLatency: Int? = nil, name: String? = nil, protocol: Protocol? = nil, streamId: String? = nil, whitelistCidr: String? = nil) {
             self.decryption = decryption
             self.description = description
             self.entitlementArn = entitlementArn
@@ -926,7 +909,7 @@ extension MediaConnect {
         /// The IP address that the flow will be listening on for incoming content.
         public let ingestIp: String?
         /// The port that the flow will be listening on for incoming content.
-        public let ingestPort: Int32?
+        public let ingestPort: Int?
         /// The name of the source.
         public let name: String
         /// The ARN of the source.
@@ -936,7 +919,7 @@ extension MediaConnect {
         /// The range of IP addresses that should be allowed to contribute content to your source. These IP addresses should in the form of a Classless Inter-Domain Routing (CIDR) block; for example, 10.0.0.0/16.
         public let whitelistCidr: String?
 
-        public init(decryption: Encryption? = nil, description: String? = nil, entitlementArn: String? = nil, ingestIp: String? = nil, ingestPort: Int32? = nil, name: String, sourceArn: String, transport: Transport? = nil, whitelistCidr: String? = nil) {
+        public init(decryption: Encryption? = nil, description: String? = nil, entitlementArn: String? = nil, ingestIp: String? = nil, ingestPort: Int? = nil, name: String, sourceArn: String, transport: Transport? = nil, whitelistCidr: String? = nil) {
             self.decryption = decryption
             self.description = description
             self.entitlementArn = entitlementArn
@@ -1085,17 +1068,17 @@ extension MediaConnect {
         ]
 
         /// The smoothing max bitrate for RTP and RTP-FEC streams.
-        public let maxBitrate: Int32?
+        public let maxBitrate: Int?
         /// The maximum latency in milliseconds for Zixi-based streams.
-        public let maxLatency: Int32?
+        public let maxLatency: Int?
         /// The protocol that is used by the source or output.
         public let `protocol`: Protocol
         /// The smoothing latency in milliseconds for RTP and RTP-FEC streams.
-        public let smoothingLatency: Int32?
+        public let smoothingLatency: Int?
         /// The stream ID that you want to use for this transport. This parameter applies only to Zixi-based streams.
         public let streamId: String?
 
-        public init(maxBitrate: Int32? = nil, maxLatency: Int32? = nil, protocol: Protocol, smoothingLatency: Int32? = nil, streamId: String? = nil) {
+        public init(maxBitrate: Int? = nil, maxLatency: Int? = nil, protocol: Protocol, smoothingLatency: Int? = nil, streamId: String? = nil) {
             self.maxBitrate = maxBitrate
             self.maxLatency = maxLatency
             self.`protocol` = `protocol`
@@ -1267,18 +1250,18 @@ extension MediaConnect {
         public let encryption: UpdateEncryption?
         public let flowArn: String
         /// The maximum latency in milliseconds for Zixi-based streams.
-        public let maxLatency: Int32?
+        public let maxLatency: Int?
         public let outputArn: String
         /// The port to use when content is distributed to this output.
-        public let port: Int32?
+        public let port: Int?
         /// The protocol to use for the output.
         public let `protocol`: Protocol?
         /// The smoothing latency in milliseconds for RTP and RTP-FEC streams.
-        public let smoothingLatency: Int32?
+        public let smoothingLatency: Int?
         /// The stream ID that you want to use for this transport. This parameter applies only to Zixi-based streams.
         public let streamId: String?
 
-        public init(description: String? = nil, destination: String? = nil, encryption: UpdateEncryption? = nil, flowArn: String, maxLatency: Int32? = nil, outputArn: String, port: Int32? = nil, protocol: Protocol? = nil, smoothingLatency: Int32? = nil, streamId: String? = nil) {
+        public init(description: String? = nil, destination: String? = nil, encryption: UpdateEncryption? = nil, flowArn: String, maxLatency: Int? = nil, outputArn: String, port: Int? = nil, protocol: Protocol? = nil, smoothingLatency: Int? = nil, streamId: String? = nil) {
             self.description = description
             self.destination = destination
             self.encryption = encryption
@@ -1349,11 +1332,11 @@ extension MediaConnect {
         public let entitlementArn: String?
         public let flowArn: String
         /// The port that the flow will be listening on for incoming content.
-        public let ingestPort: Int32?
+        public let ingestPort: Int?
         /// The smoothing max bitrate for RTP and RTP-FEC streams.
-        public let maxBitrate: Int32?
+        public let maxBitrate: Int?
         /// The maximum latency in milliseconds for Zixi-based streams.
-        public let maxLatency: Int32?
+        public let maxLatency: Int?
         /// The protocol that is used by the source.
         public let `protocol`: Protocol?
         public let sourceArn: String
@@ -1362,7 +1345,7 @@ extension MediaConnect {
         /// The range of IP addresses that should be allowed to contribute content to your source. These IP addresses should in the form of a Classless Inter-Domain Routing (CIDR) block; for example, 10.0.0.0/16.
         public let whitelistCidr: String?
 
-        public init(decryption: UpdateEncryption? = nil, description: String? = nil, entitlementArn: String? = nil, flowArn: String, ingestPort: Int32? = nil, maxBitrate: Int32? = nil, maxLatency: Int32? = nil, protocol: Protocol? = nil, sourceArn: String, streamId: String? = nil, whitelistCidr: String? = nil) {
+        public init(decryption: UpdateEncryption? = nil, description: String? = nil, entitlementArn: String? = nil, flowArn: String, ingestPort: Int? = nil, maxBitrate: Int? = nil, maxLatency: Int? = nil, protocol: Protocol? = nil, sourceArn: String, streamId: String? = nil, whitelistCidr: String? = nil) {
             self.decryption = decryption
             self.description = description
             self.entitlementArn = entitlementArn

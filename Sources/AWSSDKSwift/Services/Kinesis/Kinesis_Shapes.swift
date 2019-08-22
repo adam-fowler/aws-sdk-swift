@@ -21,10 +21,16 @@ extension Kinesis {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try tags.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, min: 0)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -54,15 +60,6 @@ extension Kinesis {
             self.consumerCreationTimestamp = consumerCreationTimestamp
             self.consumerName = consumerName
             self.consumerStatus = consumerStatus
-        }
-
-        public func validate() throws {
-            try validate(consumerARN, name:"consumerARN", max: 2048)
-            try validate(consumerARN, name:"consumerARN", min: 1)
-            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
-            try validate(consumerName, name:"consumerName", max: 128)
-            try validate(consumerName, name:"consumerName", min: 1)
-            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -100,18 +97,6 @@ extension Kinesis {
             self.streamARN = streamARN
         }
 
-        public func validate() throws {
-            try validate(consumerARN, name:"consumerARN", max: 2048)
-            try validate(consumerARN, name:"consumerARN", min: 1)
-            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
-            try validate(consumerName, name:"consumerName", max: 128)
-            try validate(consumerName, name:"consumerName", min: 1)
-            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(streamARN, name:"streamARN", max: 2048)
-            try validate(streamARN, name:"streamARN", min: 1)
-            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case consumerARN = "ConsumerARN"
             case consumerCreationTimestamp = "ConsumerCreationTimestamp"
@@ -135,21 +120,21 @@ extension Kinesis {
         ]
 
         /// The number of shards that the stream will use. The throughput of the stream is a function of the number of shards; more shards are required for greater provisioned throughput. DefaultShardLimit;
-        public let shardCount: Int32
+        public let shardCount: Int
         /// A name to identify the stream. The stream name is scoped to the AWS account used by the application that creates the stream. It is also scoped by AWS Region. That is, two streams in two different AWS accounts can have the same name. Two streams in the same AWS account but in two different Regions can also have the same name.
         public let streamName: String
 
-        public init(shardCount: Int32, streamName: String) {
+        public init(shardCount: Int, streamName: String) {
             self.shardCount = shardCount
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(shardCount, name:"shardCount", max: 100000)
-            try validate(shardCount, name:"shardCount", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(shardCount, name:"shardCount", parent: name, max: 100000)
+            try validate(shardCount, name:"shardCount", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -165,21 +150,21 @@ extension Kinesis {
         ]
 
         /// The new retention period of the stream, in hours. Must be less than the current retention period.
-        public let retentionPeriodHours: Int32
+        public let retentionPeriodHours: Int
         /// The name of the stream to modify.
         public let streamName: String
 
-        public init(retentionPeriodHours: Int32, streamName: String) {
+        public init(retentionPeriodHours: Int, streamName: String) {
             self.retentionPeriodHours = retentionPeriodHours
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 168)
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", parent: name, max: 168)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -204,10 +189,10 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -236,16 +221,16 @@ extension Kinesis {
             self.streamARN = streamARN
         }
 
-        public func validate() throws {
-            try validate(consumerARN, name:"consumerARN", max: 2048)
-            try validate(consumerARN, name:"consumerARN", min: 1)
-            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
-            try validate(consumerName, name:"consumerName", max: 128)
-            try validate(consumerName, name:"consumerName", min: 1)
-            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(streamARN, name:"streamARN", max: 2048)
-            try validate(streamARN, name:"streamARN", min: 1)
-            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+        public func validate(name: String) throws {
+            try validate(consumerARN, name:"consumerARN", parent: name, max: 2048)
+            try validate(consumerARN, name:"consumerARN", parent: name, min: 1)
+            try validate(consumerARN, name:"consumerARN", parent: name, pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(consumerName, name:"consumerName", parent: name, max: 128)
+            try validate(consumerName, name:"consumerName", parent: name, min: 1)
+            try validate(consumerName, name:"consumerName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamARN, name:"streamARN", parent: name, max: 2048)
+            try validate(streamARN, name:"streamARN", parent: name, min: 1)
+            try validate(streamARN, name:"streamARN", parent: name, pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -270,20 +255,13 @@ extension Kinesis {
         ]
 
         /// The number of open shards.
-        public let openShardCount: Int32
+        public let openShardCount: Int
         /// The maximum number of shards.
-        public let shardLimit: Int32
+        public let shardLimit: Int
 
-        public init(openShardCount: Int32, shardLimit: Int32) {
+        public init(openShardCount: Int, shardLimit: Int) {
             self.openShardCount = openShardCount
             self.shardLimit = shardLimit
-        }
-
-        public func validate() throws {
-            try validate(openShardCount, name:"openShardCount", max: 1000000)
-            try validate(openShardCount, name:"openShardCount", min: 0)
-            try validate(shardLimit, name:"shardLimit", max: 1000000)
-            try validate(shardLimit, name:"shardLimit", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -312,16 +290,16 @@ extension Kinesis {
             self.streamARN = streamARN
         }
 
-        public func validate() throws {
-            try validate(consumerARN, name:"consumerARN", max: 2048)
-            try validate(consumerARN, name:"consumerARN", min: 1)
-            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
-            try validate(consumerName, name:"consumerName", max: 128)
-            try validate(consumerName, name:"consumerName", min: 1)
-            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(streamARN, name:"streamARN", max: 2048)
-            try validate(streamARN, name:"streamARN", min: 1)
-            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+        public func validate(name: String) throws {
+            try validate(consumerARN, name:"consumerARN", parent: name, max: 2048)
+            try validate(consumerARN, name:"consumerARN", parent: name, min: 1)
+            try validate(consumerARN, name:"consumerARN", parent: name, pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(consumerName, name:"consumerName", parent: name, max: 128)
+            try validate(consumerName, name:"consumerName", parent: name, min: 1)
+            try validate(consumerName, name:"consumerName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamARN, name:"streamARN", parent: name, max: 2048)
+            try validate(streamARN, name:"streamARN", parent: name, min: 1)
+            try validate(streamARN, name:"streamARN", parent: name, pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -343,10 +321,6 @@ extension Kinesis {
             self.consumerDescription = consumerDescription
         }
 
-        public func validate() throws {
-            try consumerDescription.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case consumerDescription = "ConsumerDescription"
         }
@@ -362,25 +336,25 @@ extension Kinesis {
         /// The shard ID of the shard to start with.
         public let exclusiveStartShardId: String?
         /// The maximum number of shards to return in a single call. The default value is 100. If you specify a value greater than 100, at most 100 shards are returned.
-        public let limit: Int32?
+        public let limit: Int?
         /// The name of the stream to describe.
         public let streamName: String
 
-        public init(exclusiveStartShardId: String? = nil, limit: Int32? = nil, streamName: String) {
+        public init(exclusiveStartShardId: String? = nil, limit: Int? = nil, streamName: String) {
             self.exclusiveStartShardId = exclusiveStartShardId
             self.limit = limit
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", max: 128)
-            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", min: 1)
-            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(limit, name:"limit", max: 10000)
-            try validate(limit, name:"limit", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", parent: name, max: 128)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", parent: name, min: 1)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", parent: name, max: 10000)
+            try validate(limit, name:"limit", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -402,10 +376,6 @@ extension Kinesis {
             self.streamDescription = streamDescription
         }
 
-        public func validate() throws {
-            try streamDescription.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case streamDescription = "StreamDescription"
         }
@@ -423,10 +393,10 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -444,10 +414,6 @@ extension Kinesis {
 
         public init(streamDescriptionSummary: StreamDescriptionSummary) {
             self.streamDescriptionSummary = streamDescriptionSummary
-        }
-
-        public func validate() throws {
-            try streamDescriptionSummary.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -471,12 +437,12 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(shardLevelMetrics, name:"shardLevelMetrics", max: 7)
-            try validate(shardLevelMetrics, name:"shardLevelMetrics", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", parent: name, max: 7)
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -501,12 +467,12 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(shardLevelMetrics, name:"shardLevelMetrics", max: 7)
-            try validate(shardLevelMetrics, name:"shardLevelMetrics", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", parent: name, max: 7)
+            try validate(shardLevelMetrics, name:"shardLevelMetrics", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -531,11 +497,6 @@ extension Kinesis {
 
         public init(shardLevelMetrics: [MetricsName]? = nil) {
             self.shardLevelMetrics = shardLevelMetrics
-        }
-
-        public func validate() throws {
-            try validate(shardLevelMetrics, name:"shardLevelMetrics", max: 7)
-            try validate(shardLevelMetrics, name:"shardLevelMetrics", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -563,16 +524,6 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(currentShardLevelMetrics, name:"currentShardLevelMetrics", max: 7)
-            try validate(currentShardLevelMetrics, name:"currentShardLevelMetrics", min: 1)
-            try validate(desiredShardLevelMetrics, name:"desiredShardLevelMetrics", max: 7)
-            try validate(desiredShardLevelMetrics, name:"desiredShardLevelMetrics", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case currentShardLevelMetrics = "CurrentShardLevelMetrics"
             case desiredShardLevelMetrics = "DesiredShardLevelMetrics"
@@ -587,20 +538,20 @@ extension Kinesis {
         ]
 
         /// The maximum number of records to return. Specify a value of up to 10,000. If you specify a value that is greater than 10,000, GetRecords throws InvalidArgumentException.
-        public let limit: Int32?
+        public let limit: Int?
         /// The position in the shard from which you want to start sequentially reading data records. A shard iterator specifies this position using the sequence number of a data record in the shard.
         public let shardIterator: String
 
-        public init(limit: Int32? = nil, shardIterator: String) {
+        public init(limit: Int? = nil, shardIterator: String) {
             self.limit = limit
             self.shardIterator = shardIterator
         }
 
-        public func validate() throws {
-            try validate(limit, name:"limit", max: 10000)
-            try validate(limit, name:"limit", min: 1)
-            try validate(shardIterator, name:"shardIterator", max: 512)
-            try validate(shardIterator, name:"shardIterator", min: 1)
+        public func validate(name: String) throws {
+            try validate(limit, name:"limit", parent: name, max: 10000)
+            try validate(limit, name:"limit", parent: name, min: 1)
+            try validate(shardIterator, name:"shardIterator", parent: name, max: 512)
+            try validate(shardIterator, name:"shardIterator", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -627,15 +578,6 @@ extension Kinesis {
             self.millisBehindLatest = millisBehindLatest
             self.nextShardIterator = nextShardIterator
             self.records = records
-        }
-
-        public func validate() throws {
-            try validate(millisBehindLatest, name:"millisBehindLatest", min: 0)
-            try validate(nextShardIterator, name:"nextShardIterator", max: 512)
-            try validate(nextShardIterator, name:"nextShardIterator", min: 1)
-            try records.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -673,14 +615,14 @@ extension Kinesis {
             self.timestamp = timestamp
         }
 
-        public func validate() throws {
-            try validate(shardId, name:"shardId", max: 128)
-            try validate(shardId, name:"shardId", min: 1)
-            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(startingSequenceNumber, name:"startingSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(shardId, name:"shardId", parent: name, max: 128)
+            try validate(shardId, name:"shardId", parent: name, min: 1)
+            try validate(shardId, name:"shardId", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(startingSequenceNumber, name:"startingSequenceNumber", parent: name, pattern: "0|([1-9]\\d{0,128})")
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -704,11 +646,6 @@ extension Kinesis {
             self.shardIterator = shardIterator
         }
 
-        public func validate() throws {
-            try validate(shardIterator, name:"shardIterator", max: 512)
-            try validate(shardIterator, name:"shardIterator", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case shardIterator = "ShardIterator"
         }
@@ -730,11 +667,6 @@ extension Kinesis {
             self.startingHashKey = startingHashKey
         }
 
-        public func validate() throws {
-            try validate(endingHashKey, name:"endingHashKey", pattern: "0|([1-9]\\d{0,38})")
-            try validate(startingHashKey, name:"startingHashKey", pattern: "0|([1-9]\\d{0,38})")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case endingHashKey = "EndingHashKey"
             case startingHashKey = "StartingHashKey"
@@ -748,42 +680,26 @@ extension Kinesis {
         ]
 
         /// The new retention period of the stream, in hours. Must be more than the current retention period.
-        public let retentionPeriodHours: Int32
+        public let retentionPeriodHours: Int
         /// The name of the stream to modify.
         public let streamName: String
 
-        public init(retentionPeriodHours: Int32, streamName: String) {
+        public init(retentionPeriodHours: Int, streamName: String) {
             self.retentionPeriodHours = retentionPeriodHours
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 168)
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", parent: name, max: 168)
+            try validate(retentionPeriodHours, name:"retentionPeriodHours", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
             case retentionPeriodHours = "RetentionPeriodHours"
             case streamName = "StreamName"
-        }
-    }
-
-    public struct InternalFailureException: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "message", required: false, type: .string)
-        ]
-
-        public let message: String?
-
-        public init(message: String? = nil) {
-            self.message = message
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case message = "message"
         }
     }
 
@@ -799,7 +715,7 @@ extension Kinesis {
         /// Specify this parameter to indicate that you want to list the shards starting with the shard whose ID immediately follows ExclusiveStartShardId. If you don't specify this parameter, the default behavior is for ListShards to list the shards starting with the first one in the stream. You cannot specify this parameter if you specify NextToken.
         public let exclusiveStartShardId: String?
         /// The maximum number of shards to return in a single call to ListShards. The minimum value you can specify for this parameter is 1, and the maximum is 1,000, which is also the default. When the number of shards to be listed is greater than the value of MaxResults, the response contains a NextToken value that you can use in a subsequent call to ListShards to list the next set of shards.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// When the number of shards in the data stream is greater than the default value for the MaxResults parameter, or if you explicitly specify a value for MaxResults that is less than the number of shards in the data stream, the response includes a pagination token named NextToken. You can specify this NextToken value in a subsequent call to ListShards to list the next set of shards. Don't specify StreamName or StreamCreationTimestamp if you specify NextToken because the latter unambiguously identifies the stream. You can optionally specify a value for the MaxResults parameter when you specify NextToken. If you specify a MaxResults value that is less than the number of shards that the operation returns if you don't specify MaxResults, the response will contain a new NextToken value. You can use the new NextToken value in a subsequent call to the ListShards operation.  Tokens expire after 300 seconds. When you obtain a value for NextToken in the response to a call to ListShards, you have 300 seconds to use that value. If you specify an expired token in a call to ListShards, you get ExpiredNextTokenException. 
         public let nextToken: String?
         /// Specify this input parameter to distinguish data streams that have the same name. For example, if you create a data stream and then delete it, and you later create another data stream with the same name, you can use this input parameter to specify which of the two streams you want to list the shards for. You cannot specify this parameter if you specify the NextToken parameter.
@@ -807,7 +723,7 @@ extension Kinesis {
         /// The name of the data stream whose shards you want to list.  You cannot specify this parameter if you specify the NextToken parameter.
         public let streamName: String?
 
-        public init(exclusiveStartShardId: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, streamCreationTimestamp: TimeStamp? = nil, streamName: String? = nil) {
+        public init(exclusiveStartShardId: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, streamCreationTimestamp: TimeStamp? = nil, streamName: String? = nil) {
             self.exclusiveStartShardId = exclusiveStartShardId
             self.maxResults = maxResults
             self.nextToken = nextToken
@@ -815,17 +731,17 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", max: 128)
-            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", min: 1)
-            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(maxResults, name:"maxResults", max: 10000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1048576)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", parent: name, max: 128)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", parent: name, min: 1)
+            try validate(exclusiveStartShardId, name:"exclusiveStartShardId", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(maxResults, name:"maxResults", parent: name, max: 10000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1048576)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -853,14 +769,6 @@ extension Kinesis {
             self.shards = shards
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1048576)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try shards?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case shards = "Shards"
@@ -876,7 +784,7 @@ extension Kinesis {
         ]
 
         /// The maximum number of consumers that you want a single call of ListStreamConsumers to return.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// When the number of consumers that are registered with the data stream is greater than the default value for the MaxResults parameter, or if you explicitly specify a value for MaxResults that is less than the number of consumers that are registered with the data stream, the response includes a pagination token named NextToken. You can specify this NextToken value in a subsequent call to ListStreamConsumers to list the next set of registered consumers. Don't specify StreamName or StreamCreationTimestamp if you specify NextToken because the latter unambiguously identifies the stream. You can optionally specify a value for the MaxResults parameter when you specify NextToken. If you specify a MaxResults value that is less than the number of consumers that the operation returns if you don't specify MaxResults, the response will contain a new NextToken value. You can use the new NextToken value in a subsequent call to the ListStreamConsumers operation to list the next set of consumers.  Tokens expire after 300 seconds. When you obtain a value for NextToken in the response to a call to ListStreamConsumers, you have 300 seconds to use that value. If you specify an expired token in a call to ListStreamConsumers, you get ExpiredNextTokenException. 
         public let nextToken: String?
         /// The ARN of the Kinesis data stream for which you want to list the registered consumers. For more information, see Amazon Resource Names (ARNs) and AWS Service Namespaces.
@@ -884,21 +792,21 @@ extension Kinesis {
         /// Specify this input parameter to distinguish data streams that have the same name. For example, if you create a data stream and then delete it, and you later create another data stream with the same name, you can use this input parameter to specify which of the two streams you want to list the consumers for.  You can't specify this parameter if you specify the NextToken parameter. 
         public let streamCreationTimestamp: TimeStamp?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, streamARN: String, streamCreationTimestamp: TimeStamp? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, streamARN: String, streamCreationTimestamp: TimeStamp? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.streamARN = streamARN
             self.streamCreationTimestamp = streamCreationTimestamp
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 10000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1048576)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(streamARN, name:"streamARN", max: 2048)
-            try validate(streamARN, name:"streamARN", min: 1)
-            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 10000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1048576)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(streamARN, name:"streamARN", parent: name, max: 2048)
+            try validate(streamARN, name:"streamARN", parent: name, min: 1)
+            try validate(streamARN, name:"streamARN", parent: name, pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -925,14 +833,6 @@ extension Kinesis {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try consumers?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 1048576)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case consumers = "Consumers"
             case nextToken = "NextToken"
@@ -948,19 +848,19 @@ extension Kinesis {
         /// The name of the stream to start the list with.
         public let exclusiveStartStreamName: String?
         /// The maximum number of streams to list.
-        public let limit: Int32?
+        public let limit: Int?
 
-        public init(exclusiveStartStreamName: String? = nil, limit: Int32? = nil) {
+        public init(exclusiveStartStreamName: String? = nil, limit: Int? = nil) {
             self.exclusiveStartStreamName = exclusiveStartStreamName
             self.limit = limit
         }
 
-        public func validate() throws {
-            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", max: 128)
-            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", min: 1)
-            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(limit, name:"limit", max: 10000)
-            try validate(limit, name:"limit", min: 1)
+        public func validate(name: String) throws {
+            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", parent: name, max: 128)
+            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", parent: name, min: 1)
+            try validate(exclusiveStartStreamName, name:"exclusiveStartStreamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(limit, name:"limit", parent: name, max: 10000)
+            try validate(limit, name:"limit", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -985,14 +885,6 @@ extension Kinesis {
             self.streamNames = streamNames
         }
 
-        public func validate() throws {
-            try streamNames.forEach {
-                try validate($0, name:"streamNames[]", max: 128)
-                try validate($0, name:"streamNames[]", min: 1)
-                try validate($0, name:"streamNames[]", pattern: "[a-zA-Z0-9_.-]+")
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case hasMoreStreams = "HasMoreStreams"
             case streamNames = "StreamNames"
@@ -1009,24 +901,24 @@ extension Kinesis {
         /// The key to use as the starting point for the list of tags. If this parameter is set, ListTagsForStream gets all tags that occur after ExclusiveStartTagKey. 
         public let exclusiveStartTagKey: String?
         /// The number of tags to return. If this number is less than the total number of tags associated with the stream, HasMoreTags is set to true. To list additional tags, set ExclusiveStartTagKey to the last key in the response.
-        public let limit: Int32?
+        public let limit: Int?
         /// The name of the stream.
         public let streamName: String
 
-        public init(exclusiveStartTagKey: String? = nil, limit: Int32? = nil, streamName: String) {
+        public init(exclusiveStartTagKey: String? = nil, limit: Int? = nil, streamName: String) {
             self.exclusiveStartTagKey = exclusiveStartTagKey
             self.limit = limit
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(exclusiveStartTagKey, name:"exclusiveStartTagKey", max: 128)
-            try validate(exclusiveStartTagKey, name:"exclusiveStartTagKey", min: 1)
-            try validate(limit, name:"limit", max: 50)
-            try validate(limit, name:"limit", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(exclusiveStartTagKey, name:"exclusiveStartTagKey", parent: name, max: 128)
+            try validate(exclusiveStartTagKey, name:"exclusiveStartTagKey", parent: name, min: 1)
+            try validate(limit, name:"limit", parent: name, max: 50)
+            try validate(limit, name:"limit", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1050,13 +942,6 @@ extension Kinesis {
         public init(hasMoreTags: Bool, tags: [Tag]) {
             self.hasMoreTags = hasMoreTags
             self.tags = tags
-        }
-
-        public func validate() throws {
-            try tags.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1085,16 +970,16 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", max: 128)
-            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", min: 1)
-            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(shardToMerge, name:"shardToMerge", max: 128)
-            try validate(shardToMerge, name:"shardToMerge", min: 1)
-            try validate(shardToMerge, name:"shardToMerge", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", parent: name, max: 128)
+            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", parent: name, min: 1)
+            try validate(adjacentShardToMerge, name:"adjacentShardToMerge", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(shardToMerge, name:"shardToMerge", parent: name, max: 128)
+            try validate(shardToMerge, name:"shardToMerge", parent: name, min: 1)
+            try validate(shardToMerge, name:"shardToMerge", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1144,16 +1029,16 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(data, name:"data", max: 1048576)
-            try validate(data, name:"data", min: 0)
-            try validate(explicitHashKey, name:"explicitHashKey", pattern: "0|([1-9]\\d{0,38})")
-            try validate(partitionKey, name:"partitionKey", max: 256)
-            try validate(partitionKey, name:"partitionKey", min: 1)
-            try validate(sequenceNumberForOrdering, name:"sequenceNumberForOrdering", pattern: "0|([1-9]\\d{0,128})")
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(data, name:"data", parent: name, max: 1048576)
+            try validate(data, name:"data", parent: name, min: 0)
+            try validate(explicitHashKey, name:"explicitHashKey", parent: name, pattern: "0|([1-9]\\d{0,38})")
+            try validate(partitionKey, name:"partitionKey", parent: name, max: 256)
+            try validate(partitionKey, name:"partitionKey", parent: name, min: 1)
+            try validate(sequenceNumberForOrdering, name:"sequenceNumberForOrdering", parent: name, pattern: "0|([1-9]\\d{0,128})")
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1185,13 +1070,6 @@ extension Kinesis {
             self.shardId = shardId
         }
 
-        public func validate() throws {
-            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
-            try validate(shardId, name:"shardId", max: 128)
-            try validate(shardId, name:"shardId", min: 1)
-            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case encryptionType = "EncryptionType"
             case sequenceNumber = "SequenceNumber"
@@ -1215,15 +1093,15 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try records.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).records[]")
             }
-            try validate(records, name:"records", max: 500)
-            try validate(records, name:"records", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+            try validate(records, name:"records", parent: name, max: 500)
+            try validate(records, name:"records", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1242,24 +1120,14 @@ extension Kinesis {
         /// The encryption type used on the records. This parameter can be one of the following values:    NONE: Do not encrypt the records.    KMS: Use server-side encryption on the records using a customer-managed AWS KMS key.  
         public let encryptionType: EncryptionType?
         /// The number of unsuccessfully processed records in a PutRecords request.
-        public let failedRecordCount: Int32?
+        public let failedRecordCount: Int?
         /// An array of successfully and unsuccessfully processed record results, correlated with the request by natural ordering. A record that is successfully added to a stream includes SequenceNumber and ShardId in the result. A record that fails to be added to a stream includes ErrorCode and ErrorMessage in the result.
         public let records: [PutRecordsResultEntry]
 
-        public init(encryptionType: EncryptionType? = nil, failedRecordCount: Int32? = nil, records: [PutRecordsResultEntry]) {
+        public init(encryptionType: EncryptionType? = nil, failedRecordCount: Int? = nil, records: [PutRecordsResultEntry]) {
             self.encryptionType = encryptionType
             self.failedRecordCount = failedRecordCount
             self.records = records
-        }
-
-        public func validate() throws {
-            try validate(failedRecordCount, name:"failedRecordCount", max: 100000)
-            try validate(failedRecordCount, name:"failedRecordCount", min: 1)
-            try records.forEach {
-                try $0.validate()
-            }
-            try validate(records, name:"records", max: 500)
-            try validate(records, name:"records", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1289,12 +1157,12 @@ extension Kinesis {
             self.partitionKey = partitionKey
         }
 
-        public func validate() throws {
-            try validate(data, name:"data", max: 1048576)
-            try validate(data, name:"data", min: 0)
-            try validate(explicitHashKey, name:"explicitHashKey", pattern: "0|([1-9]\\d{0,38})")
-            try validate(partitionKey, name:"partitionKey", max: 256)
-            try validate(partitionKey, name:"partitionKey", min: 1)
+        public func validate(name: String) throws {
+            try validate(data, name:"data", parent: name, max: 1048576)
+            try validate(data, name:"data", parent: name, min: 0)
+            try validate(explicitHashKey, name:"explicitHashKey", parent: name, pattern: "0|([1-9]\\d{0,38})")
+            try validate(partitionKey, name:"partitionKey", parent: name, max: 256)
+            try validate(partitionKey, name:"partitionKey", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1326,13 +1194,6 @@ extension Kinesis {
             self.errorMessage = errorMessage
             self.sequenceNumber = sequenceNumber
             self.shardId = shardId
-        }
-
-        public func validate() throws {
-            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
-            try validate(shardId, name:"shardId", max: 128)
-            try validate(shardId, name:"shardId", min: 1)
-            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1371,14 +1232,6 @@ extension Kinesis {
             self.sequenceNumber = sequenceNumber
         }
 
-        public func validate() throws {
-            try validate(data, name:"data", max: 1048576)
-            try validate(data, name:"data", min: 0)
-            try validate(partitionKey, name:"partitionKey", max: 256)
-            try validate(partitionKey, name:"partitionKey", min: 1)
-            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case approximateArrivalTimestamp = "ApproximateArrivalTimestamp"
             case data = "Data"
@@ -1404,13 +1257,13 @@ extension Kinesis {
             self.streamARN = streamARN
         }
 
-        public func validate() throws {
-            try validate(consumerName, name:"consumerName", max: 128)
-            try validate(consumerName, name:"consumerName", min: 1)
-            try validate(consumerName, name:"consumerName", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(streamARN, name:"streamARN", max: 2048)
-            try validate(streamARN, name:"streamARN", min: 1)
-            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
+        public func validate(name: String) throws {
+            try validate(consumerName, name:"consumerName", parent: name, max: 128)
+            try validate(consumerName, name:"consumerName", parent: name, min: 1)
+            try validate(consumerName, name:"consumerName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamARN, name:"streamARN", parent: name, max: 2048)
+            try validate(streamARN, name:"streamARN", parent: name, min: 1)
+            try validate(streamARN, name:"streamARN", parent: name, pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1429,10 +1282,6 @@ extension Kinesis {
 
         public init(consumer: Consumer) {
             self.consumer = consumer
-        }
-
-        public func validate() throws {
-            try consumer.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1456,16 +1305,16 @@ extension Kinesis {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
             }
-            try validate(tagKeys, name:"tagKeys", max: 50)
-            try validate(tagKeys, name:"tagKeys", min: 1)
+            try validate(tagKeys, name:"tagKeys", parent: name, max: 50)
+            try validate(tagKeys, name:"tagKeys", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1493,11 +1342,6 @@ extension Kinesis {
         public init(endingSequenceNumber: String? = nil, startingSequenceNumber: String) {
             self.endingSequenceNumber = endingSequenceNumber
             self.startingSequenceNumber = startingSequenceNumber
-        }
-
-        public func validate() throws {
-            try validate(endingSequenceNumber, name:"endingSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
-            try validate(startingSequenceNumber, name:"startingSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1532,20 +1376,6 @@ extension Kinesis {
             self.parentShardId = parentShardId
             self.sequenceNumberRange = sequenceNumberRange
             self.shardId = shardId
-        }
-
-        public func validate() throws {
-            try validate(adjacentParentShardId, name:"adjacentParentShardId", max: 128)
-            try validate(adjacentParentShardId, name:"adjacentParentShardId", min: 1)
-            try validate(adjacentParentShardId, name:"adjacentParentShardId", pattern: "[a-zA-Z0-9_.-]+")
-            try hashKeyRange.validate()
-            try validate(parentShardId, name:"parentShardId", max: 128)
-            try validate(parentShardId, name:"parentShardId", min: 1)
-            try validate(parentShardId, name:"parentShardId", pattern: "[a-zA-Z0-9_.-]+")
-            try sequenceNumberRange.validate()
-            try validate(shardId, name:"shardId", max: 128)
-            try validate(shardId, name:"shardId", min: 1)
-            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1586,14 +1416,14 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(newStartingHashKey, name:"newStartingHashKey", pattern: "0|([1-9]\\d{0,38})")
-            try validate(shardToSplit, name:"shardToSplit", max: 128)
-            try validate(shardToSplit, name:"shardToSplit", min: 1)
-            try validate(shardToSplit, name:"shardToSplit", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(newStartingHashKey, name:"newStartingHashKey", parent: name, pattern: "0|([1-9]\\d{0,38})")
+            try validate(shardToSplit, name:"shardToSplit", parent: name, max: 128)
+            try validate(shardToSplit, name:"shardToSplit", parent: name, min: 1)
+            try validate(shardToSplit, name:"shardToSplit", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1623,12 +1453,12 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(keyId, name:"keyId", max: 2048)
-            try validate(keyId, name:"keyId", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(keyId, name:"keyId", parent: name, max: 2048)
+            try validate(keyId, name:"keyId", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1655,8 +1485,8 @@ extension Kinesis {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(sequenceNumber, name:"sequenceNumber", pattern: "0|([1-9]\\d{0,128})")
+        public func validate(name: String) throws {
+            try validate(sequenceNumber, name:"sequenceNumber", parent: name, pattern: "0|([1-9]\\d{0,128})")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1686,12 +1516,12 @@ extension Kinesis {
             self.streamName = streamName
         }
 
-        public func validate() throws {
-            try validate(keyId, name:"keyId", max: 2048)
-            try validate(keyId, name:"keyId", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
+        public func validate(name: String) throws {
+            try validate(keyId, name:"keyId", parent: name, max: 2048)
+            try validate(keyId, name:"keyId", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1724,7 +1554,7 @@ extension Kinesis {
         /// The GUID for the customer-managed AWS KMS key to use for encryption. This value can be a globally unique identifier, a fully specified ARN to either an alias or a key, or an alias name prefixed by "alias/".You can also use a master key owned by Kinesis Data Streams by specifying the alias aws/kinesis.   Key ARN example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012    Alias ARN example: arn:aws:kms:us-east-1:123456789012:alias/MyAliasName    Globally unique key ID example: 12345678-1234-1234-1234-123456789012    Alias name example: alias/MyAliasName    Master key owned by Kinesis Data Streams: alias/aws/kinesis   
         public let keyId: String?
         /// The current retention period, in hours.
-        public let retentionPeriodHours: Int32
+        public let retentionPeriodHours: Int
         /// The shards that comprise the stream.
         public let shards: [Shard]
         /// The Amazon Resource Name (ARN) for the stream being described.
@@ -1736,7 +1566,7 @@ extension Kinesis {
         /// The current status of the stream being described. The stream status is one of the following states:    CREATING - The stream is being created. Kinesis Data Streams immediately returns and sets StreamStatus to CREATING.    DELETING - The stream is being deleted. The specified stream is in the DELETING state until Kinesis Data Streams completes the deletion.    ACTIVE - The stream exists and is ready for read and write operations or deletion. You should perform read and write operations only on an ACTIVE stream.    UPDATING - Shards in the stream are being merged or split. Read and write operations continue to work while the stream is in the UPDATING state.  
         public let streamStatus: StreamStatus
 
-        public init(encryptionType: EncryptionType? = nil, enhancedMonitoring: [EnhancedMetrics], hasMoreShards: Bool, keyId: String? = nil, retentionPeriodHours: Int32, shards: [Shard], streamARN: String, streamCreationTimestamp: TimeStamp, streamName: String, streamStatus: StreamStatus) {
+        public init(encryptionType: EncryptionType? = nil, enhancedMonitoring: [EnhancedMetrics], hasMoreShards: Bool, keyId: String? = nil, retentionPeriodHours: Int, shards: [Shard], streamARN: String, streamCreationTimestamp: TimeStamp, streamName: String, streamStatus: StreamStatus) {
             self.encryptionType = encryptionType
             self.enhancedMonitoring = enhancedMonitoring
             self.hasMoreShards = hasMoreShards
@@ -1747,25 +1577,6 @@ extension Kinesis {
             self.streamCreationTimestamp = streamCreationTimestamp
             self.streamName = streamName
             self.streamStatus = streamStatus
-        }
-
-        public func validate() throws {
-            try enhancedMonitoring.forEach {
-                try $0.validate()
-            }
-            try validate(keyId, name:"keyId", max: 2048)
-            try validate(keyId, name:"keyId", min: 1)
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 168)
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
-            try shards.forEach {
-                try $0.validate()
-            }
-            try validate(streamARN, name:"streamARN", max: 2048)
-            try validate(streamARN, name:"streamARN", min: 1)
-            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1797,7 +1608,7 @@ extension Kinesis {
         ]
 
         /// The number of enhanced fan-out consumers registered with the stream.
-        public let consumerCount: Int32?
+        public let consumerCount: Int?
         /// The encryption type used. This value is one of the following:    KMS     NONE   
         public let encryptionType: EncryptionType?
         /// Represents the current enhanced monitoring settings of the stream.
@@ -1805,9 +1616,9 @@ extension Kinesis {
         /// The GUID for the customer-managed AWS KMS key to use for encryption. This value can be a globally unique identifier, a fully specified ARN to either an alias or a key, or an alias name prefixed by "alias/".You can also use a master key owned by Kinesis Data Streams by specifying the alias aws/kinesis.   Key ARN example: arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012    Alias ARN example:  arn:aws:kms:us-east-1:123456789012:alias/MyAliasName    Globally unique key ID example: 12345678-1234-1234-1234-123456789012    Alias name example: alias/MyAliasName    Master key owned by Kinesis Data Streams: alias/aws/kinesis   
         public let keyId: String?
         /// The number of open shards in the stream.
-        public let openShardCount: Int32
+        public let openShardCount: Int
         /// The current retention period, in hours.
-        public let retentionPeriodHours: Int32
+        public let retentionPeriodHours: Int
         /// The Amazon Resource Name (ARN) for the stream being described.
         public let streamARN: String
         /// The approximate time that the stream was created.
@@ -1817,7 +1628,7 @@ extension Kinesis {
         /// The current status of the stream being described. The stream status is one of the following states:    CREATING - The stream is being created. Kinesis Data Streams immediately returns and sets StreamStatus to CREATING.    DELETING - The stream is being deleted. The specified stream is in the DELETING state until Kinesis Data Streams completes the deletion.    ACTIVE - The stream exists and is ready for read and write operations or deletion. You should perform read and write operations only on an ACTIVE stream.    UPDATING - Shards in the stream are being merged or split. Read and write operations continue to work while the stream is in the UPDATING state.  
         public let streamStatus: StreamStatus
 
-        public init(consumerCount: Int32? = nil, encryptionType: EncryptionType? = nil, enhancedMonitoring: [EnhancedMetrics], keyId: String? = nil, openShardCount: Int32, retentionPeriodHours: Int32, streamARN: String, streamCreationTimestamp: TimeStamp, streamName: String, streamStatus: StreamStatus) {
+        public init(consumerCount: Int? = nil, encryptionType: EncryptionType? = nil, enhancedMonitoring: [EnhancedMetrics], keyId: String? = nil, openShardCount: Int, retentionPeriodHours: Int, streamARN: String, streamCreationTimestamp: TimeStamp, streamName: String, streamStatus: StreamStatus) {
             self.consumerCount = consumerCount
             self.encryptionType = encryptionType
             self.enhancedMonitoring = enhancedMonitoring
@@ -1828,26 +1639,6 @@ extension Kinesis {
             self.streamCreationTimestamp = streamCreationTimestamp
             self.streamName = streamName
             self.streamStatus = streamStatus
-        }
-
-        public func validate() throws {
-            try validate(consumerCount, name:"consumerCount", max: 1000000)
-            try validate(consumerCount, name:"consumerCount", min: 0)
-            try enhancedMonitoring.forEach {
-                try $0.validate()
-            }
-            try validate(keyId, name:"keyId", max: 2048)
-            try validate(keyId, name:"keyId", min: 1)
-            try validate(openShardCount, name:"openShardCount", max: 1000000)
-            try validate(openShardCount, name:"openShardCount", min: 0)
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", max: 100000)
-            try validate(retentionPeriodHours, name:"retentionPeriodHours", min: 1)
-            try validate(streamARN, name:"streamARN", max: 2048)
-            try validate(streamARN, name:"streamARN", min: 1)
-            try validate(streamARN, name:"streamARN", pattern: "arn:aws.*:kinesis:.*:\\d{12}:stream/.*")
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1872,40 +1663,6 @@ extension Kinesis {
         public var description: String { return self.rawValue }
     }
 
-    public struct SubscribeToShardEvent: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "ContinuationSequenceNumber", required: true, type: .string), 
-            AWSShapeMember(label: "MillisBehindLatest", required: true, type: .long), 
-            AWSShapeMember(label: "Records", required: true, type: .list)
-        ]
-
-        /// Use this as StartingSequenceNumber in the next call to SubscribeToShard.
-        public let continuationSequenceNumber: String
-        /// The number of milliseconds the read records are from the tip of the stream, indicating how far behind current time the consumer is. A value of zero indicates that record processing is caught up, and there are no new records to process at this moment.
-        public let millisBehindLatest: Int64
-        public let records: [Record]
-
-        public init(continuationSequenceNumber: String, millisBehindLatest: Int64, records: [Record]) {
-            self.continuationSequenceNumber = continuationSequenceNumber
-            self.millisBehindLatest = millisBehindLatest
-            self.records = records
-        }
-
-        public func validate() throws {
-            try validate(continuationSequenceNumber, name:"continuationSequenceNumber", pattern: "0|([1-9]\\d{0,128})")
-            try validate(millisBehindLatest, name:"millisBehindLatest", min: 0)
-            try records.forEach {
-                try $0.validate()
-            }
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case continuationSequenceNumber = "ContinuationSequenceNumber"
-            case millisBehindLatest = "MillisBehindLatest"
-            case records = "Records"
-        }
-    }
-
     public struct SubscribeToShardInput: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "ConsumerARN", required: true, type: .string), 
@@ -1925,14 +1682,14 @@ extension Kinesis {
             self.startingPosition = startingPosition
         }
 
-        public func validate() throws {
-            try validate(consumerARN, name:"consumerARN", max: 2048)
-            try validate(consumerARN, name:"consumerARN", min: 1)
-            try validate(consumerARN, name:"consumerARN", pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
-            try validate(shardId, name:"shardId", max: 128)
-            try validate(shardId, name:"shardId", min: 1)
-            try validate(shardId, name:"shardId", pattern: "[a-zA-Z0-9_.-]+")
-            try startingPosition.validate()
+        public func validate(name: String) throws {
+            try validate(consumerARN, name:"consumerARN", parent: name, max: 2048)
+            try validate(consumerARN, name:"consumerARN", parent: name, min: 1)
+            try validate(consumerARN, name:"consumerARN", parent: name, pattern: "^(arn):aws.*:kinesis:.*:\\d{12}:.*stream\\/[a-zA-Z0-9_.-]+\\/consumer\\/[a-zA-Z0-9_.-]+:[0-9]+")
+            try validate(shardId, name:"shardId", parent: name, max: 128)
+            try validate(shardId, name:"shardId", parent: name, min: 1)
+            try validate(shardId, name:"shardId", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try startingPosition.validate(name: "\(name).startingPosition")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1958,13 +1715,6 @@ extension Kinesis {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case key = "Key"
             case value = "Value"
@@ -1983,20 +1733,20 @@ extension Kinesis {
         /// The name of the stream.
         public let streamName: String
         /// The new number of shards.
-        public let targetShardCount: Int32
+        public let targetShardCount: Int
 
-        public init(scalingType: ScalingType, streamName: String, targetShardCount: Int32) {
+        public init(scalingType: ScalingType, streamName: String, targetShardCount: Int) {
             self.scalingType = scalingType
             self.streamName = streamName
             self.targetShardCount = targetShardCount
         }
 
-        public func validate() throws {
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(targetShardCount, name:"targetShardCount", max: 100000)
-            try validate(targetShardCount, name:"targetShardCount", min: 1)
+        public func validate(name: String) throws {
+            try validate(streamName, name:"streamName", parent: name, max: 128)
+            try validate(streamName, name:"streamName", parent: name, min: 1)
+            try validate(streamName, name:"streamName", parent: name, pattern: "[a-zA-Z0-9_.-]+")
+            try validate(targetShardCount, name:"targetShardCount", parent: name, max: 100000)
+            try validate(targetShardCount, name:"targetShardCount", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2014,26 +1764,16 @@ extension Kinesis {
         ]
 
         /// The current number of shards.
-        public let currentShardCount: Int32?
+        public let currentShardCount: Int?
         /// The name of the stream.
         public let streamName: String?
         /// The updated number of shards.
-        public let targetShardCount: Int32?
+        public let targetShardCount: Int?
 
-        public init(currentShardCount: Int32? = nil, streamName: String? = nil, targetShardCount: Int32? = nil) {
+        public init(currentShardCount: Int? = nil, streamName: String? = nil, targetShardCount: Int? = nil) {
             self.currentShardCount = currentShardCount
             self.streamName = streamName
             self.targetShardCount = targetShardCount
-        }
-
-        public func validate() throws {
-            try validate(currentShardCount, name:"currentShardCount", max: 100000)
-            try validate(currentShardCount, name:"currentShardCount", min: 1)
-            try validate(streamName, name:"streamName", max: 128)
-            try validate(streamName, name:"streamName", min: 1)
-            try validate(streamName, name:"streamName", pattern: "[a-zA-Z0-9_.-]+")
-            try validate(targetShardCount, name:"targetShardCount", max: 100000)
-            try validate(targetShardCount, name:"targetShardCount", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

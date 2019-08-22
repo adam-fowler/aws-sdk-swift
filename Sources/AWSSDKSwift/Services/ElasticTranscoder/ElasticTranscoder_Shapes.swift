@@ -41,16 +41,16 @@ extension ElasticTranscoder {
             self.sizingPolicy = sizingPolicy
         }
 
-        public func validate() throws {
-            try validate(albumArtFormat, name:"albumArtFormat", pattern: "(^jpg$)|(^png$)")
-            try encryption?.validate()
-            try validate(inputKey, name:"inputKey", max: 1024)
-            try validate(inputKey, name:"inputKey", min: 1)
-            try validate(inputKey, name:"inputKey", pattern: "(^.{1,1020}.jpg$)|(^.{1,1019}.jpeg$)|(^.{1,1020}.png$)")
-            try validate(maxHeight, name:"maxHeight", pattern: "(^auto$)|(^\\d{2,4}$)")
-            try validate(maxWidth, name:"maxWidth", pattern: "(^auto$)|(^\\d{2,4}$)")
-            try validate(paddingPolicy, name:"paddingPolicy", pattern: "(^Pad$)|(^NoPad$)")
-            try validate(sizingPolicy, name:"sizingPolicy", pattern: "(^Fit$)|(^Fill$)|(^Stretch$)|(^Keep$)|(^ShrinkToFit$)|(^ShrinkToFill$)")
+        public func validate(name: String) throws {
+            try validate(albumArtFormat, name:"albumArtFormat", parent: name, pattern: "(^jpg$)|(^png$)")
+            try encryption?.validate(name: "\(name).encryption")
+            try validate(inputKey, name:"inputKey", parent: name, max: 1024)
+            try validate(inputKey, name:"inputKey", parent: name, min: 1)
+            try validate(inputKey, name:"inputKey", parent: name, pattern: "(^.{1,1020}.jpg$)|(^.{1,1019}.jpeg$)|(^.{1,1020}.png$)")
+            try validate(maxHeight, name:"maxHeight", parent: name, pattern: "(^auto$)|(^\\d{2,4}$)")
+            try validate(maxWidth, name:"maxWidth", parent: name, pattern: "(^auto$)|(^\\d{2,4}$)")
+            try validate(paddingPolicy, name:"paddingPolicy", parent: name, pattern: "(^Pad$)|(^NoPad$)")
+            try validate(sizingPolicy, name:"sizingPolicy", parent: name, pattern: "(^Fit$)|(^Fill$)|(^Stretch$)|(^Keep$)|(^ShrinkToFit$)|(^ShrinkToFill$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -88,11 +88,11 @@ extension ElasticTranscoder {
             self.signed = signed
         }
 
-        public func validate() throws {
-            try validate(bitDepth, name:"bitDepth", pattern: "(^8$)|(^16$)|(^24$)|(^32$)")
-            try validate(bitOrder, name:"bitOrder", pattern: "(^LittleEndian$)")
-            try validate(profile, name:"profile", pattern: "(^auto$)|(^AAC-LC$)|(^HE-AAC$)|(^HE-AACv2$)")
-            try validate(signed, name:"signed", pattern: "(^Unsigned$)|(^Signed$)")
+        public func validate(name: String) throws {
+            try validate(bitDepth, name:"bitDepth", parent: name, pattern: "(^8$)|(^16$)|(^24$)|(^32$)")
+            try validate(bitOrder, name:"bitOrder", parent: name, pattern: "(^LittleEndian$)")
+            try validate(profile, name:"profile", parent: name, pattern: "(^auto$)|(^AAC-LC$)|(^HE-AAC$)|(^HE-AACv2$)")
+            try validate(signed, name:"signed", parent: name, pattern: "(^Unsigned$)|(^Signed$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -135,13 +135,13 @@ extension ElasticTranscoder {
             self.sampleRate = sampleRate
         }
 
-        public func validate() throws {
-            try validate(audioPackingMode, name:"audioPackingMode", pattern: "(^SingleTrack$)|(^OneChannelPerTrack$)|(^OneChannelPerTrackWithMosTo8Tracks$)")
-            try validate(bitRate, name:"bitRate", pattern: "^\\d{1,3}$")
-            try validate(channels, name:"channels", pattern: "(^auto$)|(^0$)|(^1$)|(^2$)")
-            try validate(codec, name:"codec", pattern: "(^AAC$)|(^vorbis$)|(^mp3$)|(^mp2$)|(^pcm$)|(^flac$)")
-            try codecOptions?.validate()
-            try validate(sampleRate, name:"sampleRate", pattern: "(^auto$)|(^22050$)|(^32000$)|(^44100$)|(^48000$)|(^96000$)|(^192000$)")
+        public func validate(name: String) throws {
+            try validate(audioPackingMode, name:"audioPackingMode", parent: name, pattern: "(^SingleTrack$)|(^OneChannelPerTrack$)|(^OneChannelPerTrackWithMosTo8Tracks$)")
+            try validate(bitRate, name:"bitRate", parent: name, pattern: "^\\d{1,3}$")
+            try validate(channels, name:"channels", parent: name, pattern: "(^auto$)|(^0$)|(^1$)|(^2$)")
+            try validate(codec, name:"codec", parent: name, pattern: "(^AAC$)|(^vorbis$)|(^mp3$)|(^mp2$)|(^pcm$)|(^flac$)")
+            try codecOptions?.validate(name: "\(name).codecOptions")
+            try validate(sampleRate, name:"sampleRate", parent: name, pattern: "(^auto$)|(^22050$)|(^32000$)|(^44100$)|(^48000$)|(^96000$)|(^192000$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -166,8 +166,8 @@ extension ElasticTranscoder {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -203,10 +203,10 @@ extension ElasticTranscoder {
             self.pattern = pattern
         }
 
-        public func validate() throws {
-            try encryption?.validate()
-            try validate(format, name:"format", pattern: "(^mov-text$)|(^srt$)|(^scc$)|(^webvtt$)|(^dfxp$)|(^cea-708$)")
-            try validate(pattern, name:"pattern", pattern: "(^$)|(^.*\\{language\\}.*$)")
+        public func validate(name: String) throws {
+            try encryption?.validate(name: "\(name).encryption")
+            try validate(format, name:"format", parent: name, pattern: "(^mov-text$)|(^srt$)|(^scc$)|(^webvtt$)|(^dfxp$)|(^cea-708$)")
+            try validate(pattern, name:"pattern", parent: name, pattern: "(^$)|(^.*\\{language\\}.*$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -244,15 +244,15 @@ extension ElasticTranscoder {
             self.timeOffset = timeOffset
         }
 
-        public func validate() throws {
-            try encryption?.validate()
-            try validate(key, name:"key", max: 1024)
-            try validate(key, name:"key", min: 1)
-            try validate(label, name:"label", max: 40)
-            try validate(label, name:"label", min: 1)
-            try validate(language, name:"language", max: 255)
-            try validate(language, name:"language", min: 1)
-            try validate(timeOffset, name:"timeOffset", pattern: "(^[+-]?\\d{1,5}(\\.\\d{0,3})?$)|(^[+-]?([0-1]?[0-9]:|2[0-3]:)?([0-5]?[0-9]:)?[0-5]?[0-9](\\.\\d{0,3})?$)")
+        public func validate(name: String) throws {
+            try encryption?.validate(name: "\(name).encryption")
+            try validate(key, name:"key", parent: name, max: 1024)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(label, name:"label", parent: name, max: 40)
+            try validate(label, name:"label", parent: name, min: 1)
+            try validate(language, name:"language", parent: name, max: 255)
+            try validate(language, name:"language", parent: name, min: 1)
+            try validate(timeOffset, name:"timeOffset", parent: name, pattern: "(^[+-]?\\d{1,5}(\\.\\d{0,3})?$)|(^[+-]?([0-1]?[0-9]:|2[0-3]:)?([0-5]?[0-9]:)?[0-5]?[0-9](\\.\\d{0,3})?$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -276,36 +276,15 @@ extension ElasticTranscoder {
             self.captionFormats = captionFormats
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try captionFormats?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).captionFormats[]")
             }
-            try validate(captionFormats, name:"captionFormats", max: 4)
+            try validate(captionFormats, name:"captionFormats", parent: name, max: 4)
         }
 
         private enum CodingKeys: String, CodingKey {
             case captionFormats = "CaptionFormats"
-        }
-    }
-
-    public struct Clip: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "TimeSpan", required: false, type: .structure)
-        ]
-
-        /// Settings that determine when a clip begins and how long it lasts.
-        public let timeSpan: TimeSpan?
-
-        public init(timeSpan: TimeSpan? = nil) {
-            self.timeSpan = timeSpan
-        }
-
-        public func validate() throws {
-            try timeSpan?.validate()
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case timeSpan = "TimeSpan"
         }
     }
 
@@ -357,19 +336,19 @@ extension ElasticTranscoder {
             self.watermarks = watermarks
         }
 
-        public func validate() throws {
-            try albumArt?.validate()
-            try captions?.validate()
-            try encryption?.validate()
-            try validate(key, name:"key", max: 255)
-            try validate(key, name:"key", min: 1)
-            try validate(presetId, name:"presetId", pattern: "^\\d{13}-\\w{6}$")
-            try validate(rotate, name:"rotate", pattern: "(^auto$)|(^0$)|(^90$)|(^180$)|(^270$)")
-            try validate(segmentDuration, name:"segmentDuration", pattern: "^\\d{1,5}(\\.\\d{0,5})?$")
-            try thumbnailEncryption?.validate()
-            try validate(thumbnailPattern, name:"thumbnailPattern", pattern: "(^$)|(^.*\\{count\\}.*$)")
+        public func validate(name: String) throws {
+            try albumArt?.validate(name: "\(name).albumArt")
+            try captions?.validate(name: "\(name).captions")
+            try encryption?.validate(name: "\(name).encryption")
+            try validate(key, name:"key", parent: name, max: 255)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(presetId, name:"presetId", parent: name, pattern: "^\\d{13}-\\w{6}$")
+            try validate(rotate, name:"rotate", parent: name, pattern: "(^auto$)|(^0$)|(^90$)|(^180$)|(^270$)")
+            try validate(segmentDuration, name:"segmentDuration", parent: name, pattern: "^\\d{1,5}(\\.\\d{0,5})?$")
+            try thumbnailEncryption?.validate(name: "\(name).thumbnailEncryption")
+            try validate(thumbnailPattern, name:"thumbnailPattern", parent: name, pattern: "(^$)|(^.*\\{count\\}.*$)")
             try watermarks?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).watermarks[]")
             }
         }
 
@@ -415,17 +394,17 @@ extension ElasticTranscoder {
             self.playReadyDrm = playReadyDrm
         }
 
-        public func validate() throws {
-            try validate(format, name:"format", pattern: "(^HLSv3$)|(^HLSv4$)|(^Smooth$)|(^MPEG-DASH$)")
-            try hlsContentProtection?.validate()
-            try validate(name, name:"name", max: 255)
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(format, name:"format", parent: name, pattern: "(^HLSv3$)|(^HLSv4$)|(^Smooth$)|(^MPEG-DASH$)")
+            try hlsContentProtection?.validate(name: "\(name).hlsContentProtection")
+            try validate(name, name:"name", parent: name, max: 255)
+            try validate(name, name:"name", parent: name, min: 1)
             try outputKeys?.forEach {
-                try validate($0, name:"outputKeys[]", max: 255)
-                try validate($0, name:"outputKeys[]", min: 1)
+                try validate($0, name: "outputKeys[]", parent: name, max: 255)
+                try validate($0, name: "outputKeys[]", parent: name, min: 1)
             }
-            try validate(outputKeys, name:"outputKeys", max: 30)
-            try playReadyDrm?.validate()
+            try validate(outputKeys, name:"outputKeys", parent: name, max: 30)
+            try playReadyDrm?.validate(name: "\(name).playReadyDrm")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -477,24 +456,24 @@ extension ElasticTranscoder {
             self.userMetadata = userMetadata
         }
 
-        public func validate() throws {
-            try input?.validate()
+        public func validate(name: String) throws {
+            try input?.validate(name: "\(name).input")
             try inputs?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).inputs[]")
             }
-            try validate(inputs, name:"inputs", max: 200)
-            try output?.validate()
-            try validate(outputKeyPrefix, name:"outputKeyPrefix", max: 255)
-            try validate(outputKeyPrefix, name:"outputKeyPrefix", min: 1)
+            try validate(inputs, name:"inputs", parent: name, max: 200)
+            try output?.validate(name: "\(name).output")
+            try validate(outputKeyPrefix, name:"outputKeyPrefix", parent: name, max: 255)
+            try validate(outputKeyPrefix, name:"outputKeyPrefix", parent: name, min: 1)
             try outputs?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).outputs[]")
             }
-            try validate(outputs, name:"outputs", max: 30)
-            try validate(pipelineId, name:"pipelineId", pattern: "^\\d{13}-\\w{6}$")
+            try validate(outputs, name:"outputs", parent: name, max: 30)
+            try validate(pipelineId, name:"pipelineId", parent: name, pattern: "^\\d{13}-\\w{6}$")
             try playlists?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).playlists[]")
             }
-            try validate(playlists, name:"playlists", max: 30)
+            try validate(playlists, name:"playlists", parent: name, max: 30)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -519,10 +498,6 @@ extension ElasticTranscoder {
 
         public init(job: Job? = nil) {
             self.job = job
-        }
-
-        public func validate() throws {
-            try job?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -570,17 +545,17 @@ extension ElasticTranscoder {
             self.thumbnailConfig = thumbnailConfig
         }
 
-        public func validate() throws {
-            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", max: 255)
-            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", min: 0)
-            try contentConfig?.validate()
-            try validate(inputBucket, name:"inputBucket", pattern: "^(\\w|\\.|-){1,255}$")
-            try validate(name, name:"name", max: 40)
-            try validate(name, name:"name", min: 1)
-            try notifications?.validate()
-            try validate(outputBucket, name:"outputBucket", pattern: "^(\\w|\\.|-){1,255}$")
-            try validate(role, name:"role", pattern: "^arn:aws:iam::\\w{12}:role/.+$")
-            try thumbnailConfig?.validate()
+        public func validate(name: String) throws {
+            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", parent: name, max: 255)
+            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", parent: name, min: 0)
+            try contentConfig?.validate(name: "\(name).contentConfig")
+            try validate(inputBucket, name:"inputBucket", parent: name, pattern: "^(\\w|\\.|-){1,255}$")
+            try validate(name, name:"name", parent: name, max: 40)
+            try validate(name, name:"name", parent: name, min: 1)
+            try notifications?.validate(name: "\(name).notifications")
+            try validate(outputBucket, name:"outputBucket", parent: name, pattern: "^(\\w|\\.|-){1,255}$")
+            try validate(role, name:"role", parent: name, pattern: "^arn:aws:iam::\\w{12}:role/.+$")
+            try thumbnailConfig?.validate(name: "\(name).thumbnailConfig")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -609,10 +584,6 @@ extension ElasticTranscoder {
         public init(pipeline: Pipeline? = nil, warnings: [Warning]? = nil) {
             self.pipeline = pipeline
             self.warnings = warnings
-        }
-
-        public func validate() throws {
-            try pipeline?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -653,15 +624,15 @@ extension ElasticTranscoder {
             self.video = video
         }
 
-        public func validate() throws {
-            try audio?.validate()
-            try validate(container, name:"container", pattern: "(^mp4$)|(^ts$)|(^webm$)|(^mp3$)|(^flac$)|(^oga$)|(^ogg$)|(^fmp4$)|(^mpg$)|(^flv$)|(^gif$)|(^mxf$)|(^wav$)|(^mp2$)")
-            try validate(description, name:"description", max: 255)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 40)
-            try validate(name, name:"name", min: 1)
-            try thumbnails?.validate()
-            try video?.validate()
+        public func validate(name: String) throws {
+            try audio?.validate(name: "\(name).audio")
+            try validate(container, name:"container", parent: name, pattern: "(^mp4$)|(^ts$)|(^webm$)|(^mp3$)|(^flac$)|(^oga$)|(^ogg$)|(^fmp4$)|(^mpg$)|(^flv$)|(^gif$)|(^mxf$)|(^wav$)|(^mp2$)")
+            try validate(description, name:"description", parent: name, max: 255)
+            try validate(description, name:"description", parent: name, min: 0)
+            try validate(name, name:"name", parent: name, max: 40)
+            try validate(name, name:"name", parent: name, min: 1)
+            try thumbnails?.validate(name: "\(name).thumbnails")
+            try video?.validate(name: "\(name).video")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -690,10 +661,6 @@ extension ElasticTranscoder {
             self.warning = warning
         }
 
-        public func validate() throws {
-            try preset?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case preset = "Preset"
             case warning = "Warning"
@@ -712,8 +679,8 @@ extension ElasticTranscoder {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -741,8 +708,8 @@ extension ElasticTranscoder {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -774,11 +741,11 @@ extension ElasticTranscoder {
         /// The detected frame rate of the input file, in frames per second.
         public let frameRate: String?
         /// The detected height of the input file, in pixels.
-        public let height: Int32?
+        public let height: Int?
         /// The detected width of the input file, in pixels.
-        public let width: Int32?
+        public let width: Int?
 
-        public init(durationMillis: Int64? = nil, fileSize: Int64? = nil, frameRate: String? = nil, height: Int32? = nil, width: Int32? = nil) {
+        public init(durationMillis: Int64? = nil, fileSize: Int64? = nil, frameRate: String? = nil, height: Int? = nil, width: Int? = nil) {
             self.durationMillis = durationMillis
             self.fileSize = fileSize
             self.frameRate = frameRate
@@ -786,8 +753,8 @@ extension ElasticTranscoder {
             self.width = width
         }
 
-        public func validate() throws {
-            try validate(frameRate, name:"frameRate", pattern: "^\\d{1,5}(\\.\\d{0,5})?$")
+        public func validate(name: String) throws {
+            try validate(frameRate, name:"frameRate", parent: name, pattern: "^\\d{1,5}(\\.\\d{0,5})?$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -823,12 +790,12 @@ extension ElasticTranscoder {
             self.mode = mode
         }
 
-        public func validate() throws {
-            try validate(initializationVector, name:"initializationVector", max: 255)
-            try validate(initializationVector, name:"initializationVector", min: 0)
-            try validate(key, name:"key", pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
-            try validate(keyMd5, name:"keyMd5", pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
-            try validate(mode, name:"mode", pattern: "(^s3$)|(^s3-aws-kms$)|(^aes-cbc-pkcs7$)|(^aes-ctr$)|(^aes-gcm$)")
+        public func validate(name: String) throws {
+            try validate(initializationVector, name:"initializationVector", parent: name, max: 255)
+            try validate(initializationVector, name:"initializationVector", parent: name, min: 0)
+            try validate(key, name:"key", parent: name, pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
+            try validate(keyMd5, name:"keyMd5", parent: name, pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
+            try validate(mode, name:"mode", parent: name, pattern: "(^s3$)|(^s3-aws-kms$)|(^aes-cbc-pkcs7$)|(^aes-ctr$)|(^aes-gcm$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -871,15 +838,15 @@ extension ElasticTranscoder {
             self.method = method
         }
 
-        public func validate() throws {
-            try validate(initializationVector, name:"initializationVector", max: 255)
-            try validate(initializationVector, name:"initializationVector", min: 0)
-            try validate(key, name:"key", pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
-            try validate(keyMd5, name:"keyMd5", pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
-            try validate(keyStoragePolicy, name:"keyStoragePolicy", pattern: "(^NoStore$)|(^WithVariantPlaylists$)")
-            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", max: 512)
-            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", min: 0)
-            try validate(method, name:"method", pattern: "(^aes-128$)")
+        public func validate(name: String) throws {
+            try validate(initializationVector, name:"initializationVector", parent: name, max: 255)
+            try validate(initializationVector, name:"initializationVector", parent: name, min: 0)
+            try validate(key, name:"key", parent: name, pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
+            try validate(keyMd5, name:"keyMd5", parent: name, pattern: "^$|(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
+            try validate(keyStoragePolicy, name:"keyStoragePolicy", parent: name, pattern: "(^NoStore$)|(^WithVariantPlaylists$)")
+            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", parent: name, max: 512)
+            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", parent: name, min: 0)
+            try validate(method, name:"method", parent: name, pattern: "(^aes-128$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -908,12 +875,12 @@ extension ElasticTranscoder {
             self.mergePolicy = mergePolicy
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try captionSources?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).captionSources[]")
             }
-            try validate(captionSources, name:"captionSources", max: 20)
-            try validate(mergePolicy, name:"mergePolicy", pattern: "(^MergeOverride$)|(^MergeRetain$)|(^Override$)")
+            try validate(captionSources, name:"captionSources", parent: name, max: 20)
+            try validate(mergePolicy, name:"mergePolicy", parent: name, pattern: "(^MergeOverride$)|(^MergeRetain$)|(^Override$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -978,26 +945,6 @@ extension ElasticTranscoder {
             self.userMetadata = userMetadata
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
-            try input?.validate()
-            try inputs?.forEach {
-                try $0.validate()
-            }
-            try validate(inputs, name:"inputs", max: 200)
-            try output?.validate()
-            try validate(outputKeyPrefix, name:"outputKeyPrefix", max: 255)
-            try validate(outputKeyPrefix, name:"outputKeyPrefix", min: 1)
-            try outputs?.forEach {
-                try $0.validate()
-            }
-            try validate(pipelineId, name:"pipelineId", pattern: "^\\d{13}-\\w{6}$")
-            try playlists?.forEach {
-                try $0.validate()
-            }
-            try validate(status, name:"status", pattern: "(^Submitted$)|(^Progressing$)|(^Complete$)|(^Canceled$)|(^Error$)")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case id = "Id"
@@ -1030,11 +977,11 @@ extension ElasticTranscoder {
             self.mergePolicy = mergePolicy
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try artwork?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).artwork[]")
             }
-            try validate(mergePolicy, name:"mergePolicy", pattern: "(^Replace$)|(^Prepend$)|(^Append$)|(^Fallback$)")
+            try validate(mergePolicy, name:"mergePolicy", parent: name, pattern: "(^Replace$)|(^Prepend$)|(^Append$)|(^Fallback$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1091,18 +1038,18 @@ extension ElasticTranscoder {
             self.timeSpan = timeSpan
         }
 
-        public func validate() throws {
-            try validate(aspectRatio, name:"aspectRatio", pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
-            try validate(container, name:"container", pattern: "(^auto$)|(^3gp$)|(^asf$)|(^avi$)|(^divx$)|(^flv$)|(^mkv$)|(^mov$)|(^mp4$)|(^mpeg$)|(^mpeg-ps$)|(^mpeg-ts$)|(^mxf$)|(^ogg$)|(^ts$)|(^vob$)|(^wav$)|(^webm$)|(^mp3$)|(^m4a$)|(^aac$)")
-            try detectedProperties?.validate()
-            try encryption?.validate()
-            try validate(frameRate, name:"frameRate", pattern: "(^auto$)|(^10$)|(^15$)|(^23.97$)|(^24$)|(^25$)|(^29.97$)|(^30$)|(^50$)|(^60$)")
-            try inputCaptions?.validate()
-            try validate(interlaced, name:"interlaced", pattern: "(^auto$)|(^true$)|(^false$)")
-            try validate(key, name:"key", max: 1024)
-            try validate(key, name:"key", min: 1)
-            try validate(resolution, name:"resolution", pattern: "(^auto$)|(^\\d{1,5}x\\d{1,5}$)")
-            try timeSpan?.validate()
+        public func validate(name: String) throws {
+            try validate(aspectRatio, name:"aspectRatio", parent: name, pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
+            try validate(container, name:"container", parent: name, pattern: "(^auto$)|(^3gp$)|(^asf$)|(^avi$)|(^divx$)|(^flv$)|(^mkv$)|(^mov$)|(^mp4$)|(^mpeg$)|(^mpeg-ps$)|(^mpeg-ts$)|(^mxf$)|(^ogg$)|(^ts$)|(^vob$)|(^wav$)|(^webm$)|(^mp3$)|(^m4a$)|(^aac$)")
+            try detectedProperties?.validate(name: "\(name).detectedProperties")
+            try encryption?.validate(name: "\(name).encryption")
+            try validate(frameRate, name:"frameRate", parent: name, pattern: "(^auto$)|(^10$)|(^15$)|(^23.97$)|(^24$)|(^25$)|(^29.97$)|(^30$)|(^50$)|(^60$)")
+            try inputCaptions?.validate(name: "\(name).inputCaptions")
+            try validate(interlaced, name:"interlaced", parent: name, pattern: "(^auto$)|(^true$)|(^false$)")
+            try validate(key, name:"key", parent: name, max: 1024)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(resolution, name:"resolution", parent: name, pattern: "(^auto$)|(^\\d{1,5}x\\d{1,5}$)")
+            try timeSpan?.validate(name: "\(name).timeSpan")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1160,7 +1107,7 @@ extension ElasticTranscoder {
         /// Frame rate of the output file, in frames per second.
         public let frameRate: String?
         /// Height of the output file, in pixels.
-        public let height: Int32?
+        public let height: Int?
         /// A sequential counter, starting with 1, that identifies an output among the outputs from the current job. In the Output syntax, this value is always 1.
         public let id: String?
         ///  The name to assign to the transcoded file. Elastic Transcoder saves the file in the Amazon S3 bucket specified by the OutputBucket object in the pipeline that is specified by the pipeline ID.
@@ -1182,9 +1129,9 @@ extension ElasticTranscoder {
         /// Information about the watermarks that you want Elastic Transcoder to add to the video during transcoding. You can specify up to four watermarks for each output. Settings for each watermark must be defined in the preset that you specify in Preset for the current output. Watermarks are added to the output video in the sequence in which you list them in the job output—the first watermark in the list is added to the output video first, the second watermark in the list is added next, and so on. As a result, if the settings in a preset cause Elastic Transcoder to place all watermarks in the same location, the second watermark that you add covers the first one, the third one covers the second, and the fourth one covers the third.
         public let watermarks: [JobWatermark]?
         /// Specifies the width of the output file in pixels.
-        public let width: Int32?
+        public let width: Int?
 
-        public init(albumArt: JobAlbumArt? = nil, appliedColorSpaceConversion: String? = nil, captions: Captions? = nil, duration: Int64? = nil, durationMillis: Int64? = nil, encryption: Encryption? = nil, fileSize: Int64? = nil, frameRate: String? = nil, height: Int32? = nil, id: String? = nil, key: String? = nil, presetId: String? = nil, rotate: String? = nil, segmentDuration: String? = nil, status: String? = nil, statusDetail: String? = nil, thumbnailEncryption: Encryption? = nil, thumbnailPattern: String? = nil, watermarks: [JobWatermark]? = nil, width: Int32? = nil) {
+        public init(albumArt: JobAlbumArt? = nil, appliedColorSpaceConversion: String? = nil, captions: Captions? = nil, duration: Int64? = nil, durationMillis: Int64? = nil, encryption: Encryption? = nil, fileSize: Int64? = nil, frameRate: String? = nil, height: Int? = nil, id: String? = nil, key: String? = nil, presetId: String? = nil, rotate: String? = nil, segmentDuration: String? = nil, status: String? = nil, statusDetail: String? = nil, thumbnailEncryption: Encryption? = nil, thumbnailPattern: String? = nil, watermarks: [JobWatermark]? = nil, width: Int? = nil) {
             self.albumArt = albumArt
             self.appliedColorSpaceConversion = appliedColorSpaceConversion
             self.captions = captions
@@ -1205,26 +1152,6 @@ extension ElasticTranscoder {
             self.thumbnailPattern = thumbnailPattern
             self.watermarks = watermarks
             self.width = width
-        }
-
-        public func validate() throws {
-            try albumArt?.validate()
-            try captions?.validate()
-            try encryption?.validate()
-            try validate(frameRate, name:"frameRate", pattern: "^\\d{1,5}(\\.\\d{0,5})?$")
-            try validate(key, name:"key", max: 255)
-            try validate(key, name:"key", min: 1)
-            try validate(presetId, name:"presetId", pattern: "^\\d{13}-\\w{6}$")
-            try validate(rotate, name:"rotate", pattern: "(^auto$)|(^0$)|(^90$)|(^180$)|(^270$)")
-            try validate(segmentDuration, name:"segmentDuration", pattern: "^\\d{1,5}(\\.\\d{0,5})?$")
-            try validate(status, name:"status", pattern: "(^Submitted$)|(^Progressing$)|(^Complete$)|(^Canceled$)|(^Error$)")
-            try validate(statusDetail, name:"statusDetail", max: 255)
-            try validate(statusDetail, name:"statusDetail", min: 0)
-            try thumbnailEncryption?.validate()
-            try validate(thumbnailPattern, name:"thumbnailPattern", pattern: "(^$)|(^.*\\{count\\}.*$)")
-            try watermarks?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1271,13 +1198,13 @@ extension ElasticTranscoder {
             self.presetWatermarkId = presetWatermarkId
         }
 
-        public func validate() throws {
-            try encryption?.validate()
-            try validate(inputKey, name:"inputKey", max: 1024)
-            try validate(inputKey, name:"inputKey", min: 1)
-            try validate(inputKey, name:"inputKey", pattern: "(^.{1,1020}.jpg$)|(^.{1,1019}.jpeg$)|(^.{1,1020}.png$)")
-            try validate(presetWatermarkId, name:"presetWatermarkId", max: 40)
-            try validate(presetWatermarkId, name:"presetWatermarkId", min: 1)
+        public func validate(name: String) throws {
+            try encryption?.validate(name: "\(name).encryption")
+            try validate(inputKey, name:"inputKey", parent: name, max: 1024)
+            try validate(inputKey, name:"inputKey", parent: name, min: 1)
+            try validate(inputKey, name:"inputKey", parent: name, pattern: "(^.{1,1020}.jpg$)|(^.{1,1019}.jpeg$)|(^.{1,1020}.png$)")
+            try validate(presetWatermarkId, name:"presetWatermarkId", parent: name, max: 40)
+            try validate(presetWatermarkId, name:"presetWatermarkId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1307,10 +1234,10 @@ extension ElasticTranscoder {
             self.pipelineId = pipelineId
         }
 
-        public func validate() throws {
-            try validate(ascending, name:"ascending", pattern: "(^true$)|(^false$)")
-            try validate(pageToken, name:"pageToken", pattern: "^\\d{13}-\\w{6}$")
-            try validate(pipelineId, name:"pipelineId", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(ascending, name:"ascending", parent: name, pattern: "(^true$)|(^false$)")
+            try validate(pageToken, name:"pageToken", parent: name, pattern: "^\\d{13}-\\w{6}$")
+            try validate(pipelineId, name:"pipelineId", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1334,13 +1261,6 @@ extension ElasticTranscoder {
         public init(jobs: [Job]? = nil, nextPageToken: String? = nil) {
             self.jobs = jobs
             self.nextPageToken = nextPageToken
-        }
-
-        public func validate() throws {
-            try jobs?.forEach {
-                try $0.validate()
-            }
-            try validate(nextPageToken, name:"nextPageToken", pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1369,10 +1289,10 @@ extension ElasticTranscoder {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(ascending, name:"ascending", pattern: "(^true$)|(^false$)")
-            try validate(pageToken, name:"pageToken", pattern: "^\\d{13}-\\w{6}$")
-            try validate(status, name:"status", pattern: "(^Submitted$)|(^Progressing$)|(^Complete$)|(^Canceled$)|(^Error$)")
+        public func validate(name: String) throws {
+            try validate(ascending, name:"ascending", parent: name, pattern: "(^true$)|(^false$)")
+            try validate(pageToken, name:"pageToken", parent: name, pattern: "^\\d{13}-\\w{6}$")
+            try validate(status, name:"status", parent: name, pattern: "(^Submitted$)|(^Progressing$)|(^Complete$)|(^Canceled$)|(^Error$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1398,13 +1318,6 @@ extension ElasticTranscoder {
             self.nextPageToken = nextPageToken
         }
 
-        public func validate() throws {
-            try jobs?.forEach {
-                try $0.validate()
-            }
-            try validate(nextPageToken, name:"nextPageToken", pattern: "^\\d{13}-\\w{6}$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case jobs = "Jobs"
             case nextPageToken = "NextPageToken"
@@ -1427,9 +1340,9 @@ extension ElasticTranscoder {
             self.pageToken = pageToken
         }
 
-        public func validate() throws {
-            try validate(ascending, name:"ascending", pattern: "(^true$)|(^false$)")
-            try validate(pageToken, name:"pageToken", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(ascending, name:"ascending", parent: name, pattern: "(^true$)|(^false$)")
+            try validate(pageToken, name:"pageToken", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1454,13 +1367,6 @@ extension ElasticTranscoder {
             self.pipelines = pipelines
         }
 
-        public func validate() throws {
-            try validate(nextPageToken, name:"nextPageToken", pattern: "^\\d{13}-\\w{6}$")
-            try pipelines?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextPageToken = "NextPageToken"
             case pipelines = "Pipelines"
@@ -1483,9 +1389,9 @@ extension ElasticTranscoder {
             self.pageToken = pageToken
         }
 
-        public func validate() throws {
-            try validate(ascending, name:"ascending", pattern: "(^true$)|(^false$)")
-            try validate(pageToken, name:"pageToken", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(ascending, name:"ascending", parent: name, pattern: "(^true$)|(^false$)")
+            try validate(pageToken, name:"pageToken", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1508,13 +1414,6 @@ extension ElasticTranscoder {
         public init(nextPageToken: String? = nil, presets: [Preset]? = nil) {
             self.nextPageToken = nextPageToken
             self.presets = presets
-        }
-
-        public func validate() throws {
-            try validate(nextPageToken, name:"nextPageToken", pattern: "^\\d{13}-\\w{6}$")
-            try presets?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1547,11 +1446,11 @@ extension ElasticTranscoder {
             self.warning = warning
         }
 
-        public func validate() throws {
-            try validate(completed, name:"completed", pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
-            try validate(error, name:"error", pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
-            try validate(progressing, name:"progressing", pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
-            try validate(warning, name:"warning", pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
+        public func validate(name: String) throws {
+            try validate(completed, name:"completed", parent: name, pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
+            try validate(error, name:"error", parent: name, pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
+            try validate(progressing, name:"progressing", parent: name, pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
+            try validate(warning, name:"warning", parent: name, pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1582,14 +1481,14 @@ extension ElasticTranscoder {
             self.granteeType = granteeType
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try access?.forEach {
-                try validate($0, name:"access[]", pattern: "(^FullControl$)|(^Read$)|(^ReadAcp$)|(^WriteAcp$)")
+                try validate($0, name: "access[]", parent: name, pattern: "(^FullControl$)|(^Read$)|(^ReadAcp$)|(^WriteAcp$)")
             }
-            try validate(access, name:"access", max: 30)
-            try validate(grantee, name:"grantee", max: 255)
-            try validate(grantee, name:"grantee", min: 1)
-            try validate(granteeType, name:"granteeType", pattern: "(^Canonical$)|(^Email$)|(^Group$)")
+            try validate(access, name:"access", parent: name, max: 30)
+            try validate(grantee, name:"grantee", parent: name, max: 255)
+            try validate(grantee, name:"grantee", parent: name, min: 1)
+            try validate(granteeType, name:"granteeType", parent: name, pattern: "(^Canonical$)|(^Email$)|(^Group$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1651,21 +1550,6 @@ extension ElasticTranscoder {
             self.thumbnailConfig = thumbnailConfig
         }
 
-        public func validate() throws {
-            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", max: 255)
-            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", min: 0)
-            try contentConfig?.validate()
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
-            try validate(inputBucket, name:"inputBucket", pattern: "^(\\w|\\.|-){1,255}$")
-            try validate(name, name:"name", max: 40)
-            try validate(name, name:"name", min: 1)
-            try notifications?.validate()
-            try validate(outputBucket, name:"outputBucket", pattern: "^(\\w|\\.|-){1,255}$")
-            try validate(role, name:"role", pattern: "^arn:aws:iam::\\w{12}:role/.+$")
-            try validate(status, name:"status", pattern: "(^Active$)|(^Paused$)")
-            try thumbnailConfig?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case awsKmsKeyArn = "AwsKmsKeyArn"
@@ -1701,13 +1585,13 @@ extension ElasticTranscoder {
             self.storageClass = storageClass
         }
 
-        public func validate() throws {
-            try validate(bucket, name:"bucket", pattern: "^(\\w|\\.|-){1,255}$")
+        public func validate(name: String) throws {
+            try validate(bucket, name:"bucket", parent: name, pattern: "^(\\w|\\.|-){1,255}$")
             try permissions?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).permissions[]")
             }
-            try validate(permissions, name:"permissions", max: 30)
-            try validate(storageClass, name:"storageClass", pattern: "(^ReducedRedundancy$)|(^Standard$)")
+            try validate(permissions, name:"permissions", parent: name, max: 30)
+            try validate(storageClass, name:"storageClass", parent: name, pattern: "(^ReducedRedundancy$)|(^Standard$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1749,15 +1633,15 @@ extension ElasticTranscoder {
             self.licenseAcquisitionUrl = licenseAcquisitionUrl
         }
 
-        public func validate() throws {
-            try validate(format, name:"format", pattern: "(^microsoft$)|(^discretix-3.0$)")
-            try validate(initializationVector, name:"initializationVector", max: 255)
-            try validate(initializationVector, name:"initializationVector", min: 0)
-            try validate(key, name:"key", pattern: "(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
-            try validate(keyId, name:"keyId", pattern: "(^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$)|(^[0-9A-Fa-f]{32}$)")
-            try validate(keyMd5, name:"keyMd5", pattern: "(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
-            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", max: 512)
-            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", min: 1)
+        public func validate(name: String) throws {
+            try validate(format, name:"format", parent: name, pattern: "(^microsoft$)|(^discretix-3.0$)")
+            try validate(initializationVector, name:"initializationVector", parent: name, max: 255)
+            try validate(initializationVector, name:"initializationVector", parent: name, min: 0)
+            try validate(key, name:"key", parent: name, pattern: "(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
+            try validate(keyId, name:"keyId", parent: name, pattern: "(^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$)|(^[0-9A-Fa-f]{32}$)")
+            try validate(keyMd5, name:"keyMd5", parent: name, pattern: "(^(?:[A-Za-z0-9\\+/]{4})*(?:[A-Za-z0-9\\+/]{2}==|[A-Za-z0-9\\+/]{3}=)?$)")
+            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", parent: name, max: 512)
+            try validate(licenseAcquisitionUrl, name:"licenseAcquisitionUrl", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1804,22 +1688,6 @@ extension ElasticTranscoder {
             self.playReadyDrm = playReadyDrm
             self.status = status
             self.statusDetail = statusDetail
-        }
-
-        public func validate() throws {
-            try validate(format, name:"format", pattern: "(^HLSv3$)|(^HLSv4$)|(^Smooth$)|(^MPEG-DASH$)")
-            try hlsContentProtection?.validate()
-            try validate(name, name:"name", max: 255)
-            try validate(name, name:"name", min: 1)
-            try outputKeys?.forEach {
-                try validate($0, name:"outputKeys[]", max: 255)
-                try validate($0, name:"outputKeys[]", min: 1)
-            }
-            try validate(outputKeys, name:"outputKeys", max: 30)
-            try playReadyDrm?.validate()
-            try validate(status, name:"status", pattern: "(^Submitted$)|(^Progressing$)|(^Complete$)|(^Canceled$)|(^Error$)")
-            try validate(statusDetail, name:"statusDetail", max: 255)
-            try validate(statusDetail, name:"statusDetail", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1875,19 +1743,6 @@ extension ElasticTranscoder {
             self.thumbnails = thumbnails
             self.`type` = `type`
             self.video = video
-        }
-
-        public func validate() throws {
-            try audio?.validate()
-            try validate(container, name:"container", pattern: "(^mp4$)|(^ts$)|(^webm$)|(^mp3$)|(^flac$)|(^oga$)|(^ogg$)|(^fmp4$)|(^mpg$)|(^flv$)|(^gif$)|(^mxf$)|(^wav$)|(^mp2$)")
-            try validate(description, name:"description", max: 255)
-            try validate(description, name:"description", min: 0)
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
-            try validate(name, name:"name", max: 40)
-            try validate(name, name:"name", min: 1)
-            try thumbnails?.validate()
-            try validate(`type`, name:"`type`", pattern: "(^System$)|(^Custom$)")
-            try video?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1951,18 +1806,18 @@ extension ElasticTranscoder {
             self.verticalOffset = verticalOffset
         }
 
-        public func validate() throws {
-            try validate(horizontalAlign, name:"horizontalAlign", pattern: "(^Left$)|(^Right$)|(^Center$)")
-            try validate(horizontalOffset, name:"horizontalOffset", pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
-            try validate(id, name:"id", max: 40)
-            try validate(id, name:"id", min: 1)
-            try validate(maxHeight, name:"maxHeight", pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
-            try validate(maxWidth, name:"maxWidth", pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
-            try validate(opacity, name:"opacity", pattern: "^\\d{1,3}(\\.\\d{0,20})?$")
-            try validate(sizingPolicy, name:"sizingPolicy", pattern: "(^Fit$)|(^Stretch$)|(^ShrinkToFit$)")
-            try validate(target, name:"target", pattern: "(^Content$)|(^Frame$)")
-            try validate(verticalAlign, name:"verticalAlign", pattern: "(^Top$)|(^Bottom$)|(^Center$)")
-            try validate(verticalOffset, name:"verticalOffset", pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
+        public func validate(name: String) throws {
+            try validate(horizontalAlign, name:"horizontalAlign", parent: name, pattern: "(^Left$)|(^Right$)|(^Center$)")
+            try validate(horizontalOffset, name:"horizontalOffset", parent: name, pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
+            try validate(id, name:"id", parent: name, max: 40)
+            try validate(id, name:"id", parent: name, min: 1)
+            try validate(maxHeight, name:"maxHeight", parent: name, pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
+            try validate(maxWidth, name:"maxWidth", parent: name, pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
+            try validate(opacity, name:"opacity", parent: name, pattern: "^\\d{1,3}(\\.\\d{0,20})?$")
+            try validate(sizingPolicy, name:"sizingPolicy", parent: name, pattern: "(^Fit$)|(^Stretch$)|(^ShrinkToFit$)")
+            try validate(target, name:"target", parent: name, pattern: "(^Content$)|(^Frame$)")
+            try validate(verticalAlign, name:"verticalAlign", parent: name, pattern: "(^Top$)|(^Bottom$)|(^Center$)")
+            try validate(verticalOffset, name:"verticalOffset", parent: name, pattern: "(^\\d{1,3}(\\.\\d{0,5})?%$)|(^\\d{1,4}?px$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1991,8 +1846,8 @@ extension ElasticTranscoder {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2012,10 +1867,6 @@ extension ElasticTranscoder {
             self.job = job
         }
 
-        public func validate() throws {
-            try job?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case job = "Job"
         }
@@ -2033,8 +1884,8 @@ extension ElasticTranscoder {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2058,10 +1909,6 @@ extension ElasticTranscoder {
             self.warnings = warnings
         }
 
-        public func validate() throws {
-            try pipeline?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case pipeline = "Pipeline"
             case warnings = "Warnings"
@@ -2080,8 +1927,8 @@ extension ElasticTranscoder {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2099,10 +1946,6 @@ extension ElasticTranscoder {
 
         public init(preset: Preset? = nil) {
             self.preset = preset
-        }
-
-        public func validate() throws {
-            try preset?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2134,14 +1977,14 @@ extension ElasticTranscoder {
             self.topics = topics
         }
 
-        public func validate() throws {
-            try validate(inputBucket, name:"inputBucket", pattern: "^(\\w|\\.|-){1,255}$")
-            try validate(outputBucket, name:"outputBucket", pattern: "^(\\w|\\.|-){1,255}$")
-            try validate(role, name:"role", pattern: "^arn:aws:iam::\\w{12}:role/.+$")
+        public func validate(name: String) throws {
+            try validate(inputBucket, name:"inputBucket", parent: name, pattern: "^(\\w|\\.|-){1,255}$")
+            try validate(outputBucket, name:"outputBucket", parent: name, pattern: "^(\\w|\\.|-){1,255}$")
+            try validate(role, name:"role", parent: name, pattern: "^arn:aws:iam::\\w{12}:role/.+$")
             try topics.forEach {
-                try validate($0, name:"topics[]", pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
+                try validate($0, name: "topics[]", parent: name, pattern: "(^$)|(^arn:aws:sns:.*:\\w{12}:.+$)")
             }
-            try validate(topics, name:"topics", max: 30)
+            try validate(topics, name:"topics", parent: name, max: 30)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2166,10 +2009,6 @@ extension ElasticTranscoder {
         public init(messages: [String]? = nil, success: String? = nil) {
             self.messages = messages
             self.success = success
-        }
-
-        public func validate() throws {
-            try validate(success, name:"success", pattern: "(^true$)|(^false$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2218,15 +2057,15 @@ extension ElasticTranscoder {
             self.sizingPolicy = sizingPolicy
         }
 
-        public func validate() throws {
-            try validate(aspectRatio, name:"aspectRatio", pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
-            try validate(format, name:"format", pattern: "(^jpg$)|(^png$)")
-            try validate(interval, name:"interval", pattern: "^\\d{1,5}$")
-            try validate(maxHeight, name:"maxHeight", pattern: "(^auto$)|(^\\d{2,4}$)")
-            try validate(maxWidth, name:"maxWidth", pattern: "(^auto$)|(^\\d{2,4}$)")
-            try validate(paddingPolicy, name:"paddingPolicy", pattern: "(^Pad$)|(^NoPad$)")
-            try validate(resolution, name:"resolution", pattern: "^\\d{1,5}x\\d{1,5}$")
-            try validate(sizingPolicy, name:"sizingPolicy", pattern: "(^Fit$)|(^Fill$)|(^Stretch$)|(^Keep$)|(^ShrinkToFit$)|(^ShrinkToFill$)")
+        public func validate(name: String) throws {
+            try validate(aspectRatio, name:"aspectRatio", parent: name, pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
+            try validate(format, name:"format", parent: name, pattern: "(^jpg$)|(^png$)")
+            try validate(interval, name:"interval", parent: name, pattern: "^\\d{1,5}$")
+            try validate(maxHeight, name:"maxHeight", parent: name, pattern: "(^auto$)|(^\\d{2,4}$)")
+            try validate(maxWidth, name:"maxWidth", parent: name, pattern: "(^auto$)|(^\\d{2,4}$)")
+            try validate(paddingPolicy, name:"paddingPolicy", parent: name, pattern: "(^Pad$)|(^NoPad$)")
+            try validate(resolution, name:"resolution", parent: name, pattern: "^\\d{1,5}x\\d{1,5}$")
+            try validate(sizingPolicy, name:"sizingPolicy", parent: name, pattern: "(^Fit$)|(^Fill$)|(^Stretch$)|(^Keep$)|(^ShrinkToFit$)|(^ShrinkToFill$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2257,9 +2096,9 @@ extension ElasticTranscoder {
             self.startTime = startTime
         }
 
-        public func validate() throws {
-            try validate(duration, name:"duration", pattern: "(^\\d{1,5}(\\.\\d{0,3})?$)|(^([0-1]?[0-9]:|2[0-3]:)?([0-5]?[0-9]:)?[0-5]?[0-9](\\.\\d{0,3})?$)")
-            try validate(startTime, name:"startTime", pattern: "(^\\d{1,5}(\\.\\d{0,3})?$)|(^([0-1]?[0-9]:|2[0-3]:)?([0-5]?[0-9]:)?[0-5]?[0-9](\\.\\d{0,3})?$)")
+        public func validate(name: String) throws {
+            try validate(duration, name:"duration", parent: name, pattern: "(^\\d{1,5}(\\.\\d{0,3})?$)|(^([0-1]?[0-9]:|2[0-3]:)?([0-5]?[0-9]:)?[0-5]?[0-9](\\.\\d{0,3})?$)")
+            try validate(startTime, name:"startTime", parent: name, pattern: "(^\\d{1,5}(\\.\\d{0,3})?$)|(^([0-1]?[0-9]:|2[0-3]:)?([0-5]?[0-9]:)?[0-5]?[0-9](\\.\\d{0,3})?$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2311,9 +2150,9 @@ extension ElasticTranscoder {
             self.notifications = notifications
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
-            try notifications.validate()
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
+            try notifications.validate(name: "\(name).notifications")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2332,10 +2171,6 @@ extension ElasticTranscoder {
 
         public init(pipeline: Pipeline? = nil) {
             self.pipeline = pipeline
-        }
-
-        public func validate() throws {
-            try pipeline?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2383,17 +2218,17 @@ extension ElasticTranscoder {
             self.thumbnailConfig = thumbnailConfig
         }
 
-        public func validate() throws {
-            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", max: 255)
-            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", min: 0)
-            try contentConfig?.validate()
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
-            try validate(inputBucket, name:"inputBucket", pattern: "^(\\w|\\.|-){1,255}$")
-            try validate(name, name:"name", max: 40)
-            try validate(name, name:"name", min: 1)
-            try notifications?.validate()
-            try validate(role, name:"role", pattern: "^arn:aws:iam::\\w{12}:role/.+$")
-            try thumbnailConfig?.validate()
+        public func validate(name: String) throws {
+            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", parent: name, max: 255)
+            try validate(awsKmsKeyArn, name:"awsKmsKeyArn", parent: name, min: 0)
+            try contentConfig?.validate(name: "\(name).contentConfig")
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
+            try validate(inputBucket, name:"inputBucket", parent: name, pattern: "^(\\w|\\.|-){1,255}$")
+            try validate(name, name:"name", parent: name, max: 40)
+            try validate(name, name:"name", parent: name, min: 1)
+            try notifications?.validate(name: "\(name).notifications")
+            try validate(role, name:"role", parent: name, pattern: "^arn:aws:iam::\\w{12}:role/.+$")
+            try thumbnailConfig?.validate(name: "\(name).thumbnailConfig")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2424,10 +2259,6 @@ extension ElasticTranscoder {
             self.warnings = warnings
         }
 
-        public func validate() throws {
-            try pipeline?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case pipeline = "Pipeline"
             case warnings = "Warnings"
@@ -2450,9 +2281,9 @@ extension ElasticTranscoder {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", pattern: "^\\d{13}-\\w{6}$")
-            try validate(status, name:"status", pattern: "(^Active$)|(^Paused$)")
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, pattern: "^\\d{13}-\\w{6}$")
+            try validate(status, name:"status", parent: name, pattern: "(^Active$)|(^Paused$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2471,10 +2302,6 @@ extension ElasticTranscoder {
 
         public init(pipeline: Pipeline? = nil) {
             self.pipeline = pipeline
-        }
-
-        public func validate() throws {
-            try pipeline?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2550,22 +2377,28 @@ extension ElasticTranscoder {
             self.watermarks = watermarks
         }
 
-        public func validate() throws {
-            try validate(aspectRatio, name:"aspectRatio", pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
-            try validate(bitRate, name:"bitRate", pattern: "(^\\d{2,5}$)|(^auto$)")
-            try validate(codec, name:"codec", pattern: "(^H\\.264$)|(^vp8$)|(^vp9$)|(^mpeg2$)|(^gif$)")
-            try validate(displayAspectRatio, name:"displayAspectRatio", pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
-            try validate(fixedGOP, name:"fixedGOP", pattern: "(^true$)|(^false$)")
-            try validate(frameRate, name:"frameRate", pattern: "(^auto$)|(^10$)|(^15$)|(^23.97$)|(^24$)|(^25$)|(^29.97$)|(^30$)|(^50$)|(^60$)")
-            try validate(keyframesMaxDist, name:"keyframesMaxDist", pattern: "^\\d{1,6}$")
-            try validate(maxFrameRate, name:"maxFrameRate", pattern: "(^10$)|(^15$)|(^23.97$)|(^24$)|(^25$)|(^29.97$)|(^30$)|(^50$)|(^60$)")
-            try validate(maxHeight, name:"maxHeight", pattern: "(^auto$)|(^\\d{2,4}$)")
-            try validate(maxWidth, name:"maxWidth", pattern: "(^auto$)|(^\\d{2,4}$)")
-            try validate(paddingPolicy, name:"paddingPolicy", pattern: "(^Pad$)|(^NoPad$)")
-            try validate(resolution, name:"resolution", pattern: "(^auto$)|(^\\d{1,5}x\\d{1,5}$)")
-            try validate(sizingPolicy, name:"sizingPolicy", pattern: "(^Fit$)|(^Fill$)|(^Stretch$)|(^Keep$)|(^ShrinkToFit$)|(^ShrinkToFill$)")
+        public func validate(name: String) throws {
+            try validate(aspectRatio, name:"aspectRatio", parent: name, pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
+            try validate(bitRate, name:"bitRate", parent: name, pattern: "(^\\d{2,5}$)|(^auto$)")
+            try validate(codec, name:"codec", parent: name, pattern: "(^H\\.264$)|(^vp8$)|(^vp9$)|(^mpeg2$)|(^gif$)")
+            try codecOptions?.forEach {
+                try validate($0.key, name:"codecOptions.key", parent: name, max: 255)
+                try validate($0.key, name:"codecOptions.key", parent: name, min: 1)
+                try validate($0.value, name:"codecOptions[\"\($0.key)\"]", parent: name, max: 255)
+                try validate($0.value, name:"codecOptions[\"\($0.key)\"]", parent: name, min: 1)
+            }
+            try validate(displayAspectRatio, name:"displayAspectRatio", parent: name, pattern: "(^auto$)|(^1:1$)|(^4:3$)|(^3:2$)|(^16:9$)")
+            try validate(fixedGOP, name:"fixedGOP", parent: name, pattern: "(^true$)|(^false$)")
+            try validate(frameRate, name:"frameRate", parent: name, pattern: "(^auto$)|(^10$)|(^15$)|(^23.97$)|(^24$)|(^25$)|(^29.97$)|(^30$)|(^50$)|(^60$)")
+            try validate(keyframesMaxDist, name:"keyframesMaxDist", parent: name, pattern: "^\\d{1,6}$")
+            try validate(maxFrameRate, name:"maxFrameRate", parent: name, pattern: "(^10$)|(^15$)|(^23.97$)|(^24$)|(^25$)|(^29.97$)|(^30$)|(^50$)|(^60$)")
+            try validate(maxHeight, name:"maxHeight", parent: name, pattern: "(^auto$)|(^\\d{2,4}$)")
+            try validate(maxWidth, name:"maxWidth", parent: name, pattern: "(^auto$)|(^\\d{2,4}$)")
+            try validate(paddingPolicy, name:"paddingPolicy", parent: name, pattern: "(^Pad$)|(^NoPad$)")
+            try validate(resolution, name:"resolution", parent: name, pattern: "(^auto$)|(^\\d{1,5}x\\d{1,5}$)")
+            try validate(sizingPolicy, name:"sizingPolicy", parent: name, pattern: "(^Fit$)|(^Fill$)|(^Stretch$)|(^Keep$)|(^ShrinkToFit$)|(^ShrinkToFill$)")
             try watermarks?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).watermarks[]")
             }
         }
 

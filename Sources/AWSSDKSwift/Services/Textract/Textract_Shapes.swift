@@ -21,8 +21,8 @@ extension Textract {
             self.featureTypes = featureTypes
         }
 
-        public func validate() throws {
-            try document.validate()
+        public func validate(name: String) throws {
+            try document.validate(name: "\(name).document")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -45,13 +45,6 @@ extension Textract {
         public init(blocks: [Block]? = nil, documentMetadata: DocumentMetadata? = nil) {
             self.blocks = blocks
             self.documentMetadata = documentMetadata
-        }
-
-        public func validate() throws {
-            try blocks?.forEach {
-                try $0.validate()
-            }
-            try documentMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -80,9 +73,9 @@ extension Textract {
         /// The type of text that's recognized in a block. In text-detection operations, the following types are returned:    PAGE - Contains a list of the LINE Block objects that are detected on a document page.    WORD - A word detected on a document page. A word is one or more ISO basic Latin script characters that aren't separated by spaces.    LINE - A string of tab-delimited, contiguous words that's detected on a document page.   In text analysis operations, the following types are returned:    PAGE - Contains a list of child Block objects that are detected on a document page.    KEY_VALUE_SET - Stores the KEY and VALUE Block objects for a field that's detected on a document page. Use the EntityType field to determine if a KEY_VALUE_SET object is a KEY Block object or a VALUE Block object.     WORD - A word detected on a document page. A word is one or more ISO basic Latin script characters that aren't separated by spaces that's detected on a document page.    LINE - A string of tab-delimited, contiguous words that's detected on a document page.    TABLE - A table that's detected on a document page. A table is any grid-based information with 2 or more rows or columns with a cell span of 1 row and 1 column each.     CELL - A cell within a detected table. The cell is the parent of the block that contains the text in the cell.    SELECTION_ELEMENT - A selectable element such as a radio button or checkbox that's detected on a document page. Use the value of SelectionStatus to determine the status of the selection element.  
         public let blockType: BlockType?
         /// The column in which a table cell appears. The first column position is 1. ColumnIndex isn't returned by DetectDocumentText and GetDocumentTextDetection.
-        public let columnIndex: Int32?
+        public let columnIndex: Int?
         /// The number of columns that a table cell spans. ColumnSpan isn't returned by DetectDocumentText and GetDocumentTextDetection. 
-        public let columnSpan: Int32?
+        public let columnSpan: Int?
         /// The confidence that Amazon Textract has in the accuracy of the recognized text and the accuracy of the geometry points around the recognized text.
         public let confidence: Float?
         /// The type of entity. The following can be returned:    KEY - An identifier for a field on the document.    VALUE - The field text.    EntityTypes isn't returned by DetectDocumentText and GetDocumentTextDetection.
@@ -92,19 +85,19 @@ extension Textract {
         /// The identifier for the recognized text. The identifier is only unique for a single operation. 
         public let id: String?
         /// The page in which a block was detected. Page is returned by asynchronous operations. Page values greater than 1 are only returned for multi-page documents that are in PDF format. A scanned image (JPG/PNG), even if it contains multiple document pages, is always considered to be a single-page document and the value of Page is always 1. Synchronous operations don't return Page as every input document is considered to be a single-page document.
-        public let page: Int32?
+        public let page: Int?
         /// A list of child blocks of the current block. For example a LINE object has child blocks for each WORD block that's part of the line of text. There aren't Relationship objects in the list for relationships that don't exist, such as when the current block has no child blocks. The list size can be the following:   0 - The block has no child blocks.   1 - The block has child blocks.  
         public let relationships: [Relationship]?
         /// The row in which a table cell is located. The first row position is 1. RowIndex isn't returned by DetectDocumentText and GetDocumentTextDetection.
-        public let rowIndex: Int32?
+        public let rowIndex: Int?
         /// The number of rows that a table spans. RowSpan isn't returned by DetectDocumentText and GetDocumentTextDetection.
-        public let rowSpan: Int32?
+        public let rowSpan: Int?
         /// The selection status of a selectable element such as a radio button or checkbox. 
         public let selectionStatus: SelectionStatus?
         /// The word or line of text that's recognized by Amazon Textract. 
         public let text: String?
 
-        public init(blockType: BlockType? = nil, columnIndex: Int32? = nil, columnSpan: Int32? = nil, confidence: Float? = nil, entityTypes: [EntityType]? = nil, geometry: Geometry? = nil, id: String? = nil, page: Int32? = nil, relationships: [Relationship]? = nil, rowIndex: Int32? = nil, rowSpan: Int32? = nil, selectionStatus: SelectionStatus? = nil, text: String? = nil) {
+        public init(blockType: BlockType? = nil, columnIndex: Int? = nil, columnSpan: Int? = nil, confidence: Float? = nil, entityTypes: [EntityType]? = nil, geometry: Geometry? = nil, id: String? = nil, page: Int? = nil, relationships: [Relationship]? = nil, rowIndex: Int? = nil, rowSpan: Int? = nil, selectionStatus: SelectionStatus? = nil, text: String? = nil) {
             self.blockType = blockType
             self.columnIndex = columnIndex
             self.columnSpan = columnSpan
@@ -118,20 +111,6 @@ extension Textract {
             self.rowSpan = rowSpan
             self.selectionStatus = selectionStatus
             self.text = text
-        }
-
-        public func validate() throws {
-            try validate(columnIndex, name:"columnIndex", min: 0)
-            try validate(columnSpan, name:"columnSpan", min: 0)
-            try validate(confidence, name:"confidence", max: 100)
-            try validate(confidence, name:"confidence", min: 0)
-            try validate(id, name:"id", pattern: ".*\\S.*")
-            try validate(page, name:"page", min: 0)
-            try relationships?.forEach {
-                try $0.validate()
-            }
-            try validate(rowIndex, name:"rowIndex", min: 0)
-            try validate(rowSpan, name:"rowSpan", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -206,8 +185,8 @@ extension Textract {
             self.document = document
         }
 
-        public func validate() throws {
-            try document.validate()
+        public func validate(name: String) throws {
+            try document.validate(name: "\(name).document")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -229,13 +208,6 @@ extension Textract {
         public init(blocks: [Block]? = nil, documentMetadata: DocumentMetadata? = nil) {
             self.blocks = blocks
             self.documentMetadata = documentMetadata
-        }
-
-        public func validate() throws {
-            try blocks?.forEach {
-                try $0.validate()
-            }
-            try documentMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -260,10 +232,10 @@ extension Textract {
             self.s3Object = s3Object
         }
 
-        public func validate() throws {
-            try validate(bytes, name:"bytes", max: 5242880)
-            try validate(bytes, name:"bytes", min: 1)
-            try s3Object?.validate()
+        public func validate(name: String) throws {
+            try validate(bytes, name:"bytes", parent: name, max: 5242880)
+            try validate(bytes, name:"bytes", parent: name, min: 1)
+            try s3Object?.validate(name: "\(name).s3Object")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -284,8 +256,8 @@ extension Textract {
             self.s3Object = s3Object
         }
 
-        public func validate() throws {
-            try s3Object?.validate()
+        public func validate(name: String) throws {
+            try s3Object?.validate(name: "\(name).s3Object")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -299,14 +271,10 @@ extension Textract {
         ]
 
         /// The number of pages detected in the document.
-        public let pages: Int32?
+        public let pages: Int?
 
-        public init(pages: Int32? = nil) {
+        public init(pages: Int? = nil) {
             self.pages = pages
-        }
-
-        public func validate() throws {
-            try validate(pages, name:"pages", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -358,24 +326,24 @@ extension Textract {
         /// A unique identifier for the text-detection job. The JobId is returned from StartDocumentAnalysis.
         public let jobId: String
         /// The maximum number of results to return per paginated call. The largest value that you can specify is 1,000. If you specify a value greater than 1,000, a maximum of 1,000 results is returned. The default value is 1,000.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If the previous response was incomplete (because there are more blocks to retrieve), Amazon Textract returns a pagination token in the response. You can use this pagination token to retrieve the next set of blocks.
         public let nextToken: String?
 
-        public init(jobId: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(jobId: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.jobId = jobId
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 64)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 255)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 64)
+            try validate(jobId, name:"jobId", parent: name, min: 1)
+            try validate(jobId, name:"jobId", parent: name, pattern: "^[a-zA-Z0-9-_]+$")
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 255)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -417,19 +385,6 @@ extension Textract {
             self.warnings = warnings
         }
 
-        public func validate() throws {
-            try blocks?.forEach {
-                try $0.validate()
-            }
-            try documentMetadata?.validate()
-            try validate(nextToken, name:"nextToken", max: 255)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
-            try warnings?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case blocks = "Blocks"
             case documentMetadata = "DocumentMetadata"
@@ -450,24 +405,24 @@ extension Textract {
         /// A unique identifier for the text detection job. The JobId is returned from StartDocumentTextDetection.
         public let jobId: String
         /// The maximum number of results to return per paginated call. The largest value you can specify is 1,000. If you specify a value greater than 1,000, a maximum of 1,000 results is returned. The default value is 1,000.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If the previous response was incomplete (because there are more blocks to retrieve), Amazon Textract returns a pagination token in the response. You can use this pagination token to retrieve the next set of blocks.
         public let nextToken: String?
 
-        public init(jobId: String, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(jobId: String, maxResults: Int? = nil, nextToken: String? = nil) {
             self.jobId = jobId
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 64)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 255)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 64)
+            try validate(jobId, name:"jobId", parent: name, min: 1)
+            try validate(jobId, name:"jobId", parent: name, pattern: "^[a-zA-Z0-9-_]+$")
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 255)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -509,19 +464,6 @@ extension Textract {
             self.warnings = warnings
         }
 
-        public func validate() throws {
-            try blocks?.forEach {
-                try $0.validate()
-            }
-            try documentMetadata?.validate()
-            try validate(nextToken, name:"nextToken", max: 255)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(nextToken, name:"nextToken", pattern: ".*\\S.*")
-            try warnings?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case blocks = "Blocks"
             case documentMetadata = "DocumentMetadata"
@@ -556,13 +498,13 @@ extension Textract {
             self.sNSTopicArn = sNSTopicArn
         }
 
-        public func validate() throws {
-            try validate(roleArn, name:"roleArn", max: 2048)
-            try validate(roleArn, name:"roleArn", min: 20)
-            try validate(roleArn, name:"roleArn", pattern: "arn:([a-z\\d-]+):iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+")
-            try validate(sNSTopicArn, name:"sNSTopicArn", max: 1024)
-            try validate(sNSTopicArn, name:"sNSTopicArn", min: 20)
-            try validate(sNSTopicArn, name:"sNSTopicArn", pattern: "(^arn:([a-z\\d-]+):sns:[a-zA-Z\\d-]{1,20}:\\w{12}:.+$)")
+        public func validate(name: String) throws {
+            try validate(roleArn, name:"roleArn", parent: name, max: 2048)
+            try validate(roleArn, name:"roleArn", parent: name, min: 20)
+            try validate(roleArn, name:"roleArn", parent: name, pattern: "arn:([a-z\\d-]+):iam::\\d{12}:role/?[a-zA-Z_0-9+=,.@\\-_/]+")
+            try validate(sNSTopicArn, name:"sNSTopicArn", parent: name, max: 1024)
+            try validate(sNSTopicArn, name:"sNSTopicArn", parent: name, min: 20)
+            try validate(sNSTopicArn, name:"sNSTopicArn", parent: name, pattern: "(^arn:([a-z\\d-]+):sns:[a-zA-Z\\d-]{1,20}:\\w{12}:.+$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -609,12 +551,6 @@ extension Textract {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try ids?.forEach {
-                try validate($0, name:"ids[]", pattern: ".*\\S.*")
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case ids = "Ids"
             case `type` = "Type"
@@ -647,16 +583,16 @@ extension Textract {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(bucket, name:"bucket", max: 255)
-            try validate(bucket, name:"bucket", min: 3)
-            try validate(bucket, name:"bucket", pattern: "[0-9A-Za-z\\.\\-_]*")
-            try validate(name, name:"name", max: 1024)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: ".*\\S.*")
-            try validate(version, name:"version", max: 1024)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: ".*\\S.*")
+        public func validate(name: String) throws {
+            try validate(bucket, name:"bucket", parent: name, max: 255)
+            try validate(bucket, name:"bucket", parent: name, min: 3)
+            try validate(bucket, name:"bucket", parent: name, pattern: "[0-9A-Za-z\\.\\-_]*")
+            try validate(name, name:"name", parent: name, max: 1024)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: ".*\\S.*")
+            try validate(version, name:"version", parent: name, max: 1024)
+            try validate(version, name:"version", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, pattern: ".*\\S.*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -700,15 +636,15 @@ extension Textract {
             self.notificationChannel = notificationChannel
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-_]+$")
-            try documentLocation.validate()
-            try validate(jobTag, name:"jobTag", max: 64)
-            try validate(jobTag, name:"jobTag", min: 1)
-            try validate(jobTag, name:"jobTag", pattern: "[a-zA-Z0-9_.\\-:]+")
-            try notificationChannel?.validate()
+        public func validate(name: String) throws {
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "^[a-zA-Z0-9-_]+$")
+            try documentLocation.validate(name: "\(name).documentLocation")
+            try validate(jobTag, name:"jobTag", parent: name, max: 64)
+            try validate(jobTag, name:"jobTag", parent: name, min: 1)
+            try validate(jobTag, name:"jobTag", parent: name, pattern: "[a-zA-Z0-9_.\\-:]+")
+            try notificationChannel?.validate(name: "\(name).notificationChannel")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -730,12 +666,6 @@ extension Textract {
 
         public init(jobId: String? = nil) {
             self.jobId = jobId
-        }
-
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 64)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -767,15 +697,15 @@ extension Textract {
             self.notificationChannel = notificationChannel
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 64)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "^[a-zA-Z0-9-_]+$")
-            try documentLocation.validate()
-            try validate(jobTag, name:"jobTag", max: 64)
-            try validate(jobTag, name:"jobTag", min: 1)
-            try validate(jobTag, name:"jobTag", pattern: "[a-zA-Z0-9_.\\-:]+")
-            try notificationChannel?.validate()
+        public func validate(name: String) throws {
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 64)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "^[a-zA-Z0-9-_]+$")
+            try documentLocation.validate(name: "\(name).documentLocation")
+            try validate(jobTag, name:"jobTag", parent: name, max: 64)
+            try validate(jobTag, name:"jobTag", parent: name, min: 1)
+            try validate(jobTag, name:"jobTag", parent: name, pattern: "[a-zA-Z0-9_.\\-:]+")
+            try notificationChannel?.validate(name: "\(name).notificationChannel")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -798,12 +728,6 @@ extension Textract {
             self.jobId = jobId
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 64)
-            try validate(jobId, name:"jobId", min: 1)
-            try validate(jobId, name:"jobId", pattern: "^[a-zA-Z0-9-_]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case jobId = "JobId"
         }
@@ -818,17 +742,11 @@ extension Textract {
         /// The error code for the warning.
         public let errorCode: String?
         /// A list of the pages that the warning applies to.
-        public let pages: [Int32]?
+        public let pages: [Int]?
 
-        public init(errorCode: String? = nil, pages: [Int32]? = nil) {
+        public init(errorCode: String? = nil, pages: [Int]? = nil) {
             self.errorCode = errorCode
             self.pages = pages
-        }
-
-        public func validate() throws {
-            try pages?.forEach {
-                try validate($0, name:"pages[]", min: 0)
-            }
         }
 
         private enum CodingKeys: String, CodingKey {

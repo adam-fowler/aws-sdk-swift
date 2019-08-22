@@ -43,9 +43,9 @@ extension CloudFormation {
         /// The name of the account limit.
         public let name: String?
         /// The value that is associated with the account limit name.
-        public let value: Int32?
+        public let value: Int?
 
-        public init(name: String? = nil, value: Int32? = nil) {
+        public init(name: String? = nil, value: Int? = nil) {
             self.name = name
             self.value = value
         }
@@ -72,10 +72,10 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+        public func validate(name: String) throws {
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -105,10 +105,6 @@ extension CloudFormation {
         public init(resourceChange: ResourceChange? = nil, type: ChangeType? = nil) {
             self.resourceChange = resourceChange
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try resourceChange?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -177,16 +173,6 @@ extension CloudFormation {
             self.statusReason = statusReason
         }
 
-        public func validate() throws {
-            try validate(changeSetId, name:"changeSetId", min: 1)
-            try validate(changeSetId, name:"changeSetId", pattern: "arn:[-a-zA-Z0-9:/]*")
-            try validate(changeSetName, name:"changeSetName", max: 128)
-            try validate(changeSetName, name:"changeSetName", min: 1)
-            try validate(changeSetName, name:"changeSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*")
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case changeSetId = "ChangeSetId"
             case changeSetName = "ChangeSetName"
@@ -244,17 +230,17 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+        public func validate(name: String) throws {
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
             try resourcesToSkip?.forEach {
-                try validate($0, name:"resourcesToSkip[]", pattern: "[a-zA-Z0-9]+|[a-zA-Z][-a-zA-Z0-9]*\\.[a-zA-Z0-9]+")
+                try validate($0, name: "resourcesToSkip[]", parent: name, pattern: "[a-zA-Z0-9]+|[a-zA-Z][-a-zA-Z0-9]*\\.[a-zA-Z0-9]+")
             }
-            try validate(roleARN, name:"roleARN", max: 2048)
-            try validate(roleARN, name:"roleARN", min: 20)
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+            try validate(roleARN, name:"roleARN", parent: name, max: 2048)
+            try validate(roleARN, name:"roleARN", parent: name, min: 20)
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -341,31 +327,31 @@ extension CloudFormation {
             self.usePreviousTemplate = usePreviousTemplate
         }
 
-        public func validate() throws {
-            try validate(changeSetName, name:"changeSetName", max: 128)
-            try validate(changeSetName, name:"changeSetName", min: 1)
-            try validate(changeSetName, name:"changeSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*")
-            try validate(clientToken, name:"clientToken", max: 128)
-            try validate(clientToken, name:"clientToken", min: 1)
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(notificationARNs, name:"notificationARNs", max: 5)
+        public func validate(name: String) throws {
+            try validate(changeSetName, name:"changeSetName", parent: name, max: 128)
+            try validate(changeSetName, name:"changeSetName", parent: name, min: 1)
+            try validate(changeSetName, name:"changeSetName", parent: name, pattern: "[a-zA-Z][-a-zA-Z0-9]*")
+            try validate(clientToken, name:"clientToken", parent: name, max: 128)
+            try validate(clientToken, name:"clientToken", parent: name, min: 1)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(description, name:"description", parent: name, min: 1)
+            try validate(notificationARNs, name:"notificationARNs", parent: name, max: 5)
             try resourceTypes?.forEach {
-                try validate($0, name:"resourceTypes[]", max: 256)
-                try validate($0, name:"resourceTypes[]", min: 1)
+                try validate($0, name: "resourceTypes[]", parent: name, max: 256)
+                try validate($0, name: "resourceTypes[]", parent: name, min: 1)
             }
-            try validate(roleARN, name:"roleARN", max: 2048)
-            try validate(roleARN, name:"roleARN", min: 20)
-            try rollbackConfiguration?.validate()
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+            try validate(roleARN, name:"roleARN", parent: name, max: 2048)
+            try validate(roleARN, name:"roleARN", parent: name, min: 20)
+            try rollbackConfiguration?.validate(name: "\(name).rollbackConfiguration")
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -401,11 +387,6 @@ extension CloudFormation {
         public init(id: String? = nil, stackId: String? = nil) {
             self.id = id
             self.stackId = stackId
-        }
-
-        public func validate() throws {
-            try validate(id, name:"id", min: 1)
-            try validate(id, name:"id", pattern: "arn:[-a-zA-Z0-9:/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -468,9 +449,9 @@ extension CloudFormation {
         /// Location of file containing the template body. The URL must point to a template (max size: 460,800 bytes) that is located in an Amazon S3 bucket. For more information, go to the Template Anatomy in the AWS CloudFormation User Guide. Conditional: You must specify either the TemplateBody or the TemplateURL parameter, but not both.
         public let templateURL: String?
         /// The amount of time that can pass before the stack status becomes CREATE_FAILED; if DisableRollback is not set or is set to false, the stack will be rolled back.
-        public let timeoutInMinutes: Int32?
+        public let timeoutInMinutes: Int?
 
-        public init(capabilities: [Capability]? = nil, clientRequestToken: String? = nil, disableRollback: Bool? = nil, enableTerminationProtection: Bool? = nil, notificationARNs: [String]? = nil, onFailure: OnFailure? = nil, parameters: [Parameter]? = nil, resourceTypes: [String]? = nil, roleARN: String? = nil, rollbackConfiguration: RollbackConfiguration? = nil, stackName: String, stackPolicyBody: String? = nil, stackPolicyURL: String? = nil, tags: [Tag]? = nil, templateBody: String? = nil, templateURL: String? = nil, timeoutInMinutes: Int32? = nil) {
+        public init(capabilities: [Capability]? = nil, clientRequestToken: String? = nil, disableRollback: Bool? = nil, enableTerminationProtection: Bool? = nil, notificationARNs: [String]? = nil, onFailure: OnFailure? = nil, parameters: [Parameter]? = nil, resourceTypes: [String]? = nil, roleARN: String? = nil, rollbackConfiguration: RollbackConfiguration? = nil, stackName: String, stackPolicyBody: String? = nil, stackPolicyURL: String? = nil, tags: [Tag]? = nil, templateBody: String? = nil, templateURL: String? = nil, timeoutInMinutes: Int? = nil) {
             self.capabilities = capabilities
             self.clientRequestToken = clientRequestToken
             self.disableRollback = disableRollback
@@ -490,30 +471,30 @@ extension CloudFormation {
             self.timeoutInMinutes = timeoutInMinutes
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try validate(notificationARNs, name:"notificationARNs", max: 5)
+        public func validate(name: String) throws {
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try validate(notificationARNs, name:"notificationARNs", parent: name, max: 5)
             try resourceTypes?.forEach {
-                try validate($0, name:"resourceTypes[]", max: 256)
-                try validate($0, name:"resourceTypes[]", min: 1)
+                try validate($0, name: "resourceTypes[]", parent: name, max: 256)
+                try validate($0, name: "resourceTypes[]", parent: name, min: 1)
             }
-            try validate(roleARN, name:"roleARN", max: 2048)
-            try validate(roleARN, name:"roleARN", min: 20)
-            try rollbackConfiguration?.validate()
-            try validate(stackPolicyBody, name:"stackPolicyBody", max: 16384)
-            try validate(stackPolicyBody, name:"stackPolicyBody", min: 1)
-            try validate(stackPolicyURL, name:"stackPolicyURL", max: 1350)
-            try validate(stackPolicyURL, name:"stackPolicyURL", min: 1)
+            try validate(roleARN, name:"roleARN", parent: name, max: 2048)
+            try validate(roleARN, name:"roleARN", parent: name, min: 20)
+            try rollbackConfiguration?.validate(name: "\(name).rollbackConfiguration")
+            try validate(stackPolicyBody, name:"stackPolicyBody", parent: name, max: 16384)
+            try validate(stackPolicyBody, name:"stackPolicyBody", parent: name, min: 1)
+            try validate(stackPolicyURL, name:"stackPolicyURL", parent: name, max: 1350)
+            try validate(stackPolicyURL, name:"stackPolicyURL", parent: name, min: 1)
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", min: 1)
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
+            try validate(timeoutInMinutes, name:"timeoutInMinutes", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -569,14 +550,14 @@ extension CloudFormation {
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try accounts.forEach {
-                try validate($0, name:"accounts[]", pattern: "[0-9]{12}")
+                try validate($0, name: "accounts[]", parent: name, pattern: "[0-9]{12}")
             }
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try operationPreferences?.validate()
+            try validate(operationId, name:"operationId", parent: name, max: 128)
+            try validate(operationId, name:"operationId", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try operationPreferences?.validate(name: "\(name).operationPreferences")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -599,12 +580,6 @@ extension CloudFormation {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -677,24 +652,24 @@ extension CloudFormation {
             self.templateURL = templateURL
         }
 
-        public func validate() throws {
-            try validate(administrationRoleARN, name:"administrationRoleARN", max: 2048)
-            try validate(administrationRoleARN, name:"administrationRoleARN", min: 20)
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(executionRoleName, name:"executionRoleName", max: 64)
-            try validate(executionRoleName, name:"executionRoleName", min: 1)
-            try validate(executionRoleName, name:"executionRoleName", pattern: "[a-zA-Z_0-9+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(administrationRoleARN, name:"administrationRoleARN", parent: name, max: 2048)
+            try validate(administrationRoleARN, name:"administrationRoleARN", parent: name, min: 20)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(description, name:"description", parent: name, min: 1)
+            try validate(executionRoleName, name:"executionRoleName", parent: name, max: 64)
+            try validate(executionRoleName, name:"executionRoleName", parent: name, min: 1)
+            try validate(executionRoleName, name:"executionRoleName", parent: name, pattern: "[a-zA-Z_0-9+=,.@-]+")
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -744,12 +719,12 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(changeSetName, name:"changeSetName", max: 1600)
-            try validate(changeSetName, name:"changeSetName", min: 1)
-            try validate(changeSetName, name:"changeSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+        public func validate(name: String) throws {
+            try validate(changeSetName, name:"changeSetName", parent: name, max: 1600)
+            try validate(changeSetName, name:"changeSetName", parent: name, min: 1)
+            try validate(changeSetName, name:"changeSetName", parent: name, pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -790,12 +765,12 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try validate(roleARN, name:"roleARN", max: 2048)
-            try validate(roleARN, name:"roleARN", min: 20)
+        public func validate(name: String) throws {
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try validate(roleARN, name:"roleARN", parent: name, max: 2048)
+            try validate(roleARN, name:"roleARN", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -838,14 +813,14 @@ extension CloudFormation {
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try accounts.forEach {
-                try validate($0, name:"accounts[]", pattern: "[0-9]{12}")
+                try validate($0, name: "accounts[]", parent: name, pattern: "[0-9]{12}")
             }
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try operationPreferences?.validate()
+            try validate(operationId, name:"operationId", parent: name, max: 128)
+            try validate(operationId, name:"operationId", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try operationPreferences?.validate(name: "\(name).operationPreferences")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -868,12 +843,6 @@ extension CloudFormation {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -918,9 +887,9 @@ extension CloudFormation {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -942,11 +911,6 @@ extension CloudFormation {
         public init(accountLimits: [AccountLimit]? = nil, nextToken: String? = nil) {
             self.accountLimits = accountLimits
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -975,14 +939,14 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(changeSetName, name:"changeSetName", max: 1600)
-            try validate(changeSetName, name:"changeSetName", min: 1)
-            try validate(changeSetName, name:"changeSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+        public func validate(name: String) throws {
+            try validate(changeSetName, name:"changeSetName", parent: name, max: 1600)
+            try validate(changeSetName, name:"changeSetName", parent: name, min: 1)
+            try validate(changeSetName, name:"changeSetName", parent: name, pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1064,27 +1028,6 @@ extension CloudFormation {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try changes?.forEach {
-                try $0.validate()
-            }
-            try validate(changeSetId, name:"changeSetId", min: 1)
-            try validate(changeSetId, name:"changeSetId", pattern: "arn:[-a-zA-Z0-9:/]*")
-            try validate(changeSetName, name:"changeSetName", max: 128)
-            try validate(changeSetName, name:"changeSetName", min: 1)
-            try validate(changeSetName, name:"changeSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*")
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(notificationARNs, name:"notificationARNs", max: 5)
-            try rollbackConfiguration?.validate()
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case capabilities = "Capabilities"
             case changes = "Changes"
@@ -1117,9 +1060,9 @@ extension CloudFormation {
             self.stackDriftDetectionId = stackDriftDetectionId
         }
 
-        public func validate() throws {
-            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", max: 36)
-            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", min: 1)
+        public func validate(name: String) throws {
+            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", parent: name, max: 36)
+            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1143,7 +1086,7 @@ extension CloudFormation {
         /// The reason the stack drift detection operation has its current status.
         public let detectionStatusReason: String?
         /// Total number of stack resources that have drifted. This is NULL until the drift detection operation reaches a status of DETECTION_COMPLETE. This value will be 0 for stacks whose drift status is IN_SYNC.
-        public let driftedStackResourceCount: Int32?
+        public let driftedStackResourceCount: Int?
         /// The ID of the drift detection results of this operation.  AWS CloudFormation generates new results, with a new drift detection ID, each time this operation is run. However, the number of reports AWS CloudFormation retains for any given stack, and for how long, may vary.
         public let stackDriftDetectionId: String
         /// Status of the stack's actual configuration compared to its expected configuration.     DRIFTED: The stack differs from its expected template configuration. A stack is considered to have drifted if one or more of its resources have drifted.    NOT_CHECKED: AWS CloudFormation has not checked if the stack differs from its expected template configuration.    IN_SYNC: The stack's actual configuration matches its expected template configuration.    UNKNOWN: This value is reserved for future use.  
@@ -1153,7 +1096,7 @@ extension CloudFormation {
         /// Time at which the stack drift detection operation was initiated.
         public let timestamp: TimeStamp
 
-        public init(detectionStatus: StackDriftDetectionStatus, detectionStatusReason: String? = nil, driftedStackResourceCount: Int32? = nil, stackDriftDetectionId: String, stackDriftStatus: StackDriftStatus? = nil, stackId: String, timestamp: TimeStamp) {
+        public init(detectionStatus: StackDriftDetectionStatus, detectionStatusReason: String? = nil, driftedStackResourceCount: Int? = nil, stackDriftDetectionId: String, stackDriftStatus: StackDriftStatus? = nil, stackId: String, timestamp: TimeStamp) {
             self.detectionStatus = detectionStatus
             self.detectionStatusReason = detectionStatusReason
             self.driftedStackResourceCount = driftedStackResourceCount
@@ -1161,11 +1104,6 @@ extension CloudFormation {
             self.stackDriftStatus = stackDriftStatus
             self.stackId = stackId
             self.timestamp = timestamp
-        }
-
-        public func validate() throws {
-            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", max: 36)
-            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1195,9 +1133,9 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1220,14 +1158,6 @@ extension CloudFormation {
         public init(nextToken: String? = nil, stackEvents: [StackEvent]? = nil) {
             self.nextToken = nextToken
             self.stackEvents = stackEvents
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try stackEvents?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1256,8 +1186,8 @@ extension CloudFormation {
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
-            try validate(stackInstanceAccount, name:"stackInstanceAccount", pattern: "[0-9]{12}")
+        public func validate(name: String) throws {
+            try validate(stackInstanceAccount, name:"stackInstanceAccount", parent: name, pattern: "[0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1279,10 +1209,6 @@ extension CloudFormation {
             self.stackInstance = stackInstance
         }
 
-        public func validate() throws {
-            try stackInstance?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case stackInstance = "StackInstance"
         }
@@ -1297,7 +1223,7 @@ extension CloudFormation {
         ]
 
         /// The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a NextToken value that you can assign to the NextToken request parameter to get the next set of results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A string that identifies the next page of stack resource drift results.
         public let nextToken: String?
         /// The name of the stack for which you want drift information.
@@ -1305,22 +1231,22 @@ extension CloudFormation {
         /// The resource drift status values to use as filters for the resource drift results returned.    DELETED: The resource differs from its expected template configuration in that the resource has been deleted.    MODIFIED: One or more resource properties differ from their expected template values.    IN_SYNC: The resources's actual configuration matches its expected template configuration.    NOT_CHECKED: AWS CloudFormation does not currently return this value.  
         public let stackResourceDriftStatusFilters: [StackResourceDriftStatus]?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, stackName: String, stackResourceDriftStatusFilters: [StackResourceDriftStatus]? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, stackName: String, stackResourceDriftStatusFilters: [StackResourceDriftStatus]? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.stackName = stackName
             self.stackResourceDriftStatusFilters = stackResourceDriftStatusFilters
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
-            try validate(stackResourceDriftStatusFilters, name:"stackResourceDriftStatusFilters", max: 4)
-            try validate(stackResourceDriftStatusFilters, name:"stackResourceDriftStatusFilters", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+            try validate(stackResourceDriftStatusFilters, name:"stackResourceDriftStatusFilters", parent: name, max: 4)
+            try validate(stackResourceDriftStatusFilters, name:"stackResourceDriftStatusFilters", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1345,14 +1271,6 @@ extension CloudFormation {
         public init(nextToken: String? = nil, stackResourceDrifts: [StackResourceDrift]) {
             self.nextToken = nextToken
             self.stackResourceDrifts = stackResourceDrifts
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try stackResourceDrifts.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1393,10 +1311,6 @@ extension CloudFormation {
 
         public init(stackResourceDetail: StackResourceDetail? = nil) {
             self.stackResourceDetail = stackResourceDetail
-        }
-
-        public func validate() throws {
-            try stackResourceDetail?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1443,12 +1357,6 @@ extension CloudFormation {
             self.stackResources = stackResources
         }
 
-        public func validate() throws {
-            try stackResources?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case stackResources = "StackResources"
         }
@@ -1487,10 +1395,10 @@ extension CloudFormation {
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+        public func validate(name: String) throws {
+            try validate(operationId, name:"operationId", parent: name, max: 128)
+            try validate(operationId, name:"operationId", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1511,10 +1419,6 @@ extension CloudFormation {
             self.stackSetOperation = stackSetOperation
         }
 
-        public func validate() throws {
-            try stackSetOperation?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case stackSetOperation = "StackSetOperation"
         }
@@ -1530,10 +1434,6 @@ extension CloudFormation {
 
         public init(stackSet: StackSet? = nil) {
             self.stackSet = stackSet
-        }
-
-        public func validate() throws {
-            try stackSet?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1557,9 +1457,9 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1584,14 +1484,6 @@ extension CloudFormation {
             self.stacks = stacks
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try stacks?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case stacks = "Stacks"
@@ -1614,11 +1506,11 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(logicalResourceIds, name:"logicalResourceIds", max: 200)
-            try validate(logicalResourceIds, name:"logicalResourceIds", min: 1)
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+        public func validate(name: String) throws {
+            try validate(logicalResourceIds, name:"logicalResourceIds", parent: name, max: 200)
+            try validate(logicalResourceIds, name:"logicalResourceIds", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1637,11 +1529,6 @@ extension CloudFormation {
 
         public init(stackDriftDetectionId: String) {
             self.stackDriftDetectionId = stackDriftDetectionId
-        }
-
-        public func validate() throws {
-            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", max: 36)
-            try validate(stackDriftDetectionId, name:"stackDriftDetectionId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1665,9 +1552,9 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+        public func validate(name: String) throws {
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1686,10 +1573,6 @@ extension CloudFormation {
 
         public init(stackResourceDrift: StackResourceDrift) {
             self.stackResourceDrift = stackResourceDrift
-        }
-
-        public func validate() throws {
-            try stackResourceDrift.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1724,10 +1607,10 @@ extension CloudFormation {
             self.templateURL = templateURL
         }
 
-        public func validate() throws {
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
+        public func validate(name: String) throws {
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1780,15 +1663,15 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(changeSetName, name:"changeSetName", max: 1600)
-            try validate(changeSetName, name:"changeSetName", min: 1)
-            try validate(changeSetName, name:"changeSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+        public func validate(name: String) throws {
+            try validate(changeSetName, name:"changeSetName", parent: name, max: 1600)
+            try validate(changeSetName, name:"changeSetName", parent: name, min: 1)
+            try validate(changeSetName, name:"changeSetName", parent: name, pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1872,11 +1755,6 @@ extension CloudFormation {
             self.stackPolicyBody = stackPolicyBody
         }
 
-        public func validate() throws {
-            try validate(stackPolicyBody, name:"stackPolicyBody", max: 16384)
-            try validate(stackPolicyBody, name:"stackPolicyBody", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case stackPolicyBody = "StackPolicyBody"
         }
@@ -1902,10 +1780,10 @@ extension CloudFormation {
             self.templateStage = templateStage
         }
 
-        public func validate() throws {
-            try validate(changeSetName, name:"changeSetName", max: 1600)
-            try validate(changeSetName, name:"changeSetName", min: 1)
-            try validate(changeSetName, name:"changeSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
+        public func validate(name: String) throws {
+            try validate(changeSetName, name:"changeSetName", parent: name, max: 1600)
+            try validate(changeSetName, name:"changeSetName", parent: name, min: 1)
+            try validate(changeSetName, name:"changeSetName", parent: name, pattern: "[a-zA-Z][-a-zA-Z0-9]*|arn:[-a-zA-Z0-9:/]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1929,10 +1807,6 @@ extension CloudFormation {
         public init(stagesAvailable: [TemplateStage]? = nil, templateBody: String? = nil) {
             self.stagesAvailable = stagesAvailable
             self.templateBody = templateBody
-        }
-
-        public func validate() throws {
-            try validate(templateBody, name:"templateBody", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1965,13 +1839,13 @@ extension CloudFormation {
             self.templateURL = templateURL
         }
 
-        public func validate() throws {
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
-            try validate(stackSetName, name:"stackSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*(?::[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})?")
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
+        public func validate(name: String) throws {
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+            try validate(stackSetName, name:"stackSetName", parent: name, pattern: "[a-zA-Z][-a-zA-Z0-9]*(?::[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})?")
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2022,18 +1896,6 @@ extension CloudFormation {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try parameters?.forEach {
-                try $0.validate()
-            }
-            try resourceTypes?.forEach {
-                try validate($0, name:"resourceTypes[]", max: 256)
-                try validate($0, name:"resourceTypes[]", min: 1)
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case capabilities = "Capabilities"
             case capabilitiesReason = "CapabilitiesReason"
@@ -2062,11 +1924,11 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2091,14 +1953,6 @@ extension CloudFormation {
             self.summaries = summaries
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try summaries?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case summaries = "Summaries"
@@ -2117,9 +1971,9 @@ extension CloudFormation {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2141,11 +1995,6 @@ extension CloudFormation {
         public init(exports: [Export]? = nil, nextToken: String? = nil) {
             self.exports = exports
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2170,9 +2019,9 @@ extension CloudFormation {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2197,11 +2046,6 @@ extension CloudFormation {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case imports = "Imports"
             case nextToken = "NextToken"
@@ -2218,7 +2062,7 @@ extension CloudFormation {
         ]
 
         /// The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a NextToken value that you can assign to the NextToken request parameter to get the next set of results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If the previous request didn't return all of the remaining results, the response's NextToken parameter value is set to a token. To retrieve the next set of results, call ListStackInstances again and assign that token to the request object's NextToken parameter. If there are no remaining results, the previous response object's NextToken parameter is set to null.
         public let nextToken: String?
         /// The name of the AWS account that you want to list stack instances for.
@@ -2228,7 +2072,7 @@ extension CloudFormation {
         /// The name or unique ID of the stack set that you want to list stack instances for.
         public let stackSetName: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, stackInstanceAccount: String? = nil, stackInstanceRegion: String? = nil, stackSetName: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, stackInstanceAccount: String? = nil, stackInstanceRegion: String? = nil, stackSetName: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.stackInstanceAccount = stackInstanceAccount
@@ -2236,12 +2080,12 @@ extension CloudFormation {
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(stackInstanceAccount, name:"stackInstanceAccount", pattern: "[0-9]{12}")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(stackInstanceAccount, name:"stackInstanceAccount", parent: name, pattern: "[0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2269,14 +2113,6 @@ extension CloudFormation {
             self.summaries = summaries
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try summaries?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case summaries = "Summaries"
@@ -2299,9 +2135,9 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2326,14 +2162,6 @@ extension CloudFormation {
             self.stackResourceSummaries = stackResourceSummaries
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try stackResourceSummaries?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case stackResourceSummaries = "StackResourceSummaries"
@@ -2349,7 +2177,7 @@ extension CloudFormation {
         ]
 
         /// The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a NextToken value that you can assign to the NextToken request parameter to get the next set of results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If the previous request didn't return all of the remaining results, the response object's NextToken parameter value is set to a token. To retrieve the next set of results, call ListStackSetOperationResults again and assign that token to the request object's NextToken parameter. If there are no remaining results, the previous response object's NextToken parameter is set to null.
         public let nextToken: String?
         /// The ID of the stack set operation.
@@ -2357,21 +2185,21 @@ extension CloudFormation {
         /// The name or unique ID of the stack set that you want to get operation results for.
         public let stackSetName: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, operationId: String, stackSetName: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, operationId: String, stackSetName: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.operationId = operationId
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, max: 128)
+            try validate(operationId, name:"operationId", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2398,14 +2226,6 @@ extension CloudFormation {
             self.summaries = summaries
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try summaries?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case summaries = "Summaries"
@@ -2420,23 +2240,23 @@ extension CloudFormation {
         ]
 
         /// The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a NextToken value that you can assign to the NextToken request parameter to get the next set of results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If the previous paginated request didn't return all of the remaining results, the response object's NextToken parameter value is set to a token. To retrieve the next set of results, call ListStackSetOperations again and assign that token to the request object's NextToken parameter. If there are no remaining results, the previous response object's NextToken parameter is set to null.
         public let nextToken: String?
         /// The name or unique ID of the stack set that you want to get operation summaries for.
         public let stackSetName: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, stackSetName: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, stackSetName: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2462,14 +2282,6 @@ extension CloudFormation {
             self.summaries = summaries
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try summaries?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case summaries = "Summaries"
@@ -2484,23 +2296,23 @@ extension CloudFormation {
         ]
 
         /// The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a NextToken value that you can assign to the NextToken request parameter to get the next set of results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// If the previous paginated request didn't return all of the remaining results, the response object's NextToken parameter value is set to a token. To retrieve the next set of results, call ListStackSets again and assign that token to the request object's NextToken parameter. If there are no remaining results, the previous response object's NextToken parameter is set to null.
         public let nextToken: String?
         /// The status of the stack sets that you want to get summary information about.
         public let status: StackSetStatus?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, status: StackSetStatus? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, status: StackSetStatus? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2526,14 +2338,6 @@ extension CloudFormation {
             self.summaries = summaries
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try summaries?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case summaries = "Summaries"
@@ -2556,9 +2360,9 @@ extension CloudFormation {
             self.stackStatusFilter = stackStatusFilter
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2581,11 +2385,6 @@ extension CloudFormation {
         public init(nextToken: String? = nil, stackSummaries: [StackSummary]? = nil) {
             self.nextToken = nextToken
             self.stackSummaries = stackSummaries
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2623,11 +2422,6 @@ extension CloudFormation {
             self.exportName = exportName
             self.outputKey = outputKey
             self.outputValue = outputValue
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2717,11 +2511,6 @@ extension CloudFormation {
             self.parameterConstraints = parameterConstraints
             self.parameterKey = parameterKey
             self.parameterType = parameterType
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2848,11 +2637,6 @@ extension CloudFormation {
             self.scope = scope
         }
 
-        public func validate() throws {
-            try validate(resourceType, name:"resourceType", max: 256)
-            try validate(resourceType, name:"resourceType", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case action = "Action"
             case details = "Details"
@@ -2950,19 +2734,19 @@ extension CloudFormation {
         ]
 
         /// The amount of time, in minutes, during which CloudFormation should monitor all the rollback triggers after the stack creation or update operation deploys all necessary resources. The default is 0 minutes. If you specify a monitoring period but do not specify any rollback triggers, CloudFormation still waits the specified period of time before cleaning up old resources after update operations. You can use this monitoring period to perform any manual stack validation desired, and manually cancel the stack creation or update (using CancelUpdateStack, for example) as necessary. If you specify 0 for this parameter, CloudFormation still monitors the specified rollback triggers during stack creation and update operations. Then, for update operations, it begins disposing of old resources immediately once the operation completes.
-        public let monitoringTimeInMinutes: Int32?
+        public let monitoringTimeInMinutes: Int?
         /// The triggers to monitor during stack creation or update actions.  By default, AWS CloudFormation saves the rollback triggers specified for a stack and applies them to any subsequent update operations for the stack, unless you specify otherwise. If you do specify rollback triggers for this parameter, those triggers replace any list of triggers previously specified for the stack. This means:   To use the rollback triggers previously specified for this stack, if any, don't specify this parameter.   To specify new or updated rollback triggers, you must specify all the triggers that you want used for this stack, even triggers you've specifed before (for example, when creating the stack or during a previous stack update). Any triggers that you don't include in the updated list of triggers are no longer applied to the stack.   To remove all currently specified triggers, specify an empty list for this parameter.   If a specified trigger is missing, the entire stack operation fails and is rolled back. 
         public let rollbackTriggers: [RollbackTrigger]?
 
-        public init(monitoringTimeInMinutes: Int32? = nil, rollbackTriggers: [RollbackTrigger]? = nil) {
+        public init(monitoringTimeInMinutes: Int? = nil, rollbackTriggers: [RollbackTrigger]? = nil) {
             self.monitoringTimeInMinutes = monitoringTimeInMinutes
             self.rollbackTriggers = rollbackTriggers
         }
 
-        public func validate() throws {
-            try validate(monitoringTimeInMinutes, name:"monitoringTimeInMinutes", max: 180)
-            try validate(monitoringTimeInMinutes, name:"monitoringTimeInMinutes", min: 0)
-            try validate(rollbackTriggers, name:"rollbackTriggers", max: 5)
+        public func validate(name: String) throws {
+            try validate(monitoringTimeInMinutes, name:"monitoringTimeInMinutes", parent: name, max: 180)
+            try validate(monitoringTimeInMinutes, name:"monitoringTimeInMinutes", parent: name, min: 0)
+            try validate(rollbackTriggers, name:"rollbackTriggers", parent: name, max: 5)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3013,11 +2797,11 @@ extension CloudFormation {
             self.stackPolicyURL = stackPolicyURL
         }
 
-        public func validate() throws {
-            try validate(stackPolicyBody, name:"stackPolicyBody", max: 16384)
-            try validate(stackPolicyBody, name:"stackPolicyBody", min: 1)
-            try validate(stackPolicyURL, name:"stackPolicyURL", max: 1350)
-            try validate(stackPolicyURL, name:"stackPolicyURL", min: 1)
+        public func validate(name: String) throws {
+            try validate(stackPolicyBody, name:"stackPolicyBody", parent: name, max: 16384)
+            try validate(stackPolicyBody, name:"stackPolicyBody", parent: name, min: 1)
+            try validate(stackPolicyURL, name:"stackPolicyURL", parent: name, max: 1350)
+            try validate(stackPolicyURL, name:"stackPolicyURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3051,11 +2835,11 @@ extension CloudFormation {
             self.uniqueId = uniqueId
         }
 
-        public func validate() throws {
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
-            try validate(uniqueId, name:"uniqueId", max: 64)
-            try validate(uniqueId, name:"uniqueId", min: 1)
+        public func validate(name: String) throws {
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+            try validate(uniqueId, name:"uniqueId", parent: name, max: 64)
+            try validate(uniqueId, name:"uniqueId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3135,9 +2919,9 @@ extension CloudFormation {
         /// A list of Tags that specify information about the stack.
         public let tags: [Tag]?
         /// The amount of time within which stack creation should complete.
-        public let timeoutInMinutes: Int32?
+        public let timeoutInMinutes: Int?
 
-        public init(capabilities: [Capability]? = nil, changeSetId: String? = nil, creationTime: TimeStamp, deletionTime: TimeStamp? = nil, description: String? = nil, disableRollback: Bool? = nil, driftInformation: StackDriftInformation? = nil, enableTerminationProtection: Bool? = nil, lastUpdatedTime: TimeStamp? = nil, notificationARNs: [String]? = nil, outputs: [Output]? = nil, parameters: [Parameter]? = nil, parentId: String? = nil, roleARN: String? = nil, rollbackConfiguration: RollbackConfiguration? = nil, rootId: String? = nil, stackId: String? = nil, stackName: String, stackStatus: StackStatus, stackStatusReason: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int32? = nil) {
+        public init(capabilities: [Capability]? = nil, changeSetId: String? = nil, creationTime: TimeStamp, deletionTime: TimeStamp? = nil, description: String? = nil, disableRollback: Bool? = nil, driftInformation: StackDriftInformation? = nil, enableTerminationProtection: Bool? = nil, lastUpdatedTime: TimeStamp? = nil, notificationARNs: [String]? = nil, outputs: [Output]? = nil, parameters: [Parameter]? = nil, parentId: String? = nil, roleARN: String? = nil, rollbackConfiguration: RollbackConfiguration? = nil, rootId: String? = nil, stackId: String? = nil, stackName: String, stackStatus: StackStatus, stackStatusReason: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int? = nil) {
             self.capabilities = capabilities
             self.changeSetId = changeSetId
             self.creationTime = creationTime
@@ -3160,25 +2944,6 @@ extension CloudFormation {
             self.stackStatusReason = stackStatusReason
             self.tags = tags
             self.timeoutInMinutes = timeoutInMinutes
-        }
-
-        public func validate() throws {
-            try validate(changeSetId, name:"changeSetId", min: 1)
-            try validate(changeSetId, name:"changeSetId", pattern: "arn:[-a-zA-Z0-9:/]*")
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(notificationARNs, name:"notificationARNs", max: 5)
-            try outputs?.forEach {
-                try $0.validate()
-            }
-            try validate(roleARN, name:"roleARN", max: 2048)
-            try validate(roleARN, name:"roleARN", min: 20)
-            try rollbackConfiguration?.validate()
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3318,14 +3083,6 @@ extension CloudFormation {
             self.timestamp = timestamp
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try validate(resourceType, name:"resourceType", max: 256)
-            try validate(resourceType, name:"resourceType", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case clientRequestToken = "ClientRequestToken"
             case eventId = "EventId"
@@ -3377,10 +3134,6 @@ extension CloudFormation {
             self.statusReason = statusReason
         }
 
-        public func validate() throws {
-            try validate(account, name:"account", pattern: "[0-9]{12}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case account = "Account"
             case parameterOverrides = "ParameterOverrides"
@@ -3429,10 +3182,6 @@ extension CloudFormation {
             self.stackSetId = stackSetId
             self.status = status
             self.statusReason = statusReason
-        }
-
-        public func validate() throws {
-            try validate(account, name:"account", pattern: "[0-9]{12}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3491,13 +3240,6 @@ extension CloudFormation {
             self.stackId = stackId
             self.stackName = stackName
             self.timestamp = timestamp
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(resourceType, name:"resourceType", max: 256)
-            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3566,13 +3308,6 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(resourceType, name:"resourceType", max: 256)
-            try validate(resourceType, name:"resourceType", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case description = "Description"
             case driftInformation = "DriftInformation"
@@ -3634,12 +3369,6 @@ extension CloudFormation {
             self.stackId = stackId
             self.stackResourceDriftStatus = stackResourceDriftStatus
             self.timestamp = timestamp
-        }
-
-        public func validate() throws {
-            try validate(physicalResourceIdContext, name:"physicalResourceIdContext", max: 5)
-            try validate(resourceType, name:"resourceType", max: 256)
-            try validate(resourceType, name:"resourceType", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3744,11 +3473,6 @@ extension CloudFormation {
             self.resourceType = resourceType
         }
 
-        public func validate() throws {
-            try validate(resourceType, name:"resourceType", max: 256)
-            try validate(resourceType, name:"resourceType", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case driftInformation = "DriftInformation"
             case lastUpdatedTimestamp = "LastUpdatedTimestamp"
@@ -3810,21 +3534,6 @@ extension CloudFormation {
             self.status = status
             self.tags = tags
             self.templateBody = templateBody
-        }
-
-        public func validate() throws {
-            try validate(administrationRoleARN, name:"administrationRoleARN", max: 2048)
-            try validate(administrationRoleARN, name:"administrationRoleARN", min: 20)
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(executionRoleName, name:"executionRoleName", max: 64)
-            try validate(executionRoleName, name:"executionRoleName", min: 1)
-            try validate(executionRoleName, name:"executionRoleName", pattern: "[a-zA-Z_0-9+=,.@-]+")
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-            try validate(templateBody, name:"templateBody", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3890,18 +3599,6 @@ extension CloudFormation {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(administrationRoleARN, name:"administrationRoleARN", max: 2048)
-            try validate(administrationRoleARN, name:"administrationRoleARN", min: 20)
-            try validate(executionRoleName, name:"executionRoleName", max: 64)
-            try validate(executionRoleName, name:"executionRoleName", min: 1)
-            try validate(executionRoleName, name:"executionRoleName", pattern: "[a-zA-Z_0-9+=,.@-]+")
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try operationPreferences?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case action = "Action"
             case administrationRoleARN = "AdministrationRoleARN"
@@ -3933,17 +3630,17 @@ extension CloudFormation {
         ]
 
         /// The number of accounts, per region, for which this operation can fail before AWS CloudFormation stops the operation in that region. If the operation is stopped in a region, AWS CloudFormation doesn't attempt the operation in any subsequent regions. Conditional: You must specify either FailureToleranceCount or FailureTolerancePercentage (but not both).
-        public let failureToleranceCount: Int32?
+        public let failureToleranceCount: Int?
         /// The percentage of accounts, per region, for which this stack operation can fail before AWS CloudFormation stops the operation in that region. If the operation is stopped in a region, AWS CloudFormation doesn't attempt the operation in any subsequent regions. When calculating the number of accounts based on the specified percentage, AWS CloudFormation rounds down to the next whole number. Conditional: You must specify either FailureToleranceCount or FailureTolerancePercentage, but not both.
-        public let failureTolerancePercentage: Int32?
+        public let failureTolerancePercentage: Int?
         /// The maximum number of accounts in which to perform this operation at one time. This is dependent on the value of FailureToleranceCount—MaxConcurrentCount is at most one more than the FailureToleranceCount . Note that this setting lets you specify the maximum for operations. For large deployments, under certain circumstances the actual number of accounts acted upon concurrently may be lower due to service throttling. Conditional: You must specify either MaxConcurrentCount or MaxConcurrentPercentage, but not both.
-        public let maxConcurrentCount: Int32?
+        public let maxConcurrentCount: Int?
         /// The maximum percentage of accounts in which to perform this operation at one time. When calculating the number of accounts based on the specified percentage, AWS CloudFormation rounds down to the next whole number. This is true except in cases where rounding down would result is zero. In this case, CloudFormation sets the number as one instead. Note that this setting lets you specify the maximum for operations. For large deployments, under certain circumstances the actual number of accounts acted upon concurrently may be lower due to service throttling. Conditional: You must specify either MaxConcurrentCount or MaxConcurrentPercentage, but not both.
-        public let maxConcurrentPercentage: Int32?
+        public let maxConcurrentPercentage: Int?
         /// The order of the regions in where you want to perform the stack operation.
         public let regionOrder: [String]?
 
-        public init(failureToleranceCount: Int32? = nil, failureTolerancePercentage: Int32? = nil, maxConcurrentCount: Int32? = nil, maxConcurrentPercentage: Int32? = nil, regionOrder: [String]? = nil) {
+        public init(failureToleranceCount: Int? = nil, failureTolerancePercentage: Int? = nil, maxConcurrentCount: Int? = nil, maxConcurrentPercentage: Int? = nil, regionOrder: [String]? = nil) {
             self.failureToleranceCount = failureToleranceCount
             self.failureTolerancePercentage = failureTolerancePercentage
             self.maxConcurrentCount = maxConcurrentCount
@@ -3951,13 +3648,13 @@ extension CloudFormation {
             self.regionOrder = regionOrder
         }
 
-        public func validate() throws {
-            try validate(failureToleranceCount, name:"failureToleranceCount", min: 0)
-            try validate(failureTolerancePercentage, name:"failureTolerancePercentage", max: 100)
-            try validate(failureTolerancePercentage, name:"failureTolerancePercentage", min: 0)
-            try validate(maxConcurrentCount, name:"maxConcurrentCount", min: 1)
-            try validate(maxConcurrentPercentage, name:"maxConcurrentPercentage", max: 100)
-            try validate(maxConcurrentPercentage, name:"maxConcurrentPercentage", min: 1)
+        public func validate(name: String) throws {
+            try validate(failureToleranceCount, name:"failureToleranceCount", parent: name, min: 0)
+            try validate(failureTolerancePercentage, name:"failureTolerancePercentage", parent: name, max: 100)
+            try validate(failureTolerancePercentage, name:"failureTolerancePercentage", parent: name, min: 0)
+            try validate(maxConcurrentCount, name:"maxConcurrentCount", parent: name, min: 1)
+            try validate(maxConcurrentPercentage, name:"maxConcurrentPercentage", parent: name, max: 100)
+            try validate(maxConcurrentPercentage, name:"maxConcurrentPercentage", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4006,10 +3703,6 @@ extension CloudFormation {
             self.statusReason = statusReason
         }
 
-        public func validate() throws {
-            try validate(account, name:"account", pattern: "[0-9]{12}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case account = "Account"
             case accountGateResult = "AccountGateResult"
@@ -4056,12 +3749,6 @@ extension CloudFormation {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case action = "Action"
             case creationTimestamp = "CreationTimestamp"
@@ -4099,11 +3786,6 @@ extension CloudFormation {
             self.stackSetId = stackSetId
             self.stackSetName = stackSetName
             self.status = status
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4218,10 +3900,10 @@ extension CloudFormation {
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+        public func validate(name: String) throws {
+            try validate(operationId, name:"operationId", parent: name, max: 128)
+            try validate(operationId, name:"operationId", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4254,11 +3936,11 @@ extension CloudFormation {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4289,11 +3971,6 @@ extension CloudFormation {
             self.description = description
             self.noEcho = noEcho
             self.parameterKey = parameterKey
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4382,33 +4059,33 @@ extension CloudFormation {
             self.usePreviousTemplate = usePreviousTemplate
         }
 
-        public func validate() throws {
-            try validate(clientRequestToken, name:"clientRequestToken", max: 128)
-            try validate(clientRequestToken, name:"clientRequestToken", min: 1)
-            try validate(clientRequestToken, name:"clientRequestToken", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try validate(notificationARNs, name:"notificationARNs", max: 5)
+        public func validate(name: String) throws {
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, max: 128)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, min: 1)
+            try validate(clientRequestToken, name:"clientRequestToken", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try validate(notificationARNs, name:"notificationARNs", parent: name, max: 5)
             try resourceTypes?.forEach {
-                try validate($0, name:"resourceTypes[]", max: 256)
-                try validate($0, name:"resourceTypes[]", min: 1)
+                try validate($0, name: "resourceTypes[]", parent: name, max: 256)
+                try validate($0, name: "resourceTypes[]", parent: name, min: 1)
             }
-            try validate(roleARN, name:"roleARN", max: 2048)
-            try validate(roleARN, name:"roleARN", min: 20)
-            try rollbackConfiguration?.validate()
-            try validate(stackPolicyBody, name:"stackPolicyBody", max: 16384)
-            try validate(stackPolicyBody, name:"stackPolicyBody", min: 1)
-            try validate(stackPolicyDuringUpdateBody, name:"stackPolicyDuringUpdateBody", max: 16384)
-            try validate(stackPolicyDuringUpdateBody, name:"stackPolicyDuringUpdateBody", min: 1)
-            try validate(stackPolicyDuringUpdateURL, name:"stackPolicyDuringUpdateURL", max: 1350)
-            try validate(stackPolicyDuringUpdateURL, name:"stackPolicyDuringUpdateURL", min: 1)
-            try validate(stackPolicyURL, name:"stackPolicyURL", max: 1350)
-            try validate(stackPolicyURL, name:"stackPolicyURL", min: 1)
+            try validate(roleARN, name:"roleARN", parent: name, max: 2048)
+            try validate(roleARN, name:"roleARN", parent: name, min: 20)
+            try rollbackConfiguration?.validate(name: "\(name).rollbackConfiguration")
+            try validate(stackPolicyBody, name:"stackPolicyBody", parent: name, max: 16384)
+            try validate(stackPolicyBody, name:"stackPolicyBody", parent: name, min: 1)
+            try validate(stackPolicyDuringUpdateBody, name:"stackPolicyDuringUpdateBody", parent: name, max: 16384)
+            try validate(stackPolicyDuringUpdateBody, name:"stackPolicyDuringUpdateBody", parent: name, min: 1)
+            try validate(stackPolicyDuringUpdateURL, name:"stackPolicyDuringUpdateURL", parent: name, max: 1350)
+            try validate(stackPolicyDuringUpdateURL, name:"stackPolicyDuringUpdateURL", parent: name, min: 1)
+            try validate(stackPolicyURL, name:"stackPolicyURL", parent: name, max: 1350)
+            try validate(stackPolicyURL, name:"stackPolicyURL", parent: name, min: 1)
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4463,15 +4140,15 @@ extension CloudFormation {
             self.stackSetName = stackSetName
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try accounts.forEach {
-                try validate($0, name:"accounts[]", pattern: "[0-9]{12}")
+                try validate($0, name: "accounts[]", parent: name, pattern: "[0-9]{12}")
             }
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try operationPreferences?.validate()
-            try validate(stackSetName, name:"stackSetName", pattern: "[a-zA-Z][-a-zA-Z0-9]*(?::[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})?")
+            try validate(operationId, name:"operationId", parent: name, max: 128)
+            try validate(operationId, name:"operationId", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try operationPreferences?.validate(name: "\(name).operationPreferences")
+            try validate(stackSetName, name:"stackSetName", parent: name, pattern: "[a-zA-Z][-a-zA-Z0-9]*(?::[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4494,12 +4171,6 @@ extension CloudFormation {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4588,28 +4259,28 @@ extension CloudFormation {
             self.usePreviousTemplate = usePreviousTemplate
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try accounts?.forEach {
-                try validate($0, name:"accounts[]", pattern: "[0-9]{12}")
+                try validate($0, name: "accounts[]", parent: name, pattern: "[0-9]{12}")
             }
-            try validate(administrationRoleARN, name:"administrationRoleARN", max: 2048)
-            try validate(administrationRoleARN, name:"administrationRoleARN", min: 20)
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try validate(executionRoleName, name:"executionRoleName", max: 64)
-            try validate(executionRoleName, name:"executionRoleName", min: 1)
-            try validate(executionRoleName, name:"executionRoleName", pattern: "[a-zA-Z_0-9+=,.@-]+")
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-            try operationPreferences?.validate()
+            try validate(administrationRoleARN, name:"administrationRoleARN", parent: name, max: 2048)
+            try validate(administrationRoleARN, name:"administrationRoleARN", parent: name, min: 20)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(description, name:"description", parent: name, min: 1)
+            try validate(executionRoleName, name:"executionRoleName", parent: name, max: 64)
+            try validate(executionRoleName, name:"executionRoleName", parent: name, min: 1)
+            try validate(executionRoleName, name:"executionRoleName", parent: name, pattern: "[a-zA-Z_0-9+=,.@-]+")
+            try validate(operationId, name:"operationId", parent: name, max: 128)
+            try validate(operationId, name:"operationId", parent: name, min: 1)
+            try validate(operationId, name:"operationId", parent: name, pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
+            try operationPreferences?.validate(name: "\(name).operationPreferences")
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4642,12 +4313,6 @@ extension CloudFormation {
             self.operationId = operationId
         }
 
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 128)
-            try validate(operationId, name:"operationId", min: 1)
-            try validate(operationId, name:"operationId", pattern: "[a-zA-Z0-9][-a-zA-Z0-9]*")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case operationId = "OperationId"
         }
@@ -4669,9 +4334,9 @@ extension CloudFormation {
             self.stackName = stackName
         }
 
-        public func validate() throws {
-            try validate(stackName, name:"stackName", min: 1)
-            try validate(stackName, name:"stackName", pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
+        public func validate(name: String) throws {
+            try validate(stackName, name:"stackName", parent: name, min: 1)
+            try validate(stackName, name:"stackName", parent: name, pattern: "([a-zA-Z][-a-zA-Z0-9]*)|(arn:\\b(aws|aws-us-gov|aws-cn)\\b:[-a-zA-Z0-9:/._+]*)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4713,10 +4378,10 @@ extension CloudFormation {
             self.templateURL = templateURL
         }
 
-        public func validate() throws {
-            try validate(templateBody, name:"templateBody", min: 1)
-            try validate(templateURL, name:"templateURL", max: 1024)
-            try validate(templateURL, name:"templateURL", min: 1)
+        public func validate(name: String) throws {
+            try validate(templateBody, name:"templateBody", parent: name, min: 1)
+            try validate(templateURL, name:"templateURL", parent: name, max: 1024)
+            try validate(templateURL, name:"templateURL", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4751,14 +4416,6 @@ extension CloudFormation {
             self.declaredTransforms = declaredTransforms
             self.description = description
             self.parameters = parameters
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try validate(description, name:"description", min: 1)
-            try parameters?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {

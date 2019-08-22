@@ -45,14 +45,6 @@ extension CloudHSMV2 {
             self.sourceRegion = sourceRegion
         }
 
-        public func validate() throws {
-            try validate(backupId, name:"backupId", pattern: "backup-[2-7a-zA-Z]{11,16}")
-            try validate(clusterId, name:"clusterId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try validate(sourceBackup, name:"sourceBackup", pattern: "backup-[2-7a-zA-Z]{11,16}")
-            try validate(sourceCluster, name:"sourceCluster", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try validate(sourceRegion, name:"sourceRegion", pattern: "[a-z]{2}(-(gov))?-(east|west|north|south|central){1,2}-\\d")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case backupId = "BackupId"
             case backupState = "BackupState"
@@ -105,19 +97,6 @@ extension CloudHSMV2 {
             self.clusterCsr = clusterCsr
             self.hsmCertificate = hsmCertificate
             self.manufacturerHardwareCertificate = manufacturerHardwareCertificate
-        }
-
-        public func validate() throws {
-            try validate(awsHardwareCertificate, name:"awsHardwareCertificate", max: 5000)
-            try validate(awsHardwareCertificate, name:"awsHardwareCertificate", pattern: "[a-zA-Z0-9+-/=\\s]*")
-            try validate(clusterCertificate, name:"clusterCertificate", max: 5000)
-            try validate(clusterCertificate, name:"clusterCertificate", pattern: "[a-zA-Z0-9+-/=\\s]*")
-            try validate(clusterCsr, name:"clusterCsr", max: 5000)
-            try validate(clusterCsr, name:"clusterCsr", pattern: "[a-zA-Z0-9+-/=\\s]*")
-            try validate(hsmCertificate, name:"hsmCertificate", max: 5000)
-            try validate(hsmCertificate, name:"hsmCertificate", pattern: "[a-zA-Z0-9+-/=\\s]*")
-            try validate(manufacturerHardwareCertificate, name:"manufacturerHardwareCertificate", max: 5000)
-            try validate(manufacturerHardwareCertificate, name:"manufacturerHardwareCertificate", pattern: "[a-zA-Z0-9+-/=\\s]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -189,22 +168,6 @@ extension CloudHSMV2 {
             self.vpcId = vpcId
         }
 
-        public func validate() throws {
-            try certificates?.validate()
-            try validate(clusterId, name:"clusterId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try hsms?.forEach {
-                try $0.validate()
-            }
-            try validate(hsmType, name:"hsmType", pattern: "(hsm1\\.medium)")
-            try validate(preCoPassword, name:"preCoPassword", max: 32)
-            try validate(preCoPassword, name:"preCoPassword", min: 7)
-            try validate(securityGroup, name:"securityGroup", pattern: "sg-[0-9a-fA-F]")
-            try validate(sourceBackupId, name:"sourceBackupId", pattern: "backup-[2-7a-zA-Z]{11,16}")
-            try validate(stateMessage, name:"stateMessage", max: 300)
-            try validate(stateMessage, name:"stateMessage", pattern: ".*")
-            try validate(vpcId, name:"vpcId", pattern: "vpc-[0-9a-fA-F]")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case backupPolicy = "BackupPolicy"
             case certificates = "Certificates"
@@ -251,9 +214,9 @@ extension CloudHSMV2 {
             self.destinationRegion = destinationRegion
         }
 
-        public func validate() throws {
-            try validate(backupId, name:"backupId", pattern: "backup-[2-7a-zA-Z]{11,16}")
-            try validate(destinationRegion, name:"destinationRegion", pattern: "[a-z]{2}(-(gov))?-(east|west|north|south|central){1,2}-\\d")
+        public func validate(name: String) throws {
+            try validate(backupId, name:"backupId", parent: name, pattern: "backup-[2-7a-zA-Z]{11,16}")
+            try validate(destinationRegion, name:"destinationRegion", parent: name, pattern: "[a-z]{2}(-(gov))?-(east|west|north|south|central){1,2}-\\d")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -272,10 +235,6 @@ extension CloudHSMV2 {
 
         public init(destinationBackup: DestinationBackup? = nil) {
             self.destinationBackup = destinationBackup
-        }
-
-        public func validate() throws {
-            try destinationBackup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -303,14 +262,14 @@ extension CloudHSMV2 {
             self.subnetIds = subnetIds
         }
 
-        public func validate() throws {
-            try validate(hsmType, name:"hsmType", pattern: "(hsm1\\.medium)")
-            try validate(sourceBackupId, name:"sourceBackupId", pattern: "backup-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(hsmType, name:"hsmType", parent: name, pattern: "(hsm1\\.medium)")
+            try validate(sourceBackupId, name:"sourceBackupId", parent: name, pattern: "backup-[2-7a-zA-Z]{11,16}")
             try subnetIds.forEach {
-                try validate($0, name:"subnetIds[]", pattern: "subnet-[0-9a-fA-F]{8,17}")
+                try validate($0, name: "subnetIds[]", parent: name, pattern: "subnet-[0-9a-fA-F]{8,17}")
             }
-            try validate(subnetIds, name:"subnetIds", max: 10)
-            try validate(subnetIds, name:"subnetIds", min: 1)
+            try validate(subnetIds, name:"subnetIds", parent: name, max: 10)
+            try validate(subnetIds, name:"subnetIds", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -330,10 +289,6 @@ extension CloudHSMV2 {
 
         public init(cluster: Cluster? = nil) {
             self.cluster = cluster
-        }
-
-        public func validate() throws {
-            try cluster?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -361,10 +316,10 @@ extension CloudHSMV2 {
             self.ipAddress = ipAddress
         }
 
-        public func validate() throws {
-            try validate(availabilityZone, name:"availabilityZone", pattern: "[a-z]{2}(-(gov))?-(east|west|north|south|central){1,2}-\\d[a-z]")
-            try validate(clusterId, name:"clusterId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try validate(ipAddress, name:"ipAddress", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
+        public func validate(name: String) throws {
+            try validate(availabilityZone, name:"availabilityZone", parent: name, pattern: "[a-z]{2}(-(gov))?-(east|west|north|south|central){1,2}-\\d[a-z]")
+            try validate(clusterId, name:"clusterId", parent: name, pattern: "cluster-[2-7a-zA-Z]{11,16}")
+            try validate(ipAddress, name:"ipAddress", parent: name, pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -386,10 +341,6 @@ extension CloudHSMV2 {
             self.hsm = hsm
         }
 
-        public func validate() throws {
-            try hsm?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case hsm = "Hsm"
         }
@@ -407,8 +358,8 @@ extension CloudHSMV2 {
             self.backupId = backupId
         }
 
-        public func validate() throws {
-            try validate(backupId, name:"backupId", pattern: "backup-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(backupId, name:"backupId", parent: name, pattern: "backup-[2-7a-zA-Z]{11,16}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -428,10 +379,6 @@ extension CloudHSMV2 {
             self.backup = backup
         }
 
-        public func validate() throws {
-            try backup?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case backup = "Backup"
         }
@@ -449,8 +396,8 @@ extension CloudHSMV2 {
             self.clusterId = clusterId
         }
 
-        public func validate() throws {
-            try validate(clusterId, name:"clusterId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(clusterId, name:"clusterId", parent: name, pattern: "cluster-[2-7a-zA-Z]{11,16}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -468,10 +415,6 @@ extension CloudHSMV2 {
 
         public init(cluster: Cluster? = nil) {
             self.cluster = cluster
-        }
-
-        public func validate() throws {
-            try cluster?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -503,11 +446,11 @@ extension CloudHSMV2 {
             self.hsmId = hsmId
         }
 
-        public func validate() throws {
-            try validate(clusterId, name:"clusterId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try validate(eniId, name:"eniId", pattern: "eni-[0-9a-fA-F]{8,17}")
-            try validate(eniIp, name:"eniIp", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
-            try validate(hsmId, name:"hsmId", pattern: "hsm-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(clusterId, name:"clusterId", parent: name, pattern: "cluster-[2-7a-zA-Z]{11,16}")
+            try validate(eniId, name:"eniId", parent: name, pattern: "eni-[0-9a-fA-F]{8,17}")
+            try validate(eniIp, name:"eniIp", parent: name, pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
+            try validate(hsmId, name:"hsmId", parent: name, pattern: "hsm-[2-7a-zA-Z]{11,16}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -530,10 +473,6 @@ extension CloudHSMV2 {
             self.hsmId = hsmId
         }
 
-        public func validate() throws {
-            try validate(hsmId, name:"hsmId", pattern: "hsm-[2-7a-zA-Z]{11,16}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case hsmId = "HsmId"
         }
@@ -550,23 +489,26 @@ extension CloudHSMV2 {
         /// One or more filters to limit the items returned in the response. Use the backupIds filter to return only the specified backups. Specify backups by their backup identifier (ID). Use the sourceBackupIds filter to return only the backups created from a source backup. The sourceBackupID of a source backup is returned by the CopyBackupToRegion operation. Use the clusterIds filter to return only the backups for the specified clusters. Specify clusters by their cluster identifier (ID). Use the states filter to return only backups that match the specified state.
         public let filters: [String: [String]]?
         /// The maximum number of backups to return in the response. When there are more backups than the number you specify, the response contains a NextToken value.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The NextToken value that you received in the previous response. Use this value to get more backups.
         public let nextToken: String?
         public let sortAscending: Bool?
 
-        public init(filters: [String: [String]]? = nil, maxResults: Int32? = nil, nextToken: String? = nil, sortAscending: Bool? = nil) {
+        public init(filters: [String: [String]]? = nil, maxResults: Int? = nil, nextToken: String? = nil, sortAscending: Bool? = nil) {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.sortAscending = sortAscending
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 256)
-            try validate(nextToken, name:"nextToken", pattern: ".*")
+        public func validate(name: String) throws {
+            try filters?.forEach {
+                try validate($0.key, name:"filters.key", parent: name, pattern: "[a-zA-Z0-9_-]+")
+            }
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 256)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -593,14 +535,6 @@ extension CloudHSMV2 {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try backups?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 256)
-            try validate(nextToken, name:"nextToken", pattern: ".*")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case backups = "Backups"
             case nextToken = "NextToken"
@@ -617,21 +551,24 @@ extension CloudHSMV2 {
         /// One or more filters to limit the items returned in the response. Use the clusterIds filter to return only the specified clusters. Specify clusters by their cluster identifier (ID). Use the vpcIds filter to return only the clusters in the specified virtual private clouds (VPCs). Specify VPCs by their VPC identifier (ID). Use the states filter to return only clusters that match the specified state.
         public let filters: [String: [String]]?
         /// The maximum number of clusters to return in the response. When there are more clusters than the number you specify, the response contains a NextToken value.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The NextToken value that you received in the previous response. Use this value to get more clusters.
         public let nextToken: String?
 
-        public init(filters: [String: [String]]? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filters: [String: [String]]? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 256)
-            try validate(nextToken, name:"nextToken", pattern: ".*")
+        public func validate(name: String) throws {
+            try filters?.forEach {
+                try validate($0.key, name:"filters.key", parent: name, pattern: "[a-zA-Z0-9_-]+")
+            }
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 256)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -655,14 +592,6 @@ extension CloudHSMV2 {
         public init(clusters: [Cluster]? = nil, nextToken: String? = nil) {
             self.clusters = clusters
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try clusters?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 256)
-            try validate(nextToken, name:"nextToken", pattern: ".*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -689,12 +618,6 @@ extension CloudHSMV2 {
             self.sourceBackup = sourceBackup
             self.sourceCluster = sourceCluster
             self.sourceRegion = sourceRegion
-        }
-
-        public func validate() throws {
-            try validate(sourceBackup, name:"sourceBackup", pattern: "backup-[2-7a-zA-Z]{11,16}")
-            try validate(sourceCluster, name:"sourceCluster", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try validate(sourceRegion, name:"sourceRegion", pattern: "[a-z]{2}(-(gov))?-(east|west|north|south|central){1,2}-\\d")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -745,15 +668,6 @@ extension CloudHSMV2 {
             self.subnetId = subnetId
         }
 
-        public func validate() throws {
-            try validate(availabilityZone, name:"availabilityZone", pattern: "[a-z]{2}(-(gov))?-(east|west|north|south|central){1,2}-\\d[a-z]")
-            try validate(clusterId, name:"clusterId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try validate(eniId, name:"eniId", pattern: "eni-[0-9a-fA-F]{8,17}")
-            try validate(eniIp, name:"eniIp", pattern: "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")
-            try validate(hsmId, name:"hsmId", pattern: "hsm-[2-7a-zA-Z]{11,16}")
-            try validate(subnetId, name:"subnetId", pattern: "subnet-[0-9a-fA-F]{8,17}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case availabilityZone = "AvailabilityZone"
             case clusterId = "ClusterId"
@@ -795,12 +709,12 @@ extension CloudHSMV2 {
             self.trustAnchor = trustAnchor
         }
 
-        public func validate() throws {
-            try validate(clusterId, name:"clusterId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
-            try validate(signedCert, name:"signedCert", max: 5000)
-            try validate(signedCert, name:"signedCert", pattern: "[a-zA-Z0-9+-/=\\s]*")
-            try validate(trustAnchor, name:"trustAnchor", max: 5000)
-            try validate(trustAnchor, name:"trustAnchor", pattern: "[a-zA-Z0-9+-/=\\s]*")
+        public func validate(name: String) throws {
+            try validate(clusterId, name:"clusterId", parent: name, pattern: "cluster-[2-7a-zA-Z]{11,16}")
+            try validate(signedCert, name:"signedCert", parent: name, max: 5000)
+            try validate(signedCert, name:"signedCert", parent: name, pattern: "[a-zA-Z0-9+-/=\\s]*")
+            try validate(trustAnchor, name:"trustAnchor", parent: name, max: 5000)
+            try validate(trustAnchor, name:"trustAnchor", parent: name, pattern: "[a-zA-Z0-9+-/=\\s]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -826,11 +740,6 @@ extension CloudHSMV2 {
             self.stateMessage = stateMessage
         }
 
-        public func validate() throws {
-            try validate(stateMessage, name:"stateMessage", max: 300)
-            try validate(stateMessage, name:"stateMessage", pattern: ".*")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case state = "State"
             case stateMessage = "StateMessage"
@@ -845,24 +754,24 @@ extension CloudHSMV2 {
         ]
 
         /// The maximum number of tags to return in the response. When there are more tags than the number you specify, the response contains a NextToken value.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The NextToken value that you received in the previous response. Use this value to get more tags.
         public let nextToken: String?
         /// The cluster identifier (ID) for the cluster whose tags you are getting. To find the cluster ID, use DescribeClusters.
         public let resourceId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, resourceId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, resourceId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.resourceId = resourceId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 256)
-            try validate(nextToken, name:"nextToken", pattern: ".*")
-            try validate(resourceId, name:"resourceId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 256)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: ".*")
+            try validate(resourceId, name:"resourceId", parent: name, pattern: "cluster-[2-7a-zA-Z]{11,16}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -888,16 +797,6 @@ extension CloudHSMV2 {
             self.tagList = tagList
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 256)
-            try validate(nextToken, name:"nextToken", pattern: ".*")
-            try tagList.forEach {
-                try $0.validate()
-            }
-            try validate(tagList, name:"tagList", max: 50)
-            try validate(tagList, name:"tagList", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case tagList = "TagList"
@@ -916,8 +815,8 @@ extension CloudHSMV2 {
             self.backupId = backupId
         }
 
-        public func validate() throws {
-            try validate(backupId, name:"backupId", pattern: "backup-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(backupId, name:"backupId", parent: name, pattern: "backup-[2-7a-zA-Z]{11,16}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -935,10 +834,6 @@ extension CloudHSMV2 {
 
         public init(backup: Backup? = nil) {
             self.backup = backup
-        }
-
-        public func validate() throws {
-            try backup?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -962,13 +857,13 @@ extension CloudHSMV2 {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 0)
-            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(key, name:"key", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, min: 0)
+            try validate(value, name:"value", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -993,13 +888,13 @@ extension CloudHSMV2 {
             self.tagList = tagList
         }
 
-        public func validate() throws {
-            try validate(resourceId, name:"resourceId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(resourceId, name:"resourceId", parent: name, pattern: "cluster-[2-7a-zA-Z]{11,16}")
             try tagList.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tagList[]")
             }
-            try validate(tagList, name:"tagList", max: 50)
-            try validate(tagList, name:"tagList", min: 1)
+            try validate(tagList, name:"tagList", parent: name, max: 50)
+            try validate(tagList, name:"tagList", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1032,15 +927,15 @@ extension CloudHSMV2 {
             self.tagKeyList = tagKeyList
         }
 
-        public func validate() throws {
-            try validate(resourceId, name:"resourceId", pattern: "cluster-[2-7a-zA-Z]{11,16}")
+        public func validate(name: String) throws {
+            try validate(resourceId, name:"resourceId", parent: name, pattern: "cluster-[2-7a-zA-Z]{11,16}")
             try tagKeyList.forEach {
-                try validate($0, name:"tagKeyList[]", max: 128)
-                try validate($0, name:"tagKeyList[]", min: 1)
-                try validate($0, name:"tagKeyList[]", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
+                try validate($0, name: "tagKeyList[]", parent: name, max: 128)
+                try validate($0, name: "tagKeyList[]", parent: name, min: 1)
+                try validate($0, name: "tagKeyList[]", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*)$")
             }
-            try validate(tagKeyList, name:"tagKeyList", max: 50)
-            try validate(tagKeyList, name:"tagKeyList", min: 1)
+            try validate(tagKeyList, name:"tagKeyList", parent: name, max: 50)
+            try validate(tagKeyList, name:"tagKeyList", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

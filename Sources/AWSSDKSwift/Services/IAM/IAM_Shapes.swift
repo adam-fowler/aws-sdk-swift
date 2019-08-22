@@ -26,24 +26,15 @@ extension IAM {
         /// The namespace of the service in which access was attempted. To learn the service namespace of a service, go to Actions, Resources, and Condition Keys for AWS Services in the IAM User Guide. Choose the name of the service to view details for that service. In the first paragraph, find the service prefix. For example, (service prefix: a4b). For more information about service namespaces, see AWS Service Namespaces in the AWS General Reference.
         public let serviceNamespace: String
         /// The number of accounts with authenticated principals (root users, IAM users, and IAM roles) that attempted to access the service in the reporting period.
-        public let totalAuthenticatedEntities: Int32?
+        public let totalAuthenticatedEntities: Int?
 
-        public init(entityPath: String? = nil, lastAuthenticatedTime: TimeStamp? = nil, region: String? = nil, serviceName: String, serviceNamespace: String, totalAuthenticatedEntities: Int32? = nil) {
+        public init(entityPath: String? = nil, lastAuthenticatedTime: TimeStamp? = nil, region: String? = nil, serviceName: String, serviceNamespace: String, totalAuthenticatedEntities: Int? = nil) {
             self.entityPath = entityPath
             self.lastAuthenticatedTime = lastAuthenticatedTime
             self.region = region
             self.serviceName = serviceName
             self.serviceNamespace = serviceNamespace
             self.totalAuthenticatedEntities = totalAuthenticatedEntities
-        }
-
-        public func validate() throws {
-            try validate(entityPath, name:"entityPath", max: 427)
-            try validate(entityPath, name:"entityPath", min: 19)
-            try validate(entityPath, name:"entityPath", pattern: "^o-[0-9a-z]{10,32}\\/r-[0-9a-z]{4,32}[0-9a-z-\\/]*")
-            try validate(serviceNamespace, name:"serviceNamespace", max: 64)
-            try validate(serviceNamespace, name:"serviceNamespace", min: 1)
-            try validate(serviceNamespace, name:"serviceNamespace", pattern: "[\\w-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -82,15 +73,6 @@ extension IAM {
             self.secretAccessKey = secretAccessKey
             self.status = status
             self.userName = userName
-        }
-
-        public func validate() throws {
-            try validate(accessKeyId, name:"accessKeyId", max: 128)
-            try validate(accessKeyId, name:"accessKeyId", min: 16)
-            try validate(accessKeyId, name:"accessKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -153,15 +135,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(accessKeyId, name:"accessKeyId", max: 128)
-            try validate(accessKeyId, name:"accessKeyId", min: 16)
-            try validate(accessKeyId, name:"accessKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accessKeyId = "AccessKeyId"
             case createDate = "CreateDate"
@@ -186,11 +159,11 @@ extension IAM {
             self.openIDConnectProviderArn = openIDConnectProviderArn
         }
 
-        public func validate() throws {
-            try validate(clientID, name:"clientID", max: 255)
-            try validate(clientID, name:"clientID", min: 1)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", max: 2048)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(clientID, name:"clientID", parent: name, max: 255)
+            try validate(clientID, name:"clientID", parent: name, min: 1)
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, max: 2048)
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -215,13 +188,13 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(instanceProfileName, name:"instanceProfileName", max: 128)
-            try validate(instanceProfileName, name:"instanceProfileName", min: 1)
-            try validate(instanceProfileName, name:"instanceProfileName", pattern: "[\\w+=,.@-]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, max: 128)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, min: 1)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -246,13 +219,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -277,12 +250,12 @@ extension IAM {
             self.policyArn = policyArn
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -307,12 +280,12 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -337,12 +310,12 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -367,11 +340,6 @@ extension IAM {
             self.permissionsBoundaryType = permissionsBoundaryType
         }
 
-        public func validate() throws {
-            try validate(permissionsBoundaryArn, name:"permissionsBoundaryArn", max: 2048)
-            try validate(permissionsBoundaryArn, name:"permissionsBoundaryArn", min: 20)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case permissionsBoundaryArn = "PermissionsBoundaryArn"
             case permissionsBoundaryType = "PermissionsBoundaryType"
@@ -391,14 +359,6 @@ extension IAM {
         public init(policyArn: String? = nil, policyName: String? = nil) {
             self.policyArn = policyArn
             self.policyName = policyName
-        }
-
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -423,13 +383,13 @@ extension IAM {
             self.oldPassword = oldPassword
         }
 
-        public func validate() throws {
-            try validate(newPassword, name:"newPassword", max: 128)
-            try validate(newPassword, name:"newPassword", min: 1)
-            try validate(newPassword, name:"newPassword", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(oldPassword, name:"oldPassword", max: 128)
-            try validate(oldPassword, name:"oldPassword", min: 1)
-            try validate(oldPassword, name:"oldPassword", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(newPassword, name:"newPassword", parent: name, max: 128)
+            try validate(newPassword, name:"newPassword", parent: name, min: 1)
+            try validate(newPassword, name:"newPassword", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(oldPassword, name:"oldPassword", parent: name, max: 128)
+            try validate(oldPassword, name:"oldPassword", parent: name, min: 1)
+            try validate(oldPassword, name:"oldPassword", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -458,9 +418,9 @@ extension IAM {
             self.contextKeyValues = contextKeyValues
         }
 
-        public func validate() throws {
-            try validate(contextKeyName, name:"contextKeyName", max: 256)
-            try validate(contextKeyName, name:"contextKeyName", min: 5)
+        public func validate(name: String) throws {
+            try validate(contextKeyName, name:"contextKeyName", parent: name, max: 256)
+            try validate(contextKeyName, name:"contextKeyName", parent: name, min: 5)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -498,10 +458,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -521,10 +481,6 @@ extension IAM {
             self.accessKey = accessKey
         }
 
-        public func validate() throws {
-            try accessKey.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accessKey = "AccessKey"
         }
@@ -542,10 +498,10 @@ extension IAM {
             self.accountAlias = accountAlias
         }
 
-        public func validate() throws {
-            try validate(accountAlias, name:"accountAlias", max: 63)
-            try validate(accountAlias, name:"accountAlias", min: 3)
-            try validate(accountAlias, name:"accountAlias", pattern: "^[a-z0-9](([a-z0-9]|-(?!-))*[a-z0-9])?$")
+        public func validate(name: String) throws {
+            try validate(accountAlias, name:"accountAlias", parent: name, max: 63)
+            try validate(accountAlias, name:"accountAlias", parent: name, min: 3)
+            try validate(accountAlias, name:"accountAlias", parent: name, pattern: "^[a-z0-9](([a-z0-9]|-(?!-))*[a-z0-9])?$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -569,13 +525,13 @@ extension IAM {
             self.path = path
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(path, name:"path", parent: name, max: 512)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -594,10 +550,6 @@ extension IAM {
 
         public init(group: Group) {
             self.group = group
-        }
-
-        public func validate() throws {
-            try group.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -621,13 +573,13 @@ extension IAM {
             self.path = path
         }
 
-        public func validate() throws {
-            try validate(instanceProfileName, name:"instanceProfileName", max: 128)
-            try validate(instanceProfileName, name:"instanceProfileName", min: 1)
-            try validate(instanceProfileName, name:"instanceProfileName", pattern: "[\\w+=,.@-]+")
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+        public func validate(name: String) throws {
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, max: 128)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, min: 1)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(path, name:"path", parent: name, max: 512)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -646,10 +598,6 @@ extension IAM {
 
         public init(instanceProfile: InstanceProfile) {
             self.instanceProfile = instanceProfile
-        }
-
-        public func validate() throws {
-            try instanceProfile.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -677,13 +625,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(password, name:"password", max: 128)
-            try validate(password, name:"password", min: 1)
-            try validate(password, name:"password", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(password, name:"password", parent: name, max: 128)
+            try validate(password, name:"password", parent: name, min: 1)
+            try validate(password, name:"password", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -703,10 +651,6 @@ extension IAM {
 
         public init(loginProfile: LoginProfile) {
             self.loginProfile = loginProfile
-        }
-
-        public func validate() throws {
-            try loginProfile.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -734,17 +678,17 @@ extension IAM {
             self.url = url
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try clientIDList?.forEach {
-                try validate($0, name:"clientIDList[]", max: 255)
-                try validate($0, name:"clientIDList[]", min: 1)
+                try validate($0, name: "clientIDList[]", parent: name, max: 255)
+                try validate($0, name: "clientIDList[]", parent: name, min: 1)
             }
             try thumbprintList.forEach {
-                try validate($0, name:"thumbprintList[]", max: 40)
-                try validate($0, name:"thumbprintList[]", min: 40)
+                try validate($0, name: "thumbprintList[]", parent: name, max: 40)
+                try validate($0, name: "thumbprintList[]", parent: name, min: 40)
             }
-            try validate(url, name:"url", max: 255)
-            try validate(url, name:"url", min: 1)
+            try validate(url, name:"url", parent: name, max: 255)
+            try validate(url, name:"url", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -764,11 +708,6 @@ extension IAM {
 
         public init(openIDConnectProviderArn: String? = nil) {
             self.openIDConnectProviderArn = openIDConnectProviderArn
-        }
-
-        public func validate() throws {
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", max: 2048)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -800,17 +739,17 @@ extension IAM {
             self.policyName = policyName
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1000)
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 1000)
+            try validate(path, name:"path", parent: name, max: 512)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
+            try validate(policyDocument, name:"policyDocument", parent: name, max: 131072)
+            try validate(policyDocument, name:"policyDocument", parent: name, min: 1)
+            try validate(policyDocument, name:"policyDocument", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -831,10 +770,6 @@ extension IAM {
 
         public init(policy: Policy? = nil) {
             self.policy = policy
-        }
-
-        public func validate() throws {
-            try policy?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -862,12 +797,12 @@ extension IAM {
             self.setAsDefault = setAsDefault
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(policyDocument, name:"policyDocument", parent: name, max: 131072)
+            try validate(policyDocument, name:"policyDocument", parent: name, min: 1)
+            try validate(policyDocument, name:"policyDocument", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -887,10 +822,6 @@ extension IAM {
 
         public init(policyVersion: PolicyVersion? = nil) {
             self.policyVersion = policyVersion
-        }
-
-        public func validate() throws {
-            try policyVersion?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -914,7 +845,7 @@ extension IAM {
         /// A description of the role.
         public let description: String?
         /// The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours. Anyone who assumes the role from the AWS CLI or API can use the DurationSeconds API parameter or the duration-seconds CLI parameter to request a longer session. The MaxSessionDuration setting determines the maximum duration that can be requested using the DurationSeconds parameter. If users don't specify a value for the DurationSeconds parameter, their security credentials are valid for one hour by default. This applies when you use the AssumeRole* API operations or the assume-role* CLI operations but does not apply when you use those operations to create a console URL. For more information, see Using IAM Roles in the IAM User Guide.
-        public let maxSessionDuration: Int32?
+        public let maxSessionDuration: Int?
         ///  The path to the role. For more information about paths, see IAM Identifiers in the IAM User Guide. This parameter is optional. If it is not included, it defaults to a slash (/). This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let path: String?
         /// The ARN of the policy that is used to set the permissions boundary for the role.
@@ -924,7 +855,7 @@ extension IAM {
         /// A list of tags that you want to attach to the newly created role. Each tag consists of a key name and an associated value. For more information about tagging, see Tagging IAM Identities in the IAM User Guide.  If any one of the tags is invalid or if you exceed the allowed number of tags per role, then the entire request fails and the role is not created. 
         public let tags: [Tag]?
 
-        public init(assumeRolePolicyDocument: String, description: String? = nil, maxSessionDuration: Int32? = nil, path: String? = nil, permissionsBoundary: String? = nil, roleName: String, tags: [Tag]? = nil) {
+        public init(assumeRolePolicyDocument: String, description: String? = nil, maxSessionDuration: Int? = nil, path: String? = nil, permissionsBoundary: String? = nil, roleName: String, tags: [Tag]? = nil) {
             self.assumeRolePolicyDocument = assumeRolePolicyDocument
             self.description = description
             self.maxSessionDuration = maxSessionDuration
@@ -934,26 +865,26 @@ extension IAM {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", max: 131072)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", min: 1)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(description, name:"description", max: 1000)
-            try validate(description, name:"description", pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
-            try validate(maxSessionDuration, name:"maxSessionDuration", max: 43200)
-            try validate(maxSessionDuration, name:"maxSessionDuration", min: 3600)
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(permissionsBoundary, name:"permissionsBoundary", max: 2048)
-            try validate(permissionsBoundary, name:"permissionsBoundary", min: 20)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", parent: name, max: 131072)
+            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", parent: name, min: 1)
+            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(description, name:"description", parent: name, max: 1000)
+            try validate(description, name:"description", parent: name, pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
+            try validate(maxSessionDuration, name:"maxSessionDuration", parent: name, max: 43200)
+            try validate(maxSessionDuration, name:"maxSessionDuration", parent: name, min: 3600)
+            try validate(path, name:"path", parent: name, max: 512)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, max: 2048)
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, min: 20)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", parent: name, max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -979,10 +910,6 @@ extension IAM {
             self.role = role
         }
 
-        public func validate() throws {
-            try role.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case role = "Role"
         }
@@ -1004,12 +931,12 @@ extension IAM {
             self.sAMLMetadataDocument = sAMLMetadataDocument
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 128)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\w._-]+")
-            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", max: 10000000)
-            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", min: 1000)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 128)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[\\w._-]+")
+            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", parent: name, max: 10000000)
+            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", parent: name, min: 1000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1028,11 +955,6 @@ extension IAM {
 
         public init(sAMLProviderArn: String? = nil) {
             self.sAMLProviderArn = sAMLProviderArn
-        }
-
-        public func validate() throws {
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", max: 2048)
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1060,15 +982,15 @@ extension IAM {
             self.description = description
         }
 
-        public func validate() throws {
-            try validate(aWSServiceName, name:"aWSServiceName", max: 128)
-            try validate(aWSServiceName, name:"aWSServiceName", min: 1)
-            try validate(aWSServiceName, name:"aWSServiceName", pattern: "[\\w+=,.@-]+")
-            try validate(customSuffix, name:"customSuffix", max: 64)
-            try validate(customSuffix, name:"customSuffix", min: 1)
-            try validate(customSuffix, name:"customSuffix", pattern: "[\\w+=,.@-]+")
-            try validate(description, name:"description", max: 1000)
-            try validate(description, name:"description", pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
+        public func validate(name: String) throws {
+            try validate(aWSServiceName, name:"aWSServiceName", parent: name, max: 128)
+            try validate(aWSServiceName, name:"aWSServiceName", parent: name, min: 1)
+            try validate(aWSServiceName, name:"aWSServiceName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(customSuffix, name:"customSuffix", parent: name, max: 64)
+            try validate(customSuffix, name:"customSuffix", parent: name, min: 1)
+            try validate(customSuffix, name:"customSuffix", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(description, name:"description", parent: name, max: 1000)
+            try validate(description, name:"description", parent: name, pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1088,10 +1010,6 @@ extension IAM {
 
         public init(role: Role? = nil) {
             self.role = role
-        }
-
-        public func validate() throws {
-            try role?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1115,10 +1033,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1137,10 +1055,6 @@ extension IAM {
 
         public init(serviceSpecificCredential: ServiceSpecificCredential? = nil) {
             self.serviceSpecificCredential = serviceSpecificCredential
-        }
-
-        public func validate() throws {
-            try serviceSpecificCredential?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1172,19 +1086,19 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(permissionsBoundary, name:"permissionsBoundary", max: 2048)
-            try validate(permissionsBoundary, name:"permissionsBoundary", min: 20)
+        public func validate(name: String) throws {
+            try validate(path, name:"path", parent: name, max: 512)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, max: 2048)
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, min: 20)
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1205,10 +1119,6 @@ extension IAM {
 
         public init(user: User? = nil) {
             self.user = user
-        }
-
-        public func validate() throws {
-            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1232,12 +1142,12 @@ extension IAM {
             self.virtualMFADeviceName = virtualMFADeviceName
         }
 
-        public func validate() throws {
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(virtualMFADeviceName, name:"virtualMFADeviceName", min: 1)
-            try validate(virtualMFADeviceName, name:"virtualMFADeviceName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(path, name:"path", parent: name, max: 512)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+            try validate(virtualMFADeviceName, name:"virtualMFADeviceName", parent: name, min: 1)
+            try validate(virtualMFADeviceName, name:"virtualMFADeviceName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1256,10 +1166,6 @@ extension IAM {
 
         public init(virtualMFADevice: VirtualMFADevice) {
             self.virtualMFADevice = virtualMFADevice
-        }
-
-        public func validate() throws {
-            try virtualMFADevice.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1283,13 +1189,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(serialNumber, name:"serialNumber", max: 256)
-            try validate(serialNumber, name:"serialNumber", min: 9)
-            try validate(serialNumber, name:"serialNumber", pattern: "[\\w+=/:,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(serialNumber, name:"serialNumber", parent: name, max: 256)
+            try validate(serialNumber, name:"serialNumber", parent: name, min: 9)
+            try validate(serialNumber, name:"serialNumber", parent: name, pattern: "[\\w+=/:,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1314,13 +1220,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(accessKeyId, name:"accessKeyId", max: 128)
-            try validate(accessKeyId, name:"accessKeyId", min: 16)
-            try validate(accessKeyId, name:"accessKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(accessKeyId, name:"accessKeyId", parent: name, max: 128)
+            try validate(accessKeyId, name:"accessKeyId", parent: name, min: 16)
+            try validate(accessKeyId, name:"accessKeyId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1341,10 +1247,10 @@ extension IAM {
             self.accountAlias = accountAlias
         }
 
-        public func validate() throws {
-            try validate(accountAlias, name:"accountAlias", max: 63)
-            try validate(accountAlias, name:"accountAlias", min: 3)
-            try validate(accountAlias, name:"accountAlias", pattern: "^[a-z0-9](([a-z0-9]|-(?!-))*[a-z0-9])?$")
+        public func validate(name: String) throws {
+            try validate(accountAlias, name:"accountAlias", parent: name, max: 63)
+            try validate(accountAlias, name:"accountAlias", parent: name, min: 3)
+            try validate(accountAlias, name:"accountAlias", parent: name, pattern: "^[a-z0-9](([a-z0-9]|-(?!-))*[a-z0-9])?$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1368,13 +1274,13 @@ extension IAM {
             self.policyName = policyName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1395,10 +1301,10 @@ extension IAM {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1418,10 +1324,10 @@ extension IAM {
             self.instanceProfileName = instanceProfileName
         }
 
-        public func validate() throws {
-            try validate(instanceProfileName, name:"instanceProfileName", max: 128)
-            try validate(instanceProfileName, name:"instanceProfileName", min: 1)
-            try validate(instanceProfileName, name:"instanceProfileName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, max: 128)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, min: 1)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1441,10 +1347,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1464,9 +1370,9 @@ extension IAM {
             self.openIDConnectProviderArn = openIDConnectProviderArn
         }
 
-        public func validate() throws {
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", max: 2048)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, max: 2048)
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1486,9 +1392,9 @@ extension IAM {
             self.policyArn = policyArn
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1512,10 +1418,10 @@ extension IAM {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(versionId, name:"versionId", pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(versionId, name:"versionId", parent: name, pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1536,10 +1442,10 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1563,13 +1469,13 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1590,10 +1496,10 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1613,9 +1519,9 @@ extension IAM {
             self.sAMLProviderArn = sAMLProviderArn
         }
 
-        public func validate() throws {
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", max: 2048)
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(sAMLProviderArn, name:"sAMLProviderArn", parent: name, max: 2048)
+            try validate(sAMLProviderArn, name:"sAMLProviderArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1639,13 +1545,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", max: 128)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", min: 20)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, max: 128)
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, min: 20)
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1666,10 +1572,10 @@ extension IAM {
             self.serverCertificateName = serverCertificateName
         }
 
-        public func validate() throws {
-            try validate(serverCertificateName, name:"serverCertificateName", max: 128)
-            try validate(serverCertificateName, name:"serverCertificateName", min: 1)
-            try validate(serverCertificateName, name:"serverCertificateName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, max: 128)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, min: 1)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1689,10 +1595,10 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1710,11 +1616,6 @@ extension IAM {
 
         public init(deletionTaskId: String) {
             self.deletionTaskId = deletionTaskId
-        }
-
-        public func validate() throws {
-            try validate(deletionTaskId, name:"deletionTaskId", max: 1000)
-            try validate(deletionTaskId, name:"deletionTaskId", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1738,13 +1639,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", max: 128)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", min: 20)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, max: 128)
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, min: 20)
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1769,13 +1670,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(certificateId, name:"certificateId", max: 128)
-            try validate(certificateId, name:"certificateId", min: 24)
-            try validate(certificateId, name:"certificateId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(certificateId, name:"certificateId", parent: name, max: 128)
+            try validate(certificateId, name:"certificateId", parent: name, min: 24)
+            try validate(certificateId, name:"certificateId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1796,10 +1697,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1823,13 +1724,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1850,10 +1751,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1873,10 +1774,10 @@ extension IAM {
             self.serialNumber = serialNumber
         }
 
-        public func validate() throws {
-            try validate(serialNumber, name:"serialNumber", max: 256)
-            try validate(serialNumber, name:"serialNumber", min: 9)
-            try validate(serialNumber, name:"serialNumber", pattern: "[\\w+=/:,.@-]+")
+        public func validate(name: String) throws {
+            try validate(serialNumber, name:"serialNumber", parent: name, max: 256)
+            try validate(serialNumber, name:"serialNumber", parent: name, min: 9)
+            try validate(serialNumber, name:"serialNumber", parent: name, pattern: "[\\w+=/:,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1898,13 +1799,6 @@ extension IAM {
         public init(reason: String? = nil, roleUsageList: [RoleUsageType]? = nil) {
             self.reason = reason
             self.roleUsageList = roleUsageList
-        }
-
-        public func validate() throws {
-            try validate(reason, name:"reason", max: 1000)
-            try roleUsageList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1937,12 +1831,12 @@ extension IAM {
             self.policyArn = policyArn
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1967,12 +1861,12 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1997,12 +1891,12 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2035,19 +1929,19 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(authenticationCode1, name:"authenticationCode1", max: 6)
-            try validate(authenticationCode1, name:"authenticationCode1", min: 6)
-            try validate(authenticationCode1, name:"authenticationCode1", pattern: "[\\d]+")
-            try validate(authenticationCode2, name:"authenticationCode2", max: 6)
-            try validate(authenticationCode2, name:"authenticationCode2", min: 6)
-            try validate(authenticationCode2, name:"authenticationCode2", pattern: "[\\d]+")
-            try validate(serialNumber, name:"serialNumber", max: 256)
-            try validate(serialNumber, name:"serialNumber", min: 9)
-            try validate(serialNumber, name:"serialNumber", pattern: "[\\w+=/:,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(authenticationCode1, name:"authenticationCode1", parent: name, max: 6)
+            try validate(authenticationCode1, name:"authenticationCode1", parent: name, min: 6)
+            try validate(authenticationCode1, name:"authenticationCode1", parent: name, pattern: "[\\d]+")
+            try validate(authenticationCode2, name:"authenticationCode2", parent: name, max: 6)
+            try validate(authenticationCode2, name:"authenticationCode2", parent: name, min: 6)
+            try validate(authenticationCode2, name:"authenticationCode2", parent: name, pattern: "[\\d]+")
+            try validate(serialNumber, name:"serialNumber", parent: name, max: 256)
+            try validate(serialNumber, name:"serialNumber", parent: name, min: 9)
+            try validate(serialNumber, name:"serialNumber", parent: name, pattern: "[\\w+=/:,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2072,10 +1966,6 @@ extension IAM {
         public init(entityInfo: EntityInfo, lastAuthenticated: TimeStamp? = nil) {
             self.entityInfo = entityInfo
             self.lastAuthenticated = lastAuthenticated
-        }
-
-        public func validate() throws {
-            try entityInfo.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2109,20 +1999,6 @@ extension IAM {
             self.name = name
             self.path = path
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(id, name:"id", max: 128)
-            try validate(id, name:"id", min: 16)
-            try validate(id, name:"id", pattern: "[\\w]+")
-            try validate(name, name:"name", max: 64)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[\\w+=,.@-]+")
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2205,20 +2081,6 @@ extension IAM {
             self.resourceSpecificResults = resourceSpecificResults
         }
 
-        public func validate() throws {
-            try validate(evalActionName, name:"evalActionName", max: 128)
-            try validate(evalActionName, name:"evalActionName", min: 3)
-            try validate(evalResourceName, name:"evalResourceName", max: 2048)
-            try validate(evalResourceName, name:"evalResourceName", min: 1)
-            try missingContextValues?.forEach {
-                try validate($0, name:"missingContextValues[]", max: 256)
-                try validate($0, name:"missingContextValues[]", min: 5)
-            }
-            try resourceSpecificResults?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case evalActionName = "EvalActionName"
             case evalDecision = "EvalDecision"
@@ -2269,11 +2131,11 @@ extension IAM {
             self.organizationsPolicyId = organizationsPolicyId
         }
 
-        public func validate() throws {
-            try validate(entityPath, name:"entityPath", max: 427)
-            try validate(entityPath, name:"entityPath", min: 19)
-            try validate(entityPath, name:"entityPath", pattern: "^o-[0-9a-z]{10,32}\\/r-[0-9a-z]{4,32}[0-9a-z-\\/]*")
-            try validate(organizationsPolicyId, name:"organizationsPolicyId", pattern: "^p-[0-9a-zA-Z_]{8,128}$")
+        public func validate(name: String) throws {
+            try validate(entityPath, name:"entityPath", parent: name, max: 427)
+            try validate(entityPath, name:"entityPath", parent: name, min: 19)
+            try validate(entityPath, name:"entityPath", parent: name, pattern: "^o-[0-9a-z]{10,32}\\/r-[0-9a-z]{4,32}[0-9a-z-\\/]*")
+            try validate(organizationsPolicyId, name:"organizationsPolicyId", parent: name, pattern: "^p-[0-9a-zA-Z_]{8,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2294,11 +2156,6 @@ extension IAM {
             self.jobId = jobId
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 36)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case jobId = "JobId"
         }
@@ -2316,9 +2173,9 @@ extension IAM {
             self.arn = arn
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
+        public func validate(name: String) throws {
+            try validate(arn, name:"arn", parent: name, max: 2048)
+            try validate(arn, name:"arn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2338,11 +2195,6 @@ extension IAM {
             self.jobId = jobId
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 36)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case jobId = "JobId"
         }
@@ -2360,10 +2212,10 @@ extension IAM {
             self.accessKeyId = accessKeyId
         }
 
-        public func validate() throws {
-            try validate(accessKeyId, name:"accessKeyId", max: 128)
-            try validate(accessKeyId, name:"accessKeyId", min: 16)
-            try validate(accessKeyId, name:"accessKeyId", pattern: "[\\w]+")
+        public func validate(name: String) throws {
+            try validate(accessKeyId, name:"accessKeyId", parent: name, max: 128)
+            try validate(accessKeyId, name:"accessKeyId", parent: name, min: 16)
+            try validate(accessKeyId, name:"accessKeyId", parent: name, pattern: "[\\w]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2387,12 +2239,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accessKeyLastUsed = "AccessKeyLastUsed"
             case userName = "UserName"
@@ -2411,20 +2257,20 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
 
-        public init(filter: [EntityType]? = nil, marker: String? = nil, maxItems: Int32? = nil) {
+        public init(filter: [EntityType]? = nil, marker: String? = nil, maxItems: Int? = nil) {
             self.filter = filter
             self.marker = marker
             self.maxItems = maxItems
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2466,21 +2312,6 @@ extension IAM {
             self.userDetailList = userDetailList
         }
 
-        public func validate() throws {
-            try groupDetailList?.forEach {
-                try $0.validate()
-            }
-            try policies?.forEach {
-                try $0.validate()
-            }
-            try roleDetailList?.forEach {
-                try $0.validate()
-            }
-            try userDetailList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groupDetailList = "GroupDetailList"
             case isTruncated = "IsTruncated"
@@ -2503,10 +2334,6 @@ extension IAM {
             self.passwordPolicy = passwordPolicy
         }
 
-        public func validate() throws {
-            try passwordPolicy.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case passwordPolicy = "PasswordPolicy"
         }
@@ -2518,9 +2345,9 @@ extension IAM {
         ]
 
         /// A set of key–value pairs containing information about IAM entity usage and IAM quotas.
-        public let summaryMap: [SummaryKeyType: Int32]?
+        public let summaryMap: [SummaryKeyType: Int]?
 
-        public init(summaryMap: [SummaryKeyType: Int32]? = nil) {
+        public init(summaryMap: [SummaryKeyType: Int]? = nil) {
             self.summaryMap = summaryMap
         }
 
@@ -2541,11 +2368,11 @@ extension IAM {
             self.policyInputList = policyInputList
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try policyInputList.forEach {
-                try validate($0, name:"policyInputList[]", max: 131072)
-                try validate($0, name:"policyInputList[]", min: 1)
-                try validate($0, name:"policyInputList[]", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+                try validate($0, name: "policyInputList[]", parent: name, max: 131072)
+                try validate($0, name: "policyInputList[]", parent: name, min: 1)
+                try validate($0, name: "policyInputList[]", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
             }
         }
 
@@ -2564,13 +2391,6 @@ extension IAM {
 
         public init(contextKeyNames: [String]? = nil) {
             self.contextKeyNames = contextKeyNames
-        }
-
-        public func validate() throws {
-            try contextKeyNames?.forEach {
-                try validate($0, name:"contextKeyNames[]", max: 256)
-                try validate($0, name:"contextKeyNames[]", min: 5)
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2594,14 +2414,14 @@ extension IAM {
             self.policySourceArn = policySourceArn
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try policyInputList?.forEach {
-                try validate($0, name:"policyInputList[]", max: 131072)
-                try validate($0, name:"policyInputList[]", min: 1)
-                try validate($0, name:"policyInputList[]", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+                try validate($0, name: "policyInputList[]", parent: name, max: 131072)
+                try validate($0, name: "policyInputList[]", parent: name, min: 1)
+                try validate($0, name: "policyInputList[]", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
             }
-            try validate(policySourceArn, name:"policySourceArn", max: 2048)
-            try validate(policySourceArn, name:"policySourceArn", min: 20)
+            try validate(policySourceArn, name:"policySourceArn", parent: name, max: 2048)
+            try validate(policySourceArn, name:"policySourceArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2653,13 +2473,13 @@ extension IAM {
             self.policyName = policyName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2688,18 +2508,6 @@ extension IAM {
             self.policyName = policyName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groupName = "GroupName"
             case policyDocument = "PolicyDocument"
@@ -2719,23 +2527,23 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
 
-        public init(groupName: String, marker: String? = nil, maxItems: Int32? = nil) {
+        public init(groupName: String, marker: String? = nil, maxItems: Int? = nil) {
             self.groupName = groupName
             self.marker = marker
             self.maxItems = maxItems
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2769,13 +2577,6 @@ extension IAM {
             self.users = users
         }
 
-        public func validate() throws {
-            try group.validate()
-            try users.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case group = "Group"
             case isTruncated = "IsTruncated"
@@ -2796,10 +2597,10 @@ extension IAM {
             self.instanceProfileName = instanceProfileName
         }
 
-        public func validate() throws {
-            try validate(instanceProfileName, name:"instanceProfileName", max: 128)
-            try validate(instanceProfileName, name:"instanceProfileName", min: 1)
-            try validate(instanceProfileName, name:"instanceProfileName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, max: 128)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, min: 1)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2819,10 +2620,6 @@ extension IAM {
             self.instanceProfile = instanceProfile
         }
 
-        public func validate() throws {
-            try instanceProfile.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case instanceProfile = "InstanceProfile"
         }
@@ -2840,10 +2637,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2863,10 +2660,6 @@ extension IAM {
             self.loginProfile = loginProfile
         }
 
-        public func validate() throws {
-            try loginProfile.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case loginProfile = "LoginProfile"
         }
@@ -2884,9 +2677,9 @@ extension IAM {
             self.openIDConnectProviderArn = openIDConnectProviderArn
         }
 
-        public func validate() throws {
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", max: 2048)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, max: 2048)
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2918,19 +2711,6 @@ extension IAM {
             self.url = url
         }
 
-        public func validate() throws {
-            try clientIDList?.forEach {
-                try validate($0, name:"clientIDList[]", max: 255)
-                try validate($0, name:"clientIDList[]", min: 1)
-            }
-            try thumbprintList?.forEach {
-                try validate($0, name:"thumbprintList[]", max: 40)
-                try validate($0, name:"thumbprintList[]", min: 40)
-            }
-            try validate(url, name:"url", max: 255)
-            try validate(url, name:"url", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case clientIDList = "ClientIDList"
             case createDate = "CreateDate"
@@ -2952,25 +2732,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The key that is used to sort the results. If you choose the namespace key, the results are returned in alphabetical order. If you choose the time key, the results are sorted numerically by the date and time.
         public let sortKey: SortKeyType?
 
-        public init(jobId: String, marker: String? = nil, maxItems: Int32? = nil, sortKey: SortKeyType? = nil) {
+        public init(jobId: String, marker: String? = nil, maxItems: Int? = nil, sortKey: SortKeyType? = nil) {
             self.jobId = jobId
             self.marker = marker
             self.maxItems = maxItems
             self.sortKey = sortKey
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 36)
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 36)
+            try validate(jobId, name:"jobId", parent: name, min: 36)
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3008,11 +2788,11 @@ extension IAM {
         /// When IsTruncated is true, this element is present and contains the value to use for the Marker parameter in a subsequent pagination request.
         public let marker: String?
         /// The number of services that the applicable SCPs allow account principals to access.
-        public let numberOfServicesAccessible: Int32?
+        public let numberOfServicesAccessible: Int?
         /// The number of services that account principals are allowed but did not attempt to access.
-        public let numberOfServicesNotAccessed: Int32?
+        public let numberOfServicesNotAccessed: Int?
 
-        public init(accessDetails: [AccessDetail]? = nil, errorDetails: ErrorDetails? = nil, isTruncated: Bool? = nil, jobCompletionDate: TimeStamp? = nil, jobCreationDate: TimeStamp, jobStatus: JobStatusType, marker: String? = nil, numberOfServicesAccessible: Int32? = nil, numberOfServicesNotAccessed: Int32? = nil) {
+        public init(accessDetails: [AccessDetail]? = nil, errorDetails: ErrorDetails? = nil, isTruncated: Bool? = nil, jobCompletionDate: TimeStamp? = nil, jobCreationDate: TimeStamp, jobStatus: JobStatusType, marker: String? = nil, numberOfServicesAccessible: Int? = nil, numberOfServicesNotAccessed: Int? = nil) {
             self.accessDetails = accessDetails
             self.errorDetails = errorDetails
             self.isTruncated = isTruncated
@@ -3022,15 +2802,6 @@ extension IAM {
             self.marker = marker
             self.numberOfServicesAccessible = numberOfServicesAccessible
             self.numberOfServicesNotAccessed = numberOfServicesNotAccessed
-        }
-
-        public func validate() throws {
-            try accessDetails?.forEach {
-                try $0.validate()
-            }
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3058,9 +2829,9 @@ extension IAM {
             self.policyArn = policyArn
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3078,10 +2849,6 @@ extension IAM {
 
         public init(policy: Policy? = nil) {
             self.policy = policy
-        }
-
-        public func validate() throws {
-            try policy?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3105,10 +2872,10 @@ extension IAM {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(versionId, name:"versionId", pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(versionId, name:"versionId", parent: name, pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3127,10 +2894,6 @@ extension IAM {
 
         public init(policyVersion: PolicyVersion? = nil) {
             self.policyVersion = policyVersion
-        }
-
-        public func validate() throws {
-            try policyVersion?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3154,13 +2917,13 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3189,18 +2952,6 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case policyDocument = "PolicyDocument"
             case policyName = "PolicyName"
@@ -3220,10 +2971,10 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3243,10 +2994,6 @@ extension IAM {
             self.role = role
         }
 
-        public func validate() throws {
-            try role.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case role = "Role"
         }
@@ -3264,9 +3011,9 @@ extension IAM {
             self.sAMLProviderArn = sAMLProviderArn
         }
 
-        public func validate() throws {
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", max: 2048)
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(sAMLProviderArn, name:"sAMLProviderArn", parent: name, max: 2048)
+            try validate(sAMLProviderArn, name:"sAMLProviderArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3292,11 +3039,6 @@ extension IAM {
             self.createDate = createDate
             self.sAMLMetadataDocument = sAMLMetadataDocument
             self.validUntil = validUntil
-        }
-
-        public func validate() throws {
-            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", max: 10000000)
-            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", min: 1000)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3326,13 +3068,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", max: 128)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", min: 20)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, max: 128)
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, min: 20)
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3354,10 +3096,6 @@ extension IAM {
             self.sSHPublicKey = sSHPublicKey
         }
 
-        public func validate() throws {
-            try sSHPublicKey?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case sSHPublicKey = "SSHPublicKey"
         }
@@ -3375,10 +3113,10 @@ extension IAM {
             self.serverCertificateName = serverCertificateName
         }
 
-        public func validate() throws {
-            try validate(serverCertificateName, name:"serverCertificateName", max: 128)
-            try validate(serverCertificateName, name:"serverCertificateName", min: 1)
-            try validate(serverCertificateName, name:"serverCertificateName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, max: 128)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, min: 1)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3398,10 +3136,6 @@ extension IAM {
             self.serverCertificate = serverCertificate
         }
 
-        public func validate() throws {
-            try serverCertificate.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case serverCertificate = "ServerCertificate"
         }
@@ -3419,22 +3153,22 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
 
-        public init(jobId: String, marker: String? = nil, maxItems: Int32? = nil) {
+        public init(jobId: String, marker: String? = nil, maxItems: Int? = nil) {
             self.jobId = jobId
             self.marker = marker
             self.maxItems = maxItems
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 36)
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 36)
+            try validate(jobId, name:"jobId", parent: name, min: 36)
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3480,12 +3214,6 @@ extension IAM {
             self.servicesLastAccessed = servicesLastAccessed
         }
 
-        public func validate() throws {
-            try servicesLastAccessed.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case error = "Error"
             case isTruncated = "IsTruncated"
@@ -3510,28 +3238,28 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The service namespace for an AWS service. Provide the service namespace to learn when the IAM entity last attempted to access the specified service. To learn the service namespace for a service, go to Actions, Resources, and Condition Keys for AWS Services in the IAM User Guide. Choose the name of the service to view details for that service. In the first paragraph, find the service prefix. For example, (service prefix: a4b). For more information about service namespaces, see AWS Service Namespaces in the AWS General Reference.
         public let serviceNamespace: String
 
-        public init(jobId: String, marker: String? = nil, maxItems: Int32? = nil, serviceNamespace: String) {
+        public init(jobId: String, marker: String? = nil, maxItems: Int? = nil, serviceNamespace: String) {
             self.jobId = jobId
             self.marker = marker
             self.maxItems = maxItems
             self.serviceNamespace = serviceNamespace
         }
 
-        public func validate() throws {
-            try validate(jobId, name:"jobId", max: 36)
-            try validate(jobId, name:"jobId", min: 36)
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(serviceNamespace, name:"serviceNamespace", max: 64)
-            try validate(serviceNamespace, name:"serviceNamespace", min: 1)
-            try validate(serviceNamespace, name:"serviceNamespace", pattern: "[\\w-]*")
+        public func validate(name: String) throws {
+            try validate(jobId, name:"jobId", parent: name, max: 36)
+            try validate(jobId, name:"jobId", parent: name, min: 36)
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(serviceNamespace, name:"serviceNamespace", parent: name, max: 64)
+            try validate(serviceNamespace, name:"serviceNamespace", parent: name, min: 1)
+            try validate(serviceNamespace, name:"serviceNamespace", parent: name, pattern: "[\\w-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3578,12 +3306,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try entityDetailsList.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case entityDetailsList = "EntityDetailsList"
             case error = "Error"
@@ -3607,9 +3329,9 @@ extension IAM {
             self.deletionTaskId = deletionTaskId
         }
 
-        public func validate() throws {
-            try validate(deletionTaskId, name:"deletionTaskId", max: 1000)
-            try validate(deletionTaskId, name:"deletionTaskId", min: 1)
+        public func validate(name: String) throws {
+            try validate(deletionTaskId, name:"deletionTaskId", parent: name, max: 1000)
+            try validate(deletionTaskId, name:"deletionTaskId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3631,10 +3353,6 @@ extension IAM {
         public init(reason: DeletionTaskFailureReasonType? = nil, status: DeletionTaskStatusType) {
             self.reason = reason
             self.status = status
-        }
-
-        public func validate() throws {
-            try reason?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3659,13 +3377,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3694,18 +3412,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case policyDocument = "PolicyDocument"
             case policyName = "PolicyName"
@@ -3725,10 +3431,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3746,10 +3452,6 @@ extension IAM {
 
         public init(user: User) {
             self.user = user
-        }
-
-        public func validate() throws {
-            try user.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3783,20 +3485,6 @@ extension IAM {
             self.groupId = groupId
             self.groupName = groupName
             self.path = path
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(groupId, name:"groupId", max: 128)
-            try validate(groupId, name:"groupId", min: 16)
-            try validate(groupId, name:"groupId", pattern: "[\\w]+")
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3843,26 +3531,6 @@ extension IAM {
             self.path = path
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try attachedManagedPolicies?.forEach {
-                try $0.validate()
-            }
-            try validate(groupId, name:"groupId", max: 128)
-            try validate(groupId, name:"groupId", min: 16)
-            try validate(groupId, name:"groupId", pattern: "[\\w]+")
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try groupPolicyList?.forEach {
-                try $0.validate()
-            }
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case attachedManagedPolicies = "AttachedManagedPolicies"
@@ -3906,23 +3574,6 @@ extension IAM {
             self.roles = roles
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(instanceProfileId, name:"instanceProfileId", max: 128)
-            try validate(instanceProfileId, name:"instanceProfileId", min: 16)
-            try validate(instanceProfileId, name:"instanceProfileId", pattern: "[\\w]+")
-            try validate(instanceProfileName, name:"instanceProfileName", max: 128)
-            try validate(instanceProfileName, name:"instanceProfileName", min: 1)
-            try validate(instanceProfileName, name:"instanceProfileName", pattern: "[\\w+=,.@-]+")
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try roles.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case createDate = "CreateDate"
@@ -3943,25 +3594,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the user. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let userName: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, userName: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, userName: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3991,12 +3642,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try accessKeyMetadata.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accessKeyMetadata = "AccessKeyMetadata"
             case isTruncated = "IsTruncated"
@@ -4013,19 +3658,19 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil) {
             self.marker = marker
             self.maxItems = maxItems
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4054,14 +3699,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try accountAliases.forEach {
-                try validate($0, name:"accountAliases[]", max: 63)
-                try validate($0, name:"accountAliases[]", min: 3)
-                try validate($0, name:"accountAliases[]", pattern: "^[a-z0-9](([a-z0-9]|-(?!-))*[a-z0-9])?$")
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accountAliases = "AccountAliases"
             case isTruncated = "IsTruncated"
@@ -4082,29 +3719,29 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The path prefix for filtering the results. This parameter is optional. If it is not included, it defaults to a slash (/), listing all policies. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
 
-        public init(groupName: String, marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil) {
+        public init(groupName: String, marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil) {
             self.groupName = groupName
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4135,12 +3772,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try attachedPolicies?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attachedPolicies = "AttachedPolicies"
             case isTruncated = "IsTruncated"
@@ -4159,31 +3790,31 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The path prefix for filtering the results. This parameter is optional. If it is not included, it defaults to a slash (/), listing all policies. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
         /// The name (friendly name, not ARN) of the role to list attached policies for. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let roleName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil, roleName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil, roleName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4214,12 +3845,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try attachedPolicies?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attachedPolicies = "AttachedPolicies"
             case isTruncated = "IsTruncated"
@@ -4238,31 +3863,31 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The path prefix for filtering the results. This parameter is optional. If it is not included, it defaults to a slash (/), listing all policies. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
         /// The name (friendly name, not ARN) of the user to list attached policies for. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let userName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil, userName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil, userName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4293,12 +3918,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try attachedPolicies?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attachedPolicies = "AttachedPolicies"
             case isTruncated = "IsTruncated"
@@ -4321,7 +3940,7 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The path prefix for filtering the results. This parameter is optional. If it is not included, it defaults to a slash (/), listing all entities. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
         /// The Amazon Resource Name (ARN) of the IAM policy for which you want the versions. For more information about ARNs, see Amazon Resource Names (ARNs) and AWS Service Namespaces in the AWS General Reference.
@@ -4329,7 +3948,7 @@ extension IAM {
         /// The policy usage method to use for filtering the results. To list only permissions policies, set PolicyUsageFilter to PermissionsPolicy. To list only the policies used to set permissions boundaries, set the value to PermissionsBoundary. This parameter is optional. If it is not included, all policies are returned. 
         public let policyUsageFilter: PolicyUsageType?
 
-        public init(entityFilter: EntityType? = nil, marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil, policyArn: String, policyUsageFilter: PolicyUsageType? = nil) {
+        public init(entityFilter: EntityType? = nil, marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil, policyArn: String, policyUsageFilter: PolicyUsageType? = nil) {
             self.entityFilter = entityFilter
             self.marker = marker
             self.maxItems = maxItems
@@ -4338,17 +3957,17 @@ extension IAM {
             self.policyUsageFilter = policyUsageFilter
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4389,18 +4008,6 @@ extension IAM {
             self.policyUsers = policyUsers
         }
 
-        public func validate() throws {
-            try policyGroups?.forEach {
-                try $0.validate()
-            }
-            try policyRoles?.forEach {
-                try $0.validate()
-            }
-            try policyUsers?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -4422,23 +4029,23 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
 
-        public init(groupName: String, marker: String? = nil, maxItems: Int32? = nil) {
+        public init(groupName: String, marker: String? = nil, maxItems: Int? = nil) {
             self.groupName = groupName
             self.marker = marker
             self.maxItems = maxItems
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4468,14 +4075,6 @@ extension IAM {
             self.policyNames = policyNames
         }
 
-        public func validate() throws {
-            try policyNames.forEach {
-                try validate($0, name:"policyNames[]", max: 128)
-                try validate($0, name:"policyNames[]", min: 1)
-                try validate($0, name:"policyNames[]", pattern: "[\\w+=,.@-]+")
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -4493,25 +4092,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the user to list groups for. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let userName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, userName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, userName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4541,12 +4140,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try groups.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groups = "Groups"
             case isTruncated = "IsTruncated"
@@ -4564,25 +4157,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         ///  The path prefix for filtering the results. For example, the prefix /division_abc/subdivision_xyz/ gets all groups whose path starts with /division_abc/subdivision_xyz/. This parameter is optional. If it is not included, it defaults to a slash (/), listing all groups. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "\\u002F[\\u0021-\\u007F]*")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "\\u002F[\\u0021-\\u007F]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4612,12 +4205,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try groups.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groups = "Groups"
             case isTruncated = "IsTruncated"
@@ -4635,25 +4222,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the role to list instance profiles for. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let roleName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, roleName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, roleName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4683,12 +4270,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try instanceProfiles.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case instanceProfiles = "InstanceProfiles"
             case isTruncated = "IsTruncated"
@@ -4706,25 +4287,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         ///  The path prefix for filtering the results. For example, the prefix /application_abc/component_xyz/ gets all instance profiles whose path starts with /application_abc/component_xyz/. This parameter is optional. If it is not included, it defaults to a slash (/), listing all instance profiles. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "\\u002F[\\u0021-\\u007F]*")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "\\u002F[\\u0021-\\u007F]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4754,12 +4335,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try instanceProfiles.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case instanceProfiles = "InstanceProfiles"
             case isTruncated = "IsTruncated"
@@ -4777,25 +4352,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the user whose MFA devices you want to list. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let userName: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, userName: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, userName: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4825,12 +4400,6 @@ extension IAM {
             self.mFADevices = mFADevices
         }
 
-        public func validate() throws {
-            try mFADevices.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -4858,12 +4427,6 @@ extension IAM {
             self.openIDConnectProviderList = openIDConnectProviderList
         }
 
-        public func validate() throws {
-            try openIDConnectProviderList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case openIDConnectProviderList = "OpenIDConnectProviderList"
         }
@@ -4883,15 +4446,6 @@ extension IAM {
         public init(policies: [PolicyGrantingServiceAccess]? = nil, serviceNamespace: String? = nil) {
             self.policies = policies
             self.serviceNamespace = serviceNamespace
-        }
-
-        public func validate() throws {
-            try policies?.forEach {
-                try $0.validate()
-            }
-            try validate(serviceNamespace, name:"serviceNamespace", max: 64)
-            try validate(serviceNamespace, name:"serviceNamespace", min: 1)
-            try validate(serviceNamespace, name:"serviceNamespace", pattern: "[\\w-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4920,19 +4474,19 @@ extension IAM {
             self.serviceNamespaces = serviceNamespaces
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(arn, name:"arn", parent: name, max: 2048)
+            try validate(arn, name:"arn", parent: name, min: 20)
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
             try serviceNamespaces.forEach {
-                try validate($0, name:"serviceNamespaces[]", max: 64)
-                try validate($0, name:"serviceNamespaces[]", min: 1)
-                try validate($0, name:"serviceNamespaces[]", pattern: "[\\w-]*")
+                try validate($0, name: "serviceNamespaces[]", parent: name, max: 64)
+                try validate($0, name: "serviceNamespaces[]", parent: name, min: 1)
+                try validate($0, name: "serviceNamespaces[]", parent: name, pattern: "[\\w-]*")
             }
-            try validate(serviceNamespaces, name:"serviceNamespaces", max: 200)
-            try validate(serviceNamespaces, name:"serviceNamespaces", min: 1)
+            try validate(serviceNamespaces, name:"serviceNamespaces", parent: name, max: 200)
+            try validate(serviceNamespaces, name:"serviceNamespaces", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4962,12 +4516,6 @@ extension IAM {
             self.policiesGrantingServiceAccess = policiesGrantingServiceAccess
         }
 
-        public func validate() throws {
-            try policiesGrantingServiceAccess.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -4988,7 +4536,7 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// A flag to filter the results to only the attached policies. When OnlyAttached is true, the returned list contains only the policies that are attached to an IAM user, group, or role. When OnlyAttached is false, or when the parameter is not included, all policies are returned.
         public let onlyAttached: Bool?
         /// The path prefix for filtering the results. This parameter is optional. If it is not included, it defaults to a slash (/), listing all policies. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
@@ -4998,7 +4546,7 @@ extension IAM {
         /// The scope to use for filtering the results. To list only AWS managed policies, set Scope to AWS. To list only the customer managed policies in your AWS account, set Scope to Local. This parameter is optional. If it is not included, or if it is set to All, all policies are returned.
         public let scope: PolicyScopeType?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, onlyAttached: Bool? = nil, pathPrefix: String? = nil, policyUsageFilter: PolicyUsageType? = nil, scope: PolicyScopeType? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, onlyAttached: Bool? = nil, pathPrefix: String? = nil, policyUsageFilter: PolicyUsageType? = nil, scope: PolicyScopeType? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.onlyAttached = onlyAttached
@@ -5007,15 +4555,15 @@ extension IAM {
             self.scope = scope
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5048,12 +4596,6 @@ extension IAM {
             self.policies = policies
         }
 
-        public func validate() throws {
-            try policies?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5071,24 +4613,24 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The Amazon Resource Name (ARN) of the IAM policy for which you want the versions. For more information about ARNs, see Amazon Resource Names (ARNs) and AWS Service Namespaces in the AWS General Reference.
         public let policyArn: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, policyArn: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, policyArn: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.policyArn = policyArn
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5118,12 +4660,6 @@ extension IAM {
             self.versions = versions
         }
 
-        public func validate() throws {
-            try versions?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5141,25 +4677,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the role to list policies for. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let roleName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, roleName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, roleName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5189,14 +4725,6 @@ extension IAM {
             self.policyNames = policyNames
         }
 
-        public func validate() throws {
-            try policyNames.forEach {
-                try validate($0, name:"policyNames[]", max: 128)
-                try validate($0, name:"policyNames[]", min: 1)
-                try validate($0, name:"policyNames[]", pattern: "[\\w+=,.@-]+")
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5214,25 +4742,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// (Optional) Use this only when paginating results to indicate the maximum number of items that you want in the response. If additional items exist beyond the maximum that you specify, the IsTruncated response element is true. If you do not include this parameter, it defaults to 100. Note that IAM might return fewer results, even when more results are available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the IAM role for which you want to see the list of tags. This parameter accepts (through its regex pattern) a string of characters that consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let roleName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, roleName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, roleName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5262,13 +4790,6 @@ extension IAM {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try tags.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5286,25 +4807,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         ///  The path prefix for filtering the results. For example, the prefix /application_abc/component_xyz/ gets all roles whose path starts with /application_abc/component_xyz/. This parameter is optional. If it is not included, it defaults to a slash (/), listing all roles. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "\\u002F[\\u0021-\\u007F]*")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "\\u002F[\\u0021-\\u007F]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5334,12 +4855,6 @@ extension IAM {
             self.roles = roles
         }
 
-        public func validate() throws {
-            try roles.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5367,12 +4882,6 @@ extension IAM {
             self.sAMLProviderList = sAMLProviderList
         }
 
-        public func validate() throws {
-            try sAMLProviderList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case sAMLProviderList = "SAMLProviderList"
         }
@@ -5388,25 +4897,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the IAM user to list SSH public keys for. If none is specified, the UserName field is determined implicitly based on the AWS access key used to sign the request. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let userName: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, userName: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, userName: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5436,12 +4945,6 @@ extension IAM {
             self.sSHPublicKeys = sSHPublicKeys
         }
 
-        public func validate() throws {
-            try sSHPublicKeys?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5459,25 +4962,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         ///  The path prefix for filtering the results. For example: /company/servercerts would get all server certificates for which the path starts with /company/servercerts. This parameter is optional. If it is not included, it defaults to a slash (/), listing all server certificates. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "\\u002F[\\u0021-\\u007F]*")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "\\u002F[\\u0021-\\u007F]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5507,12 +5010,6 @@ extension IAM {
             self.serverCertificateMetadataList = serverCertificateMetadataList
         }
 
-        public func validate() throws {
-            try serverCertificateMetadataList.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5536,10 +5033,10 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5560,12 +5057,6 @@ extension IAM {
             self.serviceSpecificCredentials = serviceSpecificCredentials
         }
 
-        public func validate() throws {
-            try serviceSpecificCredentials?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case serviceSpecificCredentials = "ServiceSpecificCredentials"
         }
@@ -5581,25 +5072,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the IAM user whose signing certificates you want to examine. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let userName: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, userName: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, userName: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5629,12 +5120,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try certificates.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case certificates = "Certificates"
             case isTruncated = "IsTruncated"
@@ -5652,25 +5137,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the user to list policies for. This parameter allows (through its regex pattern) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@-
         public let userName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, userName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, userName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5700,14 +5185,6 @@ extension IAM {
             self.policyNames = policyNames
         }
 
-        public func validate() throws {
-            try policyNames.forEach {
-                try validate($0, name:"policyNames[]", max: 128)
-                try validate($0, name:"policyNames[]", min: 1)
-                try validate($0, name:"policyNames[]", pattern: "[\\w+=,.@-]+")
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5725,25 +5202,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// (Optional) Use this only when paginating results to indicate the maximum number of items that you want in the response. If additional items exist beyond the maximum that you specify, the IsTruncated response element is true. If you do not include this parameter, it defaults to 100. Note that IAM might return fewer results, even when more results are available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// The name of the IAM user whose tags you want to see. This parameter accepts (through its regex pattern) a string of characters that consist of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@-
         public let userName: String
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, userName: String) {
+        public init(marker: String? = nil, maxItems: Int? = nil, userName: String) {
             self.marker = marker
             self.maxItems = maxItems
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5773,13 +5250,6 @@ extension IAM {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try tags.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5797,25 +5267,25 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         ///  The path prefix for filtering the results. For example: /division_abc/subdivision_xyz/, which would get all user names whose path starts with /division_abc/subdivision_xyz/. This parameter is optional. If it is not included, it defaults to a slash (/), listing all user names. This parameter allows (through its regex pattern) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (\u0021) through the DEL character (\u007F), including most punctuation characters, digits, and upper and lowercased letters.
         public let pathPrefix: String?
 
-        public init(marker: String? = nil, maxItems: Int32? = nil, pathPrefix: String? = nil) {
+        public init(marker: String? = nil, maxItems: Int? = nil, pathPrefix: String? = nil) {
             self.marker = marker
             self.maxItems = maxItems
             self.pathPrefix = pathPrefix
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", max: 512)
-            try validate(pathPrefix, name:"pathPrefix", min: 1)
-            try validate(pathPrefix, name:"pathPrefix", pattern: "\\u002F[\\u0021-\\u007F]*")
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, max: 512)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, min: 1)
+            try validate(pathPrefix, name:"pathPrefix", parent: name, pattern: "\\u002F[\\u0021-\\u007F]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5845,12 +5315,6 @@ extension IAM {
             self.users = users
         }
 
-        public func validate() throws {
-            try users.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5870,20 +5334,20 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
 
-        public init(assignmentStatus: AssignmentStatusType? = nil, marker: String? = nil, maxItems: Int32? = nil) {
+        public init(assignmentStatus: AssignmentStatusType? = nil, marker: String? = nil, maxItems: Int? = nil) {
             self.assignmentStatus = assignmentStatus
             self.marker = marker
             self.maxItems = maxItems
         }
 
-        public func validate() throws {
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+        public func validate(name: String) throws {
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5913,12 +5377,6 @@ extension IAM {
             self.virtualMFADevices = virtualMFADevices
         }
 
-        public func validate() throws {
-            try virtualMFADevices.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isTruncated = "IsTruncated"
             case marker = "Marker"
@@ -5944,12 +5402,6 @@ extension IAM {
             self.createDate = createDate
             self.passwordResetRequired = passwordResetRequired
             self.userName = userName
-        }
-
-        public func validate() throws {
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5979,15 +5431,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(serialNumber, name:"serialNumber", max: 256)
-            try validate(serialNumber, name:"serialNumber", min: 9)
-            try validate(serialNumber, name:"serialNumber", pattern: "[\\w+=/:,.@-]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case enableDate = "EnableDate"
             case serialNumber = "SerialNumber"
@@ -6013,7 +5456,7 @@ extension IAM {
 
         public let arn: String?
         /// The number of principal entities (users, groups, and roles) that the policy is attached to.
-        public let attachmentCount: Int32?
+        public let attachmentCount: Int?
         /// The date and time, in ISO 8601 date-time format, when the policy was created.
         public let createDate: TimeStamp?
         /// The identifier for the version of the policy that is set as the default (operative) version. For more information about policy versions, see Versioning for Managed Policies in the Using IAM guide. 
@@ -6025,7 +5468,7 @@ extension IAM {
         /// The path to the policy. For more information about paths, see IAM Identifiers in the Using IAM guide.
         public let path: String?
         /// The number of entities (users and roles) for which the policy is used as the permissions boundary.  For more information about permissions boundaries, see Permissions Boundaries for IAM Identities  in the IAM User Guide.
-        public let permissionsBoundaryUsageCount: Int32?
+        public let permissionsBoundaryUsageCount: Int?
         /// The stable and unique string identifying the policy. For more information about IDs, see IAM Identifiers in the Using IAM guide.
         public let policyId: String?
         /// The friendly name (not ARN) identifying the policy.
@@ -6035,7 +5478,7 @@ extension IAM {
         /// The date and time, in ISO 8601 date-time format, when the policy was last updated. When a policy has only one version, this field contains the date and time when the policy was created. When a policy has more than one version, this field contains the date and time when the most recent policy version was created.
         public let updateDate: TimeStamp?
 
-        public init(arn: String? = nil, attachmentCount: Int32? = nil, createDate: TimeStamp? = nil, defaultVersionId: String? = nil, description: String? = nil, isAttachable: Bool? = nil, path: String? = nil, permissionsBoundaryUsageCount: Int32? = nil, policyId: String? = nil, policyName: String? = nil, policyVersionList: [PolicyVersion]? = nil, updateDate: TimeStamp? = nil) {
+        public init(arn: String? = nil, attachmentCount: Int? = nil, createDate: TimeStamp? = nil, defaultVersionId: String? = nil, description: String? = nil, isAttachable: Bool? = nil, path: String? = nil, permissionsBoundaryUsageCount: Int? = nil, policyId: String? = nil, policyName: String? = nil, policyVersionList: [PolicyVersion]? = nil, updateDate: TimeStamp? = nil) {
             self.arn = arn
             self.attachmentCount = attachmentCount
             self.createDate = createDate
@@ -6048,25 +5491,6 @@ extension IAM {
             self.policyName = policyName
             self.policyVersionList = policyVersionList
             self.updateDate = updateDate
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(defaultVersionId, name:"defaultVersionId", pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
-            try validate(description, name:"description", max: 1000)
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
-            try validate(policyId, name:"policyId", max: 128)
-            try validate(policyId, name:"policyId", min: 16)
-            try validate(policyId, name:"policyId", pattern: "[\\w]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try policyVersionList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6094,11 +5518,6 @@ extension IAM {
 
         public init(arn: String? = nil) {
             self.arn = arn
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6144,11 +5563,11 @@ extension IAM {
         /// Specifies whether IAM users are prevented from setting a new password after their password has expired.
         public let hardExpiry: Bool?
         /// The number of days that an IAM user password is valid.
-        public let maxPasswordAge: Int32?
+        public let maxPasswordAge: Int?
         /// Minimum length to require for IAM user passwords.
-        public let minimumPasswordLength: Int32?
+        public let minimumPasswordLength: Int?
         /// Specifies the number of previous passwords that IAM users are prevented from reusing.
-        public let passwordReusePrevention: Int32?
+        public let passwordReusePrevention: Int?
         /// Specifies whether to require lowercase characters for IAM user passwords.
         public let requireLowercaseCharacters: Bool?
         /// Specifies whether to require numbers for IAM user passwords.
@@ -6158,7 +5577,7 @@ extension IAM {
         /// Specifies whether to require uppercase characters for IAM user passwords.
         public let requireUppercaseCharacters: Bool?
 
-        public init(allowUsersToChangePassword: Bool? = nil, expirePasswords: Bool? = nil, hardExpiry: Bool? = nil, maxPasswordAge: Int32? = nil, minimumPasswordLength: Int32? = nil, passwordReusePrevention: Int32? = nil, requireLowercaseCharacters: Bool? = nil, requireNumbers: Bool? = nil, requireSymbols: Bool? = nil, requireUppercaseCharacters: Bool? = nil) {
+        public init(allowUsersToChangePassword: Bool? = nil, expirePasswords: Bool? = nil, hardExpiry: Bool? = nil, maxPasswordAge: Int? = nil, minimumPasswordLength: Int? = nil, passwordReusePrevention: Int? = nil, requireLowercaseCharacters: Bool? = nil, requireNumbers: Bool? = nil, requireSymbols: Bool? = nil, requireUppercaseCharacters: Bool? = nil) {
             self.allowUsersToChangePassword = allowUsersToChangePassword
             self.expirePasswords = expirePasswords
             self.hardExpiry = hardExpiry
@@ -6169,15 +5588,6 @@ extension IAM {
             self.requireNumbers = requireNumbers
             self.requireSymbols = requireSymbols
             self.requireUppercaseCharacters = requireUppercaseCharacters
-        }
-
-        public func validate() throws {
-            try validate(maxPasswordAge, name:"maxPasswordAge", max: 1095)
-            try validate(maxPasswordAge, name:"maxPasswordAge", min: 1)
-            try validate(minimumPasswordLength, name:"minimumPasswordLength", max: 128)
-            try validate(minimumPasswordLength, name:"minimumPasswordLength", min: 6)
-            try validate(passwordReusePrevention, name:"passwordReusePrevention", max: 24)
-            try validate(passwordReusePrevention, name:"passwordReusePrevention", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6216,7 +5626,7 @@ extension IAM {
 
         public let arn: String?
         /// The number of entities (users, groups, and roles) that the policy is attached to.
-        public let attachmentCount: Int32?
+        public let attachmentCount: Int?
         /// The date and time, in ISO 8601 date-time format, when the policy was created.
         public let createDate: TimeStamp?
         /// The identifier for the version of the policy that is set as the default version.
@@ -6228,7 +5638,7 @@ extension IAM {
         /// The path to the policy. For more information about paths, see IAM Identifiers in the Using IAM guide.
         public let path: String?
         /// The number of entities (users and roles) for which the policy is used to set the permissions boundary.  For more information about permissions boundaries, see Permissions Boundaries for IAM Identities  in the IAM User Guide.
-        public let permissionsBoundaryUsageCount: Int32?
+        public let permissionsBoundaryUsageCount: Int?
         /// The stable and unique string identifying the policy. For more information about IDs, see IAM Identifiers in the Using IAM guide.
         public let policyId: String?
         /// The friendly name (not ARN) identifying the policy.
@@ -6236,7 +5646,7 @@ extension IAM {
         /// The date and time, in ISO 8601 date-time format, when the policy was last updated. When a policy has only one version, this field contains the date and time when the policy was created. When a policy has more than one version, this field contains the date and time when the most recent policy version was created.
         public let updateDate: TimeStamp?
 
-        public init(arn: String? = nil, attachmentCount: Int32? = nil, createDate: TimeStamp? = nil, defaultVersionId: String? = nil, description: String? = nil, isAttachable: Bool? = nil, path: String? = nil, permissionsBoundaryUsageCount: Int32? = nil, policyId: String? = nil, policyName: String? = nil, updateDate: TimeStamp? = nil) {
+        public init(arn: String? = nil, attachmentCount: Int? = nil, createDate: TimeStamp? = nil, defaultVersionId: String? = nil, description: String? = nil, isAttachable: Bool? = nil, path: String? = nil, permissionsBoundaryUsageCount: Int? = nil, policyId: String? = nil, policyName: String? = nil, updateDate: TimeStamp? = nil) {
             self.arn = arn
             self.attachmentCount = attachmentCount
             self.createDate = createDate
@@ -6248,22 +5658,6 @@ extension IAM {
             self.policyId = policyId
             self.policyName = policyName
             self.updateDate = updateDate
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(defaultVersionId, name:"defaultVersionId", pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
-            try validate(description, name:"description", max: 1000)
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "((/[A-Za-z0-9\\.,\\+@=_-]+)*)/")
-            try validate(policyId, name:"policyId", max: 128)
-            try validate(policyId, name:"policyId", min: 16)
-            try validate(policyId, name:"policyId", pattern: "[\\w]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6295,15 +5689,6 @@ extension IAM {
         public init(policyDocument: String? = nil, policyName: String? = nil) {
             self.policyDocument = policyDocument
             self.policyName = policyName
-        }
-
-        public func validate() throws {
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6346,17 +5731,6 @@ extension IAM {
             self.policyType = policyType
         }
 
-        public func validate() throws {
-            try validate(entityName, name:"entityName", max: 128)
-            try validate(entityName, name:"entityName", min: 1)
-            try validate(entityName, name:"entityName", pattern: "[\\w+=,.@-]+")
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case entityName = "EntityName"
             case entityType = "EntityType"
@@ -6382,15 +5756,6 @@ extension IAM {
             self.groupName = groupName
         }
 
-        public func validate() throws {
-            try validate(groupId, name:"groupId", max: 128)
-            try validate(groupId, name:"groupId", min: 16)
-            try validate(groupId, name:"groupId", pattern: "[\\w]+")
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case groupId = "GroupId"
             case groupName = "GroupName"
@@ -6411,15 +5776,6 @@ extension IAM {
         public init(roleId: String? = nil, roleName: String? = nil) {
             self.roleId = roleId
             self.roleName = roleName
-        }
-
-        public func validate() throws {
-            try validate(roleId, name:"roleId", max: 128)
-            try validate(roleId, name:"roleId", min: 16)
-            try validate(roleId, name:"roleId", pattern: "[\\w]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6461,15 +5817,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(userId, name:"userId", max: 128)
-            try validate(userId, name:"userId", min: 16)
-            try validate(userId, name:"userId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case userId = "UserId"
             case userName = "UserName"
@@ -6500,13 +5847,6 @@ extension IAM {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(document, name:"document", max: 131072)
-            try validate(document, name:"document", min: 1)
-            try validate(document, name:"document", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(versionId, name:"versionId", pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createDate = "CreateDate"
             case document = "Document"
@@ -6522,11 +5862,11 @@ extension IAM {
         ]
 
         /// The column in the line containing the specified position in the document.
-        public let column: Int32?
+        public let column: Int?
         /// The line containing the specified position in the document.
-        public let line: Int32?
+        public let line: Int?
 
-        public init(column: Int32? = nil, line: Int32? = nil) {
+        public init(column: Int? = nil, line: Int? = nil) {
             self.column = column
             self.line = line
         }
@@ -6557,16 +5897,16 @@ extension IAM {
             self.policyName = policyName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(policyDocument, name:"policyDocument", parent: name, max: 131072)
+            try validate(policyDocument, name:"policyDocument", parent: name, min: 1)
+            try validate(policyDocument, name:"policyDocument", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6592,12 +5932,12 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(permissionsBoundary, name:"permissionsBoundary", max: 2048)
-            try validate(permissionsBoundary, name:"permissionsBoundary", min: 20)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, max: 2048)
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, min: 20)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6626,16 +5966,16 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyDocument, name:"policyDocument", parent: name, max: 131072)
+            try validate(policyDocument, name:"policyDocument", parent: name, min: 1)
+            try validate(policyDocument, name:"policyDocument", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6661,12 +6001,12 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(permissionsBoundary, name:"permissionsBoundary", max: 2048)
-            try validate(permissionsBoundary, name:"permissionsBoundary", min: 20)
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, max: 2048)
+            try validate(permissionsBoundary, name:"permissionsBoundary", parent: name, min: 20)
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6695,16 +6035,16 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(policyName, name:"policyName", max: 128)
-            try validate(policyName, name:"policyName", min: 1)
-            try validate(policyName, name:"policyName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyDocument, name:"policyDocument", parent: name, max: 131072)
+            try validate(policyDocument, name:"policyDocument", parent: name, min: 1)
+            try validate(policyDocument, name:"policyDocument", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(policyName, name:"policyName", parent: name, max: 128)
+            try validate(policyName, name:"policyName", parent: name, min: 1)
+            try validate(policyName, name:"policyName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6730,11 +6070,11 @@ extension IAM {
             self.openIDConnectProviderArn = openIDConnectProviderArn
         }
 
-        public func validate() throws {
-            try validate(clientID, name:"clientID", max: 255)
-            try validate(clientID, name:"clientID", min: 1)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", max: 2048)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(clientID, name:"clientID", parent: name, max: 255)
+            try validate(clientID, name:"clientID", parent: name, min: 1)
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, max: 2048)
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6759,13 +6099,13 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(instanceProfileName, name:"instanceProfileName", max: 128)
-            try validate(instanceProfileName, name:"instanceProfileName", min: 1)
-            try validate(instanceProfileName, name:"instanceProfileName", pattern: "[\\w+=,.@-]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, max: 128)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, min: 1)
+            try validate(instanceProfileName, name:"instanceProfileName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6790,13 +6130,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6833,13 +6173,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", max: 128)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", min: 20)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, max: 128)
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, min: 20)
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6858,10 +6198,6 @@ extension IAM {
 
         public init(serviceSpecificCredential: ServiceSpecificCredential? = nil) {
             self.serviceSpecificCredential = serviceSpecificCredential
-        }
-
-        public func validate() throws {
-            try serviceSpecificCredential?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6897,15 +6233,6 @@ extension IAM {
             self.missingContextValues = missingContextValues
         }
 
-        public func validate() throws {
-            try validate(evalResourceName, name:"evalResourceName", max: 2048)
-            try validate(evalResourceName, name:"evalResourceName", min: 1)
-            try missingContextValues?.forEach {
-                try validate($0, name:"missingContextValues[]", max: 256)
-                try validate($0, name:"missingContextValues[]", min: 5)
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case evalDecisionDetails = "EvalDecisionDetails"
             case evalResourceDecision = "EvalResourceDecision"
@@ -6939,19 +6266,19 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(authenticationCode1, name:"authenticationCode1", max: 6)
-            try validate(authenticationCode1, name:"authenticationCode1", min: 6)
-            try validate(authenticationCode1, name:"authenticationCode1", pattern: "[\\d]+")
-            try validate(authenticationCode2, name:"authenticationCode2", max: 6)
-            try validate(authenticationCode2, name:"authenticationCode2", min: 6)
-            try validate(authenticationCode2, name:"authenticationCode2", pattern: "[\\d]+")
-            try validate(serialNumber, name:"serialNumber", max: 256)
-            try validate(serialNumber, name:"serialNumber", min: 9)
-            try validate(serialNumber, name:"serialNumber", pattern: "[\\w+=/:,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(authenticationCode1, name:"authenticationCode1", parent: name, max: 6)
+            try validate(authenticationCode1, name:"authenticationCode1", parent: name, min: 6)
+            try validate(authenticationCode1, name:"authenticationCode1", parent: name, pattern: "[\\d]+")
+            try validate(authenticationCode2, name:"authenticationCode2", parent: name, max: 6)
+            try validate(authenticationCode2, name:"authenticationCode2", parent: name, min: 6)
+            try validate(authenticationCode2, name:"authenticationCode2", parent: name, pattern: "[\\d]+")
+            try validate(serialNumber, name:"serialNumber", parent: name, max: 256)
+            try validate(serialNumber, name:"serialNumber", parent: name, min: 9)
+            try validate(serialNumber, name:"serialNumber", parent: name, pattern: "[\\w+=/:,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6985,7 +6312,7 @@ extension IAM {
         /// A description of the role that you provide.
         public let description: String?
         /// The maximum session duration (in seconds) for the specified role. Anyone who uses the AWS CLI, or API to assume the role can specify the duration using the optional DurationSeconds API parameter or duration-seconds CLI parameter.
-        public let maxSessionDuration: Int32?
+        public let maxSessionDuration: Int?
         ///  The path to the role. For more information about paths, see IAM Identifiers in the Using IAM guide. 
         public let path: String
         /// The ARN of the policy used to set the permissions boundary for the role. For more information about permissions boundaries, see Permissions Boundaries for IAM Identities  in the IAM User Guide.
@@ -6997,7 +6324,7 @@ extension IAM {
         /// A list of tags that are attached to the specified role. For more information about tagging, see Tagging IAM Identities in the IAM User Guide.
         public let tags: [Tag]?
 
-        public init(arn: String, assumeRolePolicyDocument: String? = nil, createDate: TimeStamp, description: String? = nil, maxSessionDuration: Int32? = nil, path: String, permissionsBoundary: AttachedPermissionsBoundary? = nil, roleId: String, roleName: String, tags: [Tag]? = nil) {
+        public init(arn: String, assumeRolePolicyDocument: String? = nil, createDate: TimeStamp, description: String? = nil, maxSessionDuration: Int? = nil, path: String, permissionsBoundary: AttachedPermissionsBoundary? = nil, roleId: String, roleName: String, tags: [Tag]? = nil) {
             self.arn = arn
             self.assumeRolePolicyDocument = assumeRolePolicyDocument
             self.createDate = createDate
@@ -7008,32 +6335,6 @@ extension IAM {
             self.roleId = roleId
             self.roleName = roleName
             self.tags = tags
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", max: 131072)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", min: 1)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(description, name:"description", max: 1000)
-            try validate(description, name:"description", pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
-            try validate(maxSessionDuration, name:"maxSessionDuration", max: 43200)
-            try validate(maxSessionDuration, name:"maxSessionDuration", min: 3600)
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try permissionsBoundary?.validate()
-            try validate(roleId, name:"roleId", max: 128)
-            try validate(roleId, name:"roleId", min: 16)
-            try validate(roleId, name:"roleId", pattern: "[\\w]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7101,37 +6402,6 @@ extension IAM {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", max: 131072)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", min: 1)
-            try validate(assumeRolePolicyDocument, name:"assumeRolePolicyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try attachedManagedPolicies?.forEach {
-                try $0.validate()
-            }
-            try instanceProfileList?.forEach {
-                try $0.validate()
-            }
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try permissionsBoundary?.validate()
-            try validate(roleId, name:"roleId", max: 128)
-            try validate(roleId, name:"roleId", min: 16)
-            try validate(roleId, name:"roleId", pattern: "[\\w]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
-            try rolePolicyList?.forEach {
-                try $0.validate()
-            }
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case assumeRolePolicyDocument = "AssumeRolePolicyDocument"
@@ -7163,15 +6433,6 @@ extension IAM {
             self.resources = resources
         }
 
-        public func validate() throws {
-            try validate(region, name:"region", max: 100)
-            try validate(region, name:"region", min: 1)
-            try resources?.forEach {
-                try validate($0, name:"resources[]", max: 2048)
-                try validate($0, name:"resources[]", min: 20)
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case region = "Region"
             case resources = "Resources"
@@ -7196,11 +6457,6 @@ extension IAM {
             self.arn = arn
             self.createDate = createDate
             self.validUntil = validUntil
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7242,21 +6498,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(fingerprint, name:"fingerprint", max: 48)
-            try validate(fingerprint, name:"fingerprint", min: 48)
-            try validate(fingerprint, name:"fingerprint", pattern: "[:\\w]+")
-            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", max: 16384)
-            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", min: 1)
-            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", max: 128)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", min: 20)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case fingerprint = "Fingerprint"
             case sSHPublicKeyBody = "SSHPublicKeyBody"
@@ -7291,15 +6532,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", max: 128)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", min: 20)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case sSHPublicKeyId = "SSHPublicKeyId"
             case status = "Status"
@@ -7326,16 +6558,6 @@ extension IAM {
             self.certificateBody = certificateBody
             self.certificateChain = certificateChain
             self.serverCertificateMetadata = serverCertificateMetadata
-        }
-
-        public func validate() throws {
-            try validate(certificateBody, name:"certificateBody", max: 16384)
-            try validate(certificateBody, name:"certificateBody", min: 1)
-            try validate(certificateBody, name:"certificateBody", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(certificateChain, name:"certificateChain", max: 2097152)
-            try validate(certificateChain, name:"certificateChain", min: 1)
-            try validate(certificateChain, name:"certificateChain", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try serverCertificateMetadata.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7377,20 +6599,6 @@ extension IAM {
             self.uploadDate = uploadDate
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(serverCertificateId, name:"serverCertificateId", max: 128)
-            try validate(serverCertificateId, name:"serverCertificateId", min: 16)
-            try validate(serverCertificateId, name:"serverCertificateId", pattern: "[\\w]+")
-            try validate(serverCertificateName, name:"serverCertificateName", max: 128)
-            try validate(serverCertificateName, name:"serverCertificateName", min: 1)
-            try validate(serverCertificateName, name:"serverCertificateName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case expiration = "Expiration"
@@ -7419,22 +6627,14 @@ extension IAM {
         /// The namespace of the service in which access was attempted. To learn the service namespace of a service, go to Actions, Resources, and Condition Keys for AWS Services in the IAM User Guide. Choose the name of the service to view details for that service. In the first paragraph, find the service prefix. For example, (service prefix: a4b). For more information about service namespaces, see AWS Service Namespaces in the AWS General Reference.
         public let serviceNamespace: String
         /// The total number of authenticated principals (root user, IAM users, or IAM roles) that have attempted to access the service. This field is null if no principals attempted to access the service within the reporting period.
-        public let totalAuthenticatedEntities: Int32?
+        public let totalAuthenticatedEntities: Int?
 
-        public init(lastAuthenticated: TimeStamp? = nil, lastAuthenticatedEntity: String? = nil, serviceName: String, serviceNamespace: String, totalAuthenticatedEntities: Int32? = nil) {
+        public init(lastAuthenticated: TimeStamp? = nil, lastAuthenticatedEntity: String? = nil, serviceName: String, serviceNamespace: String, totalAuthenticatedEntities: Int? = nil) {
             self.lastAuthenticated = lastAuthenticated
             self.lastAuthenticatedEntity = lastAuthenticatedEntity
             self.serviceName = serviceName
             self.serviceNamespace = serviceNamespace
             self.totalAuthenticatedEntities = totalAuthenticatedEntities
-        }
-
-        public func validate() throws {
-            try validate(lastAuthenticatedEntity, name:"lastAuthenticatedEntity", max: 2048)
-            try validate(lastAuthenticatedEntity, name:"lastAuthenticatedEntity", min: 20)
-            try validate(serviceNamespace, name:"serviceNamespace", max: 64)
-            try validate(serviceNamespace, name:"serviceNamespace", min: 1)
-            try validate(serviceNamespace, name:"serviceNamespace", pattern: "[\\w-]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7482,18 +6682,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", max: 128)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", min: 20)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", pattern: "[\\w]+")
-            try validate(serviceUserName, name:"serviceUserName", max: 200)
-            try validate(serviceUserName, name:"serviceUserName", min: 17)
-            try validate(serviceUserName, name:"serviceUserName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createDate = "CreateDate"
             case serviceName = "ServiceName"
@@ -7537,18 +6725,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", max: 128)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", min: 20)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", pattern: "[\\w]+")
-            try validate(serviceUserName, name:"serviceUserName", max: 200)
-            try validate(serviceUserName, name:"serviceUserName", min: 17)
-            try validate(serviceUserName, name:"serviceUserName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createDate = "CreateDate"
             case serviceName = "ServiceName"
@@ -7575,10 +6751,10 @@ extension IAM {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(policyArn, name:"policyArn", max: 2048)
-            try validate(policyArn, name:"policyArn", min: 20)
-            try validate(versionId, name:"versionId", pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
+        public func validate(name: String) throws {
+            try validate(policyArn, name:"policyArn", parent: name, max: 2048)
+            try validate(policyArn, name:"policyArn", parent: name, min: 20)
+            try validate(versionId, name:"versionId", parent: name, pattern: "v[1-9][0-9]*(\\.[A-Za-z0-9-]*)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7632,18 +6808,6 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(certificateBody, name:"certificateBody", max: 16384)
-            try validate(certificateBody, name:"certificateBody", min: 1)
-            try validate(certificateBody, name:"certificateBody", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(certificateId, name:"certificateId", max: 128)
-            try validate(certificateId, name:"certificateId", min: 24)
-            try validate(certificateId, name:"certificateId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case certificateBody = "CertificateBody"
             case certificateId = "CertificateId"
@@ -7676,7 +6840,7 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// A list of policy documents to include in the simulation. Each document is specified as a string containing the complete, valid JSON text of an IAM policy. Do not include any resource-based policies in this parameter. Any resource-based policy must be submitted with the ResourcePolicy parameter. The policies cannot be "scope-down" policies, such as you could include in a call to GetFederationToken or one of the AssumeRole API operations. In other words, do not use policies designed to restrict what a user can do while using the temporary credentials. The regex pattern used to validate this parameter is a string of characters consisting of the following:   Any printable ASCII character ranging from the space character (\u0020) through the end of the ASCII character range   The printable characters in the Basic Latin and Latin-1 Supplement character set (through \u00FF)   The special characters tab (\u0009), line feed (\u000A), and carriage return (\u000D)  
         public let policyInputList: [String]
         /// A list of ARNs of AWS resources to include in the simulation. If this parameter is not provided, then the value defaults to * (all resources). Each API in the ActionNames parameter is evaluated for each resource in this list. The simulation determines the access result (allowed or denied) of each combination and reports it in the response. The simulation does not automatically retrieve policies for the specified resources. If you want to include a resource policy in the simulation, then you must include the policy as a string in the ResourcePolicy parameter. If you include a ResourcePolicy, then it must be applicable to all of the resources included in the simulation or you receive an invalid input error. For more information about ARNs, see Amazon Resource Names (ARNs) and AWS Service Namespaces in the AWS General Reference.
@@ -7688,7 +6852,7 @@ extension IAM {
         /// A resource-based policy to include in the simulation provided as a string. Each resource in the simulation is treated as if it had this policy attached. You can include only one resource-based policy in a simulation. The regex pattern used to validate this parameter is a string of characters consisting of the following:   Any printable ASCII character ranging from the space character (\u0020) through the end of the ASCII character range   The printable characters in the Basic Latin and Latin-1 Supplement character set (through \u00FF)   The special characters tab (\u0009), line feed (\u000A), and carriage return (\u000D)  
         public let resourcePolicy: String?
 
-        public init(actionNames: [String], callerArn: String? = nil, contextEntries: [ContextEntry]? = nil, marker: String? = nil, maxItems: Int32? = nil, policyInputList: [String], resourceArns: [String]? = nil, resourceHandlingOption: String? = nil, resourceOwner: String? = nil, resourcePolicy: String? = nil) {
+        public init(actionNames: [String], callerArn: String? = nil, contextEntries: [ContextEntry]? = nil, marker: String? = nil, maxItems: Int? = nil, policyInputList: [String], resourceArns: [String]? = nil, resourceHandlingOption: String? = nil, resourceOwner: String? = nil, resourcePolicy: String? = nil) {
             self.actionNames = actionNames
             self.callerArn = callerArn
             self.contextEntries = contextEntries
@@ -7701,37 +6865,37 @@ extension IAM {
             self.resourcePolicy = resourcePolicy
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try actionNames.forEach {
-                try validate($0, name:"actionNames[]", max: 128)
-                try validate($0, name:"actionNames[]", min: 3)
+                try validate($0, name: "actionNames[]", parent: name, max: 128)
+                try validate($0, name: "actionNames[]", parent: name, min: 3)
             }
-            try validate(callerArn, name:"callerArn", max: 2048)
-            try validate(callerArn, name:"callerArn", min: 1)
+            try validate(callerArn, name:"callerArn", parent: name, max: 2048)
+            try validate(callerArn, name:"callerArn", parent: name, min: 1)
             try contextEntries?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).contextEntries[]")
             }
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
             try policyInputList.forEach {
-                try validate($0, name:"policyInputList[]", max: 131072)
-                try validate($0, name:"policyInputList[]", min: 1)
-                try validate($0, name:"policyInputList[]", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+                try validate($0, name: "policyInputList[]", parent: name, max: 131072)
+                try validate($0, name: "policyInputList[]", parent: name, min: 1)
+                try validate($0, name: "policyInputList[]", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
             }
             try resourceArns?.forEach {
-                try validate($0, name:"resourceArns[]", max: 2048)
-                try validate($0, name:"resourceArns[]", min: 1)
+                try validate($0, name: "resourceArns[]", parent: name, max: 2048)
+                try validate($0, name: "resourceArns[]", parent: name, min: 1)
             }
-            try validate(resourceHandlingOption, name:"resourceHandlingOption", max: 64)
-            try validate(resourceHandlingOption, name:"resourceHandlingOption", min: 1)
-            try validate(resourceOwner, name:"resourceOwner", max: 2048)
-            try validate(resourceOwner, name:"resourceOwner", min: 1)
-            try validate(resourcePolicy, name:"resourcePolicy", max: 131072)
-            try validate(resourcePolicy, name:"resourcePolicy", min: 1)
-            try validate(resourcePolicy, name:"resourcePolicy", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(resourceHandlingOption, name:"resourceHandlingOption", parent: name, max: 64)
+            try validate(resourceHandlingOption, name:"resourceHandlingOption", parent: name, min: 1)
+            try validate(resourceOwner, name:"resourceOwner", parent: name, max: 2048)
+            try validate(resourceOwner, name:"resourceOwner", parent: name, min: 1)
+            try validate(resourcePolicy, name:"resourcePolicy", parent: name, max: 131072)
+            try validate(resourcePolicy, name:"resourcePolicy", parent: name, min: 1)
+            try validate(resourcePolicy, name:"resourcePolicy", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7768,12 +6932,6 @@ extension IAM {
             self.marker = marker
         }
 
-        public func validate() throws {
-            try evaluationResults?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case evaluationResults = "EvaluationResults"
             case isTruncated = "IsTruncated"
@@ -7805,7 +6963,7 @@ extension IAM {
         /// Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the Marker element in the response that you received to indicate where the next call should start.
         public let marker: String?
         /// Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the IsTruncated response element is true. If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the IsTruncated response element returns true, and Marker contains a value to include in the subsequent call that tells the service where to continue from.
-        public let maxItems: Int32?
+        public let maxItems: Int?
         /// An optional list of additional policy documents to include in the simulation. Each document is specified as a string containing the complete, valid JSON text of an IAM policy. The regex pattern used to validate this parameter is a string of characters consisting of the following:   Any printable ASCII character ranging from the space character (\u0020) through the end of the ASCII character range   The printable characters in the Basic Latin and Latin-1 Supplement character set (through \u00FF)   The special characters tab (\u0009), line feed (\u000A), and carriage return (\u000D)  
         public let policyInputList: [String]?
         /// The Amazon Resource Name (ARN) of a user, group, or role whose policies you want to include in the simulation. If you specify a user, group, or role, the simulation includes all policies that are associated with that entity. If you specify a user, the simulation also includes all policies that are attached to any groups the user belongs to. For more information about ARNs, see Amazon Resource Names (ARNs) and AWS Service Namespaces in the AWS General Reference.
@@ -7819,7 +6977,7 @@ extension IAM {
         /// A resource-based policy to include in the simulation provided as a string. Each resource in the simulation is treated as if it had this policy attached. You can include only one resource-based policy in a simulation. The regex pattern used to validate this parameter is a string of characters consisting of the following:   Any printable ASCII character ranging from the space character (\u0020) through the end of the ASCII character range   The printable characters in the Basic Latin and Latin-1 Supplement character set (through \u00FF)   The special characters tab (\u0009), line feed (\u000A), and carriage return (\u000D)  
         public let resourcePolicy: String?
 
-        public init(actionNames: [String], callerArn: String? = nil, contextEntries: [ContextEntry]? = nil, marker: String? = nil, maxItems: Int32? = nil, policyInputList: [String]? = nil, policySourceArn: String, resourceArns: [String]? = nil, resourceHandlingOption: String? = nil, resourceOwner: String? = nil, resourcePolicy: String? = nil) {
+        public init(actionNames: [String], callerArn: String? = nil, contextEntries: [ContextEntry]? = nil, marker: String? = nil, maxItems: Int? = nil, policyInputList: [String]? = nil, policySourceArn: String, resourceArns: [String]? = nil, resourceHandlingOption: String? = nil, resourceOwner: String? = nil, resourcePolicy: String? = nil) {
             self.actionNames = actionNames
             self.callerArn = callerArn
             self.contextEntries = contextEntries
@@ -7833,39 +6991,39 @@ extension IAM {
             self.resourcePolicy = resourcePolicy
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try actionNames.forEach {
-                try validate($0, name:"actionNames[]", max: 128)
-                try validate($0, name:"actionNames[]", min: 3)
+                try validate($0, name: "actionNames[]", parent: name, max: 128)
+                try validate($0, name: "actionNames[]", parent: name, min: 3)
             }
-            try validate(callerArn, name:"callerArn", max: 2048)
-            try validate(callerArn, name:"callerArn", min: 1)
+            try validate(callerArn, name:"callerArn", parent: name, max: 2048)
+            try validate(callerArn, name:"callerArn", parent: name, min: 1)
             try contextEntries?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).contextEntries[]")
             }
-            try validate(marker, name:"marker", max: 320)
-            try validate(marker, name:"marker", min: 1)
-            try validate(marker, name:"marker", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxItems, name:"maxItems", max: 1000)
-            try validate(maxItems, name:"maxItems", min: 1)
+            try validate(marker, name:"marker", parent: name, max: 320)
+            try validate(marker, name:"marker", parent: name, min: 1)
+            try validate(marker, name:"marker", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxItems, name:"maxItems", parent: name, max: 1000)
+            try validate(maxItems, name:"maxItems", parent: name, min: 1)
             try policyInputList?.forEach {
-                try validate($0, name:"policyInputList[]", max: 131072)
-                try validate($0, name:"policyInputList[]", min: 1)
-                try validate($0, name:"policyInputList[]", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+                try validate($0, name: "policyInputList[]", parent: name, max: 131072)
+                try validate($0, name: "policyInputList[]", parent: name, min: 1)
+                try validate($0, name: "policyInputList[]", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
             }
-            try validate(policySourceArn, name:"policySourceArn", max: 2048)
-            try validate(policySourceArn, name:"policySourceArn", min: 20)
+            try validate(policySourceArn, name:"policySourceArn", parent: name, max: 2048)
+            try validate(policySourceArn, name:"policySourceArn", parent: name, min: 20)
             try resourceArns?.forEach {
-                try validate($0, name:"resourceArns[]", max: 2048)
-                try validate($0, name:"resourceArns[]", min: 1)
+                try validate($0, name: "resourceArns[]", parent: name, max: 2048)
+                try validate($0, name: "resourceArns[]", parent: name, min: 1)
             }
-            try validate(resourceHandlingOption, name:"resourceHandlingOption", max: 64)
-            try validate(resourceHandlingOption, name:"resourceHandlingOption", min: 1)
-            try validate(resourceOwner, name:"resourceOwner", max: 2048)
-            try validate(resourceOwner, name:"resourceOwner", min: 1)
-            try validate(resourcePolicy, name:"resourcePolicy", max: 131072)
-            try validate(resourcePolicy, name:"resourcePolicy", min: 1)
-            try validate(resourcePolicy, name:"resourcePolicy", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(resourceHandlingOption, name:"resourceHandlingOption", parent: name, max: 64)
+            try validate(resourceHandlingOption, name:"resourceHandlingOption", parent: name, min: 1)
+            try validate(resourceOwner, name:"resourceOwner", parent: name, max: 2048)
+            try validate(resourceOwner, name:"resourceOwner", parent: name, min: 1)
+            try validate(resourcePolicy, name:"resourcePolicy", parent: name, max: 131072)
+            try validate(resourcePolicy, name:"resourcePolicy", parent: name, min: 1)
+            try validate(resourcePolicy, name:"resourcePolicy", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7931,13 +7089,13 @@ extension IAM {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(key, name:"key", pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]+")
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 0)
-            try validate(value, name:"value", pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*")
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(key, name:"key", parent: name, pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]+")
+            try validate(value, name:"value", parent: name, max: 256)
+            try validate(value, name:"value", parent: name, min: 0)
+            try validate(value, name:"value", parent: name, pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]*")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7962,14 +7120,14 @@ extension IAM {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
             try tags.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
+            try validate(tags, name:"tags", parent: name, max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7994,14 +7152,14 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tags.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8026,16 +7184,16 @@ extension IAM {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
-                try validate($0, name:"tagKeys[]", pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]+")
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]+")
             }
-            try validate(tagKeys, name:"tagKeys", max: 50)
+            try validate(tagKeys, name:"tagKeys", parent: name, max: 50)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8060,16 +7218,16 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
-                try validate($0, name:"tagKeys[]", pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]+")
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, pattern: "[\\p{L}\\p{Z}\\p{N}_.:/=+\\-@]+")
             }
-            try validate(tagKeys, name:"tagKeys", max: 50)
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+            try validate(tagKeys, name:"tagKeys", parent: name, max: 50)
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8098,13 +7256,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(accessKeyId, name:"accessKeyId", max: 128)
-            try validate(accessKeyId, name:"accessKeyId", min: 16)
-            try validate(accessKeyId, name:"accessKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(accessKeyId, name:"accessKeyId", parent: name, max: 128)
+            try validate(accessKeyId, name:"accessKeyId", parent: name, min: 16)
+            try validate(accessKeyId, name:"accessKeyId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8132,11 +7290,11 @@ extension IAM {
         /// Prevents IAM users from setting a new password after their password has expired. The IAM user cannot be accessed until an administrator resets the password. If you do not specify a value for this parameter, then the operation uses the default value of false. The result is that IAM users can change their passwords after they expire and continue to sign in as the user.
         public let hardExpiry: Bool?
         /// The number of days that an IAM user password is valid. If you do not specify a value for this parameter, then the operation uses the default value of 0. The result is that IAM user passwords never expire.
-        public let maxPasswordAge: Int32?
+        public let maxPasswordAge: Int?
         /// The minimum number of characters allowed in an IAM user password. If you do not specify a value for this parameter, then the operation uses the default value of 6.
-        public let minimumPasswordLength: Int32?
+        public let minimumPasswordLength: Int?
         /// Specifies the number of previous passwords that IAM users are prevented from reusing. If you do not specify a value for this parameter, then the operation uses the default value of 0. The result is that IAM users are not prevented from reusing previous passwords.
-        public let passwordReusePrevention: Int32?
+        public let passwordReusePrevention: Int?
         /// Specifies whether IAM user passwords must contain at least one lowercase character from the ISO basic Latin alphabet (a to z). If you do not specify a value for this parameter, then the operation uses the default value of false. The result is that passwords do not require at least one lowercase character.
         public let requireLowercaseCharacters: Bool?
         /// Specifies whether IAM user passwords must contain at least one numeric character (0 to 9). If you do not specify a value for this parameter, then the operation uses the default value of false. The result is that passwords do not require at least one numeric character.
@@ -8146,7 +7304,7 @@ extension IAM {
         /// Specifies whether IAM user passwords must contain at least one uppercase character from the ISO basic Latin alphabet (A to Z). If you do not specify a value for this parameter, then the operation uses the default value of false. The result is that passwords do not require at least one uppercase character.
         public let requireUppercaseCharacters: Bool?
 
-        public init(allowUsersToChangePassword: Bool? = nil, hardExpiry: Bool? = nil, maxPasswordAge: Int32? = nil, minimumPasswordLength: Int32? = nil, passwordReusePrevention: Int32? = nil, requireLowercaseCharacters: Bool? = nil, requireNumbers: Bool? = nil, requireSymbols: Bool? = nil, requireUppercaseCharacters: Bool? = nil) {
+        public init(allowUsersToChangePassword: Bool? = nil, hardExpiry: Bool? = nil, maxPasswordAge: Int? = nil, minimumPasswordLength: Int? = nil, passwordReusePrevention: Int? = nil, requireLowercaseCharacters: Bool? = nil, requireNumbers: Bool? = nil, requireSymbols: Bool? = nil, requireUppercaseCharacters: Bool? = nil) {
             self.allowUsersToChangePassword = allowUsersToChangePassword
             self.hardExpiry = hardExpiry
             self.maxPasswordAge = maxPasswordAge
@@ -8158,13 +7316,13 @@ extension IAM {
             self.requireUppercaseCharacters = requireUppercaseCharacters
         }
 
-        public func validate() throws {
-            try validate(maxPasswordAge, name:"maxPasswordAge", max: 1095)
-            try validate(maxPasswordAge, name:"maxPasswordAge", min: 1)
-            try validate(minimumPasswordLength, name:"minimumPasswordLength", max: 128)
-            try validate(minimumPasswordLength, name:"minimumPasswordLength", min: 6)
-            try validate(passwordReusePrevention, name:"passwordReusePrevention", max: 24)
-            try validate(passwordReusePrevention, name:"passwordReusePrevention", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxPasswordAge, name:"maxPasswordAge", parent: name, max: 1095)
+            try validate(maxPasswordAge, name:"maxPasswordAge", parent: name, min: 1)
+            try validate(minimumPasswordLength, name:"minimumPasswordLength", parent: name, max: 128)
+            try validate(minimumPasswordLength, name:"minimumPasswordLength", parent: name, min: 6)
+            try validate(passwordReusePrevention, name:"passwordReusePrevention", parent: name, max: 24)
+            try validate(passwordReusePrevention, name:"passwordReusePrevention", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8196,13 +7354,13 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(policyDocument, name:"policyDocument", max: 131072)
-            try validate(policyDocument, name:"policyDocument", min: 1)
-            try validate(policyDocument, name:"policyDocument", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(policyDocument, name:"policyDocument", parent: name, max: 131072)
+            try validate(policyDocument, name:"policyDocument", parent: name, min: 1)
+            try validate(policyDocument, name:"policyDocument", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8231,16 +7389,16 @@ extension IAM {
             self.newPath = newPath
         }
 
-        public func validate() throws {
-            try validate(groupName, name:"groupName", max: 128)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\w+=,.@-]+")
-            try validate(newGroupName, name:"newGroupName", max: 128)
-            try validate(newGroupName, name:"newGroupName", min: 1)
-            try validate(newGroupName, name:"newGroupName", pattern: "[\\w+=,.@-]+")
-            try validate(newPath, name:"newPath", max: 512)
-            try validate(newPath, name:"newPath", min: 1)
-            try validate(newPath, name:"newPath", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+        public func validate(name: String) throws {
+            try validate(groupName, name:"groupName", parent: name, max: 128)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(newGroupName, name:"newGroupName", parent: name, max: 128)
+            try validate(newGroupName, name:"newGroupName", parent: name, min: 1)
+            try validate(newGroupName, name:"newGroupName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(newPath, name:"newPath", parent: name, max: 512)
+            try validate(newPath, name:"newPath", parent: name, min: 1)
+            try validate(newPath, name:"newPath", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8270,13 +7428,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(password, name:"password", max: 128)
-            try validate(password, name:"password", min: 1)
-            try validate(password, name:"password", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(password, name:"password", parent: name, max: 128)
+            try validate(password, name:"password", parent: name, min: 1)
+            try validate(password, name:"password", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8302,12 +7460,12 @@ extension IAM {
             self.thumbprintList = thumbprintList
         }
 
-        public func validate() throws {
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", max: 2048)
-            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, max: 2048)
+            try validate(openIDConnectProviderArn, name:"openIDConnectProviderArn", parent: name, min: 20)
             try thumbprintList.forEach {
-                try validate($0, name:"thumbprintList[]", max: 40)
-                try validate($0, name:"thumbprintList[]", min: 40)
+                try validate($0, name: "thumbprintList[]", parent: name, max: 40)
+                try validate($0, name: "thumbprintList[]", parent: name, min: 40)
             }
         }
 
@@ -8333,12 +7491,12 @@ extension IAM {
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1000)
-            try validate(description, name:"description", pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 1000)
+            try validate(description, name:"description", parent: name, pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8359,10 +7517,6 @@ extension IAM {
             self.role = role
         }
 
-        public func validate() throws {
-            try role?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case role = "Role"
         }
@@ -8378,24 +7532,24 @@ extension IAM {
         /// The new description that you want to apply to the specified role.
         public let description: String?
         /// The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours. Anyone who assumes the role from the AWS CLI or API can use the DurationSeconds API parameter or the duration-seconds CLI parameter to request a longer session. The MaxSessionDuration setting determines the maximum duration that can be requested using the DurationSeconds parameter. If users don't specify a value for the DurationSeconds parameter, their security credentials are valid for one hour by default. This applies when you use the AssumeRole* API operations or the assume-role* CLI operations but does not apply when you use those operations to create a console URL. For more information, see Using IAM Roles in the IAM User Guide.
-        public let maxSessionDuration: Int32?
+        public let maxSessionDuration: Int?
         /// The name of the role that you want to modify.
         public let roleName: String
 
-        public init(description: String? = nil, maxSessionDuration: Int32? = nil, roleName: String) {
+        public init(description: String? = nil, maxSessionDuration: Int? = nil, roleName: String) {
             self.description = description
             self.maxSessionDuration = maxSessionDuration
             self.roleName = roleName
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1000)
-            try validate(description, name:"description", pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
-            try validate(maxSessionDuration, name:"maxSessionDuration", max: 43200)
-            try validate(maxSessionDuration, name:"maxSessionDuration", min: 3600)
-            try validate(roleName, name:"roleName", max: 64)
-            try validate(roleName, name:"roleName", min: 1)
-            try validate(roleName, name:"roleName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 1000)
+            try validate(description, name:"description", parent: name, pattern: "[\\p{L}\\p{M}\\p{Z}\\p{S}\\p{N}\\p{P}]*")
+            try validate(maxSessionDuration, name:"maxSessionDuration", parent: name, max: 43200)
+            try validate(maxSessionDuration, name:"maxSessionDuration", parent: name, min: 3600)
+            try validate(roleName, name:"roleName", parent: name, max: 64)
+            try validate(roleName, name:"roleName", parent: name, min: 1)
+            try validate(roleName, name:"roleName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8429,11 +7583,11 @@ extension IAM {
             self.sAMLProviderArn = sAMLProviderArn
         }
 
-        public func validate() throws {
-            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", max: 10000000)
-            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", min: 1000)
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", max: 2048)
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", min: 20)
+        public func validate(name: String) throws {
+            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", parent: name, max: 10000000)
+            try validate(sAMLMetadataDocument, name:"sAMLMetadataDocument", parent: name, min: 1000)
+            try validate(sAMLProviderArn, name:"sAMLProviderArn", parent: name, max: 2048)
+            try validate(sAMLProviderArn, name:"sAMLProviderArn", parent: name, min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8452,11 +7606,6 @@ extension IAM {
 
         public init(sAMLProviderArn: String? = nil) {
             self.sAMLProviderArn = sAMLProviderArn
-        }
-
-        public func validate() throws {
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", max: 2048)
-            try validate(sAMLProviderArn, name:"sAMLProviderArn", min: 20)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8484,13 +7633,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", max: 128)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", min: 20)
-            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, max: 128)
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, min: 20)
+            try validate(sSHPublicKeyId, name:"sSHPublicKeyId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8520,16 +7669,16 @@ extension IAM {
             self.serverCertificateName = serverCertificateName
         }
 
-        public func validate() throws {
-            try validate(newPath, name:"newPath", max: 512)
-            try validate(newPath, name:"newPath", min: 1)
-            try validate(newPath, name:"newPath", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(newServerCertificateName, name:"newServerCertificateName", max: 128)
-            try validate(newServerCertificateName, name:"newServerCertificateName", min: 1)
-            try validate(newServerCertificateName, name:"newServerCertificateName", pattern: "[\\w+=,.@-]+")
-            try validate(serverCertificateName, name:"serverCertificateName", max: 128)
-            try validate(serverCertificateName, name:"serverCertificateName", min: 1)
-            try validate(serverCertificateName, name:"serverCertificateName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(newPath, name:"newPath", parent: name, max: 512)
+            try validate(newPath, name:"newPath", parent: name, min: 1)
+            try validate(newPath, name:"newPath", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+            try validate(newServerCertificateName, name:"newServerCertificateName", parent: name, max: 128)
+            try validate(newServerCertificateName, name:"newServerCertificateName", parent: name, min: 1)
+            try validate(newServerCertificateName, name:"newServerCertificateName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, max: 128)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, min: 1)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8559,13 +7708,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", max: 128)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", min: 20)
-            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, max: 128)
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, min: 20)
+            try validate(serviceSpecificCredentialId, name:"serviceSpecificCredentialId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8595,13 +7744,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(certificateId, name:"certificateId", max: 128)
-            try validate(certificateId, name:"certificateId", min: 24)
-            try validate(certificateId, name:"certificateId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(certificateId, name:"certificateId", parent: name, max: 128)
+            try validate(certificateId, name:"certificateId", parent: name, min: 24)
+            try validate(certificateId, name:"certificateId", parent: name, pattern: "[\\w]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8631,16 +7780,16 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(newPath, name:"newPath", max: 512)
-            try validate(newPath, name:"newPath", min: 1)
-            try validate(newPath, name:"newPath", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(newUserName, name:"newUserName", max: 64)
-            try validate(newUserName, name:"newUserName", min: 1)
-            try validate(newUserName, name:"newUserName", pattern: "[\\w+=,.@-]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(newPath, name:"newPath", parent: name, max: 512)
+            try validate(newPath, name:"newPath", parent: name, min: 1)
+            try validate(newPath, name:"newPath", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+            try validate(newUserName, name:"newUserName", parent: name, max: 64)
+            try validate(newUserName, name:"newUserName", parent: name, min: 1)
+            try validate(newUserName, name:"newUserName", parent: name, pattern: "[\\w+=,.@-]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8666,13 +7815,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", max: 16384)
-            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", min: 1)
-            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", parent: name, max: 16384)
+            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", parent: name, min: 1)
+            try validate(sSHPublicKeyBody, name:"sSHPublicKeyBody", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(userName, name:"userName", parent: name, max: 64)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8691,10 +7840,6 @@ extension IAM {
 
         public init(sSHPublicKey: SSHPublicKey? = nil) {
             self.sSHPublicKey = sSHPublicKey
-        }
-
-        public func validate() throws {
-            try sSHPublicKey?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8730,22 +7875,22 @@ extension IAM {
             self.serverCertificateName = serverCertificateName
         }
 
-        public func validate() throws {
-            try validate(certificateBody, name:"certificateBody", max: 16384)
-            try validate(certificateBody, name:"certificateBody", min: 1)
-            try validate(certificateBody, name:"certificateBody", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(certificateChain, name:"certificateChain", max: 2097152)
-            try validate(certificateChain, name:"certificateChain", min: 1)
-            try validate(certificateChain, name:"certificateChain", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try validate(privateKey, name:"privateKey", max: 16384)
-            try validate(privateKey, name:"privateKey", min: 1)
-            try validate(privateKey, name:"privateKey", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(serverCertificateName, name:"serverCertificateName", max: 128)
-            try validate(serverCertificateName, name:"serverCertificateName", min: 1)
-            try validate(serverCertificateName, name:"serverCertificateName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(certificateBody, name:"certificateBody", parent: name, max: 16384)
+            try validate(certificateBody, name:"certificateBody", parent: name, min: 1)
+            try validate(certificateBody, name:"certificateBody", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(certificateChain, name:"certificateChain", parent: name, max: 2097152)
+            try validate(certificateChain, name:"certificateChain", parent: name, min: 1)
+            try validate(certificateChain, name:"certificateChain", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(path, name:"path", parent: name, max: 512)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
+            try validate(privateKey, name:"privateKey", parent: name, max: 16384)
+            try validate(privateKey, name:"privateKey", parent: name, min: 1)
+            try validate(privateKey, name:"privateKey", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, max: 128)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, min: 1)
+            try validate(serverCertificateName, name:"serverCertificateName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8769,10 +7914,6 @@ extension IAM {
             self.serverCertificateMetadata = serverCertificateMetadata
         }
 
-        public func validate() throws {
-            try serverCertificateMetadata?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case serverCertificateMetadata = "ServerCertificateMetadata"
         }
@@ -8794,13 +7935,13 @@ extension IAM {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(certificateBody, name:"certificateBody", max: 16384)
-            try validate(certificateBody, name:"certificateBody", min: 1)
-            try validate(certificateBody, name:"certificateBody", pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
-            try validate(userName, name:"userName", max: 128)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
+        public func validate(name: String) throws {
+            try validate(certificateBody, name:"certificateBody", parent: name, max: 16384)
+            try validate(certificateBody, name:"certificateBody", parent: name, min: 1)
+            try validate(certificateBody, name:"certificateBody", parent: name, pattern: "[\\u0009\\u000A\\u000D\\u0020-\\u00FF]+")
+            try validate(userName, name:"userName", parent: name, max: 128)
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8819,10 +7960,6 @@ extension IAM {
 
         public init(certificate: SigningCertificate) {
             self.certificate = certificate
-        }
-
-        public func validate() throws {
-            try certificate.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8868,25 +8005,6 @@ extension IAM {
             self.tags = tags
             self.userId = userId
             self.userName = userName
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try permissionsBoundary?.validate()
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-            try validate(userId, name:"userId", max: 128)
-            try validate(userId, name:"userId", min: 16)
-            try validate(userId, name:"userId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8948,36 +8066,6 @@ extension IAM {
             self.userPolicyList = userPolicyList
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 2048)
-            try validate(arn, name:"arn", min: 20)
-            try attachedManagedPolicies?.forEach {
-                try $0.validate()
-            }
-            try groupList?.forEach {
-                try validate($0, name:"groupList[]", max: 128)
-                try validate($0, name:"groupList[]", min: 1)
-                try validate($0, name:"groupList[]", pattern: "[\\w+=,.@-]+")
-            }
-            try validate(path, name:"path", max: 512)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(\\u002F)|(\\u002F[\\u0021-\\u007F]+\\u002F)")
-            try permissionsBoundary?.validate()
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-            try validate(userId, name:"userId", max: 128)
-            try validate(userId, name:"userId", min: 16)
-            try validate(userId, name:"userId", pattern: "[\\w]+")
-            try validate(userName, name:"userName", max: 64)
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\w+=,.@-]+")
-            try userPolicyList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case attachedManagedPolicies = "AttachedManagedPolicies"
@@ -9018,13 +8106,6 @@ extension IAM {
             self.qRCodePNG = qRCodePNG
             self.serialNumber = serialNumber
             self.user = user
-        }
-
-        public func validate() throws {
-            try validate(serialNumber, name:"serialNumber", max: 256)
-            try validate(serialNumber, name:"serialNumber", min: 9)
-            try validate(serialNumber, name:"serialNumber", pattern: "[\\w+=/:,.@-]+")
-            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

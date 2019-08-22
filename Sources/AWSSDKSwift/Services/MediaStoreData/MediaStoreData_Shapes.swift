@@ -17,10 +17,10 @@ extension MediaStoreData {
             self.path = path
         }
 
-        public func validate() throws {
-            try validate(path, name:"path", max: 900)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
+        public func validate(name: String) throws {
+            try validate(path, name:"path", parent: name, max: 900)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -48,10 +48,10 @@ extension MediaStoreData {
             self.path = path
         }
 
-        public func validate() throws {
-            try validate(path, name:"path", max: 900)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
+        public func validate(name: String) throws {
+            try validate(path, name:"path", parent: name, max: 900)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -87,14 +87,6 @@ extension MediaStoreData {
             self.lastModified = lastModified
         }
 
-        public func validate() throws {
-            try validate(contentLength, name:"contentLength", min: 0)
-            try validate(contentType, name:"contentType", pattern: "^[\\w\\-\\/\\.\\+]{1,255}$")
-            try validate(eTag, name:"eTag", max: 64)
-            try validate(eTag, name:"eTag", min: 1)
-            try validate(eTag, name:"eTag", pattern: "[0-9A-Fa-f]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case cacheControl = "Cache-Control"
             case contentLength = "Content-Length"
@@ -120,11 +112,11 @@ extension MediaStoreData {
             self.range = range
         }
 
-        public func validate() throws {
-            try validate(path, name:"path", max: 900)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
-            try validate(range, name:"range", pattern: "^bytes=(?:\\d+\\-\\d*|\\d*\\-\\d+)$")
+        public func validate(name: String) throws {
+            try validate(path, name:"path", parent: name, max: 900)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
+            try validate(range, name:"range", parent: name, pattern: "^bytes=(?:\\d+\\-\\d*|\\d*\\-\\d+)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -162,9 +154,9 @@ extension MediaStoreData {
         /// The date and time that the object was last modified.
         public let lastModified: TimeStamp?
         /// The HTML status code of the request. Status codes ranging from 200 to 299 indicate success. All other status codes indicate the type of error that occurred.
-        public let statusCode: Int32
+        public let statusCode: Int
 
-        public init(body: Data? = nil, cacheControl: String? = nil, contentLength: Int64? = nil, contentRange: String? = nil, contentType: String? = nil, eTag: String? = nil, lastModified: TimeStamp? = nil, statusCode: Int32) {
+        public init(body: Data? = nil, cacheControl: String? = nil, contentLength: Int64? = nil, contentRange: String? = nil, contentType: String? = nil, eTag: String? = nil, lastModified: TimeStamp? = nil, statusCode: Int) {
             self.body = body
             self.cacheControl = cacheControl
             self.contentLength = contentLength
@@ -173,15 +165,6 @@ extension MediaStoreData {
             self.eTag = eTag
             self.lastModified = lastModified
             self.statusCode = statusCode
-        }
-
-        public func validate() throws {
-            try validate(contentLength, name:"contentLength", min: 0)
-            try validate(contentRange, name:"contentRange", pattern: "^bytes=\\d+\\-\\d+/\\d+$")
-            try validate(contentType, name:"contentType", pattern: "^[\\w\\-\\/\\.\\+]{1,255}$")
-            try validate(eTag, name:"eTag", max: 64)
-            try validate(eTag, name:"eTag", min: 1)
-            try validate(eTag, name:"eTag", pattern: "[0-9A-Fa-f]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -228,15 +211,6 @@ extension MediaStoreData {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(contentLength, name:"contentLength", min: 0)
-            try validate(contentType, name:"contentType", pattern: "^[\\w\\-\\/\\.\\+]{1,255}$")
-            try validate(eTag, name:"eTag", max: 64)
-            try validate(eTag, name:"eTag", min: 1)
-            try validate(eTag, name:"eTag", pattern: "[0-9A-Fa-f]+")
-            try validate(name, name:"name", pattern: "[A-Za-z0-9_\\.\\-\\~]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case contentLength = "ContentLength"
             case contentType = "ContentType"
@@ -261,24 +235,24 @@ extension MediaStoreData {
         ]
 
         /// The maximum number of results to return per API request. For example, you submit a ListItems request with MaxResults set at 500. Although 2,000 items match your request, the service returns no more than the first 500 items. (The service also returns a NextToken value that you can use to fetch the next batch of results.) The service might return fewer results than the MaxResults value. If MaxResults is not included in the request, the service defaults to pagination with a maximum of 1,000 results per page.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token that identifies which batch of results that you want to see. For example, you submit a ListItems request with MaxResults set at 500. The service returns the first batch of results (up to 500) and a NextToken value. To see the next batch of results, you can submit the ListItems request a second time and specify the NextToken value. Tokens expire after 15 minutes.
         public let nextToken: String?
         /// The path in the container from which to retrieve items. Format: &lt;folder name&gt;/&lt;folder name&gt;/&lt;file name&gt;
         public let path: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, path: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, path: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.path = path
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 1000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(path, name:"path", max: 900)
-            try validate(path, name:"path", min: 0)
-            try validate(path, name:"path", pattern: "/?(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}(?:[A-Za-z0-9_\\.\\-\\~]+)?/?")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 1000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, max: 900)
+            try validate(path, name:"path", parent: name, min: 0)
+            try validate(path, name:"path", parent: name, pattern: "/?(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}(?:[A-Za-z0-9_\\.\\-\\~]+)?/?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -302,12 +276,6 @@ extension MediaStoreData {
         public init(items: [Item]? = nil, nextToken: String? = nil) {
             self.items = items
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try items?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -350,11 +318,11 @@ extension MediaStoreData {
             self.uploadAvailability = uploadAvailability
         }
 
-        public func validate() throws {
-            try validate(contentType, name:"contentType", pattern: "^[\\w\\-\\/\\.\\+]{1,255}$")
-            try validate(path, name:"path", max: 900)
-            try validate(path, name:"path", min: 1)
-            try validate(path, name:"path", pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
+        public func validate(name: String) throws {
+            try validate(contentType, name:"contentType", parent: name, pattern: "^[\\w\\-\\/\\.\\+]{1,255}$")
+            try validate(path, name:"path", parent: name, max: 900)
+            try validate(path, name:"path", parent: name, min: 1)
+            try validate(path, name:"path", parent: name, pattern: "(?:[A-Za-z0-9_\\.\\-\\~]+/){0,10}[A-Za-z0-9_\\.\\-\\~]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -385,15 +353,6 @@ extension MediaStoreData {
             self.contentSHA256 = contentSHA256
             self.eTag = eTag
             self.storageClass = storageClass
-        }
-
-        public func validate() throws {
-            try validate(contentSHA256, name:"contentSHA256", max: 64)
-            try validate(contentSHA256, name:"contentSHA256", min: 64)
-            try validate(contentSHA256, name:"contentSHA256", pattern: "[0-9A-Fa-f]{64}")
-            try validate(eTag, name:"eTag", max: 64)
-            try validate(eTag, name:"eTag", min: 1)
-            try validate(eTag, name:"eTag", pattern: "[0-9A-Fa-f]+")
         }
 
         private enum CodingKeys: String, CodingKey {

@@ -66,10 +66,16 @@ extension MarketplaceCommerceAnalytics {
             self.snsTopicArn = snsTopicArn
         }
 
-        public func validate() throws {
-            try validate(destinationS3BucketName, name:"destinationS3BucketName", min: 1)
-            try validate(roleNameArn, name:"roleNameArn", min: 1)
-            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
+        public func validate(name: String) throws {
+            try customerDefinedValues?.forEach {
+                try validate($0.key, name:"customerDefinedValues.key", parent: name, max: 255)
+                try validate($0.key, name:"customerDefinedValues.key", parent: name, min: 1)
+                try validate($0.value, name:"customerDefinedValues[\"\($0.key)\"]", parent: name, max: 255)
+                try validate($0.value, name:"customerDefinedValues[\"\($0.key)\"]", parent: name, min: 1)
+            }
+            try validate(destinationS3BucketName, name:"destinationS3BucketName", parent: name, min: 1)
+            try validate(roleNameArn, name:"roleNameArn", parent: name, min: 1)
+            try validate(snsTopicArn, name:"snsTopicArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -136,10 +142,16 @@ extension MarketplaceCommerceAnalytics {
             self.snsTopicArn = snsTopicArn
         }
 
-        public func validate() throws {
-            try validate(destinationS3BucketName, name:"destinationS3BucketName", min: 1)
-            try validate(roleNameArn, name:"roleNameArn", min: 1)
-            try validate(snsTopicArn, name:"snsTopicArn", min: 1)
+        public func validate(name: String) throws {
+            try customerDefinedValues?.forEach {
+                try validate($0.key, name:"customerDefinedValues.key", parent: name, max: 255)
+                try validate($0.key, name:"customerDefinedValues.key", parent: name, min: 1)
+                try validate($0.value, name:"customerDefinedValues[\"\($0.key)\"]", parent: name, max: 255)
+                try validate($0.value, name:"customerDefinedValues[\"\($0.key)\"]", parent: name, min: 1)
+            }
+            try validate(destinationS3BucketName, name:"destinationS3BucketName", parent: name, min: 1)
+            try validate(roleNameArn, name:"roleNameArn", parent: name, min: 1)
+            try validate(snsTopicArn, name:"snsTopicArn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

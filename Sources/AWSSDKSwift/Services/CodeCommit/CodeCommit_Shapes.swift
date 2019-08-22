@@ -55,9 +55,9 @@ extension CodeCommit {
         /// The path of the target files used to describe the conflicts. If not specified, the default is all conflict files.
         public let filePaths: [String]?
         /// The maximum number of files to include in the output.
-        public let maxConflictFiles: Int32?
+        public let maxConflictFiles: Int?
         /// The maximum number of merge hunks to include in the output.
-        public let maxMergeHunks: Int32?
+        public let maxMergeHunks: Int?
         /// The merge option or strategy you want to use to merge the code.
         public let mergeOption: MergeOptionTypeEnum
         /// An enumeration token that when provided in a request, returns the next batch of the results.
@@ -67,7 +67,7 @@ extension CodeCommit {
         /// The branch, tag, HEAD, or other fully qualified reference used to identify a commit. For example, a branch name or a full commit ID.
         public let sourceCommitSpecifier: String
 
-        public init(conflictDetailLevel: ConflictDetailLevelTypeEnum? = nil, conflictResolutionStrategy: ConflictResolutionStrategyTypeEnum? = nil, destinationCommitSpecifier: String, filePaths: [String]? = nil, maxConflictFiles: Int32? = nil, maxMergeHunks: Int32? = nil, mergeOption: MergeOptionTypeEnum, nextToken: String? = nil, repositoryName: String, sourceCommitSpecifier: String) {
+        public init(conflictDetailLevel: ConflictDetailLevelTypeEnum? = nil, conflictResolutionStrategy: ConflictResolutionStrategyTypeEnum? = nil, destinationCommitSpecifier: String, filePaths: [String]? = nil, maxConflictFiles: Int? = nil, maxMergeHunks: Int? = nil, mergeOption: MergeOptionTypeEnum, nextToken: String? = nil, repositoryName: String, sourceCommitSpecifier: String) {
             self.conflictDetailLevel = conflictDetailLevel
             self.conflictResolutionStrategy = conflictResolutionStrategy
             self.destinationCommitSpecifier = destinationCommitSpecifier
@@ -80,10 +80,10 @@ extension CodeCommit {
             self.sourceCommitSpecifier = sourceCommitSpecifier
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -154,11 +154,11 @@ extension CodeCommit {
             self.repositoryNames = repositoryNames
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try repositoryNames.forEach {
-                try validate($0, name:"repositoryNames[]", max: 100)
-                try validate($0, name:"repositoryNames[]", min: 1)
-                try validate($0, name:"repositoryNames[]", pattern: "[\\w\\.-]+")
+                try validate($0, name: "repositoryNames[]", parent: name, max: 100)
+                try validate($0, name: "repositoryNames[]", parent: name, min: 1)
+                try validate($0, name: "repositoryNames[]", parent: name, pattern: "[\\w\\.-]+")
             }
         }
 
@@ -181,17 +181,6 @@ extension CodeCommit {
         public init(repositories: [RepositoryMetadata]? = nil, repositoriesNotFound: [String]? = nil) {
             self.repositories = repositories
             self.repositoriesNotFound = repositoriesNotFound
-        }
-
-        public func validate() throws {
-            try repositories?.forEach {
-                try $0.validate()
-            }
-            try repositoriesNotFound?.forEach {
-                try validate($0, name:"repositoriesNotFound[]", max: 100)
-                try validate($0, name:"repositoriesNotFound[]", min: 1)
-                try validate($0, name:"repositoriesNotFound[]", pattern: "[\\w\\.-]+")
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -241,11 +230,6 @@ extension CodeCommit {
         public init(branchName: String? = nil, commitId: String? = nil) {
             self.branchName = branchName
             self.commitId = commitId
-        }
-
-        public func validate() throws {
-            try validate(branchName, name:"branchName", max: 256)
-            try validate(branchName, name:"branchName", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -349,12 +333,6 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case afterBlobId = "afterBlobId"
             case afterCommitId = "afterCommitId"
@@ -404,12 +382,6 @@ extension CodeCommit {
             self.location = location
             self.pullRequestId = pullRequestId
             self.repositoryName = repositoryName
-        }
-
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -528,13 +500,13 @@ extension CodeCommit {
         /// Whether an add, modify, or delete operation caused the conflict between the source and destination of the merge.
         public let mergeOperations: MergeOperations?
         /// The number of conflicts, including both hunk conflicts and metadata conflicts.
-        public let numberOfConflicts: Int32?
+        public let numberOfConflicts: Int?
         /// A boolean value (true or false) indicating whether there are conflicts between the branches in the object type of a file, folder, or submodule.
         public let objectTypeConflict: Bool?
         /// Information about any object type conflicts in a merge operation.
         public let objectTypes: ObjectTypes?
 
-        public init(contentConflict: Bool? = nil, fileModeConflict: Bool? = nil, fileModes: FileModes? = nil, filePath: String? = nil, fileSizes: FileSizes? = nil, isBinaryFile: IsBinaryFile? = nil, mergeOperations: MergeOperations? = nil, numberOfConflicts: Int32? = nil, objectTypeConflict: Bool? = nil, objectTypes: ObjectTypes? = nil) {
+        public init(contentConflict: Bool? = nil, fileModeConflict: Bool? = nil, fileModes: FileModes? = nil, filePath: String? = nil, fileSizes: FileSizes? = nil, isBinaryFile: IsBinaryFile? = nil, mergeOperations: MergeOperations? = nil, numberOfConflicts: Int? = nil, objectTypeConflict: Bool? = nil, objectTypes: ObjectTypes? = nil) {
             self.contentConflict = contentConflict
             self.fileModeConflict = fileModeConflict
             self.fileModes = fileModes
@@ -581,9 +553,9 @@ extension CodeCommit {
             self.setFileModes = setFileModes
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try replaceContents?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).replaceContents[]")
             }
         }
 
@@ -622,12 +594,12 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(branchName, name:"branchName", max: 256)
-            try validate(branchName, name:"branchName", min: 1)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(branchName, name:"branchName", parent: name, max: 256)
+            try validate(branchName, name:"branchName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -685,15 +657,15 @@ extension CodeCommit {
             self.setFileModes = setFileModes
         }
 
-        public func validate() throws {
-            try validate(branchName, name:"branchName", max: 256)
-            try validate(branchName, name:"branchName", min: 1)
+        public func validate(name: String) throws {
+            try validate(branchName, name:"branchName", parent: name, max: 256)
+            try validate(branchName, name:"branchName", parent: name, min: 1)
             try putFiles?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).putFiles[]")
             }
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -771,12 +743,12 @@ extension CodeCommit {
             self.title = title
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 10240)
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 10240)
             try targets.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).targets[]")
             }
-            try validate(title, name:"title", max: 150)
+            try validate(title, name:"title", parent: name, max: 150)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -797,10 +769,6 @@ extension CodeCommit {
 
         public init(pullRequest: PullRequest) {
             self.pullRequest = pullRequest
-        }
-
-        public func validate() throws {
-            try pullRequest.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -828,11 +796,17 @@ extension CodeCommit {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(repositoryDescription, name:"repositoryDescription", max: 1000)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryDescription, name:"repositoryDescription", parent: name, max: 1000)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
+            try tags?.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, min: 0)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -852,10 +826,6 @@ extension CodeCommit {
 
         public init(repositoryMetadata: RepositoryMetadata? = nil) {
             self.repositoryMetadata = repositoryMetadata
-        }
-
-        public func validate() throws {
-            try repositoryMetadata?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -915,11 +885,11 @@ extension CodeCommit {
             self.sourceCommitSpecifier = sourceCommitSpecifier
         }
 
-        public func validate() throws {
-            try conflictResolution?.validate()
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try conflictResolution?.validate(name: "\(name).conflictResolution")
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -975,12 +945,12 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(branchName, name:"branchName", max: 256)
-            try validate(branchName, name:"branchName", min: 1)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(branchName, name:"branchName", parent: name, max: 256)
+            try validate(branchName, name:"branchName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -999,10 +969,6 @@ extension CodeCommit {
 
         public init(deletedBranch: BranchInfo? = nil) {
             self.deletedBranch = deletedBranch
-        }
-
-        public func validate() throws {
-            try deletedBranch?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1101,12 +1067,12 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(branchName, name:"branchName", max: 256)
-            try validate(branchName, name:"branchName", min: 1)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(branchName, name:"branchName", parent: name, max: 256)
+            try validate(branchName, name:"branchName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1165,10 +1131,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1215,7 +1181,7 @@ extension CodeCommit {
         /// The path of the target files used to describe the conflicts. 
         public let filePath: String
         /// The maximum number of merge hunks to include in the output.
-        public let maxMergeHunks: Int32?
+        public let maxMergeHunks: Int?
         /// The merge option or strategy you want to use to merge the code.
         public let mergeOption: MergeOptionTypeEnum
         /// An enumeration token that when provided in a request, returns the next batch of the results.
@@ -1225,7 +1191,7 @@ extension CodeCommit {
         /// The branch, tag, HEAD, or other fully qualified reference used to identify a commit. For example, a branch name or a full commit ID.
         public let sourceCommitSpecifier: String
 
-        public init(conflictDetailLevel: ConflictDetailLevelTypeEnum? = nil, conflictResolutionStrategy: ConflictResolutionStrategyTypeEnum? = nil, destinationCommitSpecifier: String, filePath: String, maxMergeHunks: Int32? = nil, mergeOption: MergeOptionTypeEnum, nextToken: String? = nil, repositoryName: String, sourceCommitSpecifier: String) {
+        public init(conflictDetailLevel: ConflictDetailLevelTypeEnum? = nil, conflictResolutionStrategy: ConflictResolutionStrategyTypeEnum? = nil, destinationCommitSpecifier: String, filePath: String, maxMergeHunks: Int? = nil, mergeOption: MergeOptionTypeEnum, nextToken: String? = nil, repositoryName: String, sourceCommitSpecifier: String) {
             self.conflictDetailLevel = conflictDetailLevel
             self.conflictResolutionStrategy = conflictResolutionStrategy
             self.destinationCommitSpecifier = destinationCommitSpecifier
@@ -1237,10 +1203,10 @@ extension CodeCommit {
             self.sourceCommitSpecifier = sourceCommitSpecifier
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1310,7 +1276,7 @@ extension CodeCommit {
         /// The Amazon Resource Name (ARN) of the user whose actions resulted in the event. Examples include updating the pull request with additional commits or changing the status of a pull request.
         public let actorArn: String?
         /// A non-negative integer used to limit the number of returned results. The default is 100 events, which is also the maximum number of events that can be returned in a result.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// An enumeration token that when provided in a request, returns the next batch of the results.
         public let nextToken: String?
         /// Optional. The pull request event type about which you want to return information.
@@ -1318,7 +1284,7 @@ extension CodeCommit {
         /// The system-generated ID of the pull request. To get this ID, use ListPullRequests.
         public let pullRequestId: String
 
-        public init(actorArn: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, pullRequestEventType: PullRequestEventType? = nil, pullRequestId: String) {
+        public init(actorArn: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, pullRequestEventType: PullRequestEventType? = nil, pullRequestId: String) {
             self.actorArn = actorArn
             self.maxResults = maxResults
             self.nextToken = nextToken
@@ -1349,12 +1315,6 @@ extension CodeCommit {
         public init(nextToken: String? = nil, pullRequestEvents: [PullRequestEvent]) {
             self.nextToken = nextToken
             self.pullRequestEvents = pullRequestEvents
-        }
-
-        public func validate() throws {
-            try pullRequestEvents.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1553,10 +1513,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1598,12 +1558,12 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(branchName, name:"branchName", max: 256)
-            try validate(branchName, name:"branchName", min: 1)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(branchName, name:"branchName", parent: name, max: 256)
+            try validate(branchName, name:"branchName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1622,10 +1582,6 @@ extension CodeCommit {
 
         public init(branch: BranchInfo? = nil) {
             self.branch = branch
-        }
-
-        public func validate() throws {
-            try branch?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1681,13 +1637,13 @@ extension CodeCommit {
         /// To establish the directionality of the comparison, the full commit ID of the 'before' commit.
         public let beforeCommitId: String?
         /// A non-negative integer used to limit the number of returned results. The default is 100 comments, and is configurable up to 500.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// An enumeration token that when provided in a request, returns the next batch of the results. 
         public let nextToken: String?
         /// The name of the repository where you want to compare commits.
         public let repositoryName: String
 
-        public init(afterCommitId: String, beforeCommitId: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, repositoryName: String) {
+        public init(afterCommitId: String, beforeCommitId: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, repositoryName: String) {
             self.afterCommitId = afterCommitId
             self.beforeCommitId = beforeCommitId
             self.maxResults = maxResults
@@ -1695,10 +1651,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1726,12 +1682,6 @@ extension CodeCommit {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try commentsForComparedCommitData?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case commentsForComparedCommitData = "commentsForComparedCommitData"
             case nextToken = "nextToken"
@@ -1753,7 +1703,7 @@ extension CodeCommit {
         /// The full commit ID of the commit in the destination branch that was the tip of the branch at the time the pull request was created.
         public let beforeCommitId: String?
         /// A non-negative integer used to limit the number of returned results. The default is 100 comments. You can return up to 500 comments with a single request.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// An enumeration token that when provided in a request, returns the next batch of the results.
         public let nextToken: String?
         /// The system-generated ID of the pull request. To get this ID, use ListPullRequests.
@@ -1761,7 +1711,7 @@ extension CodeCommit {
         /// The name of the repository that contains the pull request.
         public let repositoryName: String?
 
-        public init(afterCommitId: String? = nil, beforeCommitId: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, pullRequestId: String, repositoryName: String? = nil) {
+        public init(afterCommitId: String? = nil, beforeCommitId: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, pullRequestId: String, repositoryName: String? = nil) {
             self.afterCommitId = afterCommitId
             self.beforeCommitId = beforeCommitId
             self.maxResults = maxResults
@@ -1770,10 +1720,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1802,12 +1752,6 @@ extension CodeCommit {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try commentsForPullRequestData?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case commentsForPullRequestData = "commentsForPullRequestData"
             case nextToken = "nextToken"
@@ -1830,10 +1774,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1879,13 +1823,13 @@ extension CodeCommit {
         /// The file path in which to check for differences. Limits the results to this path. Can also be used to specify the previous name of a directory or folder. If beforePath and afterPath are not specified, differences will be shown for all paths.
         public let beforePath: String?
         /// A non-negative integer used to limit the number of returned results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// An enumeration token that when provided in a request, returns the next batch of the results.
         public let nextToken: String?
         /// The name of the repository where you want to get differences.
         public let repositoryName: String
 
-        public init(afterCommitSpecifier: String, afterPath: String? = nil, beforeCommitSpecifier: String? = nil, beforePath: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, repositoryName: String) {
+        public init(afterCommitSpecifier: String, afterPath: String? = nil, beforeCommitSpecifier: String? = nil, beforePath: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, repositoryName: String) {
             self.afterCommitSpecifier = afterCommitSpecifier
             self.afterPath = afterPath
             self.beforeCommitSpecifier = beforeCommitSpecifier
@@ -1895,10 +1839,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1954,10 +1898,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1999,10 +1943,6 @@ extension CodeCommit {
             self.fileSize = fileSize
         }
 
-        public func validate() throws {
-            try validate(fileContent, name:"fileContent", max: 6291456)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case blobId = "blobId"
             case commitId = "commitId"
@@ -2033,10 +1973,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2121,10 +2061,10 @@ extension CodeCommit {
             self.sourceCommitSpecifier = sourceCommitSpecifier
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2187,7 +2127,7 @@ extension CodeCommit {
         /// The branch, tag, HEAD, or other fully qualified reference used to identify a commit. For example, a branch name or a full commit ID.
         public let destinationCommitSpecifier: String
         /// The maximum number of files to include in the output.
-        public let maxConflictFiles: Int32?
+        public let maxConflictFiles: Int?
         /// The merge option or strategy you want to use to merge the code. 
         public let mergeOption: MergeOptionTypeEnum
         /// An enumeration token that when provided in a request, returns the next batch of the results.
@@ -2197,7 +2137,7 @@ extension CodeCommit {
         /// The branch, tag, HEAD, or other fully qualified reference used to identify a commit. For example, a branch name or a full commit ID.
         public let sourceCommitSpecifier: String
 
-        public init(conflictDetailLevel: ConflictDetailLevelTypeEnum? = nil, conflictResolutionStrategy: ConflictResolutionStrategyTypeEnum? = nil, destinationCommitSpecifier: String, maxConflictFiles: Int32? = nil, mergeOption: MergeOptionTypeEnum, nextToken: String? = nil, repositoryName: String, sourceCommitSpecifier: String) {
+        public init(conflictDetailLevel: ConflictDetailLevelTypeEnum? = nil, conflictResolutionStrategy: ConflictResolutionStrategyTypeEnum? = nil, destinationCommitSpecifier: String, maxConflictFiles: Int? = nil, mergeOption: MergeOptionTypeEnum, nextToken: String? = nil, repositoryName: String, sourceCommitSpecifier: String) {
             self.conflictDetailLevel = conflictDetailLevel
             self.conflictResolutionStrategy = conflictResolutionStrategy
             self.destinationCommitSpecifier = destinationCommitSpecifier
@@ -2208,10 +2148,10 @@ extension CodeCommit {
             self.sourceCommitSpecifier = sourceCommitSpecifier
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2296,10 +2236,10 @@ extension CodeCommit {
             self.sourceCommitSpecifier = sourceCommitSpecifier
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2372,10 +2312,6 @@ extension CodeCommit {
             self.pullRequest = pullRequest
         }
 
-        public func validate() throws {
-            try pullRequest.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case pullRequest = "pullRequest"
         }
@@ -2393,10 +2329,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2416,10 +2352,6 @@ extension CodeCommit {
             self.repositoryMetadata = repositoryMetadata
         }
 
-        public func validate() throws {
-            try repositoryMetadata?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case repositoryMetadata = "repositoryMetadata"
         }
@@ -2437,10 +2369,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2462,12 +2394,6 @@ extension CodeCommit {
         public init(configurationId: String? = nil, triggers: [RepositoryTrigger]? = nil) {
             self.configurationId = configurationId
             self.triggers = triggers
-        }
-
-        public func validate() throws {
-            try triggers?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2519,10 +2445,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2547,13 +2473,6 @@ extension CodeCommit {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try branches?.forEach {
-                try validate($0, name:"branches[]", max: 256)
-                try validate($0, name:"branches[]", min: 1)
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case branches = "branches"
             case nextToken = "nextToken"
@@ -2572,7 +2491,7 @@ extension CodeCommit {
         /// Optional. The Amazon Resource Name (ARN) of the user who created the pull request. If used, this filters the results to pull requests created by that user.
         public let authorArn: String?
         /// A non-negative integer used to limit the number of returned results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// An enumeration token that when provided in a request, returns the next batch of the results.
         public let nextToken: String?
         /// Optional. The status of the pull request. If used, this refines the results to the pull requests that match the specified status.
@@ -2580,7 +2499,7 @@ extension CodeCommit {
         /// The name of the repository for which you want to list pull requests.
         public let repositoryName: String
 
-        public init(authorArn: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, pullRequestStatus: PullRequestStatusEnum? = nil, repositoryName: String) {
+        public init(authorArn: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, pullRequestStatus: PullRequestStatusEnum? = nil, repositoryName: String) {
             self.authorArn = authorArn
             self.maxResults = maxResults
             self.nextToken = nextToken
@@ -2588,10 +2507,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2666,12 +2585,6 @@ extension CodeCommit {
         public init(nextToken: String? = nil, repositories: [RepositoryNameIdPair]? = nil) {
             self.nextToken = nextToken
             self.repositories = repositories
-        }
-
-        public func validate() throws {
-            try repositories?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2775,12 +2688,12 @@ extension CodeCommit {
             self.targetBranch = targetBranch
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
-            try validate(targetBranch, name:"targetBranch", max: 256)
-            try validate(targetBranch, name:"targetBranch", min: 1)
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
+            try validate(targetBranch, name:"targetBranch", parent: name, max: 256)
+            try validate(targetBranch, name:"targetBranch", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2865,13 +2778,13 @@ extension CodeCommit {
             self.targetBranch = targetBranch
         }
 
-        public func validate() throws {
-            try conflictResolution?.validate()
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
-            try validate(targetBranch, name:"targetBranch", max: 256)
-            try validate(targetBranch, name:"targetBranch", min: 1)
+        public func validate(name: String) throws {
+            try conflictResolution?.validate(name: "\(name).conflictResolution")
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
+            try validate(targetBranch, name:"targetBranch", parent: name, max: 256)
+            try validate(targetBranch, name:"targetBranch", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2963,13 +2876,13 @@ extension CodeCommit {
             self.targetBranch = targetBranch
         }
 
-        public func validate() throws {
-            try conflictResolution?.validate()
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
-            try validate(targetBranch, name:"targetBranch", max: 256)
-            try validate(targetBranch, name:"targetBranch", min: 1)
+        public func validate(name: String) throws {
+            try conflictResolution?.validate(name: "\(name).conflictResolution")
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
+            try validate(targetBranch, name:"targetBranch", parent: name, max: 256)
+            try validate(targetBranch, name:"targetBranch", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3049,13 +2962,13 @@ extension CodeCommit {
         ]
 
         /// The end position of the hunk in the merge result.
-        public let endLine: Int32?
+        public let endLine: Int?
         /// The base-64 encoded content of the hunk merged region that might or might not contain a conflict.
         public let hunkContent: String?
         /// The start position of the hunk in the merge result.
-        public let startLine: Int32?
+        public let startLine: Int?
 
-        public init(endLine: Int32? = nil, hunkContent: String? = nil, startLine: Int32? = nil) {
+        public init(endLine: Int? = nil, hunkContent: String? = nil, startLine: Int? = nil) {
             self.endLine = endLine
             self.hunkContent = hunkContent
             self.startLine = startLine
@@ -3149,10 +3062,10 @@ extension CodeCommit {
             self.sourceCommitId = sourceCommitId
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3172,10 +3085,6 @@ extension CodeCommit {
 
         public init(pullRequest: PullRequest? = nil) {
             self.pullRequest = pullRequest
-        }
-
-        public func validate() throws {
-            try pullRequest?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3231,11 +3140,11 @@ extension CodeCommit {
             self.sourceCommitId = sourceCommitId
         }
 
-        public func validate() throws {
-            try conflictResolution?.validate()
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try conflictResolution?.validate(name: "\(name).conflictResolution")
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3261,10 +3170,6 @@ extension CodeCommit {
 
         public init(pullRequest: PullRequest? = nil) {
             self.pullRequest = pullRequest
-        }
-
-        public func validate() throws {
-            try pullRequest?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3320,11 +3225,11 @@ extension CodeCommit {
             self.sourceCommitId = sourceCommitId
         }
 
-        public func validate() throws {
-            try conflictResolution?.validate()
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try conflictResolution?.validate(name: "\(name).conflictResolution")
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3350,10 +3255,6 @@ extension CodeCommit {
 
         public init(pullRequest: PullRequest? = nil) {
             self.pullRequest = pullRequest
-        }
-
-        public func validate() throws {
-            try pullRequest?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3434,10 +3335,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3484,12 +3385,6 @@ extension CodeCommit {
             self.comment = comment
             self.location = location
             self.repositoryName = repositoryName
-        }
-
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3539,10 +3434,10 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3594,12 +3489,6 @@ extension CodeCommit {
             self.location = location
             self.pullRequestId = pullRequestId
             self.repositoryName = repositoryName
-        }
-
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3702,14 +3591,6 @@ extension CodeCommit {
             self.title = title
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 10240)
-            try pullRequestTargets?.forEach {
-                try $0.validate()
-            }
-            try validate(title, name:"title", max: 150)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case authorArn = "authorArn"
             case clientRequestToken = "clientRequestToken"
@@ -3745,12 +3626,6 @@ extension CodeCommit {
             self.mergeBase = mergeBase
             self.repositoryName = repositoryName
             self.sourceCommitId = sourceCommitId
-        }
-
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3801,12 +3676,6 @@ extension CodeCommit {
             self.pullRequestStatusChangedEventMetadata = pullRequestStatusChangedEventMetadata
         }
 
-        public func validate() throws {
-            try pullRequestCreatedEventMetadata?.validate()
-            try pullRequestMergedStateChangedEventMetadata?.validate()
-            try pullRequestSourceReferenceUpdatedEventMetadata?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case actorArn = "actorArn"
             case eventDate = "eventDate"
@@ -3847,12 +3716,6 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case destinationReference = "destinationReference"
             case mergeMetadata = "mergeMetadata"
@@ -3882,12 +3745,6 @@ extension CodeCommit {
             self.beforeCommitId = beforeCommitId
             self.mergeBase = mergeBase
             self.repositoryName = repositoryName
-        }
-
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3957,12 +3814,6 @@ extension CodeCommit {
             self.sourceReference = sourceReference
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case destinationCommit = "destinationCommit"
             case destinationReference = "destinationReference"
@@ -3998,8 +3849,8 @@ extension CodeCommit {
             self.sourceFile = sourceFile
         }
 
-        public func validate() throws {
-            try validate(fileContent, name:"fileContent", max: 6291456)
+        public func validate(name: String) throws {
+            try validate(fileContent, name:"fileContent", parent: name, max: 6291456)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4054,13 +3905,13 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(branchName, name:"branchName", max: 256)
-            try validate(branchName, name:"branchName", min: 1)
-            try validate(fileContent, name:"fileContent", max: 6291456)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(branchName, name:"branchName", parent: name, max: 256)
+            try validate(branchName, name:"branchName", parent: name, min: 1)
+            try validate(fileContent, name:"fileContent", parent: name, max: 6291456)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4119,12 +3970,12 @@ extension CodeCommit {
             self.triggers = triggers
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
             try triggers.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).triggers[]")
             }
         }
 
@@ -4181,8 +4032,8 @@ extension CodeCommit {
             self.replacementType = replacementType
         }
 
-        public func validate() throws {
-            try validate(content, name:"content", max: 6291456)
+        public func validate(name: String) throws {
+            try validate(content, name:"content", parent: name, max: 6291456)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4249,15 +4100,6 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(defaultBranch, name:"defaultBranch", max: 256)
-            try validate(defaultBranch, name:"defaultBranch", min: 1)
-            try validate(repositoryDescription, name:"repositoryDescription", max: 1000)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case accountId = "accountId"
             case arn = "Arn"
@@ -4286,12 +4128,6 @@ extension CodeCommit {
         public init(repositoryId: String? = nil, repositoryName: String? = nil) {
             self.repositoryId = repositoryId
             self.repositoryName = repositoryName
-        }
-
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4328,10 +4164,10 @@ extension CodeCommit {
             self.name = name
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try branches?.forEach {
-                try validate($0, name:"branches[]", max: 256)
-                try validate($0, name:"branches[]", min: 1)
+                try validate($0, name: "branches[]", parent: name, max: 256)
+                try validate($0, name: "branches[]", parent: name, min: 1)
             }
         }
 
@@ -4499,6 +4335,15 @@ extension CodeCommit {
             self.tags = tags
         }
 
+        public func validate(name: String) throws {
+            try tags.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, min: 0)
+            }
+        }
+
         private enum CodingKeys: String, CodingKey {
             case resourceArn = "resourceArn"
             case tags = "tags"
@@ -4525,10 +4370,10 @@ extension CodeCommit {
             self.sourceReference = sourceReference
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4554,12 +4399,12 @@ extension CodeCommit {
             self.triggers = triggers
         }
 
-        public func validate() throws {
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
             try triggers.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).triggers[]")
             }
         }
 
@@ -4607,10 +4452,10 @@ extension CodeCommit {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
             }
         }
 
@@ -4675,12 +4520,12 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(defaultBranchName, name:"defaultBranchName", max: 256)
-            try validate(defaultBranchName, name:"defaultBranchName", min: 1)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(defaultBranchName, name:"defaultBranchName", parent: name, max: 256)
+            try validate(defaultBranchName, name:"defaultBranchName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4705,8 +4550,8 @@ extension CodeCommit {
             self.pullRequestId = pullRequestId
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 10240)
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 10240)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4725,10 +4570,6 @@ extension CodeCommit {
 
         public init(pullRequest: PullRequest) {
             self.pullRequest = pullRequest
-        }
-
-        public func validate() throws {
-            try pullRequest.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4770,10 +4611,6 @@ extension CodeCommit {
             self.pullRequest = pullRequest
         }
 
-        public func validate() throws {
-            try pullRequest.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case pullRequest = "pullRequest"
         }
@@ -4795,8 +4632,8 @@ extension CodeCommit {
             self.title = title
         }
 
-        public func validate() throws {
-            try validate(title, name:"title", max: 150)
+        public func validate(name: String) throws {
+            try validate(title, name:"title", parent: name, max: 150)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4815,10 +4652,6 @@ extension CodeCommit {
 
         public init(pullRequest: PullRequest) {
             self.pullRequest = pullRequest
-        }
-
-        public func validate() throws {
-            try pullRequest.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4842,11 +4675,11 @@ extension CodeCommit {
             self.repositoryName = repositoryName
         }
 
-        public func validate() throws {
-            try validate(repositoryDescription, name:"repositoryDescription", max: 1000)
-            try validate(repositoryName, name:"repositoryName", max: 100)
-            try validate(repositoryName, name:"repositoryName", min: 1)
-            try validate(repositoryName, name:"repositoryName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(repositoryDescription, name:"repositoryDescription", parent: name, max: 1000)
+            try validate(repositoryName, name:"repositoryName", parent: name, max: 100)
+            try validate(repositoryName, name:"repositoryName", parent: name, min: 1)
+            try validate(repositoryName, name:"repositoryName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4871,13 +4704,13 @@ extension CodeCommit {
             self.oldName = oldName
         }
 
-        public func validate() throws {
-            try validate(newName, name:"newName", max: 100)
-            try validate(newName, name:"newName", min: 1)
-            try validate(newName, name:"newName", pattern: "[\\w\\.-]+")
-            try validate(oldName, name:"oldName", max: 100)
-            try validate(oldName, name:"oldName", min: 1)
-            try validate(oldName, name:"oldName", pattern: "[\\w\\.-]+")
+        public func validate(name: String) throws {
+            try validate(newName, name:"newName", parent: name, max: 100)
+            try validate(newName, name:"newName", parent: name, min: 1)
+            try validate(newName, name:"newName", parent: name, pattern: "[\\w\\.-]+")
+            try validate(oldName, name:"oldName", parent: name, max: 100)
+            try validate(oldName, name:"oldName", parent: name, min: 1)
+            try validate(oldName, name:"oldName", parent: name, pattern: "[\\w\\.-]+")
         }
 
         private enum CodingKeys: String, CodingKey {

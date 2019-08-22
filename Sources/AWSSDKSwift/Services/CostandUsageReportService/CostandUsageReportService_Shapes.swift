@@ -44,9 +44,9 @@ extension CostandUsageReportService {
             self.reportName = reportName
         }
 
-        public func validate() throws {
-            try validate(reportName, name:"reportName", max: 256)
-            try validate(reportName, name:"reportName", pattern: "[0-9A-Za-z!\\-_.*\\'()]+")
+        public func validate(name: String) throws {
+            try validate(reportName, name:"reportName", parent: name, max: 256)
+            try validate(reportName, name:"reportName", parent: name, pattern: "[0-9A-Za-z!\\-_.*\\'()]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -76,17 +76,17 @@ extension CostandUsageReportService {
             AWSShapeMember(label: "NextToken", required: false, type: .string)
         ]
 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 5)
-            try validate(maxResults, name:"maxResults", min: 5)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 5)
+            try validate(maxResults, name:"maxResults", parent: name, min: 5)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -110,12 +110,6 @@ extension CostandUsageReportService {
             self.reportDefinitions = reportDefinitions
         }
 
-        public func validate() throws {
-            try reportDefinitions?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case reportDefinitions = "ReportDefinitions"
@@ -134,8 +128,8 @@ extension CostandUsageReportService {
             self.reportDefinition = reportDefinition
         }
 
-        public func validate() throws {
-            try reportDefinition.validate()
+        public func validate(name: String) throws {
+            try reportDefinition.validate(name: "\(name).reportDefinition")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -196,12 +190,12 @@ extension CostandUsageReportService {
             self.timeUnit = timeUnit
         }
 
-        public func validate() throws {
-            try validate(reportName, name:"reportName", max: 256)
-            try validate(reportName, name:"reportName", pattern: "[0-9A-Za-z!\\-_.*\\'()]+")
-            try validate(s3Bucket, name:"s3Bucket", max: 256)
-            try validate(s3Prefix, name:"s3Prefix", max: 256)
-            try validate(s3Prefix, name:"s3Prefix", pattern: "[0-9A-Za-z!\\-_.*\\'()/]*")
+        public func validate(name: String) throws {
+            try validate(reportName, name:"reportName", parent: name, max: 256)
+            try validate(reportName, name:"reportName", parent: name, pattern: "[0-9A-Za-z!\\-_.*\\'()]+")
+            try validate(s3Bucket, name:"s3Bucket", parent: name, max: 256)
+            try validate(s3Prefix, name:"s3Prefix", parent: name, max: 256)
+            try validate(s3Prefix, name:"s3Prefix", parent: name, pattern: "[0-9A-Za-z!\\-_.*\\'()/]*")
         }
 
         private enum CodingKeys: String, CodingKey {

@@ -23,9 +23,9 @@ extension ResourceGroupsTaggingAPI {
         /// The message of the common error.
         public let errorMessage: String?
         /// The HTTP status code of the common error.
-        public let statusCode: Int32?
+        public let statusCode: Int?
 
-        public init(errorCode: ErrorCode? = nil, errorMessage: String? = nil, statusCode: Int32? = nil) {
+        public init(errorCode: ErrorCode? = nil, errorMessage: String? = nil, statusCode: Int? = nil) {
             self.errorCode = errorCode
             self.errorMessage = errorMessage
             self.statusCode = statusCode
@@ -50,15 +50,15 @@ extension ResourceGroupsTaggingAPI {
         /// A string that indicates that additional data is available. Leave this value empty for your initial request. If the response includes a PaginationToken, use that string for this value to request an additional page of data.
         public let paginationToken: String?
         /// A limit that restricts the number of resources returned by GetResources in paginated output. You can set ResourcesPerPage to a minimum of 1 item and the maximum of 100 items. 
-        public let resourcesPerPage: Int32?
+        public let resourcesPerPage: Int?
         /// The constraints on the resources that you want returned. The format of each resource type is service[:resourceType]. For example, specifying a resource type of ec2 returns all Amazon EC2 resources (which includes EC2 instances). Specifying a resource type of ec2:instance returns only EC2 instances.  The string for each service name and resource type is the same as that embedded in a resource's Amazon Resource Name (ARN). Consult the AWS General Reference for the following:   For a list of service name strings, see AWS Service Namespaces.   For resource type strings, see Example ARNs.   For more information about ARNs, see Amazon Resource Names (ARNs) and AWS Service Namespaces.   You can specify multiple resource types by using an array. The array can include up to 100 items. Note that the length constraint requirement applies to each resource type filter. 
         public let resourceTypeFilters: [String]?
         /// A list of TagFilters (keys and values). Each TagFilter specified must contain a key with values as optional. A request can include up to 50 keys, and each key can include up to 20 values.  Note the following when deciding how to use TagFilters:   If you do specify a TagFilter, the response returns only those resources that are currently associated with the specified tag.    If you don't specify a TagFilter, the response includes all resources that were ever associated with tags. Resources that currently don't have associated tags are shown with an empty tag set, like this: "Tags": [].   If you specify more than one filter in a single request, the response returns only those resources that satisfy all specified filters.   If you specify a filter that contains more than one value for a key, the response returns resources that match any of the specified values for that key.   If you don't specify any values for a key, the response returns resources that are tagged with that key irrespective of the value. For example, for filters: filter1 = {key1, {value1}}, filter2 = {key2, {value2,value3,value4}} , filter3 = {key3}:   GetResources( {filter1} ) returns resources tagged with key1=value1   GetResources( {filter2} ) returns resources tagged with key2=value2 or key2=value3 or key2=value4   GetResources( {filter3} ) returns resources tagged with any tag containing key3 as its tag key, irrespective of its value   GetResources( {filter1,filter2,filter3} ) returns resources tagged with ( key1=value1) and ( key2=value2 or key2=value3 or key2=value4) and (key3, irrespective of the value)    
         public let tagFilters: [TagFilter]?
         /// A limit that restricts the number of tags (key and value pairs) returned by GetResources in paginated output. A resource with no tags is counted as having one tag (one key and value pair).  GetResources does not split a resource and its associated tags across pages. If the specified TagsPerPage would cause such a break, a PaginationToken is returned in place of the affected resource and its tags. Use that token in another request to get the remaining data. For example, if you specify a TagsPerPage of 100 and the account has 22 resources with 10 tags each (meaning that each resource has 10 key and value pairs), the output will consist of 3 pages, with the first page displaying the first 10 resources, each with its 10 tags, the second page displaying the next 10 resources each with its 10 tags, and the third page displaying the remaining 2 resources, each with its 10 tags. You can set TagsPerPage to a minimum of 100 items and the maximum of 500 items.
-        public let tagsPerPage: Int32?
+        public let tagsPerPage: Int?
 
-        public init(paginationToken: String? = nil, resourcesPerPage: Int32? = nil, resourceTypeFilters: [String]? = nil, tagFilters: [TagFilter]? = nil, tagsPerPage: Int32? = nil) {
+        public init(paginationToken: String? = nil, resourcesPerPage: Int? = nil, resourceTypeFilters: [String]? = nil, tagFilters: [TagFilter]? = nil, tagsPerPage: Int? = nil) {
             self.paginationToken = paginationToken
             self.resourcesPerPage = resourcesPerPage
             self.resourceTypeFilters = resourceTypeFilters
@@ -66,18 +66,18 @@ extension ResourceGroupsTaggingAPI {
             self.tagsPerPage = tagsPerPage
         }
 
-        public func validate() throws {
-            try validate(paginationToken, name:"paginationToken", max: 2048)
-            try validate(paginationToken, name:"paginationToken", min: 0)
+        public func validate(name: String) throws {
+            try validate(paginationToken, name:"paginationToken", parent: name, max: 2048)
+            try validate(paginationToken, name:"paginationToken", parent: name, min: 0)
             try resourceTypeFilters?.forEach {
-                try validate($0, name:"resourceTypeFilters[]", max: 256)
-                try validate($0, name:"resourceTypeFilters[]", min: 0)
+                try validate($0, name: "resourceTypeFilters[]", parent: name, max: 256)
+                try validate($0, name: "resourceTypeFilters[]", parent: name, min: 0)
             }
             try tagFilters?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tagFilters[]")
             }
-            try validate(tagFilters, name:"tagFilters", max: 50)
-            try validate(tagFilters, name:"tagFilters", min: 0)
+            try validate(tagFilters, name:"tagFilters", parent: name, max: 50)
+            try validate(tagFilters, name:"tagFilters", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -105,14 +105,6 @@ extension ResourceGroupsTaggingAPI {
             self.resourceTagMappingList = resourceTagMappingList
         }
 
-        public func validate() throws {
-            try validate(paginationToken, name:"paginationToken", max: 2048)
-            try validate(paginationToken, name:"paginationToken", min: 0)
-            try resourceTagMappingList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case paginationToken = "PaginationToken"
             case resourceTagMappingList = "ResourceTagMappingList"
@@ -131,9 +123,9 @@ extension ResourceGroupsTaggingAPI {
             self.paginationToken = paginationToken
         }
 
-        public func validate() throws {
-            try validate(paginationToken, name:"paginationToken", max: 2048)
-            try validate(paginationToken, name:"paginationToken", min: 0)
+        public func validate(name: String) throws {
+            try validate(paginationToken, name:"paginationToken", parent: name, max: 2048)
+            try validate(paginationToken, name:"paginationToken", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -155,15 +147,6 @@ extension ResourceGroupsTaggingAPI {
         public init(paginationToken: String? = nil, tagKeys: [String]? = nil) {
             self.paginationToken = paginationToken
             self.tagKeys = tagKeys
-        }
-
-        public func validate() throws {
-            try validate(paginationToken, name:"paginationToken", max: 2048)
-            try validate(paginationToken, name:"paginationToken", min: 0)
-            try tagKeys?.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -188,11 +171,11 @@ extension ResourceGroupsTaggingAPI {
             self.paginationToken = paginationToken
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(paginationToken, name:"paginationToken", max: 2048)
-            try validate(paginationToken, name:"paginationToken", min: 0)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(paginationToken, name:"paginationToken", parent: name, max: 2048)
+            try validate(paginationToken, name:"paginationToken", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -217,15 +200,6 @@ extension ResourceGroupsTaggingAPI {
             self.tagValues = tagValues
         }
 
-        public func validate() throws {
-            try validate(paginationToken, name:"paginationToken", max: 2048)
-            try validate(paginationToken, name:"paginationToken", min: 0)
-            try tagValues?.forEach {
-                try validate($0, name:"tagValues[]", max: 256)
-                try validate($0, name:"tagValues[]", min: 0)
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case paginationToken = "PaginationToken"
             case tagValues = "TagValues"
@@ -246,14 +220,6 @@ extension ResourceGroupsTaggingAPI {
         public init(resourceARN: String? = nil, tags: [Tag]? = nil) {
             self.resourceARN = resourceARN
             self.tags = tags
-        }
-
-        public func validate() throws {
-            try validate(resourceARN, name:"resourceARN", max: 1600)
-            try validate(resourceARN, name:"resourceARN", min: 1)
-            try tags?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -278,13 +244,6 @@ extension ResourceGroupsTaggingAPI {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
-            try validate(value, name:"value", max: 256)
-            try validate(value, name:"value", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case key = "Key"
             case value = "Value"
@@ -307,15 +266,15 @@ extension ResourceGroupsTaggingAPI {
             self.values = values
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 128)
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 128)
+            try validate(key, name:"key", parent: name, min: 1)
             try values?.forEach {
-                try validate($0, name:"values[]", max: 256)
-                try validate($0, name:"values[]", min: 0)
+                try validate($0, name: "values[]", parent: name, max: 256)
+                try validate($0, name: "values[]", parent: name, min: 0)
             }
-            try validate(values, name:"values", max: 20)
-            try validate(values, name:"values", min: 0)
+            try validate(values, name:"values", parent: name, max: 20)
+            try validate(values, name:"values", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -340,13 +299,19 @@ extension ResourceGroupsTaggingAPI {
             self.tags = tags
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try resourceARNList.forEach {
-                try validate($0, name:"resourceARNList[]", max: 1600)
-                try validate($0, name:"resourceARNList[]", min: 1)
+                try validate($0, name: "resourceARNList[]", parent: name, max: 1600)
+                try validate($0, name: "resourceARNList[]", parent: name, min: 1)
             }
-            try validate(resourceARNList, name:"resourceARNList", max: 20)
-            try validate(resourceARNList, name:"resourceARNList", min: 1)
+            try validate(resourceARNList, name:"resourceARNList", parent: name, max: 20)
+            try validate(resourceARNList, name:"resourceARNList", parent: name, min: 1)
+            try tags.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, min: 0)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -388,19 +353,19 @@ extension ResourceGroupsTaggingAPI {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try resourceARNList.forEach {
-                try validate($0, name:"resourceARNList[]", max: 1600)
-                try validate($0, name:"resourceARNList[]", min: 1)
+                try validate($0, name: "resourceARNList[]", parent: name, max: 1600)
+                try validate($0, name: "resourceARNList[]", parent: name, min: 1)
             }
-            try validate(resourceARNList, name:"resourceARNList", max: 20)
-            try validate(resourceARNList, name:"resourceARNList", min: 1)
+            try validate(resourceARNList, name:"resourceARNList", parent: name, max: 20)
+            try validate(resourceARNList, name:"resourceARNList", parent: name, min: 1)
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
             }
-            try validate(tagKeys, name:"tagKeys", max: 50)
-            try validate(tagKeys, name:"tagKeys", min: 1)
+            try validate(tagKeys, name:"tagKeys", parent: name, max: 50)
+            try validate(tagKeys, name:"tagKeys", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

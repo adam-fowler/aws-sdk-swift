@@ -11,9 +11,9 @@ extension S3 {
         ]
 
         /// Specifies the number of days after which Amazon S3 aborts an incomplete multipart upload.
-        public let daysAfterInitiation: Int32?
+        public let daysAfterInitiation: Int?
 
-        public init(daysAfterInitiation: Int32? = nil) {
+        public init(daysAfterInitiation: Int? = nil) {
             self.daysAfterInitiation = daysAfterInitiation
         }
 
@@ -61,8 +61,8 @@ extension S3 {
             self.uploadId = uploadId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -145,9 +145,9 @@ extension S3 {
             self.tags = tags
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
         }
 
@@ -177,8 +177,8 @@ extension S3 {
             self.storageClassAnalysis = storageClassAnalysis
         }
 
-        public func validate() throws {
-            try filter?.validate()
+        public func validate(name: String) throws {
+            try filter?.validate(name: "\(name).filter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -225,9 +225,9 @@ extension S3 {
             self.tag = tag
         }
 
-        public func validate() throws {
-            try and?.validate()
-            try tag?.validate()
+        public func validate(name: String) throws {
+            try and?.validate(name: "\(name).and")
+            try tag?.validate(name: "\(name).tag")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -322,9 +322,9 @@ extension S3 {
             self.rules = rules
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try rules.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).rules[]")
             }
         }
 
@@ -345,6 +345,16 @@ extension S3 {
         case saEast1 = "sa-east-1"
         case cnNorth1 = "cn-north-1"
         case euCentral1 = "eu-central-1"
+        case usEast2 = "us-east-2"
+        case euWest2 = "eu-west-2"
+        case euWest3 = "eu-west-3"
+        case euNorth1 = "eu-north-1"
+        case apEast1 = "ap-east-1"
+        case apNortheast2 = "ap-northeast-2"
+        case apNortheast3 = "ap-northeast-3"
+        case caCentral1 = "ca-central-1"
+        case cnNorthwest1 = "cn-northwest-1"
+        case meSouth1 = "me-south-1"
         public var description: String { return self.rawValue }
     }
 
@@ -412,9 +422,9 @@ extension S3 {
         /// One or more headers in the response that you want customers to be able to access from their applications (for example, from a JavaScript XMLHttpRequest object).
         public let exposeHeaders: [String]?
         /// The time in seconds that your browser is to cache the preflight response for the specified resource.
-        public let maxAgeSeconds: Int32?
+        public let maxAgeSeconds: Int?
 
-        public init(allowedHeaders: [String]? = nil, allowedMethods: [String], allowedOrigins: [String], exposeHeaders: [String]? = nil, maxAgeSeconds: Int32? = nil) {
+        public init(allowedHeaders: [String]? = nil, allowedMethods: [String], allowedOrigins: [String], exposeHeaders: [String]? = nil, maxAgeSeconds: Int? = nil) {
             self.allowedHeaders = allowedHeaders
             self.allowedMethods = allowedMethods
             self.allowedOrigins = allowedOrigins
@@ -599,10 +609,6 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case bucket = "Bucket"
             case eTag = "ETag"
@@ -642,8 +648,8 @@ extension S3 {
             self.uploadId = uploadId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -680,9 +686,9 @@ extension S3 {
         /// Entity tag returned when the part was uploaded.
         public let eTag: String?
         /// Part number that identifies the part. This is a positive integer between 1 and 10,000.
-        public let partNumber: Int32?
+        public let partNumber: Int?
 
-        public init(eTag: String? = nil, partNumber: Int32? = nil) {
+        public init(eTag: String? = nil, partNumber: Int? = nil) {
             self.eTag = eTag
             self.partNumber = partNumber
         }
@@ -720,14 +726,6 @@ extension S3 {
             case httpErrorCodeReturnedEquals = "HttpErrorCodeReturnedEquals"
             case keyPrefixEquals = "KeyPrefixEquals"
         }
-    }
-
-    public struct ContinuationEvent: AWSShape {
-
-
-        public init() {
-        }
-
     }
 
     public struct CopyObjectOutput: AWSShape {
@@ -944,9 +942,9 @@ extension S3 {
             self.websiteRedirectLocation = websiteRedirectLocation
         }
 
-        public func validate() throws {
-            try validate(copySource, name:"copySource", pattern: "\\/.+\\/.+")
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(copySource, name:"copySource", parent: name, pattern: "\\/.+\\/.+")
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1174,10 +1172,6 @@ extension S3 {
             self.uploadId = uploadId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case abortDate = "x-amz-abort-date"
             case abortRuleId = "x-amz-abort-rule-id"
@@ -1306,8 +1300,8 @@ extension S3 {
             self.websiteRedirectLocation = websiteRedirectLocation
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1349,13 +1343,13 @@ extension S3 {
         ]
 
         /// The number of days that you want to specify for the default retention period.
-        public let days: Int32?
+        public let days: Int?
         /// The default object lock retention mode you want to apply to new objects placed in the specified bucket.
         public let mode: ObjectLockRetentionMode?
         /// The number of years that you want to specify for the default retention period.
-        public let years: Int32?
+        public let years: Int?
 
-        public init(days: Int32? = nil, mode: ObjectLockRetentionMode? = nil, years: Int32? = nil) {
+        public init(days: Int? = nil, mode: ObjectLockRetentionMode? = nil, years: Int? = nil) {
             self.days = days
             self.mode = mode
             self.years = years
@@ -1383,9 +1377,9 @@ extension S3 {
             self.quiet = quiet
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try objects.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).objects[]")
             }
         }
 
@@ -1618,10 +1612,6 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case isLatest = "IsLatest"
             case key = "Key"
@@ -1709,8 +1699,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1758,8 +1748,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1784,15 +1774,6 @@ extension S3 {
             self.deleted = deleted
             self.errors = errors
             self.requestCharged = requestCharged
-        }
-
-        public func validate() throws {
-            try deleted?.forEach {
-                try $0.validate()
-            }
-            try errors?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1830,8 +1811,8 @@ extension S3 {
             self.requestPayer = requestPayer
         }
 
-        public func validate() throws {
-            try delete.validate()
+        public func validate(name: String) throws {
+            try delete.validate(name: "\(name).delete")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1878,10 +1859,6 @@ extension S3 {
             self.deleteMarkerVersionId = deleteMarkerVersionId
             self.key = key
             self.versionId = versionId
-        }
-
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1978,14 +1955,6 @@ extension S3 {
         }
     }
 
-    public struct EndEvent: AWSShape {
-
-
-        public init() {
-        }
-
-    }
-
     public struct Error: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Code", required: false, type: .string), 
@@ -2004,10 +1973,6 @@ extension S3 {
             self.key = key
             self.message = message
             self.versionId = versionId
-        }
-
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2030,8 +1995,8 @@ extension S3 {
             self.key = key
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2185,10 +2150,6 @@ extension S3 {
             self.analyticsConfiguration = analyticsConfiguration
         }
 
-        public func validate() throws {
-            try analyticsConfiguration?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case analyticsConfiguration = "AnalyticsConfiguration"
         }
@@ -2335,12 +2296,6 @@ extension S3 {
             self.rules = rules
         }
 
-        public func validate() throws {
-            try rules?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case rules = "Rule"
         }
@@ -2472,10 +2427,6 @@ extension S3 {
             self.metricsConfiguration = metricsConfiguration
         }
 
-        public func validate() throws {
-            try metricsConfiguration?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case metricsConfiguration = "MetricsConfiguration"
         }
@@ -2604,10 +2555,6 @@ extension S3 {
             self.replicationConfiguration = replicationConfiguration
         }
 
-        public func validate() throws {
-            try replicationConfiguration?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case replicationConfiguration = "ReplicationConfiguration"
         }
@@ -2671,12 +2618,6 @@ extension S3 {
 
         public init(tagSet: [Tag]) {
             self.tagSet = tagSet
-        }
-
-        public func validate() throws {
-            try tagSet.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2758,10 +2699,6 @@ extension S3 {
             self.routingRules = routingRules
         }
 
-        public func validate() throws {
-            try errorDocument?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case errorDocument = "ErrorDocument"
             case indexDocument = "IndexDocument"
@@ -2832,8 +2769,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2886,8 +2823,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3001,7 +2938,7 @@ extension S3 {
         /// A map of metadata to store with the object in S3.
         public let metadata: [String: String]?
         /// This is set to the number of metadata entries not returned in x-amz-meta headers. This can happen if you create metadata using an API like SOAP that supports more flexible metadata than the REST API. For example, using SOAP, you can create metadata whose values are not legal HTTP headers.
-        public let missingMeta: Int32?
+        public let missingMeta: Int?
         /// Indicates whether this object has an active legal hold. This field is only returned if you have permission to view an object's legal hold status.
         public let objectLockLegalHoldStatus: ObjectLockLegalHoldStatus?
         /// The object lock mode currently in place for this object.
@@ -3009,7 +2946,7 @@ extension S3 {
         /// The date and time when this object's object lock will expire.
         public let objectLockRetainUntilDate: TimeStamp?
         /// The count of parts this object has.
-        public let partsCount: Int32?
+        public let partsCount: Int?
         public let replicationStatus: ReplicationStatus?
         public let requestCharged: RequestCharged?
         /// Provides information about object restoration operation and expiration time of the restored object copy.
@@ -3024,13 +2961,13 @@ extension S3 {
         public let sSEKMSKeyId: String?
         public let storageClass: StorageClass?
         /// The number of tags, if any, on the object.
-        public let tagCount: Int32?
+        public let tagCount: Int?
         /// Version of the object.
         public let versionId: String?
         /// If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.
         public let websiteRedirectLocation: String?
 
-        public init(acceptRanges: String? = nil, body: Data? = nil, cacheControl: String? = nil, contentDisposition: String? = nil, contentEncoding: String? = nil, contentLanguage: String? = nil, contentLength: Int64? = nil, contentRange: String? = nil, contentType: String? = nil, deleteMarker: Bool? = nil, eTag: String? = nil, expiration: String? = nil, expires: TimeStamp? = nil, lastModified: TimeStamp? = nil, metadata: [String: String]? = nil, missingMeta: Int32? = nil, objectLockLegalHoldStatus: ObjectLockLegalHoldStatus? = nil, objectLockMode: ObjectLockMode? = nil, objectLockRetainUntilDate: TimeStamp? = nil, partsCount: Int32? = nil, replicationStatus: ReplicationStatus? = nil, requestCharged: RequestCharged? = nil, restore: String? = nil, serverSideEncryption: ServerSideEncryption? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKeyMD5: String? = nil, sSEKMSKeyId: String? = nil, storageClass: StorageClass? = nil, tagCount: Int32? = nil, versionId: String? = nil, websiteRedirectLocation: String? = nil) {
+        public init(acceptRanges: String? = nil, body: Data? = nil, cacheControl: String? = nil, contentDisposition: String? = nil, contentEncoding: String? = nil, contentLanguage: String? = nil, contentLength: Int64? = nil, contentRange: String? = nil, contentType: String? = nil, deleteMarker: Bool? = nil, eTag: String? = nil, expiration: String? = nil, expires: TimeStamp? = nil, lastModified: TimeStamp? = nil, metadata: [String: String]? = nil, missingMeta: Int? = nil, objectLockLegalHoldStatus: ObjectLockLegalHoldStatus? = nil, objectLockMode: ObjectLockMode? = nil, objectLockRetainUntilDate: TimeStamp? = nil, partsCount: Int? = nil, replicationStatus: ReplicationStatus? = nil, requestCharged: RequestCharged? = nil, restore: String? = nil, serverSideEncryption: ServerSideEncryption? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKeyMD5: String? = nil, sSEKMSKeyId: String? = nil, storageClass: StorageClass? = nil, tagCount: Int? = nil, versionId: String? = nil, websiteRedirectLocation: String? = nil) {
             self.acceptRanges = acceptRanges
             self.body = body
             self.cacheControl = cacheControl
@@ -3133,7 +3070,7 @@ extension S3 {
         public let ifUnmodifiedSince: TimeStamp?
         public let key: String
         /// Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' GET request for the part specified. Useful for downloading just a part of an object.
-        public let partNumber: Int32?
+        public let partNumber: Int?
         /// Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
         public let range: String?
         public let requestPayer: RequestPayer?
@@ -3158,7 +3095,7 @@ extension S3 {
         /// VersionId used to reference a specific version of the object.
         public let versionId: String?
 
-        public init(bucket: String, ifMatch: String? = nil, ifModifiedSince: TimeStamp? = nil, ifNoneMatch: String? = nil, ifUnmodifiedSince: TimeStamp? = nil, key: String, partNumber: Int32? = nil, range: String? = nil, requestPayer: RequestPayer? = nil, responseCacheControl: String? = nil, responseContentDisposition: String? = nil, responseContentEncoding: String? = nil, responseContentLanguage: String? = nil, responseContentType: String? = nil, responseExpires: TimeStamp? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, versionId: String? = nil) {
+        public init(bucket: String, ifMatch: String? = nil, ifModifiedSince: TimeStamp? = nil, ifNoneMatch: String? = nil, ifUnmodifiedSince: TimeStamp? = nil, key: String, partNumber: Int? = nil, range: String? = nil, requestPayer: RequestPayer? = nil, responseCacheControl: String? = nil, responseContentDisposition: String? = nil, responseContentEncoding: String? = nil, responseContentLanguage: String? = nil, responseContentType: String? = nil, responseExpires: TimeStamp? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, versionId: String? = nil) {
             self.bucket = bucket
             self.ifMatch = ifMatch
             self.ifModifiedSince = ifModifiedSince
@@ -3180,8 +3117,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3249,8 +3186,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3273,12 +3210,6 @@ extension S3 {
         public init(tagSet: [Tag], versionId: String? = nil) {
             self.tagSet = tagSet
             self.versionId = versionId
-        }
-
-        public func validate() throws {
-            try tagSet.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3304,8 +3235,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3354,8 +3285,8 @@ extension S3 {
             self.requestPayer = requestPayer
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3550,7 +3481,7 @@ extension S3 {
         /// A map of metadata to store with the object in S3.
         public let metadata: [String: String]?
         /// This is set to the number of metadata entries not returned in x-amz-meta headers. This can happen if you create metadata using an API like SOAP that supports more flexible metadata than the REST API. For example, using SOAP, you can create metadata whose values are not legal HTTP headers.
-        public let missingMeta: Int32?
+        public let missingMeta: Int?
         /// The Legal Hold status for the specified object.
         public let objectLockLegalHoldStatus: ObjectLockLegalHoldStatus?
         /// The object lock mode currently in place for this object.
@@ -3558,7 +3489,7 @@ extension S3 {
         /// The date and time when this object's object lock expires.
         public let objectLockRetainUntilDate: TimeStamp?
         /// The count of parts this object has.
-        public let partsCount: Int32?
+        public let partsCount: Int?
         public let replicationStatus: ReplicationStatus?
         public let requestCharged: RequestCharged?
         /// Provides information about object restoration operation and expiration time of the restored object copy.
@@ -3577,7 +3508,7 @@ extension S3 {
         /// If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.
         public let websiteRedirectLocation: String?
 
-        public init(acceptRanges: String? = nil, cacheControl: String? = nil, contentDisposition: String? = nil, contentEncoding: String? = nil, contentLanguage: String? = nil, contentLength: Int64? = nil, contentType: String? = nil, deleteMarker: Bool? = nil, eTag: String? = nil, expiration: String? = nil, expires: TimeStamp? = nil, lastModified: TimeStamp? = nil, metadata: [String: String]? = nil, missingMeta: Int32? = nil, objectLockLegalHoldStatus: ObjectLockLegalHoldStatus? = nil, objectLockMode: ObjectLockMode? = nil, objectLockRetainUntilDate: TimeStamp? = nil, partsCount: Int32? = nil, replicationStatus: ReplicationStatus? = nil, requestCharged: RequestCharged? = nil, restore: String? = nil, serverSideEncryption: ServerSideEncryption? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKeyMD5: String? = nil, sSEKMSKeyId: String? = nil, storageClass: StorageClass? = nil, versionId: String? = nil, websiteRedirectLocation: String? = nil) {
+        public init(acceptRanges: String? = nil, cacheControl: String? = nil, contentDisposition: String? = nil, contentEncoding: String? = nil, contentLanguage: String? = nil, contentLength: Int64? = nil, contentType: String? = nil, deleteMarker: Bool? = nil, eTag: String? = nil, expiration: String? = nil, expires: TimeStamp? = nil, lastModified: TimeStamp? = nil, metadata: [String: String]? = nil, missingMeta: Int? = nil, objectLockLegalHoldStatus: ObjectLockLegalHoldStatus? = nil, objectLockMode: ObjectLockMode? = nil, objectLockRetainUntilDate: TimeStamp? = nil, partsCount: Int? = nil, replicationStatus: ReplicationStatus? = nil, requestCharged: RequestCharged? = nil, restore: String? = nil, serverSideEncryption: ServerSideEncryption? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKeyMD5: String? = nil, sSEKMSKeyId: String? = nil, storageClass: StorageClass? = nil, versionId: String? = nil, websiteRedirectLocation: String? = nil) {
             self.acceptRanges = acceptRanges
             self.cacheControl = cacheControl
             self.contentDisposition = contentDisposition
@@ -3668,7 +3599,7 @@ extension S3 {
         public let ifUnmodifiedSince: TimeStamp?
         public let key: String
         /// Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.
-        public let partNumber: Int32?
+        public let partNumber: Int?
         /// Downloads the specified range bytes of an object. For more information about the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
         public let range: String?
         public let requestPayer: RequestPayer?
@@ -3681,7 +3612,7 @@ extension S3 {
         /// VersionId used to reference a specific version of the object.
         public let versionId: String?
 
-        public init(bucket: String, ifMatch: String? = nil, ifModifiedSince: TimeStamp? = nil, ifNoneMatch: String? = nil, ifUnmodifiedSince: TimeStamp? = nil, key: String, partNumber: Int32? = nil, range: String? = nil, requestPayer: RequestPayer? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, versionId: String? = nil) {
+        public init(bucket: String, ifMatch: String? = nil, ifModifiedSince: TimeStamp? = nil, ifNoneMatch: String? = nil, ifUnmodifiedSince: TimeStamp? = nil, key: String, partNumber: Int? = nil, range: String? = nil, requestPayer: RequestPayer? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, versionId: String? = nil) {
             self.bucket = bucket
             self.ifMatch = ifMatch
             self.ifModifiedSince = ifModifiedSince
@@ -3697,8 +3628,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4075,11 +4006,11 @@ extension S3 {
         /// Indicates at what date the object is to be moved or deleted. Should be in GMT ISO 8601 Format.
         public let date: TimeStamp?
         /// Indicates the lifetime, in days, of the objects that are subject to the rule. The value must be a non-zero positive integer.
-        public let days: Int32?
+        public let days: Int?
         /// Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions. If set to true, the delete marker will be expired; if set to false the policy takes no action. This cannot be specified with Days or Date in a Lifecycle Expiration Policy.
         public let expiredObjectDeleteMarker: Bool?
 
-        public init(date: TimeStamp? = nil, days: Int32? = nil, expiredObjectDeleteMarker: Bool? = nil) {
+        public init(date: TimeStamp? = nil, days: Int? = nil, expiredObjectDeleteMarker: Bool? = nil) {
             self.date = date
             self.days = days
             self.expiredObjectDeleteMarker = expiredObjectDeleteMarker
@@ -4126,8 +4057,8 @@ extension S3 {
             self.transitions = transitions
         }
 
-        public func validate() throws {
-            try filter?.validate()
+        public func validate(name: String) throws {
+            try filter?.validate(name: "\(name).filter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4157,9 +4088,9 @@ extension S3 {
             self.tags = tags
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
         }
 
@@ -4188,9 +4119,9 @@ extension S3 {
             self.tag = tag
         }
 
-        public func validate() throws {
-            try and?.validate()
-            try tag?.validate()
+        public func validate(name: String) throws {
+            try and?.validate(name: "\(name).and")
+            try tag?.validate(name: "\(name).tag")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4222,12 +4153,6 @@ extension S3 {
             self.continuationToken = continuationToken
             self.isTruncated = isTruncated
             self.nextContinuationToken = nextContinuationToken
-        }
-
-        public func validate() throws {
-            try analyticsConfigurationList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4338,12 +4263,6 @@ extension S3 {
             self.nextContinuationToken = nextContinuationToken
         }
 
-        public func validate() throws {
-            try metricsConfigurationList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case continuationToken = "ContinuationToken"
             case isTruncated = "IsTruncated"
@@ -4421,7 +4340,7 @@ extension S3 {
         /// The key at or after which the listing began.
         public let keyMarker: String?
         /// Maximum number of multipart uploads that could have been included in the response.
-        public let maxUploads: Int32?
+        public let maxUploads: Int?
         /// When a list is truncated, this element specifies the value that should be used for the key-marker request parameter in a subsequent request.
         public let nextKeyMarker: String?
         /// When a list is truncated, this element specifies the value that should be used for the upload-id-marker request parameter in a subsequent request.
@@ -4432,7 +4351,7 @@ extension S3 {
         public let uploadIdMarker: String?
         public let uploads: [MultipartUpload]?
 
-        public init(bucket: String? = nil, commonPrefixes: [CommonPrefix]? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, keyMarker: String? = nil, maxUploads: Int32? = nil, nextKeyMarker: String? = nil, nextUploadIdMarker: String? = nil, prefix: String? = nil, uploadIdMarker: String? = nil, uploads: [MultipartUpload]? = nil) {
+        public init(bucket: String? = nil, commonPrefixes: [CommonPrefix]? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, keyMarker: String? = nil, maxUploads: Int? = nil, nextKeyMarker: String? = nil, nextUploadIdMarker: String? = nil, prefix: String? = nil, uploadIdMarker: String? = nil, uploads: [MultipartUpload]? = nil) {
             self.bucket = bucket
             self.commonPrefixes = commonPrefixes
             self.delimiter = delimiter
@@ -4445,12 +4364,6 @@ extension S3 {
             self.prefix = prefix
             self.uploadIdMarker = uploadIdMarker
             self.uploads = uploads
-        }
-
-        public func validate() throws {
-            try uploads?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4487,13 +4400,13 @@ extension S3 {
         /// Together with upload-id-marker, this parameter specifies the multipart upload after which listing should begin.
         public let keyMarker: String?
         /// Sets the maximum number of multipart uploads, from 1 to 1,000, to return in the response body. 1,000 is the maximum number of uploads that can be returned in a response.
-        public let maxUploads: Int32?
+        public let maxUploads: Int?
         /// Lists in-progress uploads only for those keys that begin with the specified prefix.
         public let prefix: String?
         /// Together with key-marker, specifies the multipart upload after which listing should begin. If key-marker is not specified, the upload-id-marker parameter is ignored.
         public let uploadIdMarker: String?
 
-        public init(bucket: String, delimiter: String? = nil, encodingType: EncodingType? = nil, keyMarker: String? = nil, maxUploads: Int32? = nil, prefix: String? = nil, uploadIdMarker: String? = nil) {
+        public init(bucket: String, delimiter: String? = nil, encodingType: EncodingType? = nil, keyMarker: String? = nil, maxUploads: Int? = nil, prefix: String? = nil, uploadIdMarker: String? = nil) {
             self.bucket = bucket
             self.delimiter = delimiter
             self.encodingType = encodingType
@@ -4540,7 +4453,7 @@ extension S3 {
         public let isTruncated: Bool?
         /// Marks the last Key returned in a truncated response.
         public let keyMarker: String?
-        public let maxKeys: Int32?
+        public let maxKeys: Int?
         public let name: String?
         /// Use this value for the key marker request parameter in a subsequent request.
         public let nextKeyMarker: String?
@@ -4550,7 +4463,7 @@ extension S3 {
         public let versionIdMarker: String?
         public let versions: [ObjectVersion]?
 
-        public init(commonPrefixes: [CommonPrefix]? = nil, deleteMarkers: [DeleteMarkerEntry]? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, keyMarker: String? = nil, maxKeys: Int32? = nil, name: String? = nil, nextKeyMarker: String? = nil, nextVersionIdMarker: String? = nil, prefix: String? = nil, versionIdMarker: String? = nil, versions: [ObjectVersion]? = nil) {
+        public init(commonPrefixes: [CommonPrefix]? = nil, deleteMarkers: [DeleteMarkerEntry]? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, keyMarker: String? = nil, maxKeys: Int? = nil, name: String? = nil, nextKeyMarker: String? = nil, nextVersionIdMarker: String? = nil, prefix: String? = nil, versionIdMarker: String? = nil, versions: [ObjectVersion]? = nil) {
             self.commonPrefixes = commonPrefixes
             self.deleteMarkers = deleteMarkers
             self.delimiter = delimiter
@@ -4564,15 +4477,6 @@ extension S3 {
             self.prefix = prefix
             self.versionIdMarker = versionIdMarker
             self.versions = versions
-        }
-
-        public func validate() throws {
-            try deleteMarkers?.forEach {
-                try $0.validate()
-            }
-            try versions?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4610,13 +4514,13 @@ extension S3 {
         /// Specifies the key to start with when listing objects in a bucket.
         public let keyMarker: String?
         /// Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.
-        public let maxKeys: Int32?
+        public let maxKeys: Int?
         /// Limits the response to keys that begin with the specified prefix.
         public let prefix: String?
         /// Specifies the object version you want to start listing from.
         public let versionIdMarker: String?
 
-        public init(bucket: String, delimiter: String? = nil, encodingType: EncodingType? = nil, keyMarker: String? = nil, maxKeys: Int32? = nil, prefix: String? = nil, versionIdMarker: String? = nil) {
+        public init(bucket: String, delimiter: String? = nil, encodingType: EncodingType? = nil, keyMarker: String? = nil, maxKeys: Int? = nil, prefix: String? = nil, versionIdMarker: String? = nil) {
             self.bucket = bucket
             self.delimiter = delimiter
             self.encodingType = encodingType
@@ -4659,13 +4563,13 @@ extension S3 {
         /// A flag that indicates whether or not Amazon S3 returned all of the results that satisfied the search criteria.
         public let isTruncated: Bool?
         public let marker: String?
-        public let maxKeys: Int32?
+        public let maxKeys: Int?
         public let name: String?
         /// When response is truncated (the IsTruncated element value in the response is true), you can use the key name in this field as marker in the subsequent request to get next set of objects. Amazon S3 lists objects in alphabetical order Note: This element is returned only if you have delimiter request parameter specified. If response does not include the NextMaker and it is truncated, you can use the value of the last Key in the response as the marker in the subsequent request to get the next set of object keys.
         public let nextMarker: String?
         public let prefix: String?
 
-        public init(commonPrefixes: [CommonPrefix]? = nil, contents: [Object]? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, marker: String? = nil, maxKeys: Int32? = nil, name: String? = nil, nextMarker: String? = nil, prefix: String? = nil) {
+        public init(commonPrefixes: [CommonPrefix]? = nil, contents: [Object]? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, marker: String? = nil, maxKeys: Int? = nil, name: String? = nil, nextMarker: String? = nil, prefix: String? = nil) {
             self.commonPrefixes = commonPrefixes
             self.contents = contents
             self.delimiter = delimiter
@@ -4676,12 +4580,6 @@ extension S3 {
             self.name = name
             self.nextMarker = nextMarker
             self.prefix = prefix
-        }
-
-        public func validate() throws {
-            try contents?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4716,13 +4614,13 @@ extension S3 {
         /// Specifies the key to start with when listing objects in a bucket.
         public let marker: String?
         /// Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.
-        public let maxKeys: Int32?
+        public let maxKeys: Int?
         /// Limits the response to keys that begin with the specified prefix.
         public let prefix: String?
         /// Confirms that the requester knows that she or he will be charged for the list objects request. Bucket owners need not specify this parameter in their requests.
         public let requestPayer: RequestPayer?
 
-        public init(bucket: String, delimiter: String? = nil, encodingType: EncodingType? = nil, marker: String? = nil, maxKeys: Int32? = nil, prefix: String? = nil, requestPayer: RequestPayer? = nil) {
+        public init(bucket: String, delimiter: String? = nil, encodingType: EncodingType? = nil, marker: String? = nil, maxKeys: Int? = nil, prefix: String? = nil, requestPayer: RequestPayer? = nil) {
             self.bucket = bucket
             self.delimiter = delimiter
             self.encodingType = encodingType
@@ -4772,9 +4670,9 @@ extension S3 {
         /// A flag that indicates whether or not Amazon S3 returned all of the results that satisfied the search criteria.
         public let isTruncated: Bool?
         /// KeyCount is the number of keys returned with this request. KeyCount will always be less than equals to MaxKeys field. Say you ask for 50 keys, your result will include less than equals 50 keys 
-        public let keyCount: Int32?
+        public let keyCount: Int?
         /// Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.
-        public let maxKeys: Int32?
+        public let maxKeys: Int?
         /// Name of the bucket to list.
         public let name: String?
         /// NextContinuationToken is sent when isTruncated is true which means there are more keys in the bucket that can be listed. The next list requests to Amazon S3 can be continued with this NextContinuationToken. NextContinuationToken is obfuscated and is not a real key
@@ -4784,7 +4682,7 @@ extension S3 {
         /// StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket
         public let startAfter: String?
 
-        public init(commonPrefixes: [CommonPrefix]? = nil, contents: [Object]? = nil, continuationToken: String? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, keyCount: Int32? = nil, maxKeys: Int32? = nil, name: String? = nil, nextContinuationToken: String? = nil, prefix: String? = nil, startAfter: String? = nil) {
+        public init(commonPrefixes: [CommonPrefix]? = nil, contents: [Object]? = nil, continuationToken: String? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, isTruncated: Bool? = nil, keyCount: Int? = nil, maxKeys: Int? = nil, name: String? = nil, nextContinuationToken: String? = nil, prefix: String? = nil, startAfter: String? = nil) {
             self.commonPrefixes = commonPrefixes
             self.contents = contents
             self.continuationToken = continuationToken
@@ -4797,12 +4695,6 @@ extension S3 {
             self.nextContinuationToken = nextContinuationToken
             self.prefix = prefix
             self.startAfter = startAfter
-        }
-
-        public func validate() throws {
-            try contents?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4845,7 +4737,7 @@ extension S3 {
         /// The owner field is not present in listV2 by default, if you want to return owner field with each key in the result then set the fetch owner field to true
         public let fetchOwner: Bool?
         /// Sets the maximum number of keys returned in the response. The response might contain fewer keys but will never contain more.
-        public let maxKeys: Int32?
+        public let maxKeys: Int?
         /// Limits the response to keys that begin with the specified prefix.
         public let prefix: String?
         /// Confirms that the requester knows that she or he will be charged for the list objects request in V2 style. Bucket owners need not specify this parameter in their requests.
@@ -4853,7 +4745,7 @@ extension S3 {
         /// StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket
         public let startAfter: String?
 
-        public init(bucket: String, continuationToken: String? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, fetchOwner: Bool? = nil, maxKeys: Int32? = nil, prefix: String? = nil, requestPayer: RequestPayer? = nil, startAfter: String? = nil) {
+        public init(bucket: String, continuationToken: String? = nil, delimiter: String? = nil, encodingType: EncodingType? = nil, fetchOwner: Bool? = nil, maxKeys: Int? = nil, prefix: String? = nil, requestPayer: RequestPayer? = nil, startAfter: String? = nil) {
             self.bucket = bucket
             self.continuationToken = continuationToken
             self.delimiter = delimiter
@@ -4909,12 +4801,12 @@ extension S3 {
         /// Object key for which the multipart upload was initiated.
         public let key: String?
         /// Maximum number of parts that were allowed in the response.
-        public let maxParts: Int32?
+        public let maxParts: Int?
         /// When a list is truncated, this element specifies the last part in the list, as well as the value to use for the part-number-marker request parameter in a subsequent request.
-        public let nextPartNumberMarker: Int32?
+        public let nextPartNumberMarker: Int?
         public let owner: Owner?
         /// Part number after which listing begins.
-        public let partNumberMarker: Int32?
+        public let partNumberMarker: Int?
         public let parts: [Part]?
         public let requestCharged: RequestCharged?
         /// The class of storage used to store the object.
@@ -4922,7 +4814,7 @@ extension S3 {
         /// Upload ID identifying the multipart upload whose parts are being listed.
         public let uploadId: String?
 
-        public init(abortDate: TimeStamp? = nil, abortRuleId: String? = nil, bucket: String? = nil, initiator: Initiator? = nil, isTruncated: Bool? = nil, key: String? = nil, maxParts: Int32? = nil, nextPartNumberMarker: Int32? = nil, owner: Owner? = nil, partNumberMarker: Int32? = nil, parts: [Part]? = nil, requestCharged: RequestCharged? = nil, storageClass: StorageClass? = nil, uploadId: String? = nil) {
+        public init(abortDate: TimeStamp? = nil, abortRuleId: String? = nil, bucket: String? = nil, initiator: Initiator? = nil, isTruncated: Bool? = nil, key: String? = nil, maxParts: Int? = nil, nextPartNumberMarker: Int? = nil, owner: Owner? = nil, partNumberMarker: Int? = nil, parts: [Part]? = nil, requestCharged: RequestCharged? = nil, storageClass: StorageClass? = nil, uploadId: String? = nil) {
             self.abortDate = abortDate
             self.abortRuleId = abortRuleId
             self.bucket = bucket
@@ -4937,10 +4829,6 @@ extension S3 {
             self.requestCharged = requestCharged
             self.storageClass = storageClass
             self.uploadId = uploadId
-        }
-
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -4974,14 +4862,14 @@ extension S3 {
         public let bucket: String
         public let key: String
         /// Sets the maximum number of parts to return.
-        public let maxParts: Int32?
+        public let maxParts: Int?
         /// Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.
-        public let partNumberMarker: Int32?
+        public let partNumberMarker: Int?
         public let requestPayer: RequestPayer?
         /// Upload ID identifying the multipart upload whose parts are being listed.
         public let uploadId: String
 
-        public init(bucket: String, key: String, maxParts: Int32? = nil, partNumberMarker: Int32? = nil, requestPayer: RequestPayer? = nil, uploadId: String) {
+        public init(bucket: String, key: String, maxParts: Int? = nil, partNumberMarker: Int? = nil, requestPayer: RequestPayer? = nil, uploadId: String) {
             self.bucket = bucket
             self.key = key
             self.maxParts = maxParts
@@ -4990,8 +4878,8 @@ extension S3 {
             self.uploadId = uploadId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5084,9 +4972,9 @@ extension S3 {
             self.tags = tags
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
         }
 
@@ -5112,8 +5000,8 @@ extension S3 {
             self.id = id
         }
 
-        public func validate() throws {
-            try filter?.validate()
+        public func validate(name: String) throws {
+            try filter?.validate(name: "\(name).filter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5142,9 +5030,9 @@ extension S3 {
             self.tag = tag
         }
 
-        public func validate() throws {
-            try and?.validate()
-            try tag?.validate()
+        public func validate(name: String) throws {
+            try and?.validate(name: "\(name).and")
+            try tag?.validate(name: "\(name).tag")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5185,10 +5073,6 @@ extension S3 {
             self.uploadId = uploadId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case initiated = "Initiated"
             case initiator = "Initiator"
@@ -5205,9 +5089,9 @@ extension S3 {
         ]
 
         /// Specifies the number of days an object is noncurrent before Amazon S3 can perform the associated action. For information about the noncurrent days calculations, see How Amazon S3 Calculates When an Object Became Noncurrent in the Amazon Simple Storage Service Developer Guide.
-        public let noncurrentDays: Int32?
+        public let noncurrentDays: Int?
 
-        public init(noncurrentDays: Int32? = nil) {
+        public init(noncurrentDays: Int? = nil) {
             self.noncurrentDays = noncurrentDays
         }
 
@@ -5223,11 +5107,11 @@ extension S3 {
         ]
 
         /// Specifies the number of days an object is noncurrent before Amazon S3 can perform the associated action. For information about the noncurrent days calculations, see How Amazon S3 Calculates When an Object Became Noncurrent in the Amazon Simple Storage Service Developer Guide.
-        public let noncurrentDays: Int32?
+        public let noncurrentDays: Int?
         /// The class of storage used to store the object.
         public let storageClass: TransitionStorageClass?
 
-        public init(noncurrentDays: Int32? = nil, storageClass: TransitionStorageClass? = nil) {
+        public init(noncurrentDays: Int? = nil, storageClass: TransitionStorageClass? = nil) {
             self.noncurrentDays = noncurrentDays
             self.storageClass = storageClass
         }
@@ -5332,10 +5216,6 @@ extension S3 {
             self.storageClass = storageClass
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case eTag = "ETag"
             case key = "Key"
@@ -5373,8 +5253,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5533,10 +5413,6 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case eTag = "ETag"
             case isLatest = "IsLatest"
@@ -5566,8 +5442,8 @@ extension S3 {
             self.s3 = s3
         }
 
-        public func validate() throws {
-            try s3?.validate()
+        public func validate(name: String) throws {
+            try s3?.validate(name: "\(name).s3")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5643,11 +5519,11 @@ extension S3 {
         /// Date and time at which the part was uploaded.
         public let lastModified: TimeStamp?
         /// Part number identifying the part. This is a positive integer between 1 and 10,000.
-        public let partNumber: Int32?
+        public let partNumber: Int?
         /// Size in bytes of the uploaded part data.
         public let size: Int64?
 
-        public init(eTag: String? = nil, lastModified: TimeStamp? = nil, partNumber: Int32? = nil, size: Int64? = nil) {
+        public init(eTag: String? = nil, lastModified: TimeStamp? = nil, partNumber: Int? = nil, size: Int64? = nil) {
             self.eTag = eTag
             self.lastModified = lastModified
             self.partNumber = partNumber
@@ -5691,50 +5567,6 @@ extension S3 {
 
         private enum CodingKeys: String, CodingKey {
             case isPublic = "IsPublic"
-        }
-    }
-
-    public struct Progress: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "BytesProcessed", required: false, type: .long), 
-            AWSShapeMember(label: "BytesReturned", required: false, type: .long), 
-            AWSShapeMember(label: "BytesScanned", required: false, type: .long)
-        ]
-
-        /// The current number of uncompressed object bytes processed.
-        public let bytesProcessed: Int64?
-        /// The current number of bytes of records payload data returned.
-        public let bytesReturned: Int64?
-        /// The current number of object bytes scanned.
-        public let bytesScanned: Int64?
-
-        public init(bytesProcessed: Int64? = nil, bytesReturned: Int64? = nil, bytesScanned: Int64? = nil) {
-            self.bytesProcessed = bytesProcessed
-            self.bytesReturned = bytesReturned
-            self.bytesScanned = bytesScanned
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case bytesProcessed = "BytesProcessed"
-            case bytesReturned = "BytesReturned"
-            case bytesScanned = "BytesScanned"
-        }
-    }
-
-    public struct ProgressEvent: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Details", required: false, type: .structure)
-        ]
-
-        /// The Progress event details.
-        public let details: Progress?
-
-        public init(details: Progress? = nil) {
-            self.details = details
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case details = "Details"
         }
     }
 
@@ -5882,8 +5714,8 @@ extension S3 {
             self.id = id
         }
 
-        public func validate() throws {
-            try analyticsConfiguration.validate()
+        public func validate(name: String) throws {
+            try analyticsConfiguration.validate(name: "\(name).analyticsConfiguration")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -5996,8 +5828,8 @@ extension S3 {
             self.lifecycleConfiguration = lifecycleConfiguration
         }
 
-        public func validate() throws {
-            try lifecycleConfiguration?.validate()
+        public func validate(name: String) throws {
+            try lifecycleConfiguration?.validate(name: "\(name).lifecycleConfiguration")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6083,8 +5915,8 @@ extension S3 {
             self.metricsConfiguration = metricsConfiguration
         }
 
-        public func validate() throws {
-            try metricsConfiguration.validate()
+        public func validate(name: String) throws {
+            try metricsConfiguration.validate(name: "\(name).metricsConfiguration")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6201,8 +6033,8 @@ extension S3 {
             self.token = token
         }
 
-        public func validate() throws {
-            try replicationConfiguration.validate()
+        public func validate(name: String) throws {
+            try replicationConfiguration.validate(name: "\(name).replicationConfiguration")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6260,8 +6092,8 @@ extension S3 {
             self.tagging = tagging
         }
 
-        public func validate() throws {
-            try tagging.validate()
+        public func validate(name: String) throws {
+            try tagging.validate(name: "\(name).tagging")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6323,8 +6155,8 @@ extension S3 {
             self.websiteConfiguration = websiteConfiguration
         }
 
-        public func validate() throws {
-            try websiteConfiguration.validate()
+        public func validate(name: String) throws {
+            try websiteConfiguration.validate(name: "\(name).websiteConfiguration")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6405,8 +6237,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6475,8 +6307,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6729,8 +6561,8 @@ extension S3 {
             self.websiteRedirectLocation = websiteRedirectLocation
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6821,8 +6653,8 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6878,9 +6710,9 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-            try tagging.validate()
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
+            try tagging.validate(name: "\(name).tagging")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -6981,23 +6813,6 @@ extension S3 {
         public var description: String { return self.rawValue }
     }
 
-    public struct RecordsEvent: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Payload", required: false, type: .blob)
-        ]
-
-        /// The byte array of partial, one or more result records.
-        public let payload: Data?
-
-        public init(payload: Data? = nil) {
-            self.payload = payload
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case payload = "Payload"
-        }
-    }
-
     public struct Redirect: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "HostName", required: false, type: .string), 
@@ -7073,9 +6888,9 @@ extension S3 {
             self.rules = rules
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try rules.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).rules[]")
             }
         }
 
@@ -7103,13 +6918,13 @@ extension S3 {
         /// A unique identifier for the rule. The maximum value is 255 characters.
         public let id: String?
         /// The priority associated with the rule. If you specify multiple rules in a replication configuration, Amazon S3 prioritizes the rules to prevent conflicts when filtering. If two or more rules identify the same object based on a specified filter, the rule with higher priority takes precedence. For example:   Same object quality prefix based filter criteria If prefixes you specified in multiple rules overlap    Same object qualify tag based filter criteria specified in multiple rules   For more information, see Cross-Region Replication (CRR) in the Amazon S3 Developer Guide.
-        public let priority: Int32?
+        public let priority: Int?
         /// A container that describes additional filters for identifying the source objects that you want to replicate. You can choose to enable or disable the replication of these objects. Currently, Amazon S3 supports only the filter that you can specify for objects created with server-side encryption using an AWS KMS-Managed Key (SSE-KMS).
         public let sourceSelectionCriteria: SourceSelectionCriteria?
         /// Specifies whether the rule is enabled.
         public let status: ReplicationRuleStatus
 
-        public init(deleteMarkerReplication: DeleteMarkerReplication? = nil, destination: Destination, filter: ReplicationRuleFilter? = nil, id: String? = nil, priority: Int32? = nil, sourceSelectionCriteria: SourceSelectionCriteria? = nil, status: ReplicationRuleStatus) {
+        public init(deleteMarkerReplication: DeleteMarkerReplication? = nil, destination: Destination, filter: ReplicationRuleFilter? = nil, id: String? = nil, priority: Int? = nil, sourceSelectionCriteria: SourceSelectionCriteria? = nil, status: ReplicationRuleStatus) {
             self.deleteMarkerReplication = deleteMarkerReplication
             self.destination = destination
             self.filter = filter
@@ -7119,8 +6934,8 @@ extension S3 {
             self.status = status
         }
 
-        public func validate() throws {
-            try filter?.validate()
+        public func validate(name: String) throws {
+            try filter?.validate(name: "\(name).filter")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7148,9 +6963,9 @@ extension S3 {
             self.tags = tags
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
         }
 
@@ -7180,9 +6995,9 @@ extension S3 {
             self.tag = tag
         }
 
-        public func validate() throws {
-            try and?.validate()
-            try tag?.validate()
+        public func validate(name: String) throws {
+            try and?.validate(name: "\(name).and")
+            try tag?.validate(name: "\(name).tag")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7297,9 +7112,9 @@ extension S3 {
             self.versionId = versionId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
-            try restoreRequest?.validate()
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
+            try restoreRequest?.validate(name: "\(name).restoreRequest")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7323,7 +7138,7 @@ extension S3 {
         ]
 
         /// Lifetime of the active copy in days. Do not use with restores that specify OutputLocation.
-        public let days: Int32?
+        public let days: Int?
         /// The optional description for the job.
         public let description: String?
         /// Glacier related parameters pertaining to this job. Do not use with restores that specify OutputLocation.
@@ -7337,7 +7152,7 @@ extension S3 {
         /// Type of restore request.
         public let `type`: RestoreRequestType?
 
-        public init(days: Int32? = nil, description: String? = nil, glacierJobParameters: GlacierJobParameters? = nil, outputLocation: OutputLocation? = nil, selectParameters: SelectParameters? = nil, tier: Tier? = nil, type: RestoreRequestType? = nil) {
+        public init(days: Int? = nil, description: String? = nil, glacierJobParameters: GlacierJobParameters? = nil, outputLocation: OutputLocation? = nil, selectParameters: SelectParameters? = nil, tier: Tier? = nil, type: RestoreRequestType? = nil) {
             self.days = days
             self.description = description
             self.glacierJobParameters = glacierJobParameters
@@ -7347,8 +7162,8 @@ extension S3 {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try outputLocation?.validate()
+        public func validate(name: String) throws {
+            try outputLocation?.validate(name: "\(name).outputLocation")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7491,8 +7306,8 @@ extension S3 {
             self.userMetadata = userMetadata
         }
 
-        public func validate() throws {
-            try tagging?.validate()
+        public func validate(name: String) throws {
+            try tagging?.validate(name: "\(name).tagging")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7580,8 +7395,8 @@ extension S3 {
             self.sSECustomerKeyMD5 = sSECustomerKeyMD5
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7732,50 +7547,6 @@ extension S3 {
         public var description: String { return self.rawValue }
     }
 
-    public struct Stats: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "BytesProcessed", required: false, type: .long), 
-            AWSShapeMember(label: "BytesReturned", required: false, type: .long), 
-            AWSShapeMember(label: "BytesScanned", required: false, type: .long)
-        ]
-
-        /// The total number of uncompressed object bytes processed.
-        public let bytesProcessed: Int64?
-        /// The total number of bytes of records payload data returned.
-        public let bytesReturned: Int64?
-        /// The total number of object bytes scanned.
-        public let bytesScanned: Int64?
-
-        public init(bytesProcessed: Int64? = nil, bytesReturned: Int64? = nil, bytesScanned: Int64? = nil) {
-            self.bytesProcessed = bytesProcessed
-            self.bytesReturned = bytesReturned
-            self.bytesScanned = bytesScanned
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case bytesProcessed = "BytesProcessed"
-            case bytesReturned = "BytesReturned"
-            case bytesScanned = "BytesScanned"
-        }
-    }
-
-    public struct StatsEvent: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Details", required: false, type: .structure)
-        ]
-
-        /// The Stats event details.
-        public let details: Stats?
-
-        public init(details: Stats? = nil) {
-            self.details = details
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case details = "Details"
-        }
-    }
-
     public enum StorageClass: String, CustomStringConvertible, Codable {
         case standard = "STANDARD"
         case reducedRedundancy = "REDUCED_REDUNDANCY"
@@ -7847,8 +7618,8 @@ extension S3 {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -7868,9 +7639,9 @@ extension S3 {
             self.tagSet = tagSet
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try tagSet.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tagSet[]")
             }
         }
 
@@ -7978,11 +7749,11 @@ extension S3 {
         /// Indicates when objects are transitioned to the specified storage class. The date value must be in ISO 8601 format. The time is always midnight UTC.
         public let date: TimeStamp?
         /// Indicates the number of days after creation when objects are transitioned to the specified storage class. The value must be a positive integer.
-        public let days: Int32?
+        public let days: Int?
         /// The storage class to which you want the object to transition.
         public let storageClass: TransitionStorageClass?
 
-        public init(date: TimeStamp? = nil, days: Int32? = nil, storageClass: TransitionStorageClass? = nil) {
+        public init(date: TimeStamp? = nil, days: Int? = nil, storageClass: TransitionStorageClass? = nil) {
             self.date = date
             self.days = days
             self.storageClass = storageClass
@@ -8100,7 +7871,7 @@ extension S3 {
         public let copySourceSSECustomerKeyMD5: String?
         public let key: String
         /// Part number of part being copied. This is a positive integer between 1 and 10,000.
-        public let partNumber: Int32
+        public let partNumber: Int
         public let requestPayer: RequestPayer?
         /// Specifies the algorithm to use to when encrypting the object (e.g., AES256).
         public let sSECustomerAlgorithm: String?
@@ -8111,7 +7882,7 @@ extension S3 {
         /// Upload ID identifying the multipart upload whose part is being copied.
         public let uploadId: String
 
-        public init(bucket: String, copySource: String, copySourceIfMatch: String? = nil, copySourceIfModifiedSince: TimeStamp? = nil, copySourceIfNoneMatch: String? = nil, copySourceIfUnmodifiedSince: TimeStamp? = nil, copySourceRange: String? = nil, copySourceSSECustomerAlgorithm: String? = nil, copySourceSSECustomerKey: String? = nil, copySourceSSECustomerKeyMD5: String? = nil, key: String, partNumber: Int32, requestPayer: RequestPayer? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, uploadId: String) {
+        public init(bucket: String, copySource: String, copySourceIfMatch: String? = nil, copySourceIfModifiedSince: TimeStamp? = nil, copySourceIfNoneMatch: String? = nil, copySourceIfUnmodifiedSince: TimeStamp? = nil, copySourceRange: String? = nil, copySourceSSECustomerAlgorithm: String? = nil, copySourceSSECustomerKey: String? = nil, copySourceSSECustomerKeyMD5: String? = nil, key: String, partNumber: Int, requestPayer: RequestPayer? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, uploadId: String) {
             self.bucket = bucket
             self.copySource = copySource
             self.copySourceIfMatch = copySourceIfMatch
@@ -8131,9 +7902,9 @@ extension S3 {
             self.uploadId = uploadId
         }
 
-        public func validate() throws {
-            try validate(copySource, name:"copySource", pattern: "\\/.+\\/.+")
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(copySource, name:"copySource", parent: name, pattern: "\\/.+\\/.+")
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8226,7 +7997,7 @@ extension S3 {
         /// Object key for which the multipart upload was initiated.
         public let key: String
         /// Part number of part being uploaded. This is a positive integer between 1 and 10,000.
-        public let partNumber: Int32
+        public let partNumber: Int
         public let requestPayer: RequestPayer?
         /// Specifies the algorithm to use to when encrypting the object (e.g., AES256).
         public let sSECustomerAlgorithm: String?
@@ -8237,7 +8008,7 @@ extension S3 {
         /// Upload ID identifying the multipart upload whose part is being uploaded.
         public let uploadId: String
 
-        public init(body: Data? = nil, bucket: String, contentLength: Int64? = nil, contentMD5: String? = nil, key: String, partNumber: Int32, requestPayer: RequestPayer? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, uploadId: String) {
+        public init(body: Data? = nil, bucket: String, contentLength: Int64? = nil, contentMD5: String? = nil, key: String, partNumber: Int, requestPayer: RequestPayer? = nil, sSECustomerAlgorithm: String? = nil, sSECustomerKey: String? = nil, sSECustomerKeyMD5: String? = nil, uploadId: String) {
             self.body = body
             self.bucket = bucket
             self.contentLength = contentLength
@@ -8251,8 +8022,8 @@ extension S3 {
             self.uploadId = uploadId
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", min: 1)
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -8316,8 +8087,8 @@ extension S3 {
             self.routingRules = routingRules
         }
 
-        public func validate() throws {
-            try errorDocument?.validate()
+        public func validate(name: String) throws {
+            try errorDocument?.validate(name: "\(name).errorDocument")
         }
 
         private enum CodingKeys: String, CodingKey {

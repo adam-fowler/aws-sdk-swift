@@ -112,13 +112,13 @@ extension Greengrass {
         ]
 
         /// The total number of records that returned a non-retryable error. For example, this can occur if a group record from the input file uses an invalid format or specifies a nonexistent group version, or if the execution role doesn't grant permission to deploy a group or group version.
-        public let invalidInputRecords: Int32?
+        public let invalidInputRecords: Int?
         /// The total number of group records from the input file that have been processed so far, or attempted.
-        public let recordsProcessed: Int32?
+        public let recordsProcessed: Int?
         /// The total number of deployment attempts that returned a retryable error. For example, a retry is triggered if the attempt to deploy a group returns a throttling error. ''StartBulkDeployment'' retries a group deployment up to five times.
-        public let retryAttempts: Int32?
+        public let retryAttempts: Int?
 
-        public init(invalidInputRecords: Int32? = nil, recordsProcessed: Int32? = nil, retryAttempts: Int32? = nil) {
+        public init(invalidInputRecords: Int? = nil, recordsProcessed: Int? = nil, retryAttempts: Int? = nil) {
             self.invalidInputRecords = invalidInputRecords
             self.recordsProcessed = recordsProcessed
             self.retryAttempts = retryAttempts
@@ -208,9 +208,9 @@ extension Greengrass {
         /// Metadata for this endpoint.
         public let metadata: String?
         /// The port of the Greengrass core. Usually 8883.
-        public let portNumber: Int32?
+        public let portNumber: Int?
 
-        public init(hostAddress: String? = nil, id: String? = nil, metadata: String? = nil, portNumber: Int32? = nil) {
+        public init(hostAddress: String? = nil, id: String? = nil, metadata: String? = nil, portNumber: Int? = nil) {
             self.hostAddress = hostAddress
             self.id = id
             self.metadata = metadata
@@ -1857,14 +1857,6 @@ extension Greengrass {
         }
     }
 
-    public struct Empty: AWSShape {
-
-
-        public init() {
-        }
-
-    }
-
     public enum EncodingType: String, CustomStringConvertible, Codable {
         case binary = "binary"
         case json = "json"
@@ -1940,13 +1932,13 @@ extension Greengrass {
         /// The name of the function executable.
         public let executable: String?
         /// The memory size, in KB, which the function requires. This setting is not applicable and should be cleared when you run the Lambda function without containerization.
-        public let memorySize: Int32?
+        public let memorySize: Int?
         /// True if the function is pinned. Pinned means the function is long-lived and starts when the core starts.
         public let pinned: Bool?
         /// The allowed function execution time, after which Lambda should terminate the function. This timeout still applies to pinned Lambda functions for each request.
-        public let timeout: Int32?
+        public let timeout: Int?
 
-        public init(encodingType: EncodingType? = nil, environment: FunctionConfigurationEnvironment? = nil, execArgs: String? = nil, executable: String? = nil, memorySize: Int32? = nil, pinned: Bool? = nil, timeout: Int32? = nil) {
+        public init(encodingType: EncodingType? = nil, environment: FunctionConfigurationEnvironment? = nil, execArgs: String? = nil, executable: String? = nil, memorySize: Int? = nil, pinned: Bool? = nil, timeout: Int? = nil) {
             self.encodingType = encodingType
             self.environment = environment
             self.execArgs = execArgs
@@ -2090,11 +2082,11 @@ extension Greengrass {
         ]
 
         /// The group ID whose permissions are used to run a Lambda function.
-        public let gid: Int32?
+        public let gid: Int?
         /// The user ID whose permissions are used to run a Lambda function.
-        public let uid: Int32?
+        public let uid: Int?
 
-        public init(gid: Int32? = nil, uid: Int32? = nil) {
+        public init(gid: Int? = nil, uid: Int? = nil) {
             self.gid = gid
             self.uid = uid
         }
@@ -2102,28 +2094,6 @@ extension Greengrass {
         private enum CodingKeys: String, CodingKey {
             case gid = "Gid"
             case uid = "Uid"
-        }
-    }
-
-    public struct GeneralError: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "ErrorDetails", required: false, type: .list), 
-            AWSShapeMember(label: "Message", required: false, type: .string)
-        ]
-
-        /// Details about the error.
-        public let errorDetails: [ErrorDetail]?
-        /// A message containing information about the error.
-        public let message: String?
-
-        public init(errorDetails: [ErrorDetail]? = nil, message: String? = nil) {
-            self.errorDetails = errorDetails
-            self.message = message
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case errorDetails = "ErrorDetails"
-            case message = "Message"
         }
     }
 
@@ -3437,33 +3407,6 @@ extension Greengrass {
         }
     }
 
-    public struct GroupCertificateConfiguration: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "CertificateAuthorityExpiryInMilliseconds", required: false, type: .string), 
-            AWSShapeMember(label: "CertificateExpiryInMilliseconds", required: false, type: .string), 
-            AWSShapeMember(label: "GroupId", required: false, type: .string)
-        ]
-
-        /// The amount of time remaining before the certificate authority expires, in milliseconds.
-        public let certificateAuthorityExpiryInMilliseconds: String?
-        /// The amount of time remaining before the certificate expires, in milliseconds.
-        public let certificateExpiryInMilliseconds: String?
-        /// The ID of the group certificate configuration.
-        public let groupId: String?
-
-        public init(certificateAuthorityExpiryInMilliseconds: String? = nil, certificateExpiryInMilliseconds: String? = nil, groupId: String? = nil) {
-            self.certificateAuthorityExpiryInMilliseconds = certificateAuthorityExpiryInMilliseconds
-            self.certificateExpiryInMilliseconds = certificateExpiryInMilliseconds
-            self.groupId = groupId
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case certificateAuthorityExpiryInMilliseconds = "CertificateAuthorityExpiryInMilliseconds"
-            case certificateExpiryInMilliseconds = "CertificateExpiryInMilliseconds"
-            case groupId = "GroupId"
-        }
-    }
-
     public struct GroupInformation: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "Arn", required: false, type: .string), 
@@ -3823,28 +3766,6 @@ extension Greengrass {
         ]
 
         public let definitions: [DefinitionInformation]?
-        public let nextToken: String?
-
-        public init(definitions: [DefinitionInformation]? = nil, nextToken: String? = nil) {
-            self.definitions = definitions
-            self.nextToken = nextToken
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case definitions = "Definitions"
-            case nextToken = "NextToken"
-        }
-    }
-
-    public struct ListDefinitionsResponse: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Definitions", required: false, type: .list), 
-            AWSShapeMember(label: "NextToken", required: false, type: .string)
-        ]
-
-        /// Information about a definition.
-        public let definitions: [DefinitionInformation]?
-        /// The token for the next set of results, or ''null'' if there are no additional results.
         public let nextToken: String?
 
         public init(definitions: [DefinitionInformation]? = nil, nextToken: String? = nil) {
@@ -4475,28 +4396,6 @@ extension Greengrass {
         }
     }
 
-    public struct ListVersionsResponse: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "NextToken", required: false, type: .string), 
-            AWSShapeMember(label: "Versions", required: false, type: .list)
-        ]
-
-        /// The token for the next set of results, or ''null'' if there are no additional results.
-        public let nextToken: String?
-        /// Information about a version.
-        public let versions: [VersionInformation]?
-
-        public init(nextToken: String? = nil, versions: [VersionInformation]? = nil) {
-            self.nextToken = nextToken
-            self.versions = versions
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case nextToken = "NextToken"
-            case versions = "Versions"
-        }
-    }
-
     public struct LocalDeviceResourceData: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "GroupOwnerSetting", required: false, type: .structure), 
@@ -4562,11 +4461,11 @@ extension Greengrass {
         /// The level of the logs.
         public let level: LoggerLevel?
         /// The amount of file space, in KB, to use if the local file system is used for logging purposes.
-        public let space: Int32?
+        public let space: Int?
         /// The type of log output which will be used.
         public let `type`: LoggerType?
 
-        public init(component: LoggerComponent? = nil, id: String? = nil, level: LoggerLevel? = nil, space: Int32? = nil, type: LoggerType? = nil) {
+        public init(component: LoggerComponent? = nil, id: String? = nil, level: LoggerLevel? = nil, space: Int? = nil, type: LoggerType? = nil) {
             self.component = component
             self.id = id
             self.level = level

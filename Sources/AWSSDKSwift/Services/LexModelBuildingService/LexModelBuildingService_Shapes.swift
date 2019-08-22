@@ -41,20 +41,6 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(botVersion, name:"botVersion", max: 64)
-            try validate(botVersion, name:"botVersion", min: 1)
-            try validate(botVersion, name:"botVersion", pattern: "\\$LATEST|[0-9]+")
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case botName = "botName"
             case botVersion = "botVersion"
@@ -110,20 +96,6 @@ extension LexModelBuildingService {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(botAlias, name:"botAlias", max: 100)
-            try validate(botAlias, name:"botAlias", min: 1)
-            try validate(botAlias, name:"botAlias", pattern: "^([A-Za-z]_?)+$")
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case botAlias = "botAlias"
             case botConfiguration = "botConfiguration"
@@ -167,17 +139,6 @@ extension LexModelBuildingService {
             self.name = name
             self.status = status
             self.version = version
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -282,12 +243,12 @@ extension LexModelBuildingService {
             self.uri = uri
         }
 
-        public func validate() throws {
-            try validate(messageVersion, name:"messageVersion", max: 5)
-            try validate(messageVersion, name:"messageVersion", min: 1)
-            try validate(uri, name:"uri", max: 2048)
-            try validate(uri, name:"uri", min: 20)
-            try validate(uri, name:"uri", pattern: "arn:aws:lambda:[a-z]+-[a-z]+-[0-9]:[0-9]{12}:function:[a-zA-Z0-9-_]+(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?(:[a-zA-Z0-9-_]+)?")
+        public func validate(name: String) throws {
+            try validate(messageVersion, name:"messageVersion", parent: name, max: 5)
+            try validate(messageVersion, name:"messageVersion", parent: name, min: 1)
+            try validate(uri, name:"uri", parent: name, max: 2048)
+            try validate(uri, name:"uri", parent: name, min: 20)
+            try validate(uri, name:"uri", parent: name, pattern: "arn:aws:lambda:[a-z]+-[a-z]+-[0-9]:[0-9]{12}:function:[a-zA-Z0-9-_]+(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?(:[a-zA-Z0-9-_]+)?")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -319,10 +280,10 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 50)
+            try validate(name, name:"name", parent: name, min: 2)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -365,7 +326,7 @@ extension LexModelBuildingService {
         /// If status is FAILED, Amazon Lex provides the reason that it failed to build the bot.
         public let failureReason: String?
         /// The maximum time in seconds that Amazon Lex retains the data gathered in a conversation. For more information, see PutBot.
-        public let idleSessionTTLInSeconds: Int32?
+        public let idleSessionTTLInSeconds: Int?
         /// An array of Intent objects. For more information, see PutBot.
         public let intents: [Intent]?
         /// The date when the $LATEST version of this bot was updated. 
@@ -381,7 +342,7 @@ extension LexModelBuildingService {
         /// The Amazon Polly voice ID that Amazon Lex uses for voice interactions with the user.
         public let voiceId: String?
 
-        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool? = nil, clarificationPrompt: Prompt? = nil, createdDate: TimeStamp? = nil, description: String? = nil, failureReason: String? = nil, idleSessionTTLInSeconds: Int32? = nil, intents: [Intent]? = nil, lastUpdatedDate: TimeStamp? = nil, locale: Locale? = nil, name: String? = nil, status: Status? = nil, version: String? = nil, voiceId: String? = nil) {
+        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool? = nil, clarificationPrompt: Prompt? = nil, createdDate: TimeStamp? = nil, description: String? = nil, failureReason: String? = nil, idleSessionTTLInSeconds: Int? = nil, intents: [Intent]? = nil, lastUpdatedDate: TimeStamp? = nil, locale: Locale? = nil, name: String? = nil, status: Status? = nil, version: String? = nil, voiceId: String? = nil) {
             self.abortStatement = abortStatement
             self.checksum = checksum
             self.childDirected = childDirected
@@ -397,24 +358,6 @@ extension LexModelBuildingService {
             self.status = status
             self.version = version
             self.voiceId = voiceId
-        }
-
-        public func validate() throws {
-            try abortStatement?.validate()
-            try clarificationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", max: 86400)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", min: 60)
-            try intents?.forEach {
-                try $0.validate()
-            }
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -452,10 +395,10 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -532,34 +475,6 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try conclusionStatement?.validate()
-            try confirmationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try dialogCodeHook?.validate()
-            try followUpPrompt?.validate()
-            try fulfillmentActivity?.validate()
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try rejectionStatement?.validate()
-            try sampleUtterances?.forEach {
-                try validate($0, name:"sampleUtterances[]", max: 200)
-                try validate($0, name:"sampleUtterances[]", min: 1)
-            }
-            try validate(sampleUtterances, name:"sampleUtterances", max: 1500)
-            try validate(sampleUtterances, name:"sampleUtterances", min: 0)
-            try slots?.forEach {
-                try $0.validate()
-            }
-            try validate(slots, name:"slots", max: 100)
-            try validate(slots, name:"slots", min: 0)
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case checksum = "checksum"
             case conclusionStatement = "conclusionStatement"
@@ -595,10 +510,10 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -647,22 +562,6 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try enumerationValues?.forEach {
-                try $0.validate()
-            }
-            try validate(enumerationValues, name:"enumerationValues", max: 10000)
-            try validate(enumerationValues, name:"enumerationValues", min: 1)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case checksum = "checksum"
             case createdDate = "createdDate"
@@ -691,13 +590,13 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -726,16 +625,16 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botAlias, name:"botAlias", max: 100)
-            try validate(botAlias, name:"botAlias", min: 1)
-            try validate(botAlias, name:"botAlias", pattern: "^([A-Za-z]_?)+$")
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botAlias, name:"botAlias", parent: name, max: 100)
+            try validate(botAlias, name:"botAlias", parent: name, min: 1)
+            try validate(botAlias, name:"botAlias", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -757,10 +656,10 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 50)
+            try validate(name, name:"name", parent: name, min: 2)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -784,13 +683,13 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "[0-9]+")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 50)
+            try validate(name, name:"name", parent: name, min: 2)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -811,10 +710,10 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -838,13 +737,13 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "[0-9]+")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -865,10 +764,10 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -892,13 +791,13 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "[0-9]+")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -923,12 +822,12 @@ extension LexModelBuildingService {
             self.userId = userId
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(userId, name:"userId", max: 100)
-            try validate(userId, name:"userId", min: 2)
+        public func validate(name: String) throws {
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(userId, name:"userId", parent: name, max: 100)
+            try validate(userId, name:"userId", parent: name, min: 2)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -953,13 +852,13 @@ extension LexModelBuildingService {
             self.value = value
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try synonyms?.forEach {
-                try validate($0, name:"synonyms[]", max: 140)
-                try validate($0, name:"synonyms[]", min: 1)
+                try validate($0, name: "synonyms[]", parent: name, max: 140)
+                try validate($0, name: "synonyms[]", parent: name, min: 1)
             }
-            try validate(value, name:"value", max: 140)
-            try validate(value, name:"value", min: 1)
+            try validate(value, name:"value", parent: name, max: 140)
+            try validate(value, name:"value", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -997,9 +896,9 @@ extension LexModelBuildingService {
             self.rejectionStatement = rejectionStatement
         }
 
-        public func validate() throws {
-            try prompt.validate()
-            try rejectionStatement.validate()
+        public func validate(name: String) throws {
+            try prompt.validate(name: "\(name).prompt")
+            try rejectionStatement.validate(name: "\(name).rejectionStatement")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1024,8 +923,8 @@ extension LexModelBuildingService {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try codeHook?.validate()
+        public func validate(name: String) throws {
+            try codeHook?.validate(name: "\(name).codeHook")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1056,13 +955,13 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1107,20 +1006,6 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(botVersion, name:"botVersion", max: 64)
-            try validate(botVersion, name:"botVersion", min: 1)
-            try validate(botVersion, name:"botVersion", pattern: "\\$LATEST|[0-9]+")
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case botName = "botName"
             case botVersion = "botVersion"
@@ -1143,28 +1028,28 @@ extension LexModelBuildingService {
         /// The name of the bot.
         public let botName: String
         /// The maximum number of aliases to return in the response. The default is 50. . 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Substring to match in bot alias names. An alias will be returned if any part of its name matches the substring. For example, "xyz" matches both "xyzabc" and "abcxyz."
         public let nameContains: String?
         /// A pagination token for fetching the next page of aliases. If the response to this call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of aliases, specify the pagination token in the next request. 
         public let nextToken: String?
 
-        public init(botName: String, maxResults: Int32? = nil, nameContains: String? = nil, nextToken: String? = nil) {
+        public init(botName: String, maxResults: Int? = nil, nameContains: String? = nil, nextToken: String? = nil) {
             self.botName = botName
             self.maxResults = maxResults
             self.nameContains = nameContains
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nameContains, name:"nameContains", max: 100)
-            try validate(nameContains, name:"nameContains", min: 1)
-            try validate(nameContains, name:"nameContains", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, max: 100)
+            try validate(nameContains, name:"nameContains", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1189,12 +1074,6 @@ extension LexModelBuildingService {
         public init(botAliases: [BotAliasMetadata]? = nil, nextToken: String? = nil) {
             self.botAliases = botAliases
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try botAliases?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1223,16 +1102,16 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botAlias, name:"botAlias", max: 100)
-            try validate(botAlias, name:"botAlias", min: 1)
-            try validate(botAlias, name:"botAlias", pattern: "^([A-Za-z]_?)+$")
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botAlias, name:"botAlias", parent: name, max: 100)
+            try validate(botAlias, name:"botAlias", parent: name, min: 1)
+            try validate(botAlias, name:"botAlias", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1286,20 +1165,6 @@ extension LexModelBuildingService {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(botAlias, name:"botAlias", max: 100)
-            try validate(botAlias, name:"botAlias", min: 1)
-            try validate(botAlias, name:"botAlias", pattern: "^([A-Za-z]_?)+$")
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case botAlias = "botAlias"
             case botConfiguration = "botConfiguration"
@@ -1327,13 +1192,13 @@ extension LexModelBuildingService {
         /// The name of the Amazon Lex bot in the association.
         public let botName: String
         /// The maximum number of associations to return in the response. The default is 50. 
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Substring to match in channel association names. An association will be returned if any part of its name matches the substring. For example, "xyz" matches both "xyzabc" and "abcxyz." To return all bot channel associations, use a hyphen ("-") as the nameContains parameter.
         public let nameContains: String?
         /// A pagination token for fetching the next page of associations. If the response to this call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of associations, specify the pagination token in the next request. 
         public let nextToken: String?
 
-        public init(botAlias: String, botName: String, maxResults: Int32? = nil, nameContains: String? = nil, nextToken: String? = nil) {
+        public init(botAlias: String, botName: String, maxResults: Int? = nil, nameContains: String? = nil, nextToken: String? = nil) {
             self.botAlias = botAlias
             self.botName = botName
             self.maxResults = maxResults
@@ -1341,18 +1206,18 @@ extension LexModelBuildingService {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(botAlias, name:"botAlias", max: 100)
-            try validate(botAlias, name:"botAlias", min: 1)
-            try validate(botAlias, name:"botAlias", pattern: "^(-|^([A-Za-z]_?)+$)$")
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nameContains, name:"nameContains", max: 100)
-            try validate(nameContains, name:"nameContains", min: 1)
-            try validate(nameContains, name:"nameContains", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botAlias, name:"botAlias", parent: name, max: 100)
+            try validate(botAlias, name:"botAlias", parent: name, min: 1)
+            try validate(botAlias, name:"botAlias", parent: name, pattern: "^(-|^([A-Za-z]_?)+$)$")
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, max: 100)
+            try validate(nameContains, name:"nameContains", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1380,12 +1245,6 @@ extension LexModelBuildingService {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try botChannelAssociations?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case botChannelAssociations = "botChannelAssociations"
             case nextToken = "nextToken"
@@ -1408,10 +1267,10 @@ extension LexModelBuildingService {
             self.versionOrAlias = versionOrAlias
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 50)
+            try validate(name, name:"name", parent: name, min: 2)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1454,7 +1313,7 @@ extension LexModelBuildingService {
         /// If status is FAILED, Amazon Lex explains why it failed to build the bot.
         public let failureReason: String?
         /// The maximum time in seconds that Amazon Lex retains the data gathered in a conversation. For more information, see PutBot.
-        public let idleSessionTTLInSeconds: Int32?
+        public let idleSessionTTLInSeconds: Int?
         /// An array of intent objects. For more information, see PutBot.
         public let intents: [Intent]?
         /// The date that the bot was updated. When you create a resource, the creation date and last updated date are the same. 
@@ -1470,7 +1329,7 @@ extension LexModelBuildingService {
         /// The Amazon Polly voice ID that Amazon Lex uses for voice interaction with the user. For more information, see PutBot.
         public let voiceId: String?
 
-        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool? = nil, clarificationPrompt: Prompt? = nil, createdDate: TimeStamp? = nil, description: String? = nil, failureReason: String? = nil, idleSessionTTLInSeconds: Int32? = nil, intents: [Intent]? = nil, lastUpdatedDate: TimeStamp? = nil, locale: Locale? = nil, name: String? = nil, status: Status? = nil, version: String? = nil, voiceId: String? = nil) {
+        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool? = nil, clarificationPrompt: Prompt? = nil, createdDate: TimeStamp? = nil, description: String? = nil, failureReason: String? = nil, idleSessionTTLInSeconds: Int? = nil, intents: [Intent]? = nil, lastUpdatedDate: TimeStamp? = nil, locale: Locale? = nil, name: String? = nil, status: Status? = nil, version: String? = nil, voiceId: String? = nil) {
             self.abortStatement = abortStatement
             self.checksum = checksum
             self.childDirected = childDirected
@@ -1486,24 +1345,6 @@ extension LexModelBuildingService {
             self.status = status
             self.version = version
             self.voiceId = voiceId
-        }
-
-        public func validate() throws {
-            try abortStatement?.validate()
-            try clarificationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", max: 86400)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", min: 60)
-            try intents?.forEach {
-                try $0.validate()
-            }
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1533,24 +1374,24 @@ extension LexModelBuildingService {
         ]
 
         /// The maximum number of bot versions to return in the response. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The name of the bot for which versions should be returned.
         public let name: String
         /// A pagination token for fetching the next page of bot versions. If the response to this call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of versions, specify the pagination token in the next request. 
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, name: String, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, name: String, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.name = name
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, max: 50)
+            try validate(name, name:"name", parent: name, min: 2)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1576,12 +1417,6 @@ extension LexModelBuildingService {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try bots?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case bots = "bots"
             case nextToken = "nextToken"
@@ -1596,24 +1431,24 @@ extension LexModelBuildingService {
         ]
 
         /// The maximum number of bots to return in the response that the request will return. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Substring to match in bot names. A bot will be returned if any part of its name matches the substring. For example, "xyz" matches both "xyzabc" and "abcxyz."
         public let nameContains: String?
         /// A pagination token that fetches the next page of bots. If the response to this call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of bots, specify the pagination token in the next request. 
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nameContains: String? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nameContains: String? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nameContains = nameContains
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nameContains, name:"nameContains", max: 50)
-            try validate(nameContains, name:"nameContains", min: 2)
-            try validate(nameContains, name:"nameContains", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, max: 50)
+            try validate(nameContains, name:"nameContains", parent: name, min: 2)
+            try validate(nameContains, name:"nameContains", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1637,12 +1472,6 @@ extension LexModelBuildingService {
         public init(bots: [BotMetadata]? = nil, nextToken: String? = nil) {
             self.bots = bots
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try bots?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1706,22 +1535,22 @@ extension LexModelBuildingService {
         /// A list of locales that the intent supports.
         public let locale: Locale?
         /// The maximum number of intents to return in the response. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A pagination token that fetches the next page of intents. If this API call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of intents, use the pagination token in the next request.
         public let nextToken: String?
         /// Substring to match in built-in intent signatures. An intent will be returned if any part of its signature matches the substring. For example, "xyz" matches both "xyzabc" and "abcxyz." To find the signature for an intent, see Standard Built-in Intents in the Alexa Skills Kit.
         public let signatureContains: String?
 
-        public init(locale: Locale? = nil, maxResults: Int32? = nil, nextToken: String? = nil, signatureContains: String? = nil) {
+        public init(locale: Locale? = nil, maxResults: Int? = nil, nextToken: String? = nil, signatureContains: String? = nil) {
             self.locale = locale
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.signatureContains = signatureContains
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1765,22 +1594,22 @@ extension LexModelBuildingService {
         /// A list of locales that the slot type supports.
         public let locale: Locale?
         /// The maximum number of slot types to return in the response. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// A pagination token that fetches the next page of slot types. If the response to this API call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of slot types, specify the pagination token in the next request.
         public let nextToken: String?
         /// Substring to match in built-in slot type signatures. A slot type will be returned if any part of its signature matches the substring. For example, "xyz" matches both "xyzabc" and "abcxyz."
         public let signatureContains: String?
 
-        public init(locale: Locale? = nil, maxResults: Int32? = nil, nextToken: String? = nil, signatureContains: String? = nil) {
+        public init(locale: Locale? = nil, maxResults: Int? = nil, nextToken: String? = nil, signatureContains: String? = nil) {
             self.locale = locale
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.signatureContains = signatureContains
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1837,13 +1666,13 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[a-zA-Z_]+")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "[0-9]+")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "[a-zA-Z_]+")
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1888,15 +1717,6 @@ extension LexModelBuildingService {
             self.resourceType = resourceType
             self.url = url
             self.version = version
-        }
-
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[a-zA-Z_]+")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1963,12 +1783,6 @@ extension LexModelBuildingService {
             self.resourceType = resourceType
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[a-zA-Z_]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createdDate = "createdDate"
             case failureReason = "failureReason"
@@ -1996,13 +1810,13 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2079,34 +1893,6 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try conclusionStatement?.validate()
-            try confirmationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try dialogCodeHook?.validate()
-            try followUpPrompt?.validate()
-            try fulfillmentActivity?.validate()
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try rejectionStatement?.validate()
-            try sampleUtterances?.forEach {
-                try validate($0, name:"sampleUtterances[]", max: 200)
-                try validate($0, name:"sampleUtterances[]", min: 1)
-            }
-            try validate(sampleUtterances, name:"sampleUtterances", max: 1500)
-            try validate(sampleUtterances, name:"sampleUtterances", min: 0)
-            try slots?.forEach {
-                try $0.validate()
-            }
-            try validate(slots, name:"slots", max: 100)
-            try validate(slots, name:"slots", min: 0)
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case checksum = "checksum"
             case conclusionStatement = "conclusionStatement"
@@ -2134,24 +1920,24 @@ extension LexModelBuildingService {
         ]
 
         /// The maximum number of intent versions to return in the response. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The name of the intent for which versions should be returned.
         public let name: String
         /// A pagination token for fetching the next page of intent versions. If the response to this call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of versions, specify the pagination token in the next request. 
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, name: String, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, name: String, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.name = name
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2177,12 +1963,6 @@ extension LexModelBuildingService {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try intents?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case intents = "intents"
             case nextToken = "nextToken"
@@ -2197,24 +1977,24 @@ extension LexModelBuildingService {
         ]
 
         /// The maximum number of intents to return in the response. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Substring to match in intent names. An intent will be returned if any part of its name matches the substring. For example, "xyz" matches both "xyzabc" and "abcxyz."
         public let nameContains: String?
         /// A pagination token that fetches the next page of intents. If the response to this API call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of intents, specify the pagination token in the next request. 
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nameContains: String? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nameContains: String? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nameContains = nameContains
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nameContains, name:"nameContains", max: 100)
-            try validate(nameContains, name:"nameContains", min: 1)
-            try validate(nameContains, name:"nameContains", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, max: 100)
+            try validate(nameContains, name:"nameContains", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2240,12 +2020,6 @@ extension LexModelBuildingService {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try intents?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case intents = "intents"
             case nextToken = "nextToken"
@@ -2268,13 +2042,13 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(version, name:"version", parent: name, max: 64)
+            try validate(version, name:"version", parent: name, min: 1)
+            try validate(version, name:"version", parent: name, pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2323,22 +2097,6 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try enumerationValues?.forEach {
-                try $0.validate()
-            }
-            try validate(enumerationValues, name:"enumerationValues", max: 10000)
-            try validate(enumerationValues, name:"enumerationValues", min: 1)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case checksum = "checksum"
             case createdDate = "createdDate"
@@ -2359,24 +2117,24 @@ extension LexModelBuildingService {
         ]
 
         /// The maximum number of slot type versions to return in the response. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The name of the slot type for which versions should be returned.
         public let name: String
         /// A pagination token for fetching the next page of slot type versions. If the response to this call is truncated, Amazon Lex returns a pagination token in the response. To fetch the next page of versions, specify the pagination token in the next request. 
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, name: String, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, name: String, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.name = name
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2402,12 +2160,6 @@ extension LexModelBuildingService {
             self.slotTypes = slotTypes
         }
 
-        public func validate() throws {
-            try slotTypes?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "nextToken"
             case slotTypes = "slotTypes"
@@ -2422,24 +2174,24 @@ extension LexModelBuildingService {
         ]
 
         /// The maximum number of slot types to return in the response. The default is 10.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// Substring to match in slot type names. A slot type will be returned if any part of its name matches the substring. For example, "xyz" matches both "xyzabc" and "abcxyz."
         public let nameContains: String?
         /// A pagination token that fetches the next page of slot types. If the response to this API call is truncated, Amazon Lex returns a pagination token in the response. To fetch next page of slot types, specify the pagination token in the next request.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nameContains: String? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nameContains: String? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nameContains = nameContains
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 50)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nameContains, name:"nameContains", max: 100)
-            try validate(nameContains, name:"nameContains", min: 1)
-            try validate(nameContains, name:"nameContains", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 50)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, max: 100)
+            try validate(nameContains, name:"nameContains", parent: name, min: 1)
+            try validate(nameContains, name:"nameContains", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2463,12 +2215,6 @@ extension LexModelBuildingService {
         public init(nextToken: String? = nil, slotTypes: [SlotTypeMetadata]? = nil) {
             self.nextToken = nextToken
             self.slotTypes = slotTypes
-        }
-
-        public func validate() throws {
-            try slotTypes?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2497,17 +2243,17 @@ extension LexModelBuildingService {
             self.statusType = statusType
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
             try botVersions.forEach {
-                try validate($0, name:"botVersions[]", max: 64)
-                try validate($0, name:"botVersions[]", min: 1)
-                try validate($0, name:"botVersions[]", pattern: "\\$LATEST|[0-9]+")
+                try validate($0, name: "botVersions[]", parent: name, max: 64)
+                try validate($0, name: "botVersions[]", parent: name, min: 1)
+                try validate($0, name: "botVersions[]", parent: name, pattern: "\\$LATEST|[0-9]+")
             }
-            try validate(botVersions, name:"botVersions", max: 5)
-            try validate(botVersions, name:"botVersions", min: 1)
+            try validate(botVersions, name:"botVersions", parent: name, max: 5)
+            try validate(botVersions, name:"botVersions", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2531,15 +2277,6 @@ extension LexModelBuildingService {
         public init(botName: String? = nil, utterances: [UtteranceList]? = nil) {
             self.botName = botName
             self.utterances = utterances
-        }
-
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try utterances?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2571,13 +2308,13 @@ extension LexModelBuildingService {
             self.intentVersion = intentVersion
         }
 
-        public func validate() throws {
-            try validate(intentName, name:"intentName", max: 100)
-            try validate(intentName, name:"intentName", min: 1)
-            try validate(intentName, name:"intentName", pattern: "^([A-Za-z]_?)+$")
-            try validate(intentVersion, name:"intentVersion", max: 64)
-            try validate(intentVersion, name:"intentVersion", min: 1)
-            try validate(intentVersion, name:"intentVersion", pattern: "\\$LATEST|[0-9]+")
+        public func validate(name: String) throws {
+            try validate(intentName, name:"intentName", parent: name, max: 100)
+            try validate(intentName, name:"intentName", parent: name, min: 1)
+            try validate(intentName, name:"intentName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(intentVersion, name:"intentVersion", parent: name, max: 64)
+            try validate(intentVersion, name:"intentVersion", parent: name, min: 1)
+            try validate(intentVersion, name:"intentVersion", parent: name, pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2614,17 +2351,6 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createdDate = "createdDate"
             case description = "description"
@@ -2659,19 +2385,19 @@ extension LexModelBuildingService {
         /// The content type of the message string.
         public let contentType: ContentType
         /// Identifies the message group that the message belongs to. When a group is assigned to a message, Amazon Lex returns one message from each group in the response.
-        public let groupNumber: Int32?
+        public let groupNumber: Int?
 
-        public init(content: String, contentType: ContentType, groupNumber: Int32? = nil) {
+        public init(content: String, contentType: ContentType, groupNumber: Int? = nil) {
             self.content = content
             self.contentType = contentType
             self.groupNumber = groupNumber
         }
 
-        public func validate() throws {
-            try validate(content, name:"content", max: 1000)
-            try validate(content, name:"content", min: 1)
-            try validate(groupNumber, name:"groupNumber", max: 5)
-            try validate(groupNumber, name:"groupNumber", min: 1)
+        public func validate(name: String) throws {
+            try validate(content, name:"content", parent: name, max: 1000)
+            try validate(content, name:"content", parent: name, min: 1)
+            try validate(groupNumber, name:"groupNumber", parent: name, max: 5)
+            try validate(groupNumber, name:"groupNumber", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2695,28 +2421,28 @@ extension LexModelBuildingService {
         ]
 
         /// The number of times to prompt the user for information.
-        public let maxAttempts: Int32
+        public let maxAttempts: Int
         /// An array of objects, each of which provides a message string and its type. You can specify the message string in plain text or in Speech Synthesis Markup Language (SSML).
         public let messages: [Message]
         /// A response card. Amazon Lex uses this prompt at runtime, in the PostText API response. It substitutes session attributes and slot values for placeholders in the response card. For more information, see ex-resp-card. 
         public let responseCard: String?
 
-        public init(maxAttempts: Int32, messages: [Message], responseCard: String? = nil) {
+        public init(maxAttempts: Int, messages: [Message], responseCard: String? = nil) {
             self.maxAttempts = maxAttempts
             self.messages = messages
             self.responseCard = responseCard
         }
 
-        public func validate() throws {
-            try validate(maxAttempts, name:"maxAttempts", max: 5)
-            try validate(maxAttempts, name:"maxAttempts", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxAttempts, name:"maxAttempts", parent: name, max: 5)
+            try validate(maxAttempts, name:"maxAttempts", parent: name, min: 1)
             try messages.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).messages[]")
             }
-            try validate(messages, name:"messages", max: 15)
-            try validate(messages, name:"messages", min: 1)
-            try validate(responseCard, name:"responseCard", max: 50000)
-            try validate(responseCard, name:"responseCard", min: 1)
+            try validate(messages, name:"messages", parent: name, max: 15)
+            try validate(messages, name:"messages", parent: name, min: 1)
+            try validate(responseCard, name:"responseCard", parent: name, max: 50000)
+            try validate(responseCard, name:"responseCard", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2754,18 +2480,18 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(botVersion, name:"botVersion", max: 64)
-            try validate(botVersion, name:"botVersion", min: 1)
-            try validate(botVersion, name:"botVersion", pattern: "\\$LATEST|[0-9]+")
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+        public func validate(name: String) throws {
+            try validate(botName, name:"botName", parent: name, max: 50)
+            try validate(botName, name:"botName", parent: name, min: 2)
+            try validate(botName, name:"botName", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try validate(botVersion, name:"botVersion", parent: name, max: 64)
+            try validate(botVersion, name:"botVersion", parent: name, min: 1)
+            try validate(botVersion, name:"botVersion", parent: name, pattern: "\\$LATEST|[0-9]+")
+            try validate(description, name:"description", parent: name, max: 200)
+            try validate(description, name:"description", parent: name, min: 0)
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2813,20 +2539,6 @@ extension LexModelBuildingService {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(botName, name:"botName", max: 50)
-            try validate(botName, name:"botName", min: 2)
-            try validate(botName, name:"botName", pattern: "^([A-Za-z]_?)+$")
-            try validate(botVersion, name:"botVersion", max: 64)
-            try validate(botVersion, name:"botVersion", min: 1)
-            try validate(botVersion, name:"botVersion", pattern: "\\$LATEST|[0-9]+")
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case botName = "botName"
             case botVersion = "botVersion"
@@ -2866,7 +2578,7 @@ extension LexModelBuildingService {
         /// A description of the bot.
         public let description: String?
         /// The maximum time in seconds that Amazon Lex retains the data gathered in a conversation. A user interaction session remains active for the amount of time specified. If no conversation occurs during this time, the session expires and Amazon Lex deletes any data provided before the timeout. For example, suppose that a user chooses the OrderPizza intent, but gets sidetracked halfway through placing an order. If the user doesn't complete the order within the specified time, Amazon Lex discards the slot information that it gathered, and the user must start over. If you don't include the idleSessionTTLInSeconds element in a PutBot operation request, Amazon Lex uses the default value. This is also true if the request replaces an existing bot. The default is 300 seconds (5 minutes).
-        public let idleSessionTTLInSeconds: Int32?
+        public let idleSessionTTLInSeconds: Int?
         /// An array of Intent objects. Each intent represents a command that a user can express. For example, a pizza ordering bot might support an OrderPizza intent. For more information, see how-it-works.
         public let intents: [Intent]?
         ///  Specifies the target locale for the bot. Any intent used in the bot must be compatible with the locale of the bot.  The default is en-US.
@@ -2878,7 +2590,7 @@ extension LexModelBuildingService {
         /// The Amazon Polly voice ID that you want Amazon Lex to use for voice interactions with the user. The locale configured for the voice must match the locale of the bot. For more information, see Available Voices in the Amazon Polly Developer Guide.
         public let voiceId: String?
 
-        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool, clarificationPrompt: Prompt? = nil, createVersion: Bool? = nil, description: String? = nil, idleSessionTTLInSeconds: Int32? = nil, intents: [Intent]? = nil, locale: Locale, name: String, processBehavior: ProcessBehavior? = nil, voiceId: String? = nil) {
+        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool, clarificationPrompt: Prompt? = nil, createVersion: Bool? = nil, description: String? = nil, idleSessionTTLInSeconds: Int? = nil, intents: [Intent]? = nil, locale: Locale, name: String, processBehavior: ProcessBehavior? = nil, voiceId: String? = nil) {
             self.abortStatement = abortStatement
             self.checksum = checksum
             self.childDirected = childDirected
@@ -2893,19 +2605,19 @@ extension LexModelBuildingService {
             self.voiceId = voiceId
         }
 
-        public func validate() throws {
-            try abortStatement?.validate()
-            try clarificationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", max: 86400)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", min: 60)
+        public func validate(name: String) throws {
+            try abortStatement?.validate(name: "\(name).abortStatement")
+            try clarificationPrompt?.validate(name: "\(name).clarificationPrompt")
+            try validate(description, name:"description", parent: name, max: 200)
+            try validate(description, name:"description", parent: name, min: 0)
+            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", parent: name, max: 86400)
+            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", parent: name, min: 60)
             try intents?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).intents[]")
             }
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+            try validate(name, name:"name", parent: name, max: 50)
+            try validate(name, name:"name", parent: name, min: 2)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2960,7 +2672,7 @@ extension LexModelBuildingService {
         /// If status is FAILED, Amazon Lex provides the reason that it failed to build the bot.
         public let failureReason: String?
         /// The maximum length of time that Amazon Lex retains the data gathered in a conversation. For more information, see PutBot.
-        public let idleSessionTTLInSeconds: Int32?
+        public let idleSessionTTLInSeconds: Int?
         /// An array of Intent objects. For more information, see PutBot.
         public let intents: [Intent]?
         /// The date that the bot was updated. When you create a resource, the creation date and last updated date are the same.
@@ -2976,7 +2688,7 @@ extension LexModelBuildingService {
         /// The Amazon Polly voice ID that Amazon Lex uses for voice interaction with the user. For more information, see PutBot.
         public let voiceId: String?
 
-        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool? = nil, clarificationPrompt: Prompt? = nil, createdDate: TimeStamp? = nil, createVersion: Bool? = nil, description: String? = nil, failureReason: String? = nil, idleSessionTTLInSeconds: Int32? = nil, intents: [Intent]? = nil, lastUpdatedDate: TimeStamp? = nil, locale: Locale? = nil, name: String? = nil, status: Status? = nil, version: String? = nil, voiceId: String? = nil) {
+        public init(abortStatement: Statement? = nil, checksum: String? = nil, childDirected: Bool? = nil, clarificationPrompt: Prompt? = nil, createdDate: TimeStamp? = nil, createVersion: Bool? = nil, description: String? = nil, failureReason: String? = nil, idleSessionTTLInSeconds: Int? = nil, intents: [Intent]? = nil, lastUpdatedDate: TimeStamp? = nil, locale: Locale? = nil, name: String? = nil, status: Status? = nil, version: String? = nil, voiceId: String? = nil) {
             self.abortStatement = abortStatement
             self.checksum = checksum
             self.childDirected = childDirected
@@ -2993,24 +2705,6 @@ extension LexModelBuildingService {
             self.status = status
             self.version = version
             self.voiceId = voiceId
-        }
-
-        public func validate() throws {
-            try abortStatement?.validate()
-            try clarificationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", max: 86400)
-            try validate(idleSessionTTLInSeconds, name:"idleSessionTTLInSeconds", min: 60)
-            try intents?.forEach {
-                try $0.validate()
-            }
-            try validate(name, name:"name", max: 50)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3092,29 +2786,29 @@ extension LexModelBuildingService {
             self.slots = slots
         }
 
-        public func validate() throws {
-            try conclusionStatement?.validate()
-            try confirmationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try dialogCodeHook?.validate()
-            try followUpPrompt?.validate()
-            try fulfillmentActivity?.validate()
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try rejectionStatement?.validate()
+        public func validate(name: String) throws {
+            try conclusionStatement?.validate(name: "\(name).conclusionStatement")
+            try confirmationPrompt?.validate(name: "\(name).confirmationPrompt")
+            try validate(description, name:"description", parent: name, max: 200)
+            try validate(description, name:"description", parent: name, min: 0)
+            try dialogCodeHook?.validate(name: "\(name).dialogCodeHook")
+            try followUpPrompt?.validate(name: "\(name).followUpPrompt")
+            try fulfillmentActivity?.validate(name: "\(name).fulfillmentActivity")
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
+            try rejectionStatement?.validate(name: "\(name).rejectionStatement")
             try sampleUtterances?.forEach {
-                try validate($0, name:"sampleUtterances[]", max: 200)
-                try validate($0, name:"sampleUtterances[]", min: 1)
+                try validate($0, name: "sampleUtterances[]", parent: name, max: 200)
+                try validate($0, name: "sampleUtterances[]", parent: name, min: 1)
             }
-            try validate(sampleUtterances, name:"sampleUtterances", max: 1500)
-            try validate(sampleUtterances, name:"sampleUtterances", min: 0)
+            try validate(sampleUtterances, name:"sampleUtterances", parent: name, max: 1500)
+            try validate(sampleUtterances, name:"sampleUtterances", parent: name, min: 0)
             try slots?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).slots[]")
             }
-            try validate(slots, name:"slots", max: 100)
-            try validate(slots, name:"slots", min: 0)
+            try validate(slots, name:"slots", parent: name, max: 100)
+            try validate(slots, name:"slots", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3205,34 +2899,6 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try conclusionStatement?.validate()
-            try confirmationPrompt?.validate()
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try dialogCodeHook?.validate()
-            try followUpPrompt?.validate()
-            try fulfillmentActivity?.validate()
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try rejectionStatement?.validate()
-            try sampleUtterances?.forEach {
-                try validate($0, name:"sampleUtterances[]", max: 200)
-                try validate($0, name:"sampleUtterances[]", min: 1)
-            }
-            try validate(sampleUtterances, name:"sampleUtterances", max: 1500)
-            try validate(sampleUtterances, name:"sampleUtterances", min: 0)
-            try slots?.forEach {
-                try $0.validate()
-            }
-            try validate(slots, name:"slots", max: 100)
-            try validate(slots, name:"slots", min: 0)
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case checksum = "checksum"
             case conclusionStatement = "conclusionStatement"
@@ -3284,17 +2950,17 @@ extension LexModelBuildingService {
             self.valueSelectionStrategy = valueSelectionStrategy
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 200)
+            try validate(description, name:"description", parent: name, min: 0)
             try enumerationValues?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).enumerationValues[]")
             }
-            try validate(enumerationValues, name:"enumerationValues", max: 10000)
-            try validate(enumerationValues, name:"enumerationValues", min: 1)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
+            try validate(enumerationValues, name:"enumerationValues", parent: name, max: 10000)
+            try validate(enumerationValues, name:"enumerationValues", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z]_?)+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3350,22 +3016,6 @@ extension LexModelBuildingService {
             self.version = version
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try enumerationValues?.forEach {
-                try $0.validate()
-            }
-            try validate(enumerationValues, name:"enumerationValues", max: 10000)
-            try validate(enumerationValues, name:"enumerationValues", min: 1)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case checksum = "checksum"
             case createdDate = "createdDate"
@@ -3375,45 +3025,6 @@ extension LexModelBuildingService {
             case lastUpdatedDate = "lastUpdatedDate"
             case name = "name"
             case valueSelectionStrategy = "valueSelectionStrategy"
-            case version = "version"
-        }
-    }
-
-    public enum ReferenceType: String, CustomStringConvertible, Codable {
-        case intent = "Intent"
-        case bot = "Bot"
-        case botalias = "BotAlias"
-        case botchannel = "BotChannel"
-        public var description: String { return self.rawValue }
-    }
-
-    public struct ResourceReference: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "name", required: false, type: .string), 
-            AWSShapeMember(label: "version", required: false, type: .string)
-        ]
-
-        /// The name of the resource that is using the resource that you are trying to delete.
-        public let name: String?
-        /// The version of the resource that is using the resource that you are trying to delete.
-        public let version: String?
-
-        public init(name: String? = nil, version: String? = nil) {
-            self.name = name
-            self.version = version
-        }
-
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[a-zA-Z_]+")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case name = "name"
             case version = "version"
         }
     }
@@ -3443,7 +3054,7 @@ extension LexModelBuildingService {
         /// The name of the slot.
         public let name: String
         ///  Directs Lex the order in which to elicit this slot value from the user. For example, if the intent has two slots with priorities 1 and 2, AWS Lex first elicits a value for the slot with priority 1. If multiple slots share the same priority, the order in which Lex elicits values is arbitrary.
-        public let priority: Int32?
+        public let priority: Int?
         ///  A set of possible responses for the slot type used by text-based clients. A user chooses an option from the response card, instead of using text to reply. 
         public let responseCard: String?
         ///  If you know a specific pattern with which users might respond to an Amazon Lex request for a slot value, you can provide those utterances to improve accuracy. This is optional. In most cases, Amazon Lex is capable of understanding user utterances. 
@@ -3457,7 +3068,7 @@ extension LexModelBuildingService {
         /// The prompt that Amazon Lex uses to elicit the slot value from the user.
         public let valueElicitationPrompt: Prompt?
 
-        public init(description: String? = nil, name: String, priority: Int32? = nil, responseCard: String? = nil, sampleUtterances: [String]? = nil, slotConstraint: SlotConstraint, slotType: String? = nil, slotTypeVersion: String? = nil, valueElicitationPrompt: Prompt? = nil) {
+        public init(description: String? = nil, name: String, priority: Int? = nil, responseCard: String? = nil, sampleUtterances: [String]? = nil, slotConstraint: SlotConstraint, slotType: String? = nil, slotTypeVersion: String? = nil, valueElicitationPrompt: Prompt? = nil) {
             self.description = description
             self.name = name
             self.priority = priority
@@ -3469,29 +3080,29 @@ extension LexModelBuildingService {
             self.valueElicitationPrompt = valueElicitationPrompt
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z](-|_|.)?)+$")
-            try validate(priority, name:"priority", max: 100)
-            try validate(priority, name:"priority", min: 0)
-            try validate(responseCard, name:"responseCard", max: 50000)
-            try validate(responseCard, name:"responseCard", min: 1)
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 200)
+            try validate(description, name:"description", parent: name, min: 0)
+            try validate(name, name:"name", parent: name, max: 100)
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(name, name:"name", parent: name, pattern: "^([A-Za-z](-|_|.)?)+$")
+            try validate(priority, name:"priority", parent: name, max: 100)
+            try validate(priority, name:"priority", parent: name, min: 0)
+            try validate(responseCard, name:"responseCard", parent: name, max: 50000)
+            try validate(responseCard, name:"responseCard", parent: name, min: 1)
             try sampleUtterances?.forEach {
-                try validate($0, name:"sampleUtterances[]", max: 200)
-                try validate($0, name:"sampleUtterances[]", min: 1)
+                try validate($0, name: "sampleUtterances[]", parent: name, max: 200)
+                try validate($0, name: "sampleUtterances[]", parent: name, min: 1)
             }
-            try validate(sampleUtterances, name:"sampleUtterances", max: 10)
-            try validate(sampleUtterances, name:"sampleUtterances", min: 0)
-            try validate(slotType, name:"slotType", max: 100)
-            try validate(slotType, name:"slotType", min: 1)
-            try validate(slotType, name:"slotType", pattern: "^((AMAZON\\.)_?|[A-Za-z]_?)+")
-            try validate(slotTypeVersion, name:"slotTypeVersion", max: 64)
-            try validate(slotTypeVersion, name:"slotTypeVersion", min: 1)
-            try validate(slotTypeVersion, name:"slotTypeVersion", pattern: "\\$LATEST|[0-9]+")
-            try valueElicitationPrompt?.validate()
+            try validate(sampleUtterances, name:"sampleUtterances", parent: name, max: 10)
+            try validate(sampleUtterances, name:"sampleUtterances", parent: name, min: 0)
+            try validate(slotType, name:"slotType", parent: name, max: 100)
+            try validate(slotType, name:"slotType", parent: name, min: 1)
+            try validate(slotType, name:"slotType", parent: name, pattern: "^((AMAZON\\.)_?|[A-Za-z]_?)+")
+            try validate(slotTypeVersion, name:"slotTypeVersion", parent: name, max: 64)
+            try validate(slotTypeVersion, name:"slotTypeVersion", parent: name, min: 1)
+            try validate(slotTypeVersion, name:"slotTypeVersion", parent: name, pattern: "\\$LATEST|[0-9]+")
+            try valueElicitationPrompt?.validate(name: "\(name).valueElicitationPrompt")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3539,17 +3150,6 @@ extension LexModelBuildingService {
             self.lastUpdatedDate = lastUpdatedDate
             self.name = name
             self.version = version
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 200)
-            try validate(description, name:"description", min: 0)
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "^([A-Za-z]_?)+$")
-            try validate(version, name:"version", max: 64)
-            try validate(version, name:"version", min: 1)
-            try validate(version, name:"version", pattern: "\\$LATEST|[0-9]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3626,12 +3226,6 @@ extension LexModelBuildingService {
             self.resourceType = resourceType
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", max: 100)
-            try validate(name, name:"name", min: 1)
-            try validate(name, name:"name", pattern: "[a-zA-Z_]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createdDate = "createdDate"
             case importId = "importId"
@@ -3658,14 +3252,14 @@ extension LexModelBuildingService {
             self.responseCard = responseCard
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try messages.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).messages[]")
             }
-            try validate(messages, name:"messages", max: 15)
-            try validate(messages, name:"messages", min: 1)
-            try validate(responseCard, name:"responseCard", max: 50000)
-            try validate(responseCard, name:"responseCard", min: 1)
+            try validate(messages, name:"messages", parent: name, max: 15)
+            try validate(messages, name:"messages", parent: name, min: 1)
+            try validate(responseCard, name:"responseCard", parent: name, max: 50000)
+            try validate(responseCard, name:"responseCard", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3699,9 +3293,9 @@ extension LexModelBuildingService {
         ]
 
         /// The number of times that the utterance was processed.
-        public let count: Int32?
+        public let count: Int?
         /// The total number of individuals that used the utterance.
-        public let distinctUsers: Int32?
+        public let distinctUsers: Int?
         /// The date that the utterance was first recorded.
         public let firstUtteredDate: TimeStamp?
         /// The date that the utterance was last recorded.
@@ -3709,17 +3303,12 @@ extension LexModelBuildingService {
         /// The text that was entered by the user or the text representation of an audio clip.
         public let utteranceString: String?
 
-        public init(count: Int32? = nil, distinctUsers: Int32? = nil, firstUtteredDate: TimeStamp? = nil, lastUtteredDate: TimeStamp? = nil, utteranceString: String? = nil) {
+        public init(count: Int? = nil, distinctUsers: Int? = nil, firstUtteredDate: TimeStamp? = nil, lastUtteredDate: TimeStamp? = nil, utteranceString: String? = nil) {
             self.count = count
             self.distinctUsers = distinctUsers
             self.firstUtteredDate = firstUtteredDate
             self.lastUtteredDate = lastUtteredDate
             self.utteranceString = utteranceString
-        }
-
-        public func validate() throws {
-            try validate(utteranceString, name:"utteranceString", max: 2000)
-            try validate(utteranceString, name:"utteranceString", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -3745,15 +3334,6 @@ extension LexModelBuildingService {
         public init(botVersion: String? = nil, utterances: [UtteranceData]? = nil) {
             self.botVersion = botVersion
             self.utterances = utterances
-        }
-
-        public func validate() throws {
-            try validate(botVersion, name:"botVersion", max: 64)
-            try validate(botVersion, name:"botVersion", min: 1)
-            try validate(botVersion, name:"botVersion", pattern: "\\$LATEST|[0-9]+")
-            try utterances?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {

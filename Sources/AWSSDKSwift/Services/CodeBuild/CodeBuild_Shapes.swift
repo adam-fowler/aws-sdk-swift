@@ -43,12 +43,12 @@ extension CodeBuild {
             self.ids = ids
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try ids.forEach {
-                try validate($0, name:"ids[]", min: 1)
+                try validate($0, name: "ids[]", parent: name, min: 1)
             }
-            try validate(ids, name:"ids", max: 100)
-            try validate(ids, name:"ids", min: 1)
+            try validate(ids, name:"ids", parent: name, max: 100)
+            try validate(ids, name:"ids", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -72,17 +72,6 @@ extension CodeBuild {
             self.buildsNotDeleted = buildsNotDeleted
         }
 
-        public func validate() throws {
-            try buildsDeleted?.forEach {
-                try validate($0, name:"buildsDeleted[]", min: 1)
-            }
-            try validate(buildsDeleted, name:"buildsDeleted", max: 100)
-            try validate(buildsDeleted, name:"buildsDeleted", min: 1)
-            try buildsNotDeleted?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case buildsDeleted = "buildsDeleted"
             case buildsNotDeleted = "buildsNotDeleted"
@@ -101,12 +90,12 @@ extension CodeBuild {
             self.ids = ids
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try ids.forEach {
-                try validate($0, name:"ids[]", min: 1)
+                try validate($0, name: "ids[]", parent: name, min: 1)
             }
-            try validate(ids, name:"ids", max: 100)
-            try validate(ids, name:"ids", min: 1)
+            try validate(ids, name:"ids", parent: name, max: 100)
+            try validate(ids, name:"ids", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -130,17 +119,6 @@ extension CodeBuild {
             self.buildsNotFound = buildsNotFound
         }
 
-        public func validate() throws {
-            try builds?.forEach {
-                try $0.validate()
-            }
-            try buildsNotFound?.forEach {
-                try validate($0, name:"buildsNotFound[]", min: 1)
-            }
-            try validate(buildsNotFound, name:"buildsNotFound", max: 100)
-            try validate(buildsNotFound, name:"buildsNotFound", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case builds = "builds"
             case buildsNotFound = "buildsNotFound"
@@ -159,12 +137,12 @@ extension CodeBuild {
             self.names = names
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try names.forEach {
-                try validate($0, name:"names[]", min: 1)
+                try validate($0, name: "names[]", parent: name, min: 1)
             }
-            try validate(names, name:"names", max: 100)
-            try validate(names, name:"names", min: 1)
+            try validate(names, name:"names", parent: name, max: 100)
+            try validate(names, name:"names", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -186,17 +164,6 @@ extension CodeBuild {
         public init(projects: [Project]? = nil, projectsNotFound: [String]? = nil) {
             self.projects = projects
             self.projectsNotFound = projectsNotFound
-        }
-
-        public func validate() throws {
-            try projects?.forEach {
-                try $0.validate()
-            }
-            try projectsNotFound?.forEach {
-                try validate($0, name:"projectsNotFound[]", min: 1)
-            }
-            try validate(projectsNotFound, name:"projectsNotFound", max: 100)
-            try validate(projectsNotFound, name:"projectsNotFound", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -266,7 +233,7 @@ extension CodeBuild {
         /// The name of the AWS CodeBuild project.
         public let projectName: String?
         ///  The number of minutes a build is allowed to be queued before it times out. 
-        public let queuedTimeoutInMinutes: Int32?
+        public let queuedTimeoutInMinutes: Int?
         ///  An identifier for the version of this build's source code.     For AWS CodeCommit, GitHub, GitHub Enterprise, and BitBucket, the commit ID.     For AWS CodePipeline, the source revision provided by AWS CodePipeline.     For Amazon Simple Storage Service (Amazon S3), this does not apply.   
         public let resolvedSourceVersion: String?
         ///  An array of ProjectArtifacts objects. 
@@ -284,11 +251,11 @@ extension CodeBuild {
         /// When the build process started, expressed in Unix time format.
         public let startTime: TimeStamp?
         /// How long, in minutes, for AWS CodeBuild to wait before timing out this build if it does not get marked as completed.
-        public let timeoutInMinutes: Int32?
+        public let timeoutInMinutes: Int?
         /// If your AWS CodeBuild project accesses resources in an Amazon VPC, you provide this parameter that identifies the VPC ID and the list of security group IDs and subnet IDs. The security groups and subnets must belong to the same VPC. You must provide at least one security group and one subnet ID.
         public let vpcConfig: VpcConfig?
 
-        public init(arn: String? = nil, artifacts: BuildArtifacts? = nil, buildComplete: Bool? = nil, buildStatus: StatusType? = nil, cache: ProjectCache? = nil, currentPhase: String? = nil, encryptionKey: String? = nil, endTime: TimeStamp? = nil, environment: ProjectEnvironment? = nil, id: String? = nil, initiator: String? = nil, logs: LogsLocation? = nil, networkInterface: NetworkInterface? = nil, phases: [BuildPhase]? = nil, projectName: String? = nil, queuedTimeoutInMinutes: Int32? = nil, resolvedSourceVersion: String? = nil, secondaryArtifacts: [BuildArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String? = nil, source: ProjectSource? = nil, sourceVersion: String? = nil, startTime: TimeStamp? = nil, timeoutInMinutes: Int32? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(arn: String? = nil, artifacts: BuildArtifacts? = nil, buildComplete: Bool? = nil, buildStatus: StatusType? = nil, cache: ProjectCache? = nil, currentPhase: String? = nil, encryptionKey: String? = nil, endTime: TimeStamp? = nil, environment: ProjectEnvironment? = nil, id: String? = nil, initiator: String? = nil, logs: LogsLocation? = nil, networkInterface: NetworkInterface? = nil, phases: [BuildPhase]? = nil, projectName: String? = nil, queuedTimeoutInMinutes: Int? = nil, resolvedSourceVersion: String? = nil, secondaryArtifacts: [BuildArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String? = nil, source: ProjectSource? = nil, sourceVersion: String? = nil, startTime: TimeStamp? = nil, timeoutInMinutes: Int? = nil, vpcConfig: VpcConfig? = nil) {
             self.arn = arn
             self.artifacts = artifacts
             self.buildComplete = buildComplete
@@ -315,29 +282,6 @@ extension CodeBuild {
             self.startTime = startTime
             self.timeoutInMinutes = timeoutInMinutes
             self.vpcConfig = vpcConfig
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", min: 1)
-            try validate(encryptionKey, name:"encryptionKey", min: 1)
-            try environment?.validate()
-            try validate(id, name:"id", min: 1)
-            try networkInterface?.validate()
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(resolvedSourceVersion, name:"resolvedSourceVersion", min: 1)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", max: 12)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", min: 0)
-            try secondarySources?.forEach {
-                try $0.validate()
-            }
-            try validate(secondarySources, name:"secondarySources", max: 12)
-            try validate(secondarySources, name:"secondarySources", min: 0)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", max: 12)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", min: 0)
-            try validate(serviceRole, name:"serviceRole", min: 1)
-            try source?.validate()
-            try validate(sourceVersion, name:"sourceVersion", min: 1)
-            try vpcConfig?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -426,10 +370,6 @@ extension CodeBuild {
         public init(id: String? = nil, statusCode: String? = nil) {
             self.id = id
             self.statusCode = statusCode
-        }
-
-        public func validate() throws {
-            try validate(id, name:"id", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -582,7 +522,7 @@ extension CodeBuild {
         /// The name of the build project.
         public let name: String
         ///  The number of minutes a build is allowed to be queued before it times out. 
-        public let queuedTimeoutInMinutes: Int32?
+        public let queuedTimeoutInMinutes: Int?
         ///  An array of ProjectArtifacts objects. 
         public let secondaryArtifacts: [ProjectArtifacts]?
         ///  An array of ProjectSource objects. 
@@ -598,11 +538,11 @@ extension CodeBuild {
         /// A set of tags for this build project. These tags are available for use by AWS services that support AWS CodeBuild build project tags.
         public let tags: [Tag]?
         /// How long, in minutes, from 5 to 480 (8 hours), for AWS CodeBuild to wait before it times out any build that has not been marked as completed. The default is 60 minutes.
-        public let timeoutInMinutes: Int32?
+        public let timeoutInMinutes: Int?
         /// VpcConfig enables AWS CodeBuild to access resources in an Amazon VPC.
         public let vpcConfig: VpcConfig?
 
-        public init(artifacts: ProjectArtifacts, badgeEnabled: Bool? = nil, cache: ProjectCache? = nil, description: String? = nil, encryptionKey: String? = nil, environment: ProjectEnvironment, logsConfig: LogsConfig? = nil, name: String, queuedTimeoutInMinutes: Int32? = nil, secondaryArtifacts: [ProjectArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String, source: ProjectSource, sourceVersion: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int32? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(artifacts: ProjectArtifacts, badgeEnabled: Bool? = nil, cache: ProjectCache? = nil, description: String? = nil, encryptionKey: String? = nil, environment: ProjectEnvironment, logsConfig: LogsConfig? = nil, name: String, queuedTimeoutInMinutes: Int? = nil, secondaryArtifacts: [ProjectArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String, source: ProjectSource, sourceVersion: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int? = nil, vpcConfig: VpcConfig? = nil) {
             self.artifacts = artifacts
             self.badgeEnabled = badgeEnabled
             self.cache = cache
@@ -623,35 +563,35 @@ extension CodeBuild {
             self.vpcConfig = vpcConfig
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 255)
-            try validate(description, name:"description", min: 0)
-            try validate(encryptionKey, name:"encryptionKey", min: 1)
-            try environment.validate()
-            try validate(name, name:"name", max: 255)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
-            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", max: 480)
-            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", min: 5)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", max: 12)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", min: 0)
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 255)
+            try validate(description, name:"description", parent: name, min: 0)
+            try validate(encryptionKey, name:"encryptionKey", parent: name, min: 1)
+            try environment.validate(name: "\(name).environment")
+            try validate(name, name:"name", parent: name, max: 255)
+            try validate(name, name:"name", parent: name, min: 2)
+            try validate(name, name:"name", parent: name, pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
+            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", parent: name, max: 480)
+            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", parent: name, min: 5)
+            try validate(secondaryArtifacts, name:"secondaryArtifacts", parent: name, max: 12)
+            try validate(secondaryArtifacts, name:"secondaryArtifacts", parent: name, min: 0)
             try secondarySources?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).secondarySources[]")
             }
-            try validate(secondarySources, name:"secondarySources", max: 12)
-            try validate(secondarySources, name:"secondarySources", min: 0)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", max: 12)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", min: 0)
-            try validate(serviceRole, name:"serviceRole", min: 1)
-            try source.validate()
+            try validate(secondarySources, name:"secondarySources", parent: name, max: 12)
+            try validate(secondarySources, name:"secondarySources", parent: name, min: 0)
+            try validate(secondarySourceVersions, name:"secondarySourceVersions", parent: name, max: 12)
+            try validate(secondarySourceVersions, name:"secondarySourceVersions", parent: name, min: 0)
+            try validate(serviceRole, name:"serviceRole", parent: name, min: 1)
+            try source.validate(name: "\(name).source")
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(tags, name:"tags", min: 0)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", max: 480)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", min: 5)
-            try vpcConfig?.validate()
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(tags, name:"tags", parent: name, min: 0)
+            try validate(timeoutInMinutes, name:"timeoutInMinutes", parent: name, max: 480)
+            try validate(timeoutInMinutes, name:"timeoutInMinutes", parent: name, min: 5)
+            try vpcConfig?.validate(name: "\(name).vpcConfig")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -688,10 +628,6 @@ extension CodeBuild {
             self.project = project
         }
 
-        public func validate() throws {
-            try project?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case project = "project"
         }
@@ -717,10 +653,10 @@ extension CodeBuild {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(projectName, name:"projectName", max: 255)
-            try validate(projectName, name:"projectName", min: 2)
-            try validate(projectName, name:"projectName", pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
+        public func validate(name: String) throws {
+            try validate(projectName, name:"projectName", parent: name, max: 255)
+            try validate(projectName, name:"projectName", parent: name, min: 2)
+            try validate(projectName, name:"projectName", parent: name, pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -740,10 +676,6 @@ extension CodeBuild {
 
         public init(webhook: Webhook? = nil) {
             self.webhook = webhook
-        }
-
-        public func validate() throws {
-            try webhook?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -768,8 +700,8 @@ extension CodeBuild {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -797,8 +729,8 @@ extension CodeBuild {
             self.arn = arn
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", min: 1)
+        public func validate(name: String) throws {
+            try validate(arn, name:"arn", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -818,10 +750,6 @@ extension CodeBuild {
             self.arn = arn
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
         }
@@ -839,10 +767,10 @@ extension CodeBuild {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(projectName, name:"projectName", max: 255)
-            try validate(projectName, name:"projectName", min: 2)
-            try validate(projectName, name:"projectName", pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
+        public func validate(name: String) throws {
+            try validate(projectName, name:"projectName", parent: name, max: 255)
+            try validate(projectName, name:"projectName", parent: name, min: 2)
+            try validate(projectName, name:"projectName", parent: name, pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -955,8 +883,8 @@ extension CodeBuild {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(name, name:"name", min: 1)
+        public func validate(name: String) throws {
+            try validate(name, name:"name", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1019,9 +947,9 @@ extension CodeBuild {
             self.username = username
         }
 
-        public func validate() throws {
-            try validate(token, name:"token", min: 1)
-            try validate(username, name:"username", min: 1)
+        public func validate(name: String) throws {
+            try validate(token, name:"token", parent: name, min: 1)
+            try validate(username, name:"username", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1044,10 +972,6 @@ extension CodeBuild {
             self.arn = arn
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
         }
@@ -1065,8 +989,8 @@ extension CodeBuild {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(projectName, name:"projectName", min: 1)
+        public func validate(name: String) throws {
+            try validate(projectName, name:"projectName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1116,8 +1040,8 @@ extension CodeBuild {
             self.sortOrder = sortOrder
         }
 
-        public func validate() throws {
-            try validate(projectName, name:"projectName", min: 1)
+        public func validate(name: String) throws {
+            try validate(projectName, name:"projectName", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1141,14 +1065,6 @@ extension CodeBuild {
         public init(ids: [String]? = nil, nextToken: String? = nil) {
             self.ids = ids
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try ids?.forEach {
-                try validate($0, name:"ids[]", min: 1)
-            }
-            try validate(ids, name:"ids", max: 100)
-            try validate(ids, name:"ids", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1193,14 +1109,6 @@ extension CodeBuild {
         public init(ids: [String]? = nil, nextToken: String? = nil) {
             self.ids = ids
             self.nextToken = nextToken
-        }
-
-        public func validate() throws {
-            try ids?.forEach {
-                try validate($0, name:"ids[]", min: 1)
-            }
-            try validate(ids, name:"ids", max: 100)
-            try validate(ids, name:"ids", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1254,8 +1162,8 @@ extension CodeBuild {
             self.sortOrder = sortOrder
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1279,14 +1187,6 @@ extension CodeBuild {
         public init(nextToken: String? = nil, projects: [String]? = nil) {
             self.nextToken = nextToken
             self.projects = projects
-        }
-
-        public func validate() throws {
-            try projects?.forEach {
-                try validate($0, name:"projects[]", min: 1)
-            }
-            try validate(projects, name:"projects", max: 100)
-            try validate(projects, name:"projects", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1313,12 +1213,6 @@ extension CodeBuild {
 
         public init(sourceCredentialsInfos: [SourceCredentialsInfo]? = nil) {
             self.sourceCredentialsInfos = sourceCredentialsInfos
-        }
-
-        public func validate() throws {
-            try sourceCredentialsInfos?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1412,11 +1306,6 @@ extension CodeBuild {
             self.subnetId = subnetId
         }
 
-        public func validate() throws {
-            try validate(networkInterfaceId, name:"networkInterfaceId", min: 1)
-            try validate(subnetId, name:"subnetId", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case networkInterfaceId = "networkInterfaceId"
             case subnetId = "subnetId"
@@ -1502,7 +1391,7 @@ extension CodeBuild {
         /// The name of the build project.
         public let name: String?
         ///  The number of minutes a build is allowed to be queued before it times out. 
-        public let queuedTimeoutInMinutes: Int32?
+        public let queuedTimeoutInMinutes: Int?
         ///  An array of ProjectArtifacts objects. 
         public let secondaryArtifacts: [ProjectArtifacts]?
         ///  An array of ProjectSource objects. 
@@ -1518,13 +1407,13 @@ extension CodeBuild {
         /// The tags for this build project. These tags are available for use by AWS services that support AWS CodeBuild build project tags.
         public let tags: [Tag]?
         /// How long, in minutes, from 5 to 480 (8 hours), for AWS CodeBuild to wait before timing out any related build that did not get marked as completed. The default is 60 minutes.
-        public let timeoutInMinutes: Int32?
+        public let timeoutInMinutes: Int?
         /// Information about the VPC configuration that AWS CodeBuild accesses.
         public let vpcConfig: VpcConfig?
         /// Information about a webhook that connects repository events to a build project in AWS CodeBuild.
         public let webhook: Webhook?
 
-        public init(arn: String? = nil, artifacts: ProjectArtifacts? = nil, badge: ProjectBadge? = nil, cache: ProjectCache? = nil, created: TimeStamp? = nil, description: String? = nil, encryptionKey: String? = nil, environment: ProjectEnvironment? = nil, lastModified: TimeStamp? = nil, logsConfig: LogsConfig? = nil, name: String? = nil, queuedTimeoutInMinutes: Int32? = nil, secondaryArtifacts: [ProjectArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String? = nil, source: ProjectSource? = nil, sourceVersion: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int32? = nil, vpcConfig: VpcConfig? = nil, webhook: Webhook? = nil) {
+        public init(arn: String? = nil, artifacts: ProjectArtifacts? = nil, badge: ProjectBadge? = nil, cache: ProjectCache? = nil, created: TimeStamp? = nil, description: String? = nil, encryptionKey: String? = nil, environment: ProjectEnvironment? = nil, lastModified: TimeStamp? = nil, logsConfig: LogsConfig? = nil, name: String? = nil, queuedTimeoutInMinutes: Int? = nil, secondaryArtifacts: [ProjectArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String? = nil, source: ProjectSource? = nil, sourceVersion: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int? = nil, vpcConfig: VpcConfig? = nil, webhook: Webhook? = nil) {
             self.arn = arn
             self.artifacts = artifacts
             self.badge = badge
@@ -1547,38 +1436,6 @@ extension CodeBuild {
             self.timeoutInMinutes = timeoutInMinutes
             self.vpcConfig = vpcConfig
             self.webhook = webhook
-        }
-
-        public func validate() throws {
-            try validate(description, name:"description", max: 255)
-            try validate(description, name:"description", min: 0)
-            try validate(encryptionKey, name:"encryptionKey", min: 1)
-            try environment?.validate()
-            try validate(name, name:"name", max: 255)
-            try validate(name, name:"name", min: 2)
-            try validate(name, name:"name", pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
-            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", max: 480)
-            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", min: 5)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", max: 12)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", min: 0)
-            try secondarySources?.forEach {
-                try $0.validate()
-            }
-            try validate(secondarySources, name:"secondarySources", max: 12)
-            try validate(secondarySources, name:"secondarySources", min: 0)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", max: 12)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", min: 0)
-            try validate(serviceRole, name:"serviceRole", min: 1)
-            try source?.validate()
-            try tags?.forEach {
-                try $0.validate()
-            }
-            try validate(tags, name:"tags", max: 50)
-            try validate(tags, name:"tags", min: 0)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", max: 480)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", min: 5)
-            try vpcConfig?.validate()
-            try webhook?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1753,12 +1610,12 @@ extension CodeBuild {
             self.`type` = `type`
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try environmentVariables?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).environmentVariables[]")
             }
-            try validate(image, name:"image", min: 1)
-            try registryCredential?.validate()
+            try validate(image, name:"image", parent: name, min: 1)
+            try registryCredential?.validate(name: "\(name).registryCredential")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1798,7 +1655,7 @@ extension CodeBuild {
         /// The build spec declaration to use for the builds in this build project. If this value is not specified, a build spec must be included along with the source code to be built.
         public let buildspec: String?
         /// Information about the Git clone depth for the build project.
-        public let gitCloneDepth: Int32?
+        public let gitCloneDepth: Int?
         ///  Information about the Git submodules configuration for the build project. 
         public let gitSubmodulesConfig: GitSubmodulesConfig?
         /// Enable this flag to ignore SSL warnings while connecting to the project source code.
@@ -1812,7 +1669,7 @@ extension CodeBuild {
         /// The type of repository that contains the source code to be built. Valid values include:    BITBUCKET: The source code is in a Bitbucket repository.    CODECOMMIT: The source code is in an AWS CodeCommit repository.    CODEPIPELINE: The source code settings are specified in the source action of a pipeline in AWS CodePipeline.    GITHUB: The source code is in a GitHub repository.    NO_SOURCE: The project does not have input source code.    S3: The source code is in an Amazon Simple Storage Service (Amazon S3) input bucket.  
         public let `type`: SourceType
 
-        public init(auth: SourceAuth? = nil, buildspec: String? = nil, gitCloneDepth: Int32? = nil, gitSubmodulesConfig: GitSubmodulesConfig? = nil, insecureSsl: Bool? = nil, location: String? = nil, reportBuildStatus: Bool? = nil, sourceIdentifier: String? = nil, type: SourceType) {
+        public init(auth: SourceAuth? = nil, buildspec: String? = nil, gitCloneDepth: Int? = nil, gitSubmodulesConfig: GitSubmodulesConfig? = nil, insecureSsl: Bool? = nil, location: String? = nil, reportBuildStatus: Bool? = nil, sourceIdentifier: String? = nil, type: SourceType) {
             self.auth = auth
             self.buildspec = buildspec
             self.gitCloneDepth = gitCloneDepth
@@ -1824,8 +1681,8 @@ extension CodeBuild {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(gitCloneDepth, name:"gitCloneDepth", min: 0)
+        public func validate(name: String) throws {
+            try validate(gitCloneDepth, name:"gitCloneDepth", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1879,8 +1736,8 @@ extension CodeBuild {
             self.credentialProvider = credentialProvider
         }
 
-        public func validate() throws {
-            try validate(credential, name:"credential", min: 1)
+        public func validate(name: String) throws {
+            try validate(credential, name:"credential", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1976,10 +1833,6 @@ extension CodeBuild {
             self.serverType = serverType
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case authType = "authType"
@@ -2045,7 +1898,7 @@ extension CodeBuild {
         /// A set of environment variables that overrides, for this build only, the latest ones already defined in the build project.
         public let environmentVariablesOverride: [EnvironmentVariable]?
         /// The user-defined depth of history, with a minimum value of 0, that overrides, for this build only, any previous depth of history defined in the build project.
-        public let gitCloneDepthOverride: Int32?
+        public let gitCloneDepthOverride: Int?
         ///  Information about the Git submodules configuration for this build of an AWS CodeBuild build project. 
         public let gitSubmodulesConfigOverride: GitSubmodulesConfig?
         /// A unique, case sensitive identifier you provide to ensure the idempotency of the StartBuild request. The token is included in the StartBuild request and is valid for 12 hours. If you repeat the StartBuild request with the same token, but change a parameter, AWS CodeBuild returns a parameter mismatch error. 
@@ -2063,7 +1916,7 @@ extension CodeBuild {
         /// The name of the AWS CodeBuild build project to start running a build.
         public let projectName: String
         ///  The number of minutes a build is allowed to be queued before it times out. 
-        public let queuedTimeoutInMinutesOverride: Int32?
+        public let queuedTimeoutInMinutesOverride: Int?
         ///  The credentials for access to a private registry. 
         public let registryCredentialOverride: RegistryCredential?
         ///  Set to true to report to your source provider the status of a build's start and completion. If you use this option with a source provider other than GitHub, GitHub Enterprise, or Bitbucket, an invalidInputException is thrown. 
@@ -2085,9 +1938,9 @@ extension CodeBuild {
         /// A version of the build input to be built, for this build only. If not specified, the latest version is used. If specified, must be one of:   For AWS CodeCommit: the commit ID to use.   For GitHub: the commit ID, pull request ID, branch name, or tag name that corresponds to the version of the source code you want to build. If a pull request ID is specified, it must use the format pr/pull-request-ID (for example pr/25). If a branch name is specified, the branch's HEAD commit ID is used. If not specified, the default branch's HEAD commit ID is used.   For Bitbucket: the commit ID, branch name, or tag name that corresponds to the version of the source code you want to build. If a branch name is specified, the branch's HEAD commit ID is used. If not specified, the default branch's HEAD commit ID is used.   For Amazon Simple Storage Service (Amazon S3): the version ID of the object that represents the build input ZIP file to use.    If sourceVersion is specified at the project level, then this sourceVersion (at the build level) takes precedence.   For more information, see Source Version Sample with CodeBuild in the AWS CodeBuild User Guide. 
         public let sourceVersion: String?
         /// The number of build timeout minutes, from 5 to 480 (8 hours), that overrides, for this build only, the latest setting already defined in the build project.
-        public let timeoutInMinutesOverride: Int32?
+        public let timeoutInMinutesOverride: Int?
 
-        public init(artifactsOverride: ProjectArtifacts? = nil, buildspecOverride: String? = nil, cacheOverride: ProjectCache? = nil, certificateOverride: String? = nil, computeTypeOverride: ComputeType? = nil, environmentTypeOverride: EnvironmentType? = nil, environmentVariablesOverride: [EnvironmentVariable]? = nil, gitCloneDepthOverride: Int32? = nil, gitSubmodulesConfigOverride: GitSubmodulesConfig? = nil, idempotencyToken: String? = nil, imageOverride: String? = nil, imagePullCredentialsTypeOverride: ImagePullCredentialsType? = nil, insecureSslOverride: Bool? = nil, logsConfigOverride: LogsConfig? = nil, privilegedModeOverride: Bool? = nil, projectName: String, queuedTimeoutInMinutesOverride: Int32? = nil, registryCredentialOverride: RegistryCredential? = nil, reportBuildStatusOverride: Bool? = nil, secondaryArtifactsOverride: [ProjectArtifacts]? = nil, secondarySourcesOverride: [ProjectSource]? = nil, secondarySourcesVersionOverride: [ProjectSourceVersion]? = nil, serviceRoleOverride: String? = nil, sourceAuthOverride: SourceAuth? = nil, sourceLocationOverride: String? = nil, sourceTypeOverride: SourceType? = nil, sourceVersion: String? = nil, timeoutInMinutesOverride: Int32? = nil) {
+        public init(artifactsOverride: ProjectArtifacts? = nil, buildspecOverride: String? = nil, cacheOverride: ProjectCache? = nil, certificateOverride: String? = nil, computeTypeOverride: ComputeType? = nil, environmentTypeOverride: EnvironmentType? = nil, environmentVariablesOverride: [EnvironmentVariable]? = nil, gitCloneDepthOverride: Int? = nil, gitSubmodulesConfigOverride: GitSubmodulesConfig? = nil, idempotencyToken: String? = nil, imageOverride: String? = nil, imagePullCredentialsTypeOverride: ImagePullCredentialsType? = nil, insecureSslOverride: Bool? = nil, logsConfigOverride: LogsConfig? = nil, privilegedModeOverride: Bool? = nil, projectName: String, queuedTimeoutInMinutesOverride: Int? = nil, registryCredentialOverride: RegistryCredential? = nil, reportBuildStatusOverride: Bool? = nil, secondaryArtifactsOverride: [ProjectArtifacts]? = nil, secondarySourcesOverride: [ProjectSource]? = nil, secondarySourcesVersionOverride: [ProjectSourceVersion]? = nil, serviceRoleOverride: String? = nil, sourceAuthOverride: SourceAuth? = nil, sourceLocationOverride: String? = nil, sourceTypeOverride: SourceType? = nil, sourceVersion: String? = nil, timeoutInMinutesOverride: Int? = nil) {
             self.artifactsOverride = artifactsOverride
             self.buildspecOverride = buildspecOverride
             self.cacheOverride = cacheOverride
@@ -2118,28 +1971,28 @@ extension CodeBuild {
             self.timeoutInMinutesOverride = timeoutInMinutesOverride
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try environmentVariablesOverride?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).environmentVariablesOverride[]")
             }
-            try validate(gitCloneDepthOverride, name:"gitCloneDepthOverride", min: 0)
-            try validate(imageOverride, name:"imageOverride", min: 1)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(queuedTimeoutInMinutesOverride, name:"queuedTimeoutInMinutesOverride", max: 480)
-            try validate(queuedTimeoutInMinutesOverride, name:"queuedTimeoutInMinutesOverride", min: 5)
-            try registryCredentialOverride?.validate()
-            try validate(secondaryArtifactsOverride, name:"secondaryArtifactsOverride", max: 12)
-            try validate(secondaryArtifactsOverride, name:"secondaryArtifactsOverride", min: 0)
+            try validate(gitCloneDepthOverride, name:"gitCloneDepthOverride", parent: name, min: 0)
+            try validate(imageOverride, name:"imageOverride", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(queuedTimeoutInMinutesOverride, name:"queuedTimeoutInMinutesOverride", parent: name, max: 480)
+            try validate(queuedTimeoutInMinutesOverride, name:"queuedTimeoutInMinutesOverride", parent: name, min: 5)
+            try registryCredentialOverride?.validate(name: "\(name).registryCredentialOverride")
+            try validate(secondaryArtifactsOverride, name:"secondaryArtifactsOverride", parent: name, max: 12)
+            try validate(secondaryArtifactsOverride, name:"secondaryArtifactsOverride", parent: name, min: 0)
             try secondarySourcesOverride?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).secondarySourcesOverride[]")
             }
-            try validate(secondarySourcesOverride, name:"secondarySourcesOverride", max: 12)
-            try validate(secondarySourcesOverride, name:"secondarySourcesOverride", min: 0)
-            try validate(secondarySourcesVersionOverride, name:"secondarySourcesVersionOverride", max: 12)
-            try validate(secondarySourcesVersionOverride, name:"secondarySourcesVersionOverride", min: 0)
-            try validate(serviceRoleOverride, name:"serviceRoleOverride", min: 1)
-            try validate(timeoutInMinutesOverride, name:"timeoutInMinutesOverride", max: 480)
-            try validate(timeoutInMinutesOverride, name:"timeoutInMinutesOverride", min: 5)
+            try validate(secondarySourcesOverride, name:"secondarySourcesOverride", parent: name, max: 12)
+            try validate(secondarySourcesOverride, name:"secondarySourcesOverride", parent: name, min: 0)
+            try validate(secondarySourcesVersionOverride, name:"secondarySourcesVersionOverride", parent: name, max: 12)
+            try validate(secondarySourcesVersionOverride, name:"secondarySourcesVersionOverride", parent: name, min: 0)
+            try validate(serviceRoleOverride, name:"serviceRoleOverride", parent: name, min: 1)
+            try validate(timeoutInMinutesOverride, name:"timeoutInMinutesOverride", parent: name, max: 480)
+            try validate(timeoutInMinutesOverride, name:"timeoutInMinutesOverride", parent: name, min: 5)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2186,10 +2039,6 @@ extension CodeBuild {
             self.build = build
         }
 
-        public func validate() throws {
-            try build?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case build = "build"
         }
@@ -2217,8 +2066,8 @@ extension CodeBuild {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", min: 1)
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2236,10 +2085,6 @@ extension CodeBuild {
 
         public init(build: Build? = nil) {
             self.build = build
-        }
-
-        public func validate() throws {
-            try build?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2263,13 +2108,13 @@ extension CodeBuild {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(key, name:"key", max: 127)
-            try validate(key, name:"key", min: 1)
-            try validate(key, name:"key", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=@+\\-]*)$")
-            try validate(value, name:"value", max: 255)
-            try validate(value, name:"value", min: 1)
-            try validate(value, name:"value", pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=@+\\-]*)$")
+        public func validate(name: String) throws {
+            try validate(key, name:"key", parent: name, max: 127)
+            try validate(key, name:"key", parent: name, min: 1)
+            try validate(key, name:"key", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=@+\\-]*)$")
+            try validate(value, name:"value", parent: name, max: 255)
+            try validate(value, name:"value", parent: name, min: 1)
+            try validate(value, name:"value", parent: name, pattern: "^([\\p{L}\\p{Z}\\p{N}_.:/=@+\\-]*)$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2317,7 +2162,7 @@ extension CodeBuild {
         /// The name of the build project.  You cannot change a build project's name. 
         public let name: String
         ///  The number of minutes a build is allowed to be queued before it times out. 
-        public let queuedTimeoutInMinutes: Int32?
+        public let queuedTimeoutInMinutes: Int?
         ///  An array of ProjectSource objects. 
         public let secondaryArtifacts: [ProjectArtifacts]?
         ///  An array of ProjectSource objects. 
@@ -2333,11 +2178,11 @@ extension CodeBuild {
         /// The replacement set of tags for this build project. These tags are available for use by AWS services that support AWS CodeBuild build project tags.
         public let tags: [Tag]?
         /// The replacement value in minutes, from 5 to 480 (8 hours), for AWS CodeBuild to wait before timing out any related build that did not get marked as completed.
-        public let timeoutInMinutes: Int32?
+        public let timeoutInMinutes: Int?
         /// VpcConfig enables AWS CodeBuild to access resources in an Amazon VPC.
         public let vpcConfig: VpcConfig?
 
-        public init(artifacts: ProjectArtifacts? = nil, badgeEnabled: Bool? = nil, cache: ProjectCache? = nil, description: String? = nil, encryptionKey: String? = nil, environment: ProjectEnvironment? = nil, logsConfig: LogsConfig? = nil, name: String, queuedTimeoutInMinutes: Int32? = nil, secondaryArtifacts: [ProjectArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String? = nil, source: ProjectSource? = nil, sourceVersion: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int32? = nil, vpcConfig: VpcConfig? = nil) {
+        public init(artifacts: ProjectArtifacts? = nil, badgeEnabled: Bool? = nil, cache: ProjectCache? = nil, description: String? = nil, encryptionKey: String? = nil, environment: ProjectEnvironment? = nil, logsConfig: LogsConfig? = nil, name: String, queuedTimeoutInMinutes: Int? = nil, secondaryArtifacts: [ProjectArtifacts]? = nil, secondarySources: [ProjectSource]? = nil, secondarySourceVersions: [ProjectSourceVersion]? = nil, serviceRole: String? = nil, source: ProjectSource? = nil, sourceVersion: String? = nil, tags: [Tag]? = nil, timeoutInMinutes: Int? = nil, vpcConfig: VpcConfig? = nil) {
             self.artifacts = artifacts
             self.badgeEnabled = badgeEnabled
             self.cache = cache
@@ -2358,33 +2203,33 @@ extension CodeBuild {
             self.vpcConfig = vpcConfig
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 255)
-            try validate(description, name:"description", min: 0)
-            try validate(encryptionKey, name:"encryptionKey", min: 1)
-            try environment?.validate()
-            try validate(name, name:"name", min: 1)
-            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", max: 480)
-            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", min: 5)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", max: 12)
-            try validate(secondaryArtifacts, name:"secondaryArtifacts", min: 0)
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 255)
+            try validate(description, name:"description", parent: name, min: 0)
+            try validate(encryptionKey, name:"encryptionKey", parent: name, min: 1)
+            try environment?.validate(name: "\(name).environment")
+            try validate(name, name:"name", parent: name, min: 1)
+            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", parent: name, max: 480)
+            try validate(queuedTimeoutInMinutes, name:"queuedTimeoutInMinutes", parent: name, min: 5)
+            try validate(secondaryArtifacts, name:"secondaryArtifacts", parent: name, max: 12)
+            try validate(secondaryArtifacts, name:"secondaryArtifacts", parent: name, min: 0)
             try secondarySources?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).secondarySources[]")
             }
-            try validate(secondarySources, name:"secondarySources", max: 12)
-            try validate(secondarySources, name:"secondarySources", min: 0)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", max: 12)
-            try validate(secondarySourceVersions, name:"secondarySourceVersions", min: 0)
-            try validate(serviceRole, name:"serviceRole", min: 1)
-            try source?.validate()
+            try validate(secondarySources, name:"secondarySources", parent: name, max: 12)
+            try validate(secondarySources, name:"secondarySources", parent: name, min: 0)
+            try validate(secondarySourceVersions, name:"secondarySourceVersions", parent: name, max: 12)
+            try validate(secondarySourceVersions, name:"secondarySourceVersions", parent: name, min: 0)
+            try validate(serviceRole, name:"serviceRole", parent: name, min: 1)
+            try source?.validate(name: "\(name).source")
             try tags?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).tags[]")
             }
-            try validate(tags, name:"tags", max: 50)
-            try validate(tags, name:"tags", min: 0)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", max: 480)
-            try validate(timeoutInMinutes, name:"timeoutInMinutes", min: 5)
-            try vpcConfig?.validate()
+            try validate(tags, name:"tags", parent: name, max: 50)
+            try validate(tags, name:"tags", parent: name, min: 0)
+            try validate(timeoutInMinutes, name:"timeoutInMinutes", parent: name, max: 480)
+            try validate(timeoutInMinutes, name:"timeoutInMinutes", parent: name, min: 5)
+            try vpcConfig?.validate(name: "\(name).vpcConfig")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2421,10 +2266,6 @@ extension CodeBuild {
             self.project = project
         }
 
-        public func validate() throws {
-            try project?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case project = "project"
         }
@@ -2454,10 +2295,10 @@ extension CodeBuild {
             self.rotateSecret = rotateSecret
         }
 
-        public func validate() throws {
-            try validate(projectName, name:"projectName", max: 255)
-            try validate(projectName, name:"projectName", min: 2)
-            try validate(projectName, name:"projectName", pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
+        public func validate(name: String) throws {
+            try validate(projectName, name:"projectName", parent: name, max: 255)
+            try validate(projectName, name:"projectName", parent: name, min: 2)
+            try validate(projectName, name:"projectName", parent: name, pattern: "[A-Za-z0-9][A-Za-z0-9\\-_]{1,254}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2478,10 +2319,6 @@ extension CodeBuild {
 
         public init(webhook: Webhook? = nil) {
             self.webhook = webhook
-        }
-
-        public func validate() throws {
-            try webhook?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2509,16 +2346,16 @@ extension CodeBuild {
             self.vpcId = vpcId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try securityGroupIds?.forEach {
-                try validate($0, name:"securityGroupIds[]", min: 1)
+                try validate($0, name: "securityGroupIds[]", parent: name, min: 1)
             }
-            try validate(securityGroupIds, name:"securityGroupIds", max: 5)
+            try validate(securityGroupIds, name:"securityGroupIds", parent: name, max: 5)
             try subnets?.forEach {
-                try validate($0, name:"subnets[]", min: 1)
+                try validate($0, name: "subnets[]", parent: name, min: 1)
             }
-            try validate(subnets, name:"subnets", max: 16)
-            try validate(vpcId, name:"vpcId", min: 1)
+            try validate(subnets, name:"subnets", parent: name, max: 16)
+            try validate(vpcId, name:"vpcId", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -2558,12 +2395,6 @@ extension CodeBuild {
             self.payloadUrl = payloadUrl
             self.secret = secret
             self.url = url
-        }
-
-        public func validate() throws {
-            try validate(payloadUrl, name:"payloadUrl", min: 1)
-            try validate(secret, name:"secret", min: 1)
-            try validate(url, name:"url", min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

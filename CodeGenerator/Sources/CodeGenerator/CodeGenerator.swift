@@ -103,7 +103,7 @@ extension Shape {
         case .string(_):
             return "String"
         case .integer(_):
-            return "Int32"
+            return "Int"
         case .structure(_):
             return name.toSwiftClassCase()
         case .boolean:
@@ -131,7 +131,7 @@ extension Shape {
 }
 
 extension ShapeType {
-    var description : String {
+    var description: String {
         switch self {
         case .structure:
             return "structure"
@@ -165,29 +165,29 @@ extension ShapeType {
 
 extension AWSService {
     struct ErrorContext {
-        let `enum` : String
-        let string : String
+        let `enum`: String
+        let string: String
     }
 
     struct OperationContext {
-        let comment : [String.SubSequence]
-        let funcName : String
-        let inputShape : String?
-        let outputShape : String?
-        let name : String
-        let path : String
-        let httpMethod : String
-        let deprecated : String?
+        let comment: [String.SubSequence]
+        let funcName: String
+        let inputShape: String?
+        let outputShape: String?
+        let name: String
+        let path: String
+        let httpMethod: String
+        let deprecated: String?
     }
 
     struct EnumMemberContext {
-        let `case` : String
-        let string : String
+        let `case`: String
+        let string: String
     }
 
     struct EnumContext {
-        let name : String
-        let values : [EnumMemberContext]
+        let name: String
+        let values: [EnumMemberContext]
     }
 
     struct MemberContext {
@@ -211,13 +211,17 @@ extension AWSService {
         let required : Bool
         let reqs : [String : Any]
         let member : ValidationContext?
+        let key : ValidationContext?
+        let value : ValidationContext?
 
-        init(name: String, shape: Bool = false, required: Bool = true, reqs: [String: Any] = [:], member: ValidationContext? = nil) {
+        init(name: String, shape: Bool = false, required: Bool = true, reqs: [String: Any] = [:], member: ValidationContext? = nil, key: ValidationContext? = nil, value: ValidationContext? = nil) {
             self.name = name
             self.shape = shape
             self.required = required
             self.reqs = reqs
             self.member = member
+            self.key = key
+            self.value = value
         }
     }
 
@@ -232,11 +236,11 @@ extension AWSService {
 
     /// Generate the context information for outputting the error enums
     func generateErrorContext() -> [String: Any] {
-        var context : [String: Any] = [:]
+        var context: [String: Any] = [:]
         context["name"] = serviceName
         context["errorName"] = serviceErrorName
 
-        var errorContexts : [ErrorContext] = []
+        var errorContexts: [ErrorContext] = []
         for error in errorShapeNames {
             errorContexts.append(ErrorContext(enum: error.toSwiftVariableCase(), string: error))
         }
@@ -248,7 +252,7 @@ extension AWSService {
 
     /// Generate the context information for outputting the service api calls
     func generateServiceContext() -> [String: Any] {
-        var context : [String: Any] = [:]
+        var context: [String: Any] = [:]
 
         // Service initialization
         context["name"] = serviceName
@@ -277,7 +281,7 @@ extension AWSService {
         }
 
         // Operations
-        var operationContexts : [OperationContext] = []
+        var operationContexts: [OperationContext] = []
         for operation in operations {
             operationContexts.append(OperationContext(
                 comment: docJSON["operations"][operation.name].stringValue.tagStriped().split(separator: "\n"),
@@ -297,7 +301,7 @@ extension AWSService {
     func generateEnumContext(_ shape: Shape, values: [String]) -> EnumContext {
 
         // Operations
-        var valueContexts : [EnumMemberContext] = []
+        var valueContexts: [EnumMemberContext] = []
         for value in values {
             var key = value.lowercased()
                 .replacingOccurrences(of: ".", with: "_")
@@ -351,7 +355,7 @@ extension AWSService {
     }
 
     /// Generate validation context
-    func generateValidationContext(name: String, shape: Shape, required: Bool) -> ValidationContext? {
+    func generateValidationContext(name: String, shape: Shape, required: Bool, container: Bool = false) -> ValidationContext? {
         var requirements : [String: Any] = [:]
         switch shape.type {
         case .integer(let max, let min),
@@ -368,10 +372,21 @@ extension AWSService {
         case .list(let shape, let max, let min):
             requirements["max"] = max
             requirements["min"] = min
-            if let memberValidationContext = generateValidationContext(name: name+"[]", shape: shape, required: true) {
-                return ValidationContext(name: name.toSwiftVariableCase(), required: required, reqs: requirements, member: memberValidationContext)
+            // validation code doesn't support containers inside containers. Only service affected by this is SSM
+            if !container {
+                if let memberValidationContext = generateValidationContext(name: name, shape: shape, required: true, container: true) {
+                    return ValidationContext(name: name.toSwiftVariableCase(), required: required, reqs: requirements, member: memberValidationContext)
+                }
             }
-
+        case .map(let key, let value):
+            // validation code doesn't support containers inside containers. Only service affected by this is SSM
+            if !container {
+                let keyValidationContext = generateValidationContext(name: name, shape: key, required: true, container: true)
+                let valueValiationContext = generateValidationContext(name: name, shape: value, required: true, container: true)
+                if keyValidationContext != nil || valueValiationContext != nil {
+                    return ValidationContext(name: name.toSwiftVariableCase(), required: required, key: keyValidationContext, value: valueValiationContext)
+                }
+            }
         case .string(let max, let min, let pattern):
             requirements["max"] = max
             requirements["min"] = min
@@ -416,8 +431,11 @@ extension AWSService {
 
             memberContexts.append(memberContext)
 
-            if let validationContext = generateValidationContext(name:member.name, shape: member.shape, required: member.required) {
-                validationContexts.append(validationContext)
+            // only output validation for shapes used in inputs to service apis
+            if shape.usedInInput {
+                if let validationContext = generateValidationContext(name:member.name, shape: member.shape, required: member.required) {
+                    validationContexts.append(validationContext)
+                }
             }
         }
 
@@ -432,22 +450,25 @@ extension AWSService {
 
     /// Generate the context for outputting all the AWSShape (enums and structures)
     func generateShapesContext() -> [String: Any] {
-        var context : [String: Any] = [:]
+        var context: [String: Any] = [:]
         context["name"] = serviceName
 
-        var shapeContexts : [[String : Any]] = []
+        var shapeContexts: [[String: Any]] = []
         for shape in shapes {
+            if shape.usedInInput == false && shape.usedInOutput == false {
+                continue
+            }
             // don't output error shapes
             if errorShapeNames.contains(shape.name) { continue }
 
             switch shape.type {
             case .enum(let values):
-                var enumContext : [String: Any] = [:]
+                var enumContext: [String: Any] = [:]
                 enumContext["enum"] = generateEnumContext(shape, values: values)
                 shapeContexts.append(enumContext)
 
             case .structure(let type):
-                var structContext : [String: Any] = [:]
+                var structContext: [String: Any] = [:]
                 structContext["struct"] = generateStructureContext(shape, type: type)
                 shapeContexts.append(structContext)
 

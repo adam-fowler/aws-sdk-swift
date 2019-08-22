@@ -21,14 +21,14 @@ extension MarketplaceMetering {
             self.usageRecords = usageRecords
         }
 
-        public func validate() throws {
-            try validate(productCode, name:"productCode", max: 255)
-            try validate(productCode, name:"productCode", min: 1)
+        public func validate(name: String) throws {
+            try validate(productCode, name:"productCode", parent: name, max: 255)
+            try validate(productCode, name:"productCode", parent: name, min: 1)
             try usageRecords.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).usageRecords[]")
             }
-            try validate(usageRecords, name:"usageRecords", max: 25)
-            try validate(usageRecords, name:"usageRecords", min: 0)
+            try validate(usageRecords, name:"usageRecords", parent: name, max: 25)
+            try validate(usageRecords, name:"usageRecords", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -51,17 +51,6 @@ extension MarketplaceMetering {
         public init(results: [UsageRecordResult]? = nil, unprocessedRecords: [UsageRecord]? = nil) {
             self.results = results
             self.unprocessedRecords = unprocessedRecords
-        }
-
-        public func validate() throws {
-            try results?.forEach {
-                try $0.validate()
-            }
-            try unprocessedRecords?.forEach {
-                try $0.validate()
-            }
-            try validate(unprocessedRecords, name:"unprocessedRecords", max: 25)
-            try validate(unprocessedRecords, name:"unprocessedRecords", min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -88,9 +77,9 @@ extension MarketplaceMetering {
         /// It will be one of the fcp dimension name provided during the publishing of the product.
         public let usageDimension: String
         /// Consumption value for the hour. Defaults to 0 if not specified.
-        public let usageQuantity: Int32?
+        public let usageQuantity: Int?
 
-        public init(dryRun: Bool? = nil, productCode: String, timestamp: TimeStamp, usageDimension: String, usageQuantity: Int32? = nil) {
+        public init(dryRun: Bool? = nil, productCode: String, timestamp: TimeStamp, usageDimension: String, usageQuantity: Int? = nil) {
             self.dryRun = dryRun
             self.productCode = productCode
             self.timestamp = timestamp
@@ -98,13 +87,13 @@ extension MarketplaceMetering {
             self.usageQuantity = usageQuantity
         }
 
-        public func validate() throws {
-            try validate(productCode, name:"productCode", max: 255)
-            try validate(productCode, name:"productCode", min: 1)
-            try validate(usageDimension, name:"usageDimension", max: 255)
-            try validate(usageDimension, name:"usageDimension", min: 1)
-            try validate(usageQuantity, name:"usageQuantity", max: 2147483647)
-            try validate(usageQuantity, name:"usageQuantity", min: 0)
+        public func validate(name: String) throws {
+            try validate(productCode, name:"productCode", parent: name, max: 255)
+            try validate(productCode, name:"productCode", parent: name, min: 1)
+            try validate(usageDimension, name:"usageDimension", parent: name, max: 255)
+            try validate(usageDimension, name:"usageDimension", parent: name, min: 1)
+            try validate(usageQuantity, name:"usageQuantity", parent: name, max: 2147483647)
+            try validate(usageQuantity, name:"usageQuantity", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -145,19 +134,19 @@ extension MarketplaceMetering {
         /// Product code is used to uniquely identify a product in AWS Marketplace. The product code should be the same as the one used during the publishing of a new product.
         public let productCode: String
         /// Public Key Version provided by AWS Marketplace
-        public let publicKeyVersion: Int32
+        public let publicKeyVersion: Int
 
-        public init(nonce: String? = nil, productCode: String, publicKeyVersion: Int32) {
+        public init(nonce: String? = nil, productCode: String, publicKeyVersion: Int) {
             self.nonce = nonce
             self.productCode = productCode
             self.publicKeyVersion = publicKeyVersion
         }
 
-        public func validate() throws {
-            try validate(nonce, name:"nonce", max: 255)
-            try validate(productCode, name:"productCode", max: 255)
-            try validate(productCode, name:"productCode", min: 1)
-            try validate(publicKeyVersion, name:"publicKeyVersion", min: 1)
+        public func validate(name: String) throws {
+            try validate(nonce, name:"nonce", parent: name, max: 255)
+            try validate(productCode, name:"productCode", parent: name, max: 255)
+            try validate(productCode, name:"productCode", parent: name, min: 1)
+            try validate(publicKeyVersion, name:"publicKeyVersion", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -183,10 +172,6 @@ extension MarketplaceMetering {
             self.signature = signature
         }
 
-        public func validate() throws {
-            try validate(signature, name:"signature", pattern: "\\S+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case publicKeyRotationTimestamp = "PublicKeyRotationTimestamp"
             case signature = "Signature"
@@ -205,8 +190,8 @@ extension MarketplaceMetering {
             self.registrationToken = registrationToken
         }
 
-        public func validate() throws {
-            try validate(registrationToken, name:"registrationToken", pattern: "\\S+")
+        public func validate(name: String) throws {
+            try validate(registrationToken, name:"registrationToken", parent: name, pattern: "\\S+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -230,13 +215,6 @@ extension MarketplaceMetering {
             self.productCode = productCode
         }
 
-        public func validate() throws {
-            try validate(customerIdentifier, name:"customerIdentifier", max: 255)
-            try validate(customerIdentifier, name:"customerIdentifier", min: 1)
-            try validate(productCode, name:"productCode", max: 255)
-            try validate(productCode, name:"productCode", min: 1)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case customerIdentifier = "CustomerIdentifier"
             case productCode = "ProductCode"
@@ -256,24 +234,24 @@ extension MarketplaceMetering {
         /// During the process of registering a product on AWS Marketplace, up to eight dimensions are specified. These represent different units of value in your application.
         public let dimension: String
         /// The quantity of usage consumed by the customer for the given dimension and time. Defaults to 0 if not specified.
-        public let quantity: Int32?
+        public let quantity: Int?
         /// Timestamp, in UTC, for which the usage is being reported. Your application can meter usage for up to one hour in the past. Make sure the timestamp value is not before the start of the software usage.
         public let timestamp: TimeStamp
 
-        public init(customerIdentifier: String, dimension: String, quantity: Int32? = nil, timestamp: TimeStamp) {
+        public init(customerIdentifier: String, dimension: String, quantity: Int? = nil, timestamp: TimeStamp) {
             self.customerIdentifier = customerIdentifier
             self.dimension = dimension
             self.quantity = quantity
             self.timestamp = timestamp
         }
 
-        public func validate() throws {
-            try validate(customerIdentifier, name:"customerIdentifier", max: 255)
-            try validate(customerIdentifier, name:"customerIdentifier", min: 1)
-            try validate(dimension, name:"dimension", max: 255)
-            try validate(dimension, name:"dimension", min: 1)
-            try validate(quantity, name:"quantity", max: 2147483647)
-            try validate(quantity, name:"quantity", min: 0)
+        public func validate(name: String) throws {
+            try validate(customerIdentifier, name:"customerIdentifier", parent: name, max: 255)
+            try validate(customerIdentifier, name:"customerIdentifier", parent: name, min: 1)
+            try validate(dimension, name:"dimension", parent: name, max: 255)
+            try validate(dimension, name:"dimension", parent: name, min: 1)
+            try validate(quantity, name:"quantity", parent: name, max: 2147483647)
+            try validate(quantity, name:"quantity", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -302,10 +280,6 @@ extension MarketplaceMetering {
             self.meteringRecordId = meteringRecordId
             self.status = status
             self.usageRecord = usageRecord
-        }
-
-        public func validate() throws {
-            try usageRecord?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {

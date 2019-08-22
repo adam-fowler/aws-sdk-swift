@@ -29,18 +29,18 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(deviceId, name:"deviceId", max: 32)
-            try validate(deviceId, name:"deviceId", min: 1)
-            try validate(deviceTemplateName, name:"deviceTemplateName", max: 128)
-            try validate(deviceTemplateName, name:"deviceTemplateName", min: 1)
-            try validate(deviceTemplateName, name:"deviceTemplateName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(deviceId, name:"deviceId", parent: name, max: 32)
+            try validate(deviceId, name:"deviceId", parent: name, min: 1)
+            try validate(deviceTemplateName, name:"deviceTemplateName", parent: name, max: 128)
+            try validate(deviceTemplateName, name:"deviceTemplateName", parent: name, min: 1)
+            try validate(deviceTemplateName, name:"deviceTemplateName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(placementName, name:"placementName", parent: name, max: 128)
+            try validate(placementName, name:"placementName", parent: name, min: 1)
+            try validate(placementName, name:"placementName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -79,13 +79,18 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try attributes?.forEach {
+                try validate($0.key, name:"attributes.key", parent: name, max: 128)
+                try validate($0.key, name:"attributes.key", parent: name, min: 1)
+                try validate($0.value, name:"attributes[\"\($0.key)\"]", parent: name, max: 800)
+            }
+            try validate(placementName, name:"placementName", parent: name, max: 128)
+            try validate(placementName, name:"placementName", parent: name, min: 1)
+            try validate(placementName, name:"placementName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -127,12 +132,19 @@ extension IoT1ClickProjects {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 500)
-            try validate(description, name:"description", min: 0)
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 500)
+            try validate(description, name:"description", parent: name, min: 0)
+            try placementTemplate?.validate(name: "\(name).placementTemplate")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
+            try tags?.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.key, name:"tags.key", parent: name, pattern: "^(?!aws:)[a-zA-Z+-=._:/]+$")
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -167,13 +179,13 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(placementName, name:"placementName", parent: name, max: 128)
+            try validate(placementName, name:"placementName", parent: name, min: 1)
+            try validate(placementName, name:"placementName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -202,10 +214,10 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -237,13 +249,13 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(placementName, name:"placementName", parent: name, max: 128)
+            try validate(placementName, name:"placementName", parent: name, min: 1)
+            try validate(placementName, name:"placementName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -264,10 +276,6 @@ extension IoT1ClickProjects {
             self.placement = placement
         }
 
-        public func validate() throws {
-            try placement.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case placement = "placement"
         }
@@ -285,10 +293,10 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -306,10 +314,6 @@ extension IoT1ClickProjects {
 
         public init(project: ProjectDescription) {
             self.project = project
-        }
-
-        public func validate() throws {
-            try project.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -333,8 +337,13 @@ extension IoT1ClickProjects {
             self.deviceType = deviceType
         }
 
-        public func validate() throws {
-            try validate(deviceType, name:"deviceType", max: 128)
+        public func validate(name: String) throws {
+            try callbackOverrides?.forEach {
+                try validate($0.key, name:"callbackOverrides.key", parent: name, max: 128)
+                try validate($0.key, name:"callbackOverrides.key", parent: name, min: 1)
+                try validate($0.value, name:"callbackOverrides[\"\($0.key)\"]", parent: name, max: 200)
+            }
+            try validate(deviceType, name:"deviceType", parent: name, max: 128)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -363,16 +372,16 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(deviceTemplateName, name:"deviceTemplateName", max: 128)
-            try validate(deviceTemplateName, name:"deviceTemplateName", min: 1)
-            try validate(deviceTemplateName, name:"deviceTemplateName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(deviceTemplateName, name:"deviceTemplateName", parent: name, max: 128)
+            try validate(deviceTemplateName, name:"deviceTemplateName", parent: name, min: 1)
+            try validate(deviceTemplateName, name:"deviceTemplateName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(placementName, name:"placementName", parent: name, max: 128)
+            try validate(placementName, name:"placementName", parent: name, min: 1)
+            try validate(placementName, name:"placementName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -406,13 +415,13 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(placementName, name:"placementName", parent: name, max: 128)
+            try validate(placementName, name:"placementName", parent: name, min: 1)
+            try validate(placementName, name:"placementName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -446,26 +455,26 @@ extension IoT1ClickProjects {
         ]
 
         /// The maximum number of results to return per request. If not set, a default value of 100 is used.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to retrieve the next set of results.
         public let nextToken: String?
         /// The project containing the placements to be listed.
         public let projectName: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, projectName: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, projectName: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 250)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 250)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -491,14 +500,6 @@ extension IoT1ClickProjects {
             self.placements = placements
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try placements.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "nextToken"
             case placements = "placements"
@@ -512,20 +513,20 @@ extension IoT1ClickProjects {
         ]
 
         /// The maximum number of results to return per request. If not set, a default value of 100 is used.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The token to retrieve the next set of results.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 250)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 250)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 1024)
+            try validate(nextToken, name:"nextToken", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -550,14 +551,6 @@ extension IoT1ClickProjects {
             self.projects = projects
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 1024)
-            try validate(nextToken, name:"nextToken", min: 1)
-            try projects.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "nextToken"
             case projects = "projects"
@@ -576,8 +569,8 @@ extension IoT1ClickProjects {
             self.resourceArn = resourceArn
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -630,15 +623,6 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
-        public func validate() throws {
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attributes = "attributes"
             case createdDate = "createdDate"
@@ -672,15 +656,6 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
-        public func validate() throws {
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createdDate = "createdDate"
             case placementName = "placementName"
@@ -703,6 +678,20 @@ extension IoT1ClickProjects {
         public init(defaultAttributes: [String: String]? = nil, deviceTemplates: [String: DeviceTemplate]? = nil) {
             self.defaultAttributes = defaultAttributes
             self.deviceTemplates = deviceTemplates
+        }
+
+        public func validate(name: String) throws {
+            try defaultAttributes?.forEach {
+                try validate($0.key, name:"defaultAttributes.key", parent: name, max: 128)
+                try validate($0.key, name:"defaultAttributes.key", parent: name, min: 1)
+                try validate($0.value, name:"defaultAttributes[\"\($0.key)\"]", parent: name, max: 800)
+            }
+            try deviceTemplates?.forEach {
+                try validate($0.key, name:"deviceTemplates.key", parent: name, max: 128)
+                try validate($0.key, name:"deviceTemplates.key", parent: name, min: 1)
+                try validate($0.key, name:"deviceTemplates.key", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+                try $0.value.validate(name: "\(name).deviceTemplates[\"\($0.key)\"]")
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -747,15 +736,6 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
-            try validate(description, name:"description", max: 500)
-            try validate(description, name:"description", min: 0)
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdDate = "createdDate"
@@ -795,13 +775,6 @@ extension IoT1ClickProjects {
             self.updatedDate = updatedDate
         }
 
-        public func validate() throws {
-            try validate(arn, name:"arn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "arn"
             case createdDate = "createdDate"
@@ -827,8 +800,14 @@ extension IoT1ClickProjects {
             self.tags = tags
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+            try tags.forEach {
+                try validate($0.key, name:"tags.key", parent: name, max: 128)
+                try validate($0.key, name:"tags.key", parent: name, min: 1)
+                try validate($0.key, name:"tags.key", parent: name, pattern: "^(?!aws:)[a-zA-Z+-=._:/]+$")
+                try validate($0.value, name:"tags[\"\($0.key)\"]", parent: name, max: 256)
+            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -861,15 +840,15 @@ extension IoT1ClickProjects {
             self.tagKeys = tagKeys
         }
 
-        public func validate() throws {
-            try validate(resourceArn, name:"resourceArn", pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
+        public func validate(name: String) throws {
+            try validate(resourceArn, name:"resourceArn", parent: name, pattern: "^arn:aws:iot1click:[A-Za-z0-9_/.-]{0,63}:\\d+:projects/[0-9A-Za-z_-]{1,128}$")
             try tagKeys.forEach {
-                try validate($0, name:"tagKeys[]", max: 128)
-                try validate($0, name:"tagKeys[]", min: 1)
-                try validate($0, name:"tagKeys[]", pattern: "^(?!aws:)[a-zA-Z+-=._:/]+$")
+                try validate($0, name: "tagKeys[]", parent: name, max: 128)
+                try validate($0, name: "tagKeys[]", parent: name, min: 1)
+                try validate($0, name: "tagKeys[]", parent: name, pattern: "^(?!aws:)[a-zA-Z+-=._:/]+$")
             }
-            try validate(tagKeys, name:"tagKeys", max: 50)
-            try validate(tagKeys, name:"tagKeys", min: 1)
+            try validate(tagKeys, name:"tagKeys", parent: name, max: 50)
+            try validate(tagKeys, name:"tagKeys", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -906,13 +885,18 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(placementName, name:"placementName", max: 128)
-            try validate(placementName, name:"placementName", min: 1)
-            try validate(placementName, name:"placementName", pattern: "^[a-zA-Z0-9_-]+$")
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try attributes?.forEach {
+                try validate($0.key, name:"attributes.key", parent: name, max: 128)
+                try validate($0.key, name:"attributes.key", parent: name, min: 1)
+                try validate($0.value, name:"attributes[\"\($0.key)\"]", parent: name, max: 800)
+            }
+            try validate(placementName, name:"placementName", parent: name, max: 128)
+            try validate(placementName, name:"placementName", parent: name, min: 1)
+            try validate(placementName, name:"placementName", parent: name, pattern: "^[a-zA-Z0-9_-]+$")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -950,12 +934,13 @@ extension IoT1ClickProjects {
             self.projectName = projectName
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 500)
-            try validate(description, name:"description", min: 0)
-            try validate(projectName, name:"projectName", max: 128)
-            try validate(projectName, name:"projectName", min: 1)
-            try validate(projectName, name:"projectName", pattern: "^[0-9A-Za-z_-]+$")
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 500)
+            try validate(description, name:"description", parent: name, min: 0)
+            try placementTemplate?.validate(name: "\(name).placementTemplate")
+            try validate(projectName, name:"projectName", parent: name, max: 128)
+            try validate(projectName, name:"projectName", parent: name, min: 1)
+            try validate(projectName, name:"projectName", parent: name, pattern: "^[0-9A-Za-z_-]+$")
         }
 
         private enum CodingKeys: String, CodingKey {

@@ -39,16 +39,11 @@ extension IoT1ClickDevicesService {
         public let claimCode: String?
         /// The total number of devices associated with the claim code that has been processed in
         ///  the claim request.
-        public let total: Int32?
+        public let total: Int?
 
-        public init(claimCode: String? = nil, total: Int32? = nil) {
+        public init(claimCode: String? = nil, total: Int? = nil) {
             self.claimCode = claimCode
             self.total = total
-        }
-
-        public func validate() throws {
-            try validate(claimCode, name:"claimCode", max: 40)
-            try validate(claimCode, name:"claimCode", min: 12)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -114,23 +109,6 @@ extension IoT1ClickDevicesService {
             case attributes = "attributes"
             case deviceId = "deviceId"
             case `type` = "type"
-        }
-    }
-
-    public struct DeviceClaimResponse: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "State", location: .body(locationName: "state"), required: false, type: .string)
-        ]
-
-        /// The device's final claim state.
-        public let state: String?
-
-        public init(state: String? = nil) {
-            self.state = state
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case state = "state"
         }
     }
 
@@ -204,29 +182,6 @@ extension IoT1ClickDevicesService {
         }
     }
 
-    public struct DeviceEventsResponse: AWSShape {
-        public static var _members: [AWSShapeMember] = [
-            AWSShapeMember(label: "Events", location: .body(locationName: "events"), required: false, type: .list), 
-            AWSShapeMember(label: "NextToken", location: .body(locationName: "nextToken"), required: false, type: .string)
-        ]
-
-        /// An array of zero or more elements describing the event(s) associated with the
-        ///  device.
-        public let events: [DeviceEvent]?
-        /// The token to retrieve the next set of results.
-        public let nextToken: String?
-
-        public init(events: [DeviceEvent]? = nil, nextToken: String? = nil) {
-            self.events = events
-            self.nextToken = nextToken
-        }
-
-        private enum CodingKeys: String, CodingKey {
-            case events = "events"
-            case nextToken = "nextToken"
-        }
-    }
-
     public struct DeviceMethod: AWSShape {
         public static var _members: [AWSShapeMember] = [
             AWSShapeMember(label: "DeviceType", location: .body(locationName: "deviceType"), required: false, type: .string), 
@@ -247,14 +202,6 @@ extension IoT1ClickDevicesService {
             case deviceType = "deviceType"
             case methodName = "methodName"
         }
-    }
-
-    public struct Empty: AWSShape {
-
-
-        public init() {
-        }
-
     }
 
     public struct FinalizeDeviceClaimRequest: AWSShape {
@@ -412,11 +359,11 @@ extension IoT1ClickDevicesService {
 
         public let deviceId: String
         public let fromTimeStamp: TimeStamp
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
         public let toTimeStamp: TimeStamp
 
-        public init(deviceId: String, fromTimeStamp: TimeStamp, maxResults: Int32? = nil, nextToken: String? = nil, toTimeStamp: TimeStamp) {
+        public init(deviceId: String, fromTimeStamp: TimeStamp, maxResults: Int? = nil, nextToken: String? = nil, toTimeStamp: TimeStamp) {
             self.deviceId = deviceId
             self.fromTimeStamp = fromTimeStamp
             self.maxResults = maxResults
@@ -424,9 +371,9 @@ extension IoT1ClickDevicesService {
             self.toTimeStamp = toTimeStamp
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 250)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 250)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -466,18 +413,18 @@ extension IoT1ClickDevicesService {
         ]
 
         public let deviceType: String?
-        public let maxResults: Int32?
+        public let maxResults: Int?
         public let nextToken: String?
 
-        public init(deviceType: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(deviceType: String? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.deviceType = deviceType
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 250)
-            try validate(maxResults, name:"maxResults", min: 1)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 250)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {

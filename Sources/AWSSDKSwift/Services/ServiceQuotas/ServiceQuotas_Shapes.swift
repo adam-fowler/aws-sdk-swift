@@ -41,16 +41,16 @@ extension ServiceQuotas {
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(awsRegion, name:"awsRegion", max: 64)
-            try validate(awsRegion, name:"awsRegion", min: 1)
-            try validate(awsRegion, name:"awsRegion", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(awsRegion, name:"awsRegion", parent: name, max: 64)
+            try validate(awsRegion, name:"awsRegion", parent: name, min: 1)
+            try validate(awsRegion, name:"awsRegion", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(quotaCode, name:"quotaCode", parent: name, max: 128)
+            try validate(quotaCode, name:"quotaCode", parent: name, min: 1)
+            try validate(quotaCode, name:"quotaCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -130,13 +130,13 @@ extension ServiceQuotas {
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(quotaCode, name:"quotaCode", parent: name, max: 128)
+            try validate(quotaCode, name:"quotaCode", parent: name, min: 1)
+            try validate(quotaCode, name:"quotaCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -155,10 +155,6 @@ extension ServiceQuotas {
 
         public init(quota: ServiceQuota? = nil) {
             self.quota = quota
-        }
-
-        public func validate() throws {
-            try quota?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -203,10 +199,10 @@ extension ServiceQuotas {
             self.requestId = requestId
         }
 
-        public func validate() throws {
-            try validate(requestId, name:"requestId", max: 128)
-            try validate(requestId, name:"requestId", min: 1)
-            try validate(requestId, name:"requestId", pattern: "[0-9a-zA-Z][a-zA-Z0-9-]{1,128}")
+        public func validate(name: String) throws {
+            try validate(requestId, name:"requestId", parent: name, max: 128)
+            try validate(requestId, name:"requestId", parent: name, min: 1)
+            try validate(requestId, name:"requestId", parent: name, pattern: "[0-9a-zA-Z][a-zA-Z0-9-]{1,128}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -224,10 +220,6 @@ extension ServiceQuotas {
 
         public init(requestedQuota: RequestedServiceQuotaChange? = nil) {
             self.requestedQuota = requestedQuota
-        }
-
-        public func validate() throws {
-            try requestedQuota?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -255,16 +247,16 @@ extension ServiceQuotas {
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(awsRegion, name:"awsRegion", max: 64)
-            try validate(awsRegion, name:"awsRegion", min: 1)
-            try validate(awsRegion, name:"awsRegion", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(awsRegion, name:"awsRegion", parent: name, max: 64)
+            try validate(awsRegion, name:"awsRegion", parent: name, min: 1)
+            try validate(awsRegion, name:"awsRegion", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(quotaCode, name:"quotaCode", parent: name, max: 128)
+            try validate(quotaCode, name:"quotaCode", parent: name, min: 1)
+            try validate(quotaCode, name:"quotaCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -284,10 +276,6 @@ extension ServiceQuotas {
 
         public init(serviceQuotaIncreaseRequestInTemplate: ServiceQuotaIncreaseRequestInTemplate? = nil) {
             self.serviceQuotaIncreaseRequestInTemplate = serviceQuotaIncreaseRequestInTemplate
-        }
-
-        public func validate() throws {
-            try serviceQuotaIncreaseRequestInTemplate?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -311,13 +299,13 @@ extension ServiceQuotas {
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(quotaCode, name:"quotaCode", parent: name, max: 128)
+            try validate(quotaCode, name:"quotaCode", parent: name, min: 1)
+            try validate(quotaCode, name:"quotaCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -338,10 +326,6 @@ extension ServiceQuotas {
             self.quota = quota
         }
 
-        public func validate() throws {
-            try quota?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case quota = "Quota"
         }
@@ -355,26 +339,26 @@ extension ServiceQuotas {
         ]
 
         /// (Optional) Limits the number of results that you want to include in the response. If you don't include this parameter, the response defaults to a value that's specific to the operation. If additional items exist beyond the specified maximum, the NextToken element is present and has a value (isn't null). Include that value as the NextToken request parameter in the call to the operation to get the next part of the results. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// (Optional) Use this parameter in a request if you receive a NextToken response in a previous request that indicates that there's more output available. In a subsequent call, set it to the value of the previous call's NextToken response to indicate where the output should continue from. If additional items exist beyond the specified maximum, the NextToken element is present and has a value (isn't null). Include that value as the NextToken request parameter in the call to the operation to get the next part of the results. You should check NextToken after every operation to ensure that you receive all of the results.
         public let nextToken: String?
         /// Specifies the service that you want to use.
         public let serviceCode: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, serviceCode: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, serviceCode: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 2048)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9/+]*={0,2}$")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -400,14 +384,6 @@ extension ServiceQuotas {
             self.quotas = quotas
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try quotas?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case quotas = "Quotas"
@@ -424,7 +400,7 @@ extension ServiceQuotas {
         ]
 
         /// (Optional) Limits the number of results that you want to include in the response. If you don't include this parameter, the response defaults to a value that's specific to the operation. If additional items exist beyond the specified maximum, the NextToken element is present and has a value (isn't null). Include that value as the NextToken request parameter in the call to the operation to get the next part of the results. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// (Optional) Use this parameter in a request if you receive a NextToken response in a previous request that indicates that there's more output available. In a subsequent call, set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// Specifies the service quota that you want to use
@@ -434,7 +410,7 @@ extension ServiceQuotas {
         /// Specifies the status value of the quota increase request.
         public let status: RequestStatus?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, quotaCode: String, serviceCode: String, status: RequestStatus? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, quotaCode: String, serviceCode: String, status: RequestStatus? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.quotaCode = quotaCode
@@ -442,17 +418,17 @@ extension ServiceQuotas {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 2048)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9/+]*={0,2}$")
+            try validate(quotaCode, name:"quotaCode", parent: name, max: 128)
+            try validate(quotaCode, name:"quotaCode", parent: name, min: 1)
+            try validate(quotaCode, name:"quotaCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -480,14 +456,6 @@ extension ServiceQuotas {
             self.requestedQuotas = requestedQuotas
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try requestedQuotas?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case requestedQuotas = "RequestedQuotas"
@@ -503,7 +471,7 @@ extension ServiceQuotas {
         ]
 
         /// (Optional) Limits the number of results that you want to include in the response. If you don't include this parameter, the response defaults to a value that's specific to the operation. If additional items exist beyond the specified maximum, the NextToken element is present and has a value (isn't null). Include that value as the NextToken request parameter in the call to the operation to get the next part of the results. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// (Optional) Use this parameter in a request if you receive a NextToken response in a previous request that indicates that there's more output available. In a subsequent call, set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// Specifies the service that you want to use.
@@ -511,21 +479,21 @@ extension ServiceQuotas {
         /// Specifies the status value of the quota increase request.
         public let status: RequestStatus?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, serviceCode: String? = nil, status: RequestStatus? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, serviceCode: String? = nil, status: RequestStatus? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serviceCode = serviceCode
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 2048)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9/+]*={0,2}$")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -552,14 +520,6 @@ extension ServiceQuotas {
             self.requestedQuotas = requestedQuotas
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try requestedQuotas?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case requestedQuotas = "RequestedQuotas"
@@ -577,30 +537,30 @@ extension ServiceQuotas {
         /// Specifies the AWS Region for the quota that you want to use.
         public let awsRegion: String?
         /// (Optional) Limits the number of results that you want to include in the response. If you don't include this parameter, the response defaults to a value that's specific to the operation. If additional items exist beyond the specified maximum, the NextToken element is present and has a value (isn't null). Include that value as the NextToken request parameter in the call to the operation to get the next part of the results. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// (Optional) Use this parameter in a request if you receive a NextToken response in a previous request that indicates that there's more output available. In a subsequent call, set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// The identifier for a service. When performing an operation, use the ServiceCode to specify a particular service. 
         public let serviceCode: String?
 
-        public init(awsRegion: String? = nil, maxResults: Int32? = nil, nextToken: String? = nil, serviceCode: String? = nil) {
+        public init(awsRegion: String? = nil, maxResults: Int? = nil, nextToken: String? = nil, serviceCode: String? = nil) {
             self.awsRegion = awsRegion
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(awsRegion, name:"awsRegion", max: 64)
-            try validate(awsRegion, name:"awsRegion", min: 1)
-            try validate(awsRegion, name:"awsRegion", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(awsRegion, name:"awsRegion", parent: name, max: 64)
+            try validate(awsRegion, name:"awsRegion", parent: name, min: 1)
+            try validate(awsRegion, name:"awsRegion", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 2048)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9/+]*={0,2}$")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -627,14 +587,6 @@ extension ServiceQuotas {
             self.serviceQuotaIncreaseRequestInTemplateList = serviceQuotaIncreaseRequestInTemplateList
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try serviceQuotaIncreaseRequestInTemplateList?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case serviceQuotaIncreaseRequestInTemplateList = "ServiceQuotaIncreaseRequestInTemplateList"
@@ -649,26 +601,26 @@ extension ServiceQuotas {
         ]
 
         /// (Optional) Limits the number of results that you want to include in the response. If you don't include this parameter, the response defaults to a value that's specific to the operation. If additional items exist beyond the specified maximum, the NextToken element is present and has a value (isn't null). Include that value as the NextToken request parameter in the call to the operation to get the next part of the results. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// (Optional) Use this parameter in a request if you receive a NextToken response in a previous request that indicates that there's more output available. In a subsequent call, set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
         /// The identifier for a service. When performing an operation, use the ServiceCode to specify a particular service. 
         public let serviceCode: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, serviceCode: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, serviceCode: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 2048)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9/+]*={0,2}$")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -694,14 +646,6 @@ extension ServiceQuotas {
             self.quotas = quotas
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try quotas?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case quotas = "Quotas"
@@ -715,20 +659,20 @@ extension ServiceQuotas {
         ]
 
         /// (Optional) Limits the number of results that you want to include in the response. If you don't include this parameter, the response defaults to a value that's specific to the operation. If additional items exist beyond the specified maximum, the NextToken element is present and has a value (isn't null). Include that value as the NextToken request parameter in the call to the operation to get the next part of the results. You should check NextToken after every operation to ensure that you receive all of the results.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// (Optional) Use this parameter in a request if you receive a NextToken response in a previous request that indicates that there's more output available. In a subsequent call, set it to the value of the previous call's NextToken response to indicate where the output should continue from.
         public let nextToken: String?
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil) {
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 2048)
+            try validate(nextToken, name:"nextToken", parent: name, pattern: "^[a-zA-Z0-9/+]*={0,2}$")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -751,14 +695,6 @@ extension ServiceQuotas {
         public init(nextToken: String? = nil, services: [ServiceInfo]? = nil) {
             self.nextToken = nextToken
             self.services = services
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 2048)
-            try validate(nextToken, name:"nextToken", pattern: "^[a-zA-Z0-9/+]*={0,2}$")
-            try services?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -789,12 +725,6 @@ extension ServiceQuotas {
             self.metricName = metricName
             self.metricNamespace = metricNamespace
             self.metricStatisticRecommendation = metricStatisticRecommendation
-        }
-
-        public func validate() throws {
-            try validate(metricStatisticRecommendation, name:"metricStatisticRecommendation", max: 256)
-            try validate(metricStatisticRecommendation, name:"metricStatisticRecommendation", min: 1)
-            try validate(metricStatisticRecommendation, name:"metricStatisticRecommendation", pattern: "(Sum|Maximum)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -840,18 +770,18 @@ extension ServiceQuotas {
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(awsRegion, name:"awsRegion", max: 64)
-            try validate(awsRegion, name:"awsRegion", min: 1)
-            try validate(awsRegion, name:"awsRegion", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(desiredValue, name:"desiredValue", max: 10000000000)
-            try validate(desiredValue, name:"desiredValue", min: 0)
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(awsRegion, name:"awsRegion", parent: name, max: 64)
+            try validate(awsRegion, name:"awsRegion", parent: name, min: 1)
+            try validate(awsRegion, name:"awsRegion", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(desiredValue, name:"desiredValue", parent: name, max: 10000000000)
+            try validate(desiredValue, name:"desiredValue", parent: name, min: 0)
+            try validate(quotaCode, name:"quotaCode", parent: name, max: 128)
+            try validate(quotaCode, name:"quotaCode", parent: name, min: 1)
+            try validate(quotaCode, name:"quotaCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -874,10 +804,6 @@ extension ServiceQuotas {
             self.serviceQuotaIncreaseRequestInTemplate = serviceQuotaIncreaseRequestInTemplate
         }
 
-        public func validate() throws {
-            try serviceQuotaIncreaseRequestInTemplate?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case serviceQuotaIncreaseRequestInTemplate = "ServiceQuotaIncreaseRequestInTemplate"
         }
@@ -892,9 +818,9 @@ extension ServiceQuotas {
         /// The time unit of a period.
         public let periodUnit: PeriodUnit?
         /// The value of a period.
-        public let periodValue: Int32?
+        public let periodValue: Int?
 
-        public init(periodUnit: PeriodUnit? = nil, periodValue: Int32? = nil) {
+        public init(periodUnit: PeriodUnit? = nil, periodValue: Int? = nil) {
             self.periodUnit = periodUnit
             self.periodValue = periodValue
         }
@@ -925,15 +851,15 @@ extension ServiceQuotas {
             self.serviceCode = serviceCode
         }
 
-        public func validate() throws {
-            try validate(desiredValue, name:"desiredValue", max: 10000000000)
-            try validate(desiredValue, name:"desiredValue", min: 0)
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
+        public func validate(name: String) throws {
+            try validate(desiredValue, name:"desiredValue", parent: name, max: 10000000000)
+            try validate(desiredValue, name:"desiredValue", parent: name, min: 0)
+            try validate(quotaCode, name:"quotaCode", parent: name, max: 128)
+            try validate(quotaCode, name:"quotaCode", parent: name, min: 1)
+            try validate(quotaCode, name:"quotaCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
+            try validate(serviceCode, name:"serviceCode", parent: name, max: 63)
+            try validate(serviceCode, name:"serviceCode", parent: name, min: 1)
+            try validate(serviceCode, name:"serviceCode", parent: name, pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -953,10 +879,6 @@ extension ServiceQuotas {
 
         public init(requestedQuota: RequestedServiceQuotaChange? = nil) {
             self.requestedQuota = requestedQuota
-        }
-
-        public func validate() throws {
-            try requestedQuota?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1037,20 +959,6 @@ extension ServiceQuotas {
             self.unit = unit
         }
 
-        public func validate() throws {
-            try validate(desiredValue, name:"desiredValue", max: 10000000000)
-            try validate(desiredValue, name:"desiredValue", min: 0)
-            try validate(id, name:"id", max: 128)
-            try validate(id, name:"id", min: 1)
-            try validate(id, name:"id", pattern: "[0-9a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case caseId = "CaseId"
             case created = "Created"
@@ -1083,12 +991,6 @@ extension ServiceQuotas {
         public init(serviceCode: String? = nil, serviceName: String? = nil) {
             self.serviceCode = serviceCode
             self.serviceName = serviceName
-        }
-
-        public func validate() throws {
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1153,18 +1055,6 @@ extension ServiceQuotas {
             self.value = value
         }
 
-        public func validate() throws {
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
-            try usageMetric?.validate()
-            try validate(value, name:"value", max: 10000000000)
-            try validate(value, name:"value", min: 0)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case adjustable = "Adjustable"
             case errorReason = "ErrorReason"
@@ -1219,20 +1109,6 @@ extension ServiceQuotas {
             self.serviceCode = serviceCode
             self.serviceName = serviceName
             self.unit = unit
-        }
-
-        public func validate() throws {
-            try validate(awsRegion, name:"awsRegion", max: 64)
-            try validate(awsRegion, name:"awsRegion", min: 1)
-            try validate(awsRegion, name:"awsRegion", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(desiredValue, name:"desiredValue", max: 10000000000)
-            try validate(desiredValue, name:"desiredValue", min: 0)
-            try validate(quotaCode, name:"quotaCode", max: 128)
-            try validate(quotaCode, name:"quotaCode", min: 1)
-            try validate(quotaCode, name:"quotaCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,128}")
-            try validate(serviceCode, name:"serviceCode", max: 63)
-            try validate(serviceCode, name:"serviceCode", min: 1)
-            try validate(serviceCode, name:"serviceCode", pattern: "[a-zA-Z][a-zA-Z0-9-]{1,63}")
         }
 
         private enum CodingKeys: String, CodingKey {

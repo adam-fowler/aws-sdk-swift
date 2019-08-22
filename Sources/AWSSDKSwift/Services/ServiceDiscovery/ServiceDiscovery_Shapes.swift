@@ -25,10 +25,10 @@ extension ServiceDiscovery {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(description, name:"description", max: 1024)
-            try validate(name, name:"name", max: 1024)
+        public func validate(name: String) throws {
+            try validate(creatorRequestId, name:"creatorRequestId", parent: name, max: 64)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(name, name:"name", parent: name, max: 1024)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -48,10 +48,6 @@ extension ServiceDiscovery {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -83,11 +79,11 @@ extension ServiceDiscovery {
             self.vpc = vpc
         }
 
-        public func validate() throws {
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(description, name:"description", max: 1024)
-            try validate(name, name:"name", max: 1024)
-            try validate(vpc, name:"vpc", max: 64)
+        public func validate(name: String) throws {
+            try validate(creatorRequestId, name:"creatorRequestId", parent: name, max: 64)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(name, name:"name", parent: name, max: 1024)
+            try validate(vpc, name:"vpc", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -108,10 +104,6 @@ extension ServiceDiscovery {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -139,10 +131,10 @@ extension ServiceDiscovery {
             self.name = name
         }
 
-        public func validate() throws {
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(description, name:"description", max: 1024)
-            try validate(name, name:"name", max: 1024)
+        public func validate(name: String) throws {
+            try validate(creatorRequestId, name:"creatorRequestId", parent: name, max: 64)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try validate(name, name:"name", parent: name, max: 1024)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -162,10 +154,6 @@ extension ServiceDiscovery {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -209,14 +197,14 @@ extension ServiceDiscovery {
             self.namespaceId = namespaceId
         }
 
-        public func validate() throws {
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(description, name:"description", max: 1024)
-            try dnsConfig?.validate()
-            try healthCheckConfig?.validate()
-            try healthCheckCustomConfig?.validate()
-            try validate(name, name:"name", pattern: "((?=^.{1,127}$)^([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9])(\\.([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9]))*$)|(^\\.$)")
-            try validate(namespaceId, name:"namespaceId", max: 64)
+        public func validate(name: String) throws {
+            try validate(creatorRequestId, name:"creatorRequestId", parent: name, max: 64)
+            try validate(description, name:"description", parent: name, max: 1024)
+            try dnsConfig?.validate(name: "\(name).dnsConfig")
+            try healthCheckConfig?.validate(name: "\(name).healthCheckConfig")
+            try healthCheckCustomConfig?.validate(name: "\(name).healthCheckCustomConfig")
+            try validate(name, name:"name", parent: name, pattern: "((?=^.{1,127}$)^([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9])(\\.([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9]))*$)|(^\\.$)")
+            try validate(namespaceId, name:"namespaceId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -242,10 +230,6 @@ extension ServiceDiscovery {
             self.service = service
         }
 
-        public func validate() throws {
-            try service?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case service = "Service"
         }
@@ -269,8 +253,8 @@ extension ServiceDiscovery {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 64)
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -290,10 +274,6 @@ extension ServiceDiscovery {
             self.operationId = operationId
         }
 
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 255)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case operationId = "OperationId"
         }
@@ -311,8 +291,8 @@ extension ServiceDiscovery {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 64)
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -344,9 +324,9 @@ extension ServiceDiscovery {
             self.serviceId = serviceId
         }
 
-        public func validate() throws {
-            try validate(instanceId, name:"instanceId", max: 64)
-            try validate(serviceId, name:"serviceId", max: 64)
+        public func validate(name: String) throws {
+            try validate(instanceId, name:"instanceId", parent: name, max: 64)
+            try validate(serviceId, name:"serviceId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -367,10 +347,6 @@ extension ServiceDiscovery {
             self.operationId = operationId
         }
 
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 255)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case operationId = "OperationId"
         }
@@ -388,7 +364,7 @@ extension ServiceDiscovery {
         /// The health status of the instances that you want to discover.
         public let healthStatus: HealthStatusFilter?
         /// The maximum number of instances that you want Cloud Map to return in the response to a DiscoverInstances request. If you don't specify a value for MaxResults, Cloud Map returns up to 100 instances.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The name of the namespace that you specified when you registered the instance.
         public let namespaceName: String
         /// A string map that contains attributes with values that you can use to filter instances by any custom attribute that you specified when you registered the instance. Only instances that match all the specified key/value pairs will be returned.
@@ -396,7 +372,7 @@ extension ServiceDiscovery {
         /// The name of the service that you specified when you registered the instance.
         public let serviceName: String
 
-        public init(healthStatus: HealthStatusFilter? = nil, maxResults: Int32? = nil, namespaceName: String, queryParameters: [String: String]? = nil, serviceName: String) {
+        public init(healthStatus: HealthStatusFilter? = nil, maxResults: Int? = nil, namespaceName: String, queryParameters: [String: String]? = nil, serviceName: String) {
             self.healthStatus = healthStatus
             self.maxResults = maxResults
             self.namespaceName = namespaceName
@@ -404,11 +380,15 @@ extension ServiceDiscovery {
             self.serviceName = serviceName
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(namespaceName, name:"namespaceName", max: 1024)
-            try validate(serviceName, name:"serviceName", pattern: "((?=^.{1,127}$)^([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9])(\\.([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9]))*$)|(^\\.$)")
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(namespaceName, name:"namespaceName", parent: name, max: 1024)
+            try queryParameters?.forEach {
+                try validate($0.key, name:"queryParameters.key", parent: name, max: 255)
+                try validate($0.value, name:"queryParameters[\"\($0.key)\"]", parent: name, max: 1024)
+            }
+            try validate(serviceName, name:"serviceName", parent: name, pattern: "((?=^.{1,127}$)^([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9])(\\.([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9]))*$)|(^\\.$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -432,12 +412,6 @@ extension ServiceDiscovery {
             self.instances = instances
         }
 
-        public func validate() throws {
-            try instances?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case instances = "Instances"
         }
@@ -459,9 +433,9 @@ extension ServiceDiscovery {
             self.routingPolicy = routingPolicy
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try dnsRecords.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).dnsRecords[]")
             }
         }
 
@@ -483,9 +457,9 @@ extension ServiceDiscovery {
             self.dnsRecords = dnsRecords
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try dnsRecords.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).dnsRecords[]")
             }
         }
 
@@ -504,10 +478,6 @@ extension ServiceDiscovery {
 
         public init(hostedZoneId: String? = nil) {
             self.hostedZoneId = hostedZoneId
-        }
-
-        public func validate() throws {
-            try validate(hostedZoneId, name:"hostedZoneId", max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -531,9 +501,9 @@ extension ServiceDiscovery {
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(ttl, name:"ttl", max: 2147483647)
-            try validate(ttl, name:"ttl", min: 0)
+        public func validate(name: String) throws {
+            try validate(ttl, name:"ttl", parent: name, max: 2147483647)
+            try validate(ttl, name:"ttl", parent: name, min: 0)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -565,9 +535,9 @@ extension ServiceDiscovery {
             self.serviceId = serviceId
         }
 
-        public func validate() throws {
-            try validate(instanceId, name:"instanceId", max: 64)
-            try validate(serviceId, name:"serviceId", max: 64)
+        public func validate(name: String) throws {
+            try validate(instanceId, name:"instanceId", parent: name, max: 64)
+            try validate(serviceId, name:"serviceId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -588,10 +558,6 @@ extension ServiceDiscovery {
             self.instance = instance
         }
 
-        public func validate() throws {
-            try instance?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case instance = "Instance"
         }
@@ -608,28 +574,28 @@ extension ServiceDiscovery {
         /// An array that contains the IDs of all the instances that you want to get the health status for. If you omit Instances, AWS Cloud Map returns the health status for all the instances that are associated with the specified service.  To get the IDs for the instances that you've registered by using a specified service, submit a ListInstances request. 
         public let instances: [String]?
         /// The maximum number of instances that you want AWS Cloud Map to return in the response to a GetInstancesHealthStatus request. If you don't specify a value for MaxResults, AWS Cloud Map returns up to 100 instances.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// For the first GetInstancesHealthStatus request, omit this value. If more than MaxResults instances match the specified criteria, you can submit another GetInstancesHealthStatus request to get the next group of results. Specify the value of NextToken from the previous response in the next request.
         public let nextToken: String?
         /// The ID of the service that the instance is associated with.
         public let serviceId: String
 
-        public init(instances: [String]? = nil, maxResults: Int32? = nil, nextToken: String? = nil, serviceId: String) {
+        public init(instances: [String]? = nil, maxResults: Int? = nil, nextToken: String? = nil, serviceId: String) {
             self.instances = instances
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serviceId = serviceId
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try instances?.forEach {
-                try validate($0, name:"instances[]", max: 64)
+                try validate($0, name: "instances[]", parent: name, max: 64)
             }
-            try validate(instances, name:"instances", min: 1)
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(serviceId, name:"serviceId", max: 64)
+            try validate(instances, name:"instances", parent: name, min: 1)
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(serviceId, name:"serviceId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -656,10 +622,6 @@ extension ServiceDiscovery {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case status = "Status"
@@ -678,8 +640,8 @@ extension ServiceDiscovery {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 64)
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -699,10 +661,6 @@ extension ServiceDiscovery {
             self.namespace = namespace
         }
 
-        public func validate() throws {
-            try namespace?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case namespace = "Namespace"
         }
@@ -720,8 +678,8 @@ extension ServiceDiscovery {
             self.operationId = operationId
         }
 
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 64)
+        public func validate(name: String) throws {
+            try validate(operationId, name:"operationId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -741,10 +699,6 @@ extension ServiceDiscovery {
             self.operation = operation
         }
 
-        public func validate() throws {
-            try operation?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case operation = "Operation"
         }
@@ -762,8 +716,8 @@ extension ServiceDiscovery {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 64)
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -783,10 +737,6 @@ extension ServiceDiscovery {
             self.service = service
         }
 
-        public func validate() throws {
-            try service?.validate()
-        }
-
         private enum CodingKeys: String, CodingKey {
             case service = "Service"
         }
@@ -800,22 +750,22 @@ extension ServiceDiscovery {
         ]
 
         /// The number of consecutive health checks that an endpoint must pass or fail for Route 53 to change the current status of the endpoint from unhealthy to healthy or vice versa. For more information, see How Route 53 Determines Whether an Endpoint Is Healthy in the Route 53 Developer Guide.
-        public let failureThreshold: Int32?
+        public let failureThreshold: Int?
         /// The path that you want Route 53 to request when performing health checks. The path can be any value for which your endpoint will return an HTTP status code of 2xx or 3xx when the endpoint is healthy, such as the file /docs/route53-health-check.html. Route 53 automatically adds the DNS name for the service. If you don't specify a value for ResourcePath, the default value is /. If you specify TCP for Type, you must not specify a value for ResourcePath.
         public let resourcePath: String?
         /// The type of health check that you want to create, which indicates how Route 53 determines whether an endpoint is healthy.  You can't change the value of Type after you create a health check.  You can create the following types of health checks:    HTTP: Route 53 tries to establish a TCP connection. If successful, Route 53 submits an HTTP request and waits for an HTTP status code of 200 or greater and less than 400.    HTTPS: Route 53 tries to establish a TCP connection. If successful, Route 53 submits an HTTPS request and waits for an HTTP status code of 200 or greater and less than 400.  If you specify HTTPS for the value of Type, the endpoint must support TLS v1.0 or later.     TCP: Route 53 tries to establish a TCP connection. If you specify TCP for Type, don't specify a value for ResourcePath.   For more information, see How Route 53 Determines Whether an Endpoint Is Healthy in the Route 53 Developer Guide.
         public let `type`: HealthCheckType
 
-        public init(failureThreshold: Int32? = nil, resourcePath: String? = nil, type: HealthCheckType) {
+        public init(failureThreshold: Int? = nil, resourcePath: String? = nil, type: HealthCheckType) {
             self.failureThreshold = failureThreshold
             self.resourcePath = resourcePath
             self.`type` = `type`
         }
 
-        public func validate() throws {
-            try validate(failureThreshold, name:"failureThreshold", max: 10)
-            try validate(failureThreshold, name:"failureThreshold", min: 1)
-            try validate(resourcePath, name:"resourcePath", max: 255)
+        public func validate(name: String) throws {
+            try validate(failureThreshold, name:"failureThreshold", parent: name, max: 10)
+            try validate(failureThreshold, name:"failureThreshold", parent: name, min: 1)
+            try validate(resourcePath, name:"resourcePath", parent: name, max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -831,15 +781,15 @@ extension ServiceDiscovery {
         ]
 
         /// The number of 30-second intervals that you want Cloud Map to wait after receiving an UpdateInstanceCustomHealthStatus request before it changes the health status of a service instance. For example, suppose you specify a value of 2 for FailureTheshold, and then your application sends an UpdateInstanceCustomHealthStatus request. Cloud Map waits for approximately 60 seconds (2 x 30) before changing the status of the service instance based on that request. Sending a second or subsequent UpdateInstanceCustomHealthStatus request with the same value before FailureThreshold x 30 seconds has passed doesn't accelerate the change. Cloud Map still waits FailureThreshold x 30 seconds after the first request to make the change.
-        public let failureThreshold: Int32?
+        public let failureThreshold: Int?
 
-        public init(failureThreshold: Int32? = nil) {
+        public init(failureThreshold: Int? = nil) {
             self.failureThreshold = failureThreshold
         }
 
-        public func validate() throws {
-            try validate(failureThreshold, name:"failureThreshold", max: 10)
-            try validate(failureThreshold, name:"failureThreshold", min: 1)
+        public func validate(name: String) throws {
+            try validate(failureThreshold, name:"failureThreshold", parent: name, max: 10)
+            try validate(failureThreshold, name:"failureThreshold", parent: name, min: 1)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -896,12 +846,6 @@ extension ServiceDiscovery {
             self.serviceName = serviceName
         }
 
-        public func validate() throws {
-            try validate(instanceId, name:"instanceId", max: 64)
-            try validate(namespaceName, name:"namespaceName", max: 1024)
-            try validate(serviceName, name:"serviceName", pattern: "((?=^.{1,127}$)^([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9])(\\.([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9]))*$)|(^\\.$)")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attributes = "Attributes"
             case healthStatus = "HealthStatus"
@@ -921,10 +865,6 @@ extension ServiceDiscovery {
 
         public init(httpName: String? = nil) {
             self.httpName = httpName
-        }
-
-        public func validate() throws {
-            try validate(httpName, name:"httpName", max: 1024)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -952,11 +892,6 @@ extension ServiceDiscovery {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(id, name:"id", max: 64)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attributes = "Attributes"
             case creatorRequestId = "CreatorRequestId"
@@ -980,10 +915,6 @@ extension ServiceDiscovery {
             self.id = id
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 64)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case attributes = "Attributes"
             case id = "Id"
@@ -998,23 +929,23 @@ extension ServiceDiscovery {
         ]
 
         /// The maximum number of instances that you want AWS Cloud Map to return in the response to a ListInstances request. If you don't specify a value for MaxResults, AWS Cloud Map returns up to 100 instances.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// For the first ListInstances request, omit this value. If more than MaxResults instances match the specified criteria, you can submit another ListInstances request to get the next group of results. Specify the value of NextToken from the previous response in the next request.
         public let nextToken: String?
         /// The ID of the service that you want to list instances for.
         public let serviceId: String
 
-        public init(maxResults: Int32? = nil, nextToken: String? = nil, serviceId: String) {
+        public init(maxResults: Int? = nil, nextToken: String? = nil, serviceId: String) {
             self.maxResults = maxResults
             self.nextToken = nextToken
             self.serviceId = serviceId
         }
 
-        public func validate() throws {
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try validate(serviceId, name:"serviceId", max: 64)
+        public func validate(name: String) throws {
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
+            try validate(serviceId, name:"serviceId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1040,13 +971,6 @@ extension ServiceDiscovery {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try instances?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 4096)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case instances = "Instances"
             case nextToken = "NextToken"
@@ -1063,23 +987,23 @@ extension ServiceDiscovery {
         /// A complex type that contains specifications for the namespaces that you want to list. If you specify more than one filter, a namespace must match all filters to be returned by ListNamespaces.
         public let filters: [NamespaceFilter]?
         /// The maximum number of namespaces that you want AWS Cloud Map to return in the response to a ListNamespaces request. If you don't specify a value for MaxResults, AWS Cloud Map returns up to 100 namespaces.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// For the first ListNamespaces request, omit this value. If the response contains NextToken, submit another ListNamespaces request to get the next group of results. Specify the value of NextToken from the previous response in the next request.  AWS Cloud Map gets MaxResults namespaces and then filters them based on the specified criteria. It's possible that no namespaces in the first MaxResults namespaces matched the specified criteria but that subsequent groups of MaxResults namespaces do contain namespaces that match the criteria. 
         public let nextToken: String?
 
-        public init(filters: [NamespaceFilter]? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filters: [NamespaceFilter]? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try filters?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).filters[]")
             }
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1105,13 +1029,6 @@ extension ServiceDiscovery {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try namespaces?.forEach {
-                try $0.validate()
-            }
-            try validate(nextToken, name:"nextToken", max: 4096)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case namespaces = "Namespaces"
             case nextToken = "NextToken"
@@ -1128,23 +1045,23 @@ extension ServiceDiscovery {
         /// A complex type that contains specifications for the operations that you want to list, for example, operations that you started between a specified start date and end date. If you specify more than one filter, an operation must match all filters to be returned by ListOperations.
         public let filters: [OperationFilter]?
         /// The maximum number of items that you want AWS Cloud Map to return in the response to a ListOperations request. If you don't specify a value for MaxResults, AWS Cloud Map returns up to 100 operations.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// For the first ListOperations request, omit this value. If the response contains NextToken, submit another ListOperations request to get the next group of results. Specify the value of NextToken from the previous response in the next request.  AWS Cloud Map gets MaxResults operations and then filters them based on the specified criteria. It's possible that no operations in the first MaxResults operations matched the specified criteria but that subsequent groups of MaxResults operations do contain operations that match the criteria. 
         public let nextToken: String?
 
-        public init(filters: [OperationFilter]? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filters: [OperationFilter]? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try filters?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).filters[]")
             }
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1170,13 +1087,6 @@ extension ServiceDiscovery {
             self.operations = operations
         }
 
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try operations?.forEach {
-                try $0.validate()
-            }
-        }
-
         private enum CodingKeys: String, CodingKey {
             case nextToken = "NextToken"
             case operations = "Operations"
@@ -1193,23 +1103,23 @@ extension ServiceDiscovery {
         /// A complex type that contains specifications for the namespaces that you want to list services for.  If you specify more than one filter, an operation must match all filters to be returned by ListServices.
         public let filters: [ServiceFilter]?
         /// The maximum number of services that you want AWS Cloud Map to return in the response to a ListServices request. If you don't specify a value for MaxResults, AWS Cloud Map returns up to 100 services.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// For the first ListServices request, omit this value. If the response contains NextToken, submit another ListServices request to get the next group of results. Specify the value of NextToken from the previous response in the next request.  AWS Cloud Map gets MaxResults services and then filters them based on the specified criteria. It's possible that no services in the first MaxResults services matched the specified criteria but that subsequent groups of MaxResults services do contain services that match the criteria. 
         public let nextToken: String?
 
-        public init(filters: [ServiceFilter]? = nil, maxResults: Int32? = nil, nextToken: String? = nil) {
+        public init(filters: [ServiceFilter]? = nil, maxResults: Int? = nil, nextToken: String? = nil) {
             self.filters = filters
             self.maxResults = maxResults
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try filters?.forEach {
-                try $0.validate()
+                try $0.validate(name: "\(name).filters[]")
             }
-            try validate(maxResults, name:"maxResults", max: 100)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(nextToken, name:"nextToken", max: 4096)
+            try validate(maxResults, name:"maxResults", parent: name, max: 100)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(nextToken, name:"nextToken", parent: name, max: 4096)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1233,13 +1143,6 @@ extension ServiceDiscovery {
         public init(nextToken: String? = nil, services: [ServiceSummary]? = nil) {
             self.nextToken = nextToken
             self.services = services
-        }
-
-        public func validate() throws {
-            try validate(nextToken, name:"nextToken", max: 4096)
-            try services?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1276,11 +1179,11 @@ extension ServiceDiscovery {
         /// A complex type that contains information that's specific to the type of the namespace.
         public let properties: NamespaceProperties?
         /// The number of services that are associated with the namespace.
-        public let serviceCount: Int32?
+        public let serviceCount: Int?
         /// The type of the namespace. Valid values are DNS_PUBLIC and DNS_PRIVATE.
         public let `type`: NamespaceType?
 
-        public init(arn: String? = nil, createDate: TimeStamp? = nil, creatorRequestId: String? = nil, description: String? = nil, id: String? = nil, name: String? = nil, properties: NamespaceProperties? = nil, serviceCount: Int32? = nil, type: NamespaceType? = nil) {
+        public init(arn: String? = nil, createDate: TimeStamp? = nil, creatorRequestId: String? = nil, description: String? = nil, id: String? = nil, name: String? = nil, properties: NamespaceProperties? = nil, serviceCount: Int? = nil, type: NamespaceType? = nil) {
             self.arn = arn
             self.createDate = createDate
             self.creatorRequestId = creatorRequestId
@@ -1290,15 +1193,6 @@ extension ServiceDiscovery {
             self.properties = properties
             self.serviceCount = serviceCount
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 255)
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(description, name:"description", max: 1024)
-            try validate(id, name:"id", max: 64)
-            try validate(name, name:"name", max: 1024)
-            try properties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1334,10 +1228,10 @@ extension ServiceDiscovery {
             self.values = values
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try values.forEach {
-                try validate($0, name:"values[]", max: 255)
-                try validate($0, name:"values[]", min: 1)
+                try validate($0, name: "values[]", parent: name, max: 255)
+                try validate($0, name: "values[]", parent: name, min: 1)
             }
         }
 
@@ -1367,11 +1261,6 @@ extension ServiceDiscovery {
         public init(dnsProperties: DnsProperties? = nil, httpProperties: HttpProperties? = nil) {
             self.dnsProperties = dnsProperties
             self.httpProperties = httpProperties
-        }
-
-        public func validate() throws {
-            try dnsProperties?.validate()
-            try httpProperties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1404,11 +1293,11 @@ extension ServiceDiscovery {
         public let name: String?
         public let properties: NamespaceProperties?
         /// The number of services that were created using the namespace.
-        public let serviceCount: Int32?
+        public let serviceCount: Int?
         /// The type of the namespace, either public or private.
         public let `type`: NamespaceType?
 
-        public init(arn: String? = nil, createDate: TimeStamp? = nil, description: String? = nil, id: String? = nil, name: String? = nil, properties: NamespaceProperties? = nil, serviceCount: Int32? = nil, type: NamespaceType? = nil) {
+        public init(arn: String? = nil, createDate: TimeStamp? = nil, description: String? = nil, id: String? = nil, name: String? = nil, properties: NamespaceProperties? = nil, serviceCount: Int? = nil, type: NamespaceType? = nil) {
             self.arn = arn
             self.createDate = createDate
             self.description = description
@@ -1417,14 +1306,6 @@ extension ServiceDiscovery {
             self.properties = properties
             self.serviceCount = serviceCount
             self.`type` = `type`
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 255)
-            try validate(description, name:"description", max: 1024)
-            try validate(id, name:"id", max: 64)
-            try validate(name, name:"name", max: 1024)
-            try properties?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1486,10 +1367,6 @@ extension ServiceDiscovery {
             self.updateDate = updateDate
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 255)
-        }
-
         private enum CodingKeys: String, CodingKey {
             case createDate = "CreateDate"
             case errorCode = "ErrorCode"
@@ -1522,10 +1399,10 @@ extension ServiceDiscovery {
             self.values = values
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try values.forEach {
-                try validate($0, name:"values[]", max: 255)
-                try validate($0, name:"values[]", min: 1)
+                try validate($0, name: "values[]", parent: name, max: 255)
+                try validate($0, name: "values[]", parent: name, min: 1)
             }
         }
 
@@ -1567,10 +1444,6 @@ extension ServiceDiscovery {
         public init(id: String? = nil, status: OperationStatus? = nil) {
             self.id = id
             self.status = status
-        }
-
-        public func validate() throws {
-            try validate(id, name:"id", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1627,10 +1500,14 @@ extension ServiceDiscovery {
             self.serviceId = serviceId
         }
 
-        public func validate() throws {
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(instanceId, name:"instanceId", max: 64)
-            try validate(serviceId, name:"serviceId", max: 64)
+        public func validate(name: String) throws {
+            try attributes.forEach {
+                try validate($0.key, name:"attributes.key", parent: name, max: 255)
+                try validate($0.value, name:"attributes[\"\($0.key)\"]", parent: name, max: 1024)
+            }
+            try validate(creatorRequestId, name:"creatorRequestId", parent: name, max: 64)
+            try validate(instanceId, name:"instanceId", parent: name, max: 64)
+            try validate(serviceId, name:"serviceId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1651,10 +1528,6 @@ extension ServiceDiscovery {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1700,13 +1573,13 @@ extension ServiceDiscovery {
         /// The ID that AWS Cloud Map assigned to the service when you created it.
         public let id: String?
         /// The number of instances that are currently associated with the service. Instances that were previously associated with the service but that have been deleted are not included in the count.
-        public let instanceCount: Int32?
+        public let instanceCount: Int?
         /// The name of the service.
         public let name: String?
         /// The ID of the namespace that was used to create the service.
         public let namespaceId: String?
 
-        public init(arn: String? = nil, createDate: TimeStamp? = nil, creatorRequestId: String? = nil, description: String? = nil, dnsConfig: DnsConfig? = nil, healthCheckConfig: HealthCheckConfig? = nil, healthCheckCustomConfig: HealthCheckCustomConfig? = nil, id: String? = nil, instanceCount: Int32? = nil, name: String? = nil, namespaceId: String? = nil) {
+        public init(arn: String? = nil, createDate: TimeStamp? = nil, creatorRequestId: String? = nil, description: String? = nil, dnsConfig: DnsConfig? = nil, healthCheckConfig: HealthCheckConfig? = nil, healthCheckCustomConfig: HealthCheckCustomConfig? = nil, id: String? = nil, instanceCount: Int? = nil, name: String? = nil, namespaceId: String? = nil) {
             self.arn = arn
             self.createDate = createDate
             self.creatorRequestId = creatorRequestId
@@ -1718,18 +1591,6 @@ extension ServiceDiscovery {
             self.instanceCount = instanceCount
             self.name = name
             self.namespaceId = namespaceId
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 255)
-            try validate(creatorRequestId, name:"creatorRequestId", max: 64)
-            try validate(description, name:"description", max: 1024)
-            try dnsConfig?.validate()
-            try healthCheckConfig?.validate()
-            try healthCheckCustomConfig?.validate()
-            try validate(id, name:"id", max: 64)
-            try validate(name, name:"name", pattern: "((?=^.{1,127}$)^([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9])(\\.([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9]))*$)|(^\\.$)")
-            try validate(namespaceId, name:"namespaceId", max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1766,10 +1627,10 @@ extension ServiceDiscovery {
             self.healthCheckConfig = healthCheckConfig
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 1024)
-            try dnsConfig.validate()
-            try healthCheckConfig?.validate()
+        public func validate(name: String) throws {
+            try validate(description, name:"description", parent: name, max: 1024)
+            try dnsConfig.validate(name: "\(name).dnsConfig")
+            try healthCheckConfig?.validate(name: "\(name).healthCheckConfig")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1799,10 +1660,10 @@ extension ServiceDiscovery {
             self.values = values
         }
 
-        public func validate() throws {
+        public func validate(name: String) throws {
             try values.forEach {
-                try validate($0, name:"values[]", max: 255)
-                try validate($0, name:"values[]", min: 1)
+                try validate($0, name: "values[]", parent: name, max: 255)
+                try validate($0, name: "values[]", parent: name, min: 1)
             }
         }
 
@@ -1843,11 +1704,11 @@ extension ServiceDiscovery {
         /// The ID that AWS Cloud Map assigned to the service when you created it.
         public let id: String?
         /// The number of instances that are currently associated with the service. Instances that were previously associated with the service but that have been deleted are not included in the count.
-        public let instanceCount: Int32?
+        public let instanceCount: Int?
         /// The name of the service.
         public let name: String?
 
-        public init(arn: String? = nil, createDate: TimeStamp? = nil, description: String? = nil, dnsConfig: DnsConfig? = nil, healthCheckConfig: HealthCheckConfig? = nil, healthCheckCustomConfig: HealthCheckCustomConfig? = nil, id: String? = nil, instanceCount: Int32? = nil, name: String? = nil) {
+        public init(arn: String? = nil, createDate: TimeStamp? = nil, description: String? = nil, dnsConfig: DnsConfig? = nil, healthCheckConfig: HealthCheckConfig? = nil, healthCheckCustomConfig: HealthCheckCustomConfig? = nil, id: String? = nil, instanceCount: Int? = nil, name: String? = nil) {
             self.arn = arn
             self.createDate = createDate
             self.description = description
@@ -1857,16 +1718,6 @@ extension ServiceDiscovery {
             self.id = id
             self.instanceCount = instanceCount
             self.name = name
-        }
-
-        public func validate() throws {
-            try validate(arn, name:"arn", max: 255)
-            try validate(description, name:"description", max: 1024)
-            try dnsConfig?.validate()
-            try healthCheckConfig?.validate()
-            try healthCheckCustomConfig?.validate()
-            try validate(id, name:"id", max: 64)
-            try validate(name, name:"name", pattern: "((?=^.{1,127}$)^([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9])(\\.([a-zA-Z0-9_][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9_]|[a-zA-Z0-9]))*$)|(^\\.$)")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1902,9 +1753,9 @@ extension ServiceDiscovery {
             self.status = status
         }
 
-        public func validate() throws {
-            try validate(instanceId, name:"instanceId", max: 64)
-            try validate(serviceId, name:"serviceId", max: 64)
+        public func validate(name: String) throws {
+            try validate(instanceId, name:"instanceId", parent: name, max: 64)
+            try validate(serviceId, name:"serviceId", parent: name, max: 64)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1930,9 +1781,9 @@ extension ServiceDiscovery {
             self.service = service
         }
 
-        public func validate() throws {
-            try validate(id, name:"id", max: 64)
-            try service.validate()
+        public func validate(name: String) throws {
+            try validate(id, name:"id", parent: name, max: 64)
+            try service.validate(name: "\(name).service")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1951,10 +1802,6 @@ extension ServiceDiscovery {
 
         public init(operationId: String? = nil) {
             self.operationId = operationId
-        }
-
-        public func validate() throws {
-            try validate(operationId, name:"operationId", max: 255)
         }
 
         private enum CodingKeys: String, CodingKey {

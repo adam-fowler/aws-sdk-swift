@@ -29,16 +29,16 @@ extension QuickSight {
             self.namespace = namespace
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(memberName, name:"memberName", max: 256)
-            try validate(memberName, name:"memberName", min: 1)
-            try validate(memberName, name:"memberName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(memberName, name:"memberName", parent: name, max: 256)
+            try validate(memberName, name:"memberName", parent: name, min: 1)
+            try validate(memberName, name:"memberName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -61,16 +61,12 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(groupMember: GroupMember? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(groupMember: GroupMember? = nil, requestId: String? = nil, status: Int? = nil) {
             self.groupMember = groupMember
             self.requestId = requestId
             self.status = status
-        }
-
-        public func validate() throws {
-            try groupMember?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -104,15 +100,15 @@ extension QuickSight {
             self.namespace = namespace
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(description, name:"description", max: 512)
-            try validate(description, name:"description", min: 1)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(description, name:"description", parent: name, max: 512)
+            try validate(description, name:"description", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -135,16 +131,12 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(group: Group? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(group: Group? = nil, requestId: String? = nil, status: Int? = nil) {
             self.group = group
             self.requestId = requestId
             self.status = status
-        }
-
-        public func validate() throws {
-            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -178,16 +170,16 @@ extension QuickSight {
             self.namespace = namespace
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(memberName, name:"memberName", max: 256)
-            try validate(memberName, name:"memberName", min: 1)
-            try validate(memberName, name:"memberName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(memberName, name:"memberName", parent: name, max: 256)
+            try validate(memberName, name:"memberName", parent: name, min: 1)
+            try validate(memberName, name:"memberName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -207,9 +199,9 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(requestId: String? = nil, status: Int32? = nil) {
+        public init(requestId: String? = nil, status: Int? = nil) {
             self.requestId = requestId
             self.status = status
         }
@@ -240,13 +232,13 @@ extension QuickSight {
             self.namespace = namespace
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -265,9 +257,9 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(requestId: String? = nil, status: Int32? = nil) {
+        public init(requestId: String? = nil, status: Int? = nil) {
             self.requestId = requestId
             self.status = status
         }
@@ -298,11 +290,11 @@ extension QuickSight {
             self.principalId = principalId
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -321,9 +313,9 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(requestId: String? = nil, status: Int32? = nil) {
+        public init(requestId: String? = nil, status: Int? = nil) {
             self.requestId = requestId
             self.status = status
         }
@@ -354,13 +346,13 @@ extension QuickSight {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(namespace, name:"namespace", pattern: "default")
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -379,9 +371,9 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(requestId: String? = nil, status: Int32? = nil) {
+        public init(requestId: String? = nil, status: Int? = nil) {
             self.requestId = requestId
             self.status = status
         }
@@ -412,13 +404,13 @@ extension QuickSight {
             self.namespace = namespace
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -440,16 +432,12 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(group: Group? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(group: Group? = nil, requestId: String? = nil, status: Int? = nil) {
             self.group = group
             self.requestId = requestId
             self.status = status
-        }
-
-        public func validate() throws {
-            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -479,13 +467,13 @@ extension QuickSight {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(namespace, name:"namespace", pattern: "default")
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -505,18 +493,14 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
         /// The user name.
         public let user: User?
 
-        public init(requestId: String? = nil, status: Int32? = nil, user: User? = nil) {
+        public init(requestId: String? = nil, status: Int? = nil, user: User? = nil) {
             self.requestId = requestId
             self.status = status
             self.user = user
-        }
-
-        public func validate() throws {
-            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -524,17 +508,6 @@ extension QuickSight {
             case status = "Status"
             case user = "User"
         }
-    }
-
-    public enum ExceptionResourceType: String, CustomStringConvertible, Codable {
-        case user = "USER"
-        case group = "GROUP"
-        case namespace = "NAMESPACE"
-        case dataSource = "DATA_SOURCE"
-        case dataSet = "DATA_SET"
-        case vpcConnection = "VPC_CONNECTION"
-        case ingestion = "INGESTION"
-        public var description: String { return self.rawValue }
     }
 
     public struct GetDashboardEmbedUrlRequest: AWSShape {
@@ -569,12 +542,12 @@ extension QuickSight {
             self.undoRedoDisabled = undoRedoDisabled
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(sessionLifetimeInMinutes, name:"sessionLifetimeInMinutes", max: 600)
-            try validate(sessionLifetimeInMinutes, name:"sessionLifetimeInMinutes", min: 15)
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(sessionLifetimeInMinutes, name:"sessionLifetimeInMinutes", parent: name, max: 600)
+            try validate(sessionLifetimeInMinutes, name:"sessionLifetimeInMinutes", parent: name, min: 15)
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -599,9 +572,9 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(embedUrl: String? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(embedUrl: String? = nil, requestId: String? = nil, status: Int? = nil) {
             self.embedUrl = embedUrl
             self.requestId = requestId
             self.status = status
@@ -638,13 +611,6 @@ extension QuickSight {
             self.principalId = principalId
         }
 
-        public func validate() throws {
-            try validate(description, name:"description", max: 512)
-            try validate(description, name:"description", min: 1)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-        }
-
         private enum CodingKeys: String, CodingKey {
             case arn = "Arn"
             case description = "Description"
@@ -667,12 +633,6 @@ extension QuickSight {
         public init(arn: String? = nil, memberName: String? = nil) {
             self.arn = arn
             self.memberName = memberName
-        }
-
-        public func validate() throws {
-            try validate(memberName, name:"memberName", max: 256)
-            try validate(memberName, name:"memberName", min: 1)
-            try validate(memberName, name:"memberName", pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -701,13 +661,13 @@ extension QuickSight {
         /// The name of the group that you want to see a membership list of.
         public let groupName: String
         /// The maximum number of results to return from this request.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The namespace. Currently, you should set this to default.
         public let namespace: String
         /// A pagination token that can be used in a subsequent request.
         public let nextToken: String?
 
-        public init(awsAccountId: String, groupName: String, maxResults: Int32? = nil, namespace: String, nextToken: String? = nil) {
+        public init(awsAccountId: String, groupName: String, maxResults: Int? = nil, namespace: String, nextToken: String? = nil) {
             self.awsAccountId = awsAccountId
             self.groupName = groupName
             self.maxResults = maxResults
@@ -715,15 +675,15 @@ extension QuickSight {
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(maxResults, name:"maxResults", max: 100000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(maxResults, name:"maxResults", parent: name, max: 100000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -750,19 +710,13 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(groupMemberList: [GroupMember]? = nil, nextToken: String? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(groupMemberList: [GroupMember]? = nil, nextToken: String? = nil, requestId: String? = nil, status: Int? = nil) {
             self.groupMemberList = groupMemberList
             self.nextToken = nextToken
             self.requestId = requestId
             self.status = status
-        }
-
-        public func validate() throws {
-            try groupMemberList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -784,26 +738,26 @@ extension QuickSight {
         /// The ID for the AWS account that the group is in. Currently, you use the ID for the AWS account that contains your Amazon QuickSight account.
         public let awsAccountId: String
         /// The maximum number of results to return.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The namespace. Currently, you should set this to default.
         public let namespace: String
         /// A pagination token that can be used in a subsequent request.
         public let nextToken: String?
 
-        public init(awsAccountId: String, maxResults: Int32? = nil, namespace: String, nextToken: String? = nil) {
+        public init(awsAccountId: String, maxResults: Int? = nil, namespace: String, nextToken: String? = nil) {
             self.awsAccountId = awsAccountId
             self.maxResults = maxResults
             self.namespace = namespace
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(maxResults, name:"maxResults", max: 100000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(maxResults, name:"maxResults", parent: name, max: 100000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -829,19 +783,13 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(groupList: [Group]? = nil, nextToken: String? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(groupList: [Group]? = nil, nextToken: String? = nil, requestId: String? = nil, status: Int? = nil) {
             self.groupList = groupList
             self.nextToken = nextToken
             self.requestId = requestId
             self.status = status
-        }
-
-        public func validate() throws {
-            try groupList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -864,7 +812,7 @@ extension QuickSight {
         /// The AWS Account ID that the user is in. Currently, you use the ID for the AWS account that contains your Amazon QuickSight account.
         public let awsAccountId: String
         /// The maximum number of results to return from this request.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The namespace. Currently, you should set this to default.
         public let namespace: String
         /// A pagination token that can be used in a subsequent request.
@@ -872,7 +820,7 @@ extension QuickSight {
         /// The Amazon QuickSight user name that you want to list group memberships for.
         public let userName: String
 
-        public init(awsAccountId: String, maxResults: Int32? = nil, namespace: String, nextToken: String? = nil, userName: String) {
+        public init(awsAccountId: String, maxResults: Int? = nil, namespace: String, nextToken: String? = nil, userName: String) {
             self.awsAccountId = awsAccountId
             self.maxResults = maxResults
             self.namespace = namespace
@@ -880,15 +828,15 @@ extension QuickSight {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(maxResults, name:"maxResults", max: 100000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(namespace, name:"namespace", pattern: "default")
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(maxResults, name:"maxResults", parent: name, max: 100000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -915,19 +863,13 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The HTTP status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(groupList: [Group]? = nil, nextToken: String? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(groupList: [Group]? = nil, nextToken: String? = nil, requestId: String? = nil, status: Int? = nil) {
             self.groupList = groupList
             self.nextToken = nextToken
             self.requestId = requestId
             self.status = status
-        }
-
-        public func validate() throws {
-            try groupList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -949,26 +891,26 @@ extension QuickSight {
         /// The ID for the AWS account that the user is in. Currently, you use the ID for the AWS account that contains your Amazon QuickSight account.
         public let awsAccountId: String
         /// The maximum number of results to return from this request.
-        public let maxResults: Int32?
+        public let maxResults: Int?
         /// The namespace. Currently, you should set this to default.
         public let namespace: String
         /// A pagination token that can be used in a subsequent request.
         public let nextToken: String?
 
-        public init(awsAccountId: String, maxResults: Int32? = nil, namespace: String, nextToken: String? = nil) {
+        public init(awsAccountId: String, maxResults: Int? = nil, namespace: String, nextToken: String? = nil) {
             self.awsAccountId = awsAccountId
             self.maxResults = maxResults
             self.namespace = namespace
             self.nextToken = nextToken
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(maxResults, name:"maxResults", max: 100000)
-            try validate(maxResults, name:"maxResults", min: 1)
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(maxResults, name:"maxResults", parent: name, max: 100000)
+            try validate(maxResults, name:"maxResults", parent: name, min: 1)
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -992,21 +934,15 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
         /// The list of users.
         public let userList: [User]?
 
-        public init(nextToken: String? = nil, requestId: String? = nil, status: Int32? = nil, userList: [User]? = nil) {
+        public init(nextToken: String? = nil, requestId: String? = nil, status: Int? = nil, userList: [User]? = nil) {
             self.nextToken = nextToken
             self.requestId = requestId
             self.status = status
             self.userList = userList
-        }
-
-        public func validate() throws {
-            try userList?.forEach {
-                try $0.validate()
-            }
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1057,16 +993,16 @@ extension QuickSight {
             self.userRole = userRole
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(namespace, name:"namespace", pattern: "default")
-            try validate(sessionName, name:"sessionName", max: 64)
-            try validate(sessionName, name:"sessionName", min: 2)
-            try validate(sessionName, name:"sessionName", pattern: "[\\w+=.@-]*")
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
+            try validate(sessionName, name:"sessionName", parent: name, max: 64)
+            try validate(sessionName, name:"sessionName", parent: name, min: 2)
+            try validate(sessionName, name:"sessionName", parent: name, pattern: "[\\w+=.@-]*")
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1092,21 +1028,17 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
         /// The user name.
         public let user: User?
         /// The URL the user visits to complete registration and provide a password. This is returned only for users with an identity type of QUICKSIGHT.
         public let userInvitationUrl: String?
 
-        public init(requestId: String? = nil, status: Int32? = nil, user: User? = nil, userInvitationUrl: String? = nil) {
+        public init(requestId: String? = nil, status: Int? = nil, user: User? = nil, userInvitationUrl: String? = nil) {
             self.requestId = requestId
             self.status = status
             self.user = user
             self.userInvitationUrl = userInvitationUrl
-        }
-
-        public func validate() throws {
-            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1141,15 +1073,15 @@ extension QuickSight {
             self.namespace = namespace
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(description, name:"description", max: 512)
-            try validate(description, name:"description", min: 1)
-            try validate(groupName, name:"groupName", min: 1)
-            try validate(groupName, name:"groupName", pattern: "[\\u0020-\\u00FF]+")
-            try validate(namespace, name:"namespace", pattern: "default")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(description, name:"description", parent: name, max: 512)
+            try validate(description, name:"description", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, min: 1)
+            try validate(groupName, name:"groupName", parent: name, pattern: "[\\u0020-\\u00FF]+")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1172,16 +1104,12 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
 
-        public init(group: Group? = nil, requestId: String? = nil, status: Int32? = nil) {
+        public init(group: Group? = nil, requestId: String? = nil, status: Int? = nil) {
             self.group = group
             self.requestId = requestId
             self.status = status
-        }
-
-        public func validate() throws {
-            try group?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1219,13 +1147,13 @@ extension QuickSight {
             self.userName = userName
         }
 
-        public func validate() throws {
-            try validate(awsAccountId, name:"awsAccountId", max: 12)
-            try validate(awsAccountId, name:"awsAccountId", min: 12)
-            try validate(awsAccountId, name:"awsAccountId", pattern: "^[0-9]{12}$")
-            try validate(namespace, name:"namespace", pattern: "default")
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\u0020-\\u00FF]+")
+        public func validate(name: String) throws {
+            try validate(awsAccountId, name:"awsAccountId", parent: name, max: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, min: 12)
+            try validate(awsAccountId, name:"awsAccountId", parent: name, pattern: "^[0-9]{12}$")
+            try validate(namespace, name:"namespace", parent: name, pattern: "default")
+            try validate(userName, name:"userName", parent: name, min: 1)
+            try validate(userName, name:"userName", parent: name, pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1247,18 +1175,14 @@ extension QuickSight {
         /// The AWS request ID for this operation.
         public let requestId: String?
         /// The http status of the request.
-        public let status: Int32?
+        public let status: Int?
         /// The Amazon QuickSight user.
         public let user: User?
 
-        public init(requestId: String? = nil, status: Int32? = nil, user: User? = nil) {
+        public init(requestId: String? = nil, status: Int? = nil, user: User? = nil) {
             self.requestId = requestId
             self.status = status
             self.user = user
-        }
-
-        public func validate() throws {
-            try user?.validate()
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -1302,11 +1226,6 @@ extension QuickSight {
             self.principalId = principalId
             self.role = role
             self.userName = userName
-        }
-
-        public func validate() throws {
-            try validate(userName, name:"userName", min: 1)
-            try validate(userName, name:"userName", pattern: "[\\u0020-\\u00FF]+")
         }
 
         private enum CodingKeys: String, CodingKey {
