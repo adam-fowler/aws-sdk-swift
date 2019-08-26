@@ -28,9 +28,8 @@ public extension S3 {
     ///     - expires: The amount of time before the url expires. Defaults to 1 hour
     /// - returns: A pre-signed url
     func presignedGetObject(bucket: String, key: String, expires: Int = 3600) throws -> URL {
-        let signer = try Signers.V4(credential: SharedCredential(), region: .euwest1, service: "s3", endpoint: nil)
         let urlToSign = URL(string: "https://\(bucket).s3.amazonaws.com/\(key)")!
-        let presignedURL = signer.signedURL(url: urlToSign,  method: "GET", date: Date(), expires: expires)
+        let presignedURL = client.signer.signedURL(url: urlToSign,  method: "GET", date: Date(), expires: expires)
         return presignedURL
     }
 
@@ -42,9 +41,8 @@ public extension S3 {
     ///     - expires: The amount of time before the url expires. Defaults to 1 hour
     /// - returns: A pre-signed url
     func presignedPutObject(bucket: String, key: String, expires: Int = 3600) throws -> URL {
-        let signer = try Signers.V4(credential: SharedCredential(), region: .euwest1, service: "s3", endpoint: nil)
         let urlToSign = URL(string: "https://\(bucket).s3.amazonaws.com/\(key)")!
-        let presignedURL = signer.signedURL(url: urlToSign,  method: "PUT", date: Date(), expires: expires)
+        let presignedURL = client.signer.signedURL(url: urlToSign,  method: "PUT", date: Date(), expires: expires)
         return presignedURL
     }
 
@@ -115,7 +113,7 @@ public extension S3 {
         var completedParts: [S3.CompletedPart] = []
 
         // function uploading part of a file and queueing up upload of the next part
-        func multipartUploadPart(partNumber: Int32, uploadId: String, body: Data? = nil) throws -> Future<[S3.CompletedPart]> {
+        func multipartUploadPart(partNumber: Int, uploadId: String, body: Data? = nil) throws -> Future<[S3.CompletedPart]> {
             // create upload data future, if there is no data to load because this is the first time this is called create a succeeded future
             let uploadResult : Future<[S3.CompletedPart]>
             if let body = body {
