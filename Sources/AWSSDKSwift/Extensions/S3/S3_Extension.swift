@@ -109,7 +109,7 @@ public extension S3 {
                 .and(uploadResult)
                 // upload data
                 .flatMap { (data, parts) -> Future<[S3.CompletedPart]> in
-                    guard let data = data else { return AWSClient.eventGroup.next().newSucceededFuture(parts)}
+                    guard let data = data else { return AWSClient.eventGroup.next().makeSucceededFuture(parts)}
                     return multipartUploadPart(partNumber: partNumber+1, uploadId: uploadId, body: data)
             }
             return result
@@ -117,7 +117,7 @@ public extension S3 {
 
         // initialize multipart upload
         let result = createMultipartUpload(input).flatMap { upload -> Future<CompleteMultipartUploadOutput> in
-            guard let uploadId = upload.uploadId else { return AWSClient.eventGroup.next().newFailedFuture(S3ErrorType.multipart.noUploadId) }
+            guard let uploadId = upload.uploadId else { return AWSClient.eventGroup.next().makeFailedFuture(S3ErrorType.multipart.noUploadId) }
             // upload all the parts
             return multipartUploadPart(partNumber: 1, uploadId: uploadId)
                 .flatMap { parts -> Future<CompleteMultipartUploadOutput> in
@@ -154,9 +154,13 @@ public extension S3 {
 
                 var progressValue : Int64 = 0
                 let download = self.multipartDownload(input, partSize: partSize, outputStream:{ data, fileSize in
-                    let bytesWritten = data.withUnsafeBytes { (bytes : UnsafePointer<UInt8>) -> Int in
-                        // read chunk
-                        return outputStream.write(bytes, maxLength: data.count)
+                    let bytesWritten = data.withUnsafeBytes { (ptr : UnsafeRawBufferPointer) -> Int in
+                        if let bytes = ptr.baseAddress?.assumingMemoryBound(to: UInt8.self) {
+                            // write chunk
+                            return outputStream.write(bytes, maxLength: data.count)
+                        } else {
+                            return -1
+                        }
                     }
                     if bytesWritten != data.count {
                         throw S3ErrorType.multipart.failedToWrite(file: filename)
@@ -165,7 +169,7 @@ public extension S3 {
                     progressValue += Int64(data.count)
                     try progress(Double(progressValue)/Double(fileSize))
                 })
-                download.whenComplete {
+                download.whenComplete { _ in
                     outputStream.close()
                 }
                 return download
@@ -195,8 +199,13 @@ public extension S3 {
                     try progress(Double(progressAmount) / Double(fileSize))
 
                     var data = Data(count:partSize)
-                    let bytesRead = data.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<UInt8>) -> Int in
-                        return inputStream.read(bytes, maxLength: partSize)
+                    let bytesRead = data.withUnsafeMutableBytes { (ptr : UnsafeMutableRawBufferPointer) -> Int in
+                        if let bytes = ptr.bindMemory(to: UInt8.self).baseAddress {
+                            // read chunk
+                            return inputStream.read(bytes, maxLength: partSize)
+                        } else {
+                            return -1
+                        }
                     }
                     if bytesRead == 0 {
                         return nil
@@ -212,7 +221,7 @@ public extension S3 {
                     }
                     return data
                 })
-                upload.whenComplete {
+                upload.whenComplete { _ in
                     inputStream.close()
                 }
                 return upload
