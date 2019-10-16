@@ -201,7 +201,7 @@ let package = Package(
         .library(name: "XRay", targets: ["XRay"])
     ],
     dependencies: [
-        .package(url: "https://github.com/adam-fowler/aws-sdk-swift-core.git", .branch("httpclient"))
+        .package(url: "https://github.com/adam-fowler/aws-sdk-swift-core.git", .branch("working"))
     ],
     targets: [
         .target(name: "ACM", dependencies: ["AWSSDKSwiftCore"], path: "./Sources/AWSSDKSwift/Services/ACM"),
